@@ -16,11 +16,14 @@ export function MotionController() {
     // Selector hooks are documented in AGENTS.md. Keeping them semantic avoids
     // coupling timelines to the page component tree.
     const context = gsap.context(() => {
-      gsap.fromTo(
-        ".js-hero-reveal",
-        { y: 48, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.05, stagger: 0.09, ease: "power4.out" },
-      );
+      const heroReveals = gsap.utils.toArray<HTMLElement>(".js-hero-reveal");
+      if (heroReveals.length) {
+        gsap.fromTo(
+          heroReveals,
+          { y: 48, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.05, stagger: 0.09, ease: "power4.out", clearProps: "transform" },
+        );
+      }
 
       const portrait = document.querySelector<HTMLElement>(".hero-portrait");
       if (portrait) {
@@ -71,11 +74,14 @@ export function MotionController() {
         { scaleX: 0, transformOrigin: "left center", opacity: 1 },
         { scaleX: 1, duration: 0.32, ease: "power3.in", yoyo: true, repeat: 1, repeatDelay: 0.04 },
       );
-      gsap.fromTo(
-        ".theme-swap",
-        { opacity: 0.35, scale: 1.012 },
-        { opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" },
-      );
+      const themeSwaps = gsap.utils.toArray<HTMLElement>(".theme-swap");
+      if (themeSwaps.length) {
+        gsap.fromTo(
+          themeSwaps,
+          { opacity: 0.35, scale: 1.012 },
+          { opacity: 1, scale: 1, duration: 0.7, ease: "power3.out", clearProps: "transform" },
+        );
+      }
     };
     window.addEventListener("portfolio-theme-change", onThemeChange);
 
