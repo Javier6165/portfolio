@@ -10,10 +10,10 @@ const ComplexityScene = dynamic(
 );
 
 const domains: { id: SystemDomain; label: string; detail: string }[] = [
-  { id: "rules", label: "Rules", detail: "Reveal consequence before configuration." },
-  { id: "content", label: "Content", detail: "Give structure to every state and owner." },
-  { id: "operations", label: "Operations", detail: "Connect edge cases without exposing the maze." },
-  { id: "ai", label: "AI build", detail: "Move from idea to testable behaviour sooner." },
+  { id: "rules", label: "Rule engines", detail: "Real-time logic, dependencies and safer publishing." },
+  { id: "content", label: "CMS", detail: "Content structures, permissions and third-party integrations." },
+  { id: "operations", label: "Design systems", detail: "Shared patterns and governance across backoffice products." },
+  { id: "ai", label: "AI + code", detail: "Working prototypes and dramatically shorter feedback loops." },
 ];
 
 export function ComplexityEngine() {
@@ -43,14 +43,16 @@ export function ComplexityEngine() {
         <ComplexityScene domain={domain} theme={theme} reducedMotion={reducedMotion} />
       </div>
       <div className="complexity-engine__hud">
-        <div className="complexity-engine__signal"><i /> Live system / input enabled</div>
-        <div className="complexity-engine__domains" role="group" aria-label="Explore system domains">
+        <div className="complexity-engine__signal"><i /> 5+ years / GiG product systems</div>
+        <div className="complexity-engine__domains" role="group" aria-label="Explore areas from Javier's product experience">
           {domains.map((item) => (
             <button
               type="button"
               key={item.id}
               aria-pressed={domain === item.id}
               onClick={() => setDomain(item.id)}
+              onPointerEnter={() => setDomain(item.id)}
+              onFocus={() => setDomain(item.id)}
             >
               {item.label}
             </button>

@@ -5,11 +5,14 @@ Este documento resume las decisiones que un nuevo colaborador necesita si recibe
 ## Producto y narrativa
 
 - Concepto: `Human / System`.
-- Headline: `I design the systems behind the screen.`
+- Headline: `I design complex platforms people can understand.`
 - Idioma principal: inglés.
 - Posicionamiento: Senior Product Designer especializado en sistemas de producto complejos, con experiencia reciente como lead y una práctica explícita de diseño con IA y código.
 - Territorios que deben aparecer pronto: rule engines, CMS/backoffice, plataformas multi-producto, experiencias player-facing y prototipos funcionales.
 - Los casos actuales son previews ficticios y deben permanecer rotulados.
+- `I design the systems behind the screen` sigue siendo la metáfora de la firma 3D, no la única explicación del rol.
+- El primer viewport debe responder cuatro preguntas: rol, terreno de producto, track record y ventaja diferencial.
+- La evidencia real de trayectoria aparece antes que los casos ficticios.
 
 ## Dirección visual
 
@@ -44,6 +47,17 @@ Este documento resume las decisiones que un nuevo colaborador necesita si recibe
 La auditoría `AUDIT-02-POSITIONING-AND-WOW.md` quedó aprobada cuando Javier pidió proceder con las mejoras. La implementación resultante está explicada en `IMPLEMENTATION-02-SIGNATURE-EXPERIENCE.md`.
 
 La línea anterior, `I design the calm inside complex products`, puede reaparecer como manifiesto secundario, pero ya no es el posicionamiento principal.
+
+## Dirección aprobada para Preview 3
+
+La petición de auditar copy y posicionamiento aprueba la dirección de `AUDIT-03-COPY-POSITIONING-AND-INTERACTION.md`:
+
+- identidad explícita: Javier Ortiz / Senior Product Designer / Marbella y remoto;
+- especialidad: plataformas complejas, rules, CMS y backoffice;
+- evidencia: más de cinco años en GiG y progresión Junior → Lead;
+- ventaja: pensamiento de sistemas, craft visual y prototipado con IA/código;
+- trayectoria interactiva `How I got here` antes de los casos conceptuales;
+- spotlight, conexión animada y proximidad solo donde cuentan esa historia.
 
 ## Hosting
 

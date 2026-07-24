@@ -4,7 +4,7 @@
 
 1. **Contenido y rutas de servidor**: páginas de `app/` y datos de `app/data.ts`.
 2. **Sistema visual**: `app/globals.css`, organizado por layers `reset`, `base`, `components`, `pages` y `responsive`.
-3. **Interacción cliente**: `ThemeToggle`, `MotionController`, `ComplexityEngine`, `ProjectCard` y `AIPractice`.
+3. **Interacción cliente**: `ThemeToggle`, `MotionController`, `ComplexityEngine`, `ExperienceSignal`, `ProjectCard` y `AIPractice`.
 4. **Infraestructura Sites**: `vite.config.ts`, `worker/`, `build/` y `.openai/hosting.json`.
 
 ## Rutas
@@ -63,6 +63,7 @@ Los reveals eliminan su `transform` inline al terminar para no competir con hove
 
 ## Interacción y evidencia
 
+- `ExperienceSignal.tsx` es una trayectoria real con patrón tab/tabpanel, navegación por flechas, spotlight local y progreso visual. El contenido activo cambia con hover, focus o click; no depende de una única modalidad de entrada.
 - `ProjectCard.tsx` separa `.project-card-shell.js-reveal` de la tarjeta interactiva. Así GSAP nunca pisa el transform de hover.
 - `AIPractice.tsx` es un patrón tab/tabpanel accesible que demuestra Frame → Explore → Build con artefactos DOM.
 - `ProjectVisual.tsx` sigue siendo arte CSS ficticio. En casos reales debe sustituirse por capturas, vídeo, embed de Figma o demo funcional, con fallback y contexto editorial.

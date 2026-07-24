@@ -26,7 +26,7 @@ El concepto `Human / System` convierte el selector claro/oscuro en una expresió
 - rigor de sistemas y precisión;
 - empatía, claridad y colaboración humana.
 
-La home sigue el recorrido posicionamiento específico → trabajo → capacidades diferenciales → práctica de IA → exploración → personalidad → contacto.
+La home sigue el recorrido posicionamiento específico → trayectoria real → trabajo conceptual → capacidades diferenciales → práctica de IA → exploración → personalidad → contacto.
 
 ## Por qué no es una template
 
@@ -40,6 +40,6 @@ La home sigue el recorrido posicionamiento específico → trabajo → capacidad
 
 ## Estado
 
-Preview 2 implementa la dirección de la auditoría de personalidad y “wow”: nuevo posicionamiento, Complexity Engine, tarjetas con profundidad, sección de IA, casos visual-first y microinteracciones. Los casos, resultados y experimentos siguen siendo ficticios.
+Preview 3 parte de esa firma y corrige la jerarquía del mensaje: el hero explica de forma inmediata rol, terreno, track record y ventaja; una trayectoria interactiva cuenta el origen multidisciplinar antes de mostrar casos ficticios. `AUDIT-03-COPY-POSITIONING-AND-INTERACTION.md` contiene las fuentes, el razonamiento y los efectos aceptados/rechazados.
 
-El siguiente trabajo correcto es sustituir placeholders por casos reales y sus artefactos. Vídeo, Figma embeds o demos se deben añadir cuando una historia concreta los justifique; no crear efectos adicionales sin una función narrativa.
+Los casos, resultados y experimentos siguen siendo ficticios. El siguiente trabajo correcto es sustituirlos por casos reales y sus artefactos. Vídeo, Figma embeds o demos se deben añadir cuando una historia concreta los justifique; no crear efectos adicionales sin una función narrativa.

@@ -12,7 +12,7 @@ const layouts: Record<SystemDomain, [number, number, number][]> = {
     [-2.5, 0, 0], [-1.7, 1.25, -.2], [-1.55, .35, .2], [-1.55, -.8, -.1],
     [-.45, 1.25, .15], [-.35, .35, -.25], [-.35, -.8, .15], [.85, 1.2, -.15],
     [.8, .25, .2], [.8, -.85, -.15], [2, .95, .2], [2.15, .05, -.25],
-    [2, -.9, .15], [0, .15, .55],
+    [2, -.9, .15], [-1.05, -.58, .55],
   ],
   content: [
     [-2.25, 1.35, -.2], [-.8, 1.35, .15], [.7, 1.35, -.15], [2.15, 1.35, .2],
@@ -109,8 +109,8 @@ function Network({ domain, theme, reducedMotion }: { domain: SystemDomain; theme
         <torusGeometry args={[2.25, .007, 4, 128]} />
         <meshBasicMaterial color={lineColour} transparent opacity={.12} />
       </mesh>
-      <mesh position={[0, .15, .5]}>
-        <icosahedronGeometry args={[.34, 1]} />
+      <mesh position={[-1.05, -.58, .5]}>
+        <icosahedronGeometry args={[.26, 1]} />
         <meshBasicMaterial color={nodeColour} wireframe transparent opacity={.72} />
       </mesh>
     </group>
