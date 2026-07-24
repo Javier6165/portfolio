@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Javier Ortiz" }],
   openGraph: {
     title: "Javier Ortiz — Senior Product Designer for complex platforms",
-    description: "I design complex platforms people can understand, combining product craft, systems thinking, AI and code.",
+    description: "Senior Product Designer working across complex backoffice products, design systems and AI-assisted prototypes.",
     type: "website",
     locale: "en_GB",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Javier Ortiz portfolio" }],
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Javier Ortiz — Senior Product Designer",
-    description: "I design complex platforms people can understand.",
+    description: "Complex product design, visual craft, AI-assisted workflows and coded prototypes.",
     images: ["/og.png"],
   },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },

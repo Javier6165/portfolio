@@ -2,38 +2,37 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { AIPractice } from "./components/AIPractice";
-import { ComplexityEngine } from "./components/ComplexityEngine";
 import { ExperienceSignal } from "./components/ExperienceSignal";
+import { LivingFold } from "./components/LivingFold";
 import { ProjectCard } from "./components/ProjectCard";
 import { ArrowIcon } from "./components/SiteShell";
 import { projects } from "./data";
 
-function Portrait({ context = "hero" }: { context?: "hero" | "about" }) {
-  const hero = context === "hero";
+function Portrait({ context = "profile" }: { context?: "profile" | "about" }) {
+  const profile = context === "profile";
   return (
     <figure
-      className={`${hero ? "hero-portrait" : "about-preview__portrait"} theme-swap`}
+      className={`${profile ? "profile-intro__portrait" : "about-preview__portrait"} theme-swap`}
       role="img"
       aria-label="Portrait of Javier Ortiz; the photograph changes with the Human or System theme."
     >
       <img
         className="portrait portrait--system"
-        src={`/images/portraits/${hero ? "hero-system" : "about-system"}.jpg`}
+        src={`/images/portraits/${profile ? "hero-system" : "about-system"}.jpg`}
         alt=""
         aria-hidden="true"
-        width={hero ? 1800 : 1439}
-        height={hero ? 1799 : 1800}
-        fetchPriority={hero ? "high" : undefined}
-        loading={hero ? "eager" : "lazy"}
+        width={profile ? 1800 : 1439}
+        height={profile ? 1799 : 1800}
+        loading="lazy"
       />
       <img
         className="portrait portrait--human"
-        src={`/images/portraits/${hero ? "hero-human" : "about-human"}.jpg`}
+        src={`/images/portraits/${profile ? "hero-human" : "about-human"}.jpg`}
         alt=""
         aria-hidden="true"
-        width={hero ? 2200 : 1314}
-        height={hero ? 1753 : 1800}
-        loading={hero ? "eager" : "lazy"}
+        width={profile ? 2200 : 1314}
+        height={profile ? 1753 : 1800}
+        loading="lazy"
       />
       <figcaption>
         <span className="mode-caption mode-caption--system">SYSTEM / Dark</span>
@@ -70,41 +69,40 @@ const expertise = [
 export default function Home() {
   return (
     <>
-      <section className="hero hero--v2 shell" aria-labelledby="hero-title">
-        <div className="hero__copy">
-          <p className="eyebrow js-hero-reveal">Javier Ortiz · Senior Product Designer · Marbella / Remote</p>
-          <h1 id="hero-title" className="display js-hero-reveal">
-            I design complex platforms <span className="display__signal">people can understand.</span>
+      <section className="hero hero--fold shell" aria-labelledby="hero-title">
+        <div className="hero-fold__visual js-hero-stage">
+          <LivingFold />
+        </div>
+
+        <div className="hero-fold__identity">
+          <p className="hero-fold__name js-hero-reveal">Javier Ortiz</p>
+          <h1 id="hero-title" className="hero-fold__title js-hero-reveal">
+            <span>Senior Product</span>
+            <span>Designer</span>
           </h1>
-          <p className="hero__intro js-hero-reveal">
-            <span>Over <strong>5+ years at Gaming Innovation Group</strong>, I grew from Junior to Lead while designing complex backoffice products—a real-time rules engine, proprietary CMS, design system and internal knowledge tools.</span>
-            <span>Today I work hands-on, using <strong>AI and code to turn ambiguity into working product faster.</strong></span>
-          </p>
-          <div className="hero__actions js-hero-reveal">
-            <Link className="button button--primary" href="#work">Explore case previews <ArrowIcon /></Link>
-            <Link className="button button--quiet" href="#experience">See how I got here</Link>
-          </div>
         </div>
 
-        <div className="hero__stage js-hero-stage">
-          <Portrait />
-          <ComplexityEngine />
-        </div>
-
-        <ul className="hero__proof js-hero-reveal" aria-label="Javier Ortiz at a glance">
-          <li><span>Role</span><strong>Senior Product Designer</strong><small>Recent Lead experience</small></li>
-          <li><span>Product terrain</span><strong>Complex B2B systems</strong><small>Rules · CMS · Backoffice</small></li>
-          <li><span>Track record</span><strong>5+ years at GiG</strong><small>Junior → Product → Senior → Lead</small></li>
-          <li><span>Edge</span><strong>AI + coded prototypes</strong><small>Visual design & games background</small></li>
-        </ul>
+        <Link className="hero-fold__explore js-hero-reveal" href="#experience">
+          <span>Explore</span>
+          <i aria-hidden="true" />
+        </Link>
       </section>
 
       <section className="experience section shell" id="experience" aria-labelledby="experience-title">
-        <header className="section-heading section-heading--split js-reveal">
-          <p className="kicker">01 / How I got here</p>
-          <h2 id="experience-title">From visual worlds to product systems.</h2>
-          <p>A multidisciplinary path explains why I move comfortably between visual craft, interaction behaviour, system logic and team direction.</p>
-        </header>
+        <div className="profile-intro">
+          <Portrait />
+          <header className="profile-intro__copy js-reveal">
+            <p className="kicker">01 / Profile</p>
+            <h2 id="experience-title">From visual worlds to product systems.</h2>
+            <p>I’m a Senior Product Designer based in Marbella, working remotely. Across <strong>5+ years at Gaming Innovation Group</strong>, I progressed from Junior to Senior and briefly stepped into Lead—while staying hands-on with complex digital products.</p>
+            <p>My edge is combining product judgement with visual craft, AI-assisted workflows and coded prototypes that make difficult behaviour tangible sooner.</p>
+            <ul className="profile-intro__facts" aria-label="Javier Ortiz at a glance">
+              <li><span>Trajectory</span><strong>Junior → Product → Senior → Lead</strong></li>
+              <li><span>Product terrain</span><strong>Rules · CMS · Backoffice · Design systems</strong></li>
+              <li><span>Working edge</span><strong>AI-assisted design + coded prototypes</strong></li>
+            </ul>
+          </header>
+        </div>
         <ExperienceSignal />
       </section>
 

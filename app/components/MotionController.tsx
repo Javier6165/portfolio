@@ -25,15 +25,6 @@ export function MotionController() {
         );
       }
 
-      const portrait = document.querySelector<HTMLElement>(".hero-portrait");
-      if (portrait) {
-        gsap.fromTo(
-          portrait,
-          { clipPath: "inset(0 0 100% 0)", scale: 1.04 },
-          { clipPath: "inset(0 0 0% 0)", scale: 1, duration: 1.35, delay: 0.15, ease: "power4.inOut", clearProps: "transform" },
-        );
-      }
-
       gsap.utils.toArray<HTMLElement>(".js-reveal").forEach((element) => {
         gsap.fromTo(
           element,

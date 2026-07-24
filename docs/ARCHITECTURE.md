@@ -4,7 +4,7 @@
 
 1. **Contenido y rutas de servidor**: páginas de `app/` y datos de `app/data.ts`.
 2. **Sistema visual**: `app/globals.css`, organizado por layers `reset`, `base`, `components`, `pages` y `responsive`.
-3. **Interacción cliente**: `ThemeToggle`, `MotionController`, `ComplexityEngine`, `ExperienceSignal`, `ProjectCard` y `AIPractice`.
+3. **Interacción cliente**: `ThemeToggle`, `MotionController`, `LivingFold`, `ExperienceSignal`, `ProjectCard` y `AIPractice`.
 4. **Infraestructura Sites**: `vite.config.ts`, `worker/`, `build/` y `.openai/hosting.json`.
 
 ## Rutas
@@ -55,11 +55,17 @@ Los reveals eliminan su `transform` inline al terminar para no competir con hove
 
 ## Firma interactiva del hero
 
-- `ComplexityEngine.tsx` gestiona dominio, tema y reduced motion; sus controles son botones reales con `aria-pressed`.
-- `ComplexityScene.tsx` contiene la escena R3F. Interpola catorce nodos entre cuatro topologías (`rules`, `content`, `operations`, `ai`).
-- La escena se carga con `dynamic(..., { ssr: false })`; el retrato y todo el contenido del hero se renderizan en servidor.
-- El canvas usa DPR limitado a `1–1.5`, materiales simples y ninguna luz o postproducción. En reduced motion usa `frameloop="demand"`.
-- No añadir un segundo canvas ni convertir la escena en dependencia para comprender o navegar la página.
+- `LivingFold.tsx` sincroniza tema y preferencia de movimiento. Carga la escena de forma dinámica sin bloquear el HTML del hero.
+- `LivingFoldScene.tsx` deforma una única lámina subdividida mediante vertex shader y calcula su material iridiscente en fragment shader. No usa modelos, partículas, texturas ni postproducción.
+- La entrada despliega la lámina; el puntero solo altera tensión y orientación; el scroll nativo la comprime en una franja al llegar a la segunda sección.
+- El canvas usa DPR limitado a `1–1.6` y una única geometría. El tema interpola la paleta del material sin recrear la escena.
+- El fallback CSS se renderiza en servidor detrás del canvas. Con reduced motion el canvas se oculta y ese fotograma estático queda como composición final.
+- El visual es decorativo. Nombre, rol y enlace de avance son HTML semántico y no dependen de WebGL.
+- No añadir un segundo canvas, controles o texto explicativo dentro del hero. La arquitectura completa se documenta en `IMPLEMENTATION-04-LIVING-FOLD-HERO.md`.
+
+## Secuencia Home: impacto y claridad
+
+El primer viewport contiene únicamente `Javier Ortiz`, `Senior Product Designer` y `Explore`. La segunda sección `profile-intro` contiene el retrato temático, la síntesis profesional y tres hechos escaneables; después conserva `ExperienceSignal` como trayectoria interactiva. Esta separación es deliberada: el hero capta atención y la siguiente pantalla explica el perfil.
 
 ## Interacción y evidencia
 

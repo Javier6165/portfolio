@@ -1,4 +1,4 @@
-# Javier Ortiz — Portfolio Preview 2
+# Javier Ortiz — Portfolio Preview
 
 An editorial portfolio for a Senior Product Designer working on complex platforms, systems and AI-assisted workflows.
 
@@ -7,7 +7,8 @@ An editorial portfolio for a Senior Product Designer working on complex platform
 - `System / Dark` and `Human / Light` themes swap both tokens and photography.
 - English-first, asymmetric editorial layout.
 - Three clearly labelled concept case studies.
-- A theme-aware, interactive 3D `Complexity Engine` in the hero.
+- A custom, theme-aware WebGL `Living Fold` as the hero signature.
+- A deliberately minimal first viewport followed by an evidence-led profile section.
 - An AI-assisted design practice demonstrated as a working interaction.
 - Visual-first case openings and decision/evidence modules ready for real artefacts.
 - Progressive motion with a reduced-motion fallback.
@@ -32,6 +33,8 @@ An editorial portfolio for a Senior Product Designer working on complex platform
 - `docs/ASSETS.md`: source and usage of portraits, favicon and social card.
 - `docs/AUDIT-02-POSITIONING-AND-WOW.md`: research-backed proposal for stronger positioning, interaction, 3D/media and future case-study architecture.
 - `docs/IMPLEMENTATION-02-SIGNATURE-EXPERIENCE.md`: what Preview 2 changed, why, and how to extend it safely.
+- `docs/AUDIT-04-HERO-RETHINK.md`: why the previous hero was rejected and how the replacement direction was chosen.
+- `docs/IMPLEMENTATION-04-LIVING-FOLD-HERO.md`: current hero composition, shader architecture, fallbacks and extension rules.
 
 ## Run and validate
 

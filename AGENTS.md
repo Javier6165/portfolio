@@ -19,7 +19,8 @@ Lee, en este orden:
 - El evento `portfolio-theme-change` sincroniza el selector con la animación de fotografías.
 - `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion, no clases visuales arbitrarias.
 - El contenido debe seguir siendo visible si GSAP no carga o reduced motion está activo.
-- `ComplexityEngine` es el único canvas/WebGL del sitio: debe conservar fallback, DPR limitado y modo reduced-motion.
+- `LivingFold` es la firma visual vigente del hero. Mantén un único canvas, su fallback CSS, el DPR limitado y el render estático para reduced motion; consulta `docs/IMPLEMENTATION-04-LIVING-FOLD-HERO.md` antes de modificarlo.
+- El hero se limita a nombre, rol y cue. Trayectoria, dominios de producto, IA y fotografía empiezan en la segunda sección.
 - Los reveals de GSAP no deben dejar transforms inline que anulen hovers de CSS.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - `.openai/hosting.json` identifica el sitio existente; no cambies ni derives su `project_id`.

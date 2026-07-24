@@ -19,12 +19,12 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /I design complex platforms/);
-  assert.match(html, /people can understand/);
+  assert.match(html, /Javier Ortiz/);
   assert.match(html, /5\+ years at Gaming Innovation Group/);
   assert.match(html, /Senior Product Designer/);
-  assert.match(html, /Complex B2B systems/);
   assert.match(html, /From visual worlds to product systems/);
+  assert.match(html, /AI-assisted design \+ coded prototypes/);
+  assert.match(html, /Rules · CMS · Backoffice · Design systems/);
   assert.match(html, /Case-study previews/);
   assert.match(html, /AI-assisted product design/);
   assert.match(html, /From ambiguity to working behaviour/);
@@ -35,6 +35,7 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /og\.png/);
   assert.match(html, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/og\.png/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/i);
+  assert.doesNotMatch(html, /I design complex platforms|complexity-engine/i);
 });
 
 test("server-renders About and a concept case", async () => {
