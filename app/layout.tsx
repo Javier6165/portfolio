@@ -8,7 +8,7 @@ import { SiteFooter, SiteHeader } from "./components/SiteShell";
 const themeScript = `(()=>{try{const saved=localStorage.getItem('javier-theme');const theme=saved==='human'||saved==='system'?saved:'system';document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme==='system'?'dark':'light'}catch(e){document.documentElement.dataset.theme='system';document.documentElement.style.colorScheme='dark'}})()`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://javier-ortiz-portfolio.example"),
+  metadataBase: new URL("https://javier-ortiz-portfolio.malapipa.chatgpt.site"),
   title: {
     default: "Javier Ortiz — Senior Product Designer",
     template: "%s — Javier Ortiz",

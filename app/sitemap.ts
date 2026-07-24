@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { projects } from "./data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://javier-ortiz-portfolio.example";
+  const base = "https://javier-ortiz-portfolio.malapipa.chatgpt.site";
   return [
     { url: base, priority: 1 },
     { url: `${base}/about`, priority: 0.8 },
