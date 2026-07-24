@@ -22,11 +22,14 @@ export function MotionController() {
         { y: 0, opacity: 1, duration: 1.05, stagger: 0.09, ease: "power4.out" },
       );
 
-      gsap.fromTo(
-        ".hero-portrait",
-        { clipPath: "inset(0 0 100% 0)", scale: 1.04 },
-        { clipPath: "inset(0 0 0% 0)", scale: 1, duration: 1.35, delay: 0.15, ease: "power4.inOut" },
-      );
+      const portrait = document.querySelector<HTMLElement>(".hero-portrait");
+      if (portrait) {
+        gsap.fromTo(
+          portrait,
+          { clipPath: "inset(0 0 100% 0)", scale: 1.04 },
+          { clipPath: "inset(0 0 0% 0)", scale: 1, duration: 1.35, delay: 0.15, ease: "power4.inOut", clearProps: "transform" },
+        );
+      }
 
       gsap.utils.toArray<HTMLElement>(".js-reveal").forEach((element) => {
         gsap.fromTo(
@@ -37,6 +40,7 @@ export function MotionController() {
             opacity: 1,
             duration: 0.85,
             ease: "power3.out",
+            clearProps: "transform",
             scrollTrigger: { trigger: element, start: "top 88%", once: true },
           },
         );
@@ -62,6 +66,11 @@ export function MotionController() {
     });
 
     const onThemeChange = () => {
+      gsap.fromTo(
+        ".theme-wipe",
+        { scaleX: 0, transformOrigin: "left center", opacity: 1 },
+        { scaleX: 1, duration: 0.32, ease: "power3.in", yoyo: true, repeat: 1, repeatDelay: 0.04 },
+      );
       gsap.fromTo(
         ".theme-swap",
         { opacity: 0.35, scale: 1.012 },

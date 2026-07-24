@@ -26,17 +26,20 @@ El concepto `Human / System` convierte el selector claro/oscuro en una expresió
 - rigor de sistemas y precisión;
 - empatía, claridad y colaboración humana.
 
-La home sigue el recorrido posicionamiento → trabajo → evidencia → método → personalidad → contacto.
+La home sigue el recorrido posicionamiento específico → trabajo → capacidades diferenciales → práctica de IA → exploración → personalidad → contacto.
 
 ## Por qué no es una template
 
-- Hero asimétrico donde retrato y headline comparten jerarquía.
+- Hero asimétrico donde retrato, headline y una topología 3D reaccionan como un único sistema.
 - Casos con tres art directions dentro de un mismo sistema.
-- Throughline profesional como columna narrativa.
+- Capacidades expresadas como problemas concretos, no como un método genérico.
+- Práctica de IA demostrada con una interacción Frame → Explore → Build.
 - Playground contenido para separar exploración de flujos críticos.
 - Fotografía integrada en el sistema de tema.
 - Motion progresivo con scroll nativo.
 
 ## Estado
 
-Preview 1 está completo y alojado de forma privada. Los casos, resultados y experimentos son ficticios. El siguiente trabajo correcto es contenido real y validación pre-lanzamiento, no añadir features por añadir.
+Preview 2 implementa la dirección de la auditoría de personalidad y “wow”: nuevo posicionamiento, Complexity Engine, tarjetas con profundidad, sección de IA, casos visual-first y microinteracciones. Los casos, resultados y experimentos siguen siendo ficticios.
+
+El siguiente trabajo correcto es sustituir placeholders por casos reales y sus artefactos. Vídeo, Figma embeds o demos se deben añadir cuando una historia concreta los justifique; no crear efectos adicionales sin una función narrativa.

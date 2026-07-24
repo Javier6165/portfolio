@@ -8,8 +8,12 @@ export type Project = {
   role: string;
   year: string;
   tags: string[];
+  surface: string;
+  proof: string;
+  artifactLabel: string;
   accent: "lime" | "violet" | "blue";
   thesis: string;
+  challengeTitle: string;
   challenge: string;
   decisions: { label: string; title: string; body: string }[];
   outcomes: { value: string; label: string }[];
@@ -32,9 +36,13 @@ export const projects: Project[] = [
     role: "Product strategy, interaction design, prototyping",
     year: "Preview · 2026",
     tags: ["Rule engines", "Systems thinking", "B2B UX"],
+    surface: "Rule automation engine",
+    proof: "Annotated Figma flow + interactive prototype",
+    artifactLabel: "Rule canvas / impact simulation",
     accent: "lime",
     thesis:
       "Complexity does not need to disappear. It needs to become inspectable, predictable and safe to change.",
+    challengeTitle: "The product exposed complexity without helping people reason through it.",
     challenge:
       "Operators were expected to configure interconnected conditions across several surfaces. The product exposed the data model, but not the mental model: people could make a change without understanding where its consequences would travel.",
     decisions: [
@@ -71,9 +79,13 @@ export const projects: Project[] = [
     role: "Design system strategy, governance, direction",
     year: "Preview · 2026",
     tags: ["Design systems", "Governance", "Product operations"],
+    surface: "Multi-product platform",
+    proof: "System map + governance model",
+    artifactLabel: "Token system / product modes",
     accent: "violet",
     thesis:
       "A design system scales when it makes the right path easier—and leaves enough room for products to remain themselves.",
+    challengeTitle: "The component mismatch was a symptom of decision drift.",
     challenge:
       "Parallel teams had solved similar problems in different ways. The visible inconsistency was only a symptom; the deeper issue was that ownership, contribution and decision-making had no shared structure.",
     decisions: [
@@ -110,9 +122,13 @@ export const projects: Project[] = [
     role: "Discovery, workflow design, facilitation",
     year: "Preview · 2026",
     tags: ["Applied AI", "Workflow design", "Trust"],
+    surface: "AI-assisted workflow",
+    proof: "Decision prototype + working web demo",
+    artifactLabel: "Evidence review / confidence states",
     accent: "blue",
     thesis:
       "AI becomes useful when it reduces uncertainty inside an existing decision—not when it asks people to invent the right prompt.",
+    challengeTitle: "The team needed leverage without giving up control.",
     challenge:
       "Teams saw opportunities for automation everywhere, but lacked a way to distinguish genuine leverage from novelty. The experience also needed to communicate confidence, source and reversibility without slowing experts down.",
     decisions: [

@@ -22,11 +22,11 @@ Las copias se redimensionaron y comprimieron a JPEG para proteger LCP sin altera
 
 ## Tarjeta social
 
-`public/og.png` fue generada una sola vez con la herramienta integrada de generación de imágenes.
+`public/og.png` se renovó para Preview 2 a partir de una única generación con la herramienta integrada de imagen y una composición tipográfica determinista.
 
-Dirección del prompt: una composición editorial premium que representa calma emergiendo de un sistema digital complejo; fondo grafito, grid modular, señal chartreuse y acento violeta, detalle concentrado a la derecha y espacio negativo a la izquierda; sin personas, dashboards literales, texto, logos ni marcas de agua.
+Dirección del prompt: sistema digital 3D de paneles de vidrio grafito, filamentos precisos y nodos lima que convergen en un núcleo claro; detalle concentrado a la derecha, casi negro y espacio negativo a la izquierda; sin personas, dashboards literales, texto, logos ni marcas de agua.
 
-La imagen se validó visualmente y se ajustó a `1200 × 630`.
+La tipografía (`I design the systems behind the screen.`, nombre y rol) se renderizó después en el navegador para asegurar texto exacto. La imagen final se validó visualmente y mide `1200 × 630`.
 
 ## Favicon
 

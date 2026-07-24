@@ -45,8 +45,8 @@ export function SiteFooter() {
     <footer className="site-footer" id="contact">
       <div className="shell footer-grid">
         <div className="footer-heading">
-          <p className="kicker">Have a complex problem?</p>
-          <p>Let’s make it feel simple.</p>
+          <p className="kicker">Have a hard system to untangle?</p>
+          <p>Let’s make the next move obvious.</p>
         </div>
         <div className="footer-contact">
           <p>Contact details arrive in the final content pass.</p>

@@ -25,7 +25,7 @@ export default function AboutPage() {
           <h1 className="page-display js-hero-reveal">I care about the space between a hard problem and an obvious next step.</h1>
         </div>
         <div className="about-hero__intro js-hero-reveal">
-          <p>I’m a Senior Product Designer based in Marbella, Spain, currently working as Lead Product Designer at Gaming Innovation Group.</p>
+          <p>I’m a Senior Product Designer based in Marbella, Spain, with recent experience stepping into lead responsibility at Gaming Innovation Group.</p>
           <p>My work lives where products become dense: many users, many rules, many edge cases and many teams trying to move at once.</p>
         </div>
       </section>

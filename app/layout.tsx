@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     template: "%s — Javier Ortiz",
   },
   description:
-    "Senior Product Designer with recent lead experience, designing clear systems for complex products, platforms and teams.",
+    "Senior Product Designer for rule engines, complex platforms and AI-assisted product work. I design the systems behind the screen.",
   authors: [{ name: "Javier Ortiz" }],
   openGraph: {
-    title: "Javier Ortiz — Product design for complex systems",
-    description: "I design the calm inside complex products.",
+    title: "Javier Ortiz — I design the systems behind the screen",
+    description: "Complex product systems, made clear, testable and ready to scale.",
     type: "website",
     locale: "en_GB",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Javier Ortiz portfolio" }],
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Javier Ortiz — Senior Product Designer",
-    description: "I design the calm inside complex products.",
+    description: "I design the systems behind the screen.",
     images: ["/og.png"],
   },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
@@ -51,6 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
       <body>
         <a className="skip-link" href="#main-content">Skip to content</a>
+        <div className="theme-wipe" aria-hidden="true" />
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />

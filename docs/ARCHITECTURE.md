@@ -4,7 +4,7 @@
 
 1. **Contenido y rutas de servidor**: páginas de `app/` y datos de `app/data.ts`.
 2. **Sistema visual**: `app/globals.css`, organizado por layers `reset`, `base`, `components`, `pages` y `responsive`.
-3. **Interacción cliente**: `ThemeToggle` y `MotionController`.
+3. **Interacción cliente**: `ThemeToggle`, `MotionController`, `ComplexityEngine`, `ProjectCard` y `AIPractice`.
 4. **Infraestructura Sites**: `vite.config.ts`, `worker/`, `build/` y `.openai/hosting.json`.
 
 ## Rutas
@@ -37,28 +37,44 @@ Flujo:
 1. El script inline de `layout.tsx` lee `localStorage` antes de pintar.
 2. `globals.css` resuelve tokens y visibilidad de fotografías desde `data-theme`.
 3. `ThemeToggle` cambia el atributo, `colorScheme` y `localStorage`.
-4. El evento `portfolio-theme-change` permite que `MotionController` añada una transición breve sin acoplar ambos componentes.
+4. El evento `portfolio-theme-change` sincroniza `MotionController`, los retratos y la paleta del canvas 3D sin acoplar los componentes.
 
 No muevas la lectura inicial a un `useEffect`: reintroduciría un flash y un cambio de layout/imagen al hidratar.
 
 ## Motion progresivo
 
-`MotionController` conoce cuatro hooks:
+`MotionController` conoce tres hooks vigentes:
 
 - `.js-hero-reveal`: entrada inicial.
 - `.js-reveal`: entrada única al viewport.
-- `.throughline__progress`: progreso ligado al scroll.
 - `.theme-swap`: feedback al cambiar de tema.
 
 El contenido no empieza oculto en CSS. GSAP aplica `fromTo` después de montar; si JavaScript falla, el usuario ve el documento completo. Reduced motion cancela el controlador y CSS elimina transiciones restantes.
 
+Los reveals eliminan su `transform` inline al terminar para no competir con hover y microinteracciones CSS. Los selectores opcionales se comprueban antes de crear timelines, por lo que navegar a About, Playground o un caso no produce warnings por nodos ausentes.
+
+## Firma interactiva del hero
+
+- `ComplexityEngine.tsx` gestiona dominio, tema y reduced motion; sus controles son botones reales con `aria-pressed`.
+- `ComplexityScene.tsx` contiene la escena R3F. Interpola catorce nodos entre cuatro topologías (`rules`, `content`, `operations`, `ai`).
+- La escena se carga con `dynamic(..., { ssr: false })`; el retrato y todo el contenido del hero se renderizan en servidor.
+- El canvas usa DPR limitado a `1–1.5`, materiales simples y ninguna luz o postproducción. En reduced motion usa `frameloop="demand"`.
+- No añadir un segundo canvas ni convertir la escena en dependencia para comprender o navegar la página.
+
+## Interacción y evidencia
+
+- `ProjectCard.tsx` separa `.project-card-shell.js-reveal` de la tarjeta interactiva. Así GSAP nunca pisa el transform de hover.
+- `AIPractice.tsx` es un patrón tab/tabpanel accesible que demuestra Frame → Explore → Build con artefactos DOM.
+- `ProjectVisual.tsx` sigue siendo arte CSS ficticio. En casos reales debe sustituirse por capturas, vídeo, embed de Figma o demo funcional, con fallback y contexto editorial.
+
 ## Casos conceptuales
 
-`app/data.ts` define el tipo `Project` y los tres objetos. La plantilla dinámica:
+`app/data.ts` define el tipo `Project` y los tres objetos. Además del relato, cada proyecto declara `surface`, `proof`, `artifactLabel` y `challengeTitle`. La plantilla dinámica:
 
 - genera metadata;
-- presenta contexto, rol y estado;
-- muestra decisiones y outcomes;
+- presenta contexto, rol y formato de evidencia junto al primer artefacto;
+- incluye un índice sticky y alterna decisiones con artefactos;
+- muestra outcomes ilustrativos;
 - conecta el siguiente caso.
 
 `ProjectVisual` genera visuales CSS abstractos. No representan interfaces reales ni deben presentarse como capturas de producto.

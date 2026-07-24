@@ -17,8 +17,10 @@ Lee, en este orden:
 - Los valores de tema válidos son `system` y `human`.
 - La clave local del tema es `javier-theme`.
 - El evento `portfolio-theme-change` sincroniza el selector con la animación de fotografías.
-- `.js-hero-reveal`, `.js-reveal`, `.theme-swap` y `.throughline__progress` son hooks de motion, no clases visuales arbitrarias.
+- `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion, no clases visuales arbitrarias.
 - El contenido debe seguir siendo visible si GSAP no carga o reduced motion está activo.
+- `ComplexityEngine` es el único canvas/WebGL del sitio: debe conservar fallback, DPR limitado y modo reduced-motion.
+- Los reveals de GSAP no deben dejar transforms inline que anulen hovers de CSS.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - `.openai/hosting.json` identifica el sitio existente; no cambies ni derives su `project_id`.
 

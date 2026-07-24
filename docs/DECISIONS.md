@@ -5,9 +5,10 @@ Este documento resume las decisiones que un nuevo colaborador necesita si recibe
 ## Producto y narrativa
 
 - Concepto: `Human / System`.
-- Headline: `I design the calm inside complex products.`
+- Headline: `I design the systems behind the screen.`
 - Idioma principal: inglés.
-- Posicionamiento: Senior Product Designer con experiencia reciente como lead.
+- Posicionamiento: Senior Product Designer especializado en sistemas de producto complejos, con experiencia reciente como lead y una práctica explícita de diseño con IA y código.
+- Territorios que deben aparecer pronto: rule engines, CMS/backoffice, plataformas multi-producto, experiencias player-facing y prototipos funcionales.
 - Los casos actuales son previews ficticios y deben permanecer rotulados.
 
 ## Dirección visual
@@ -17,12 +18,15 @@ Este documento resume las decisiones que un nuevo colaborador necesita si recibe
 - Instrument Sans para voz editorial y Fragment Mono para metadatos.
 - Paleta oscura `System` y clara `Human`, ambas semánticas.
 - Las fotografías son parte del concepto de tema, no avatares intercambiables.
+- La firma interactiva es `Complexity Engine`: retrato + red 3D + cuatro dominios seleccionables. Debe seguir siendo una demostración contenida, no un fondo WebGL global.
+- Los casos abren con un artefacto visual y alternan razonamiento con evidencia. No volver al formato de texto largo seguido de una única imagen gigante.
 
 ## Tecnología
 
 - Next.js 16 + React 19 sobre vinext/Sites.
 - CSS nativo, custom properties y cascade layers.
 - GSAP/ScrollTrigger para una capa pequeña de motion progresivo.
+- Three.js + React Three Fiber solo para el motor 3D del hero, cargado de forma dinámica en cliente.
 - Datos TypeScript para los casos conceptuales.
 - Sin base de datos, R2, autenticación, analytics o variables de entorno.
 - El scaffolding opcional de D1/Auth del starter no se usa actualmente.
@@ -30,10 +34,16 @@ Este documento resume las decisiones que un nuevo colaborador necesita si recibe
 ## Decisiones negativas
 
 - Sin smooth scroll ni scroll-jacking.
-- Sin WebGL/canvas global.
+- Sin WebGL/canvas global; el único canvas está acotado al hero y tiene fallback estático.
 - Sin librería de componentes genérica.
 - Sin contacto inventado.
 - Sin indexación mientras el contenido sea ficticio.
+
+## Dirección aprobada e implementada en Preview 2
+
+La auditoría `AUDIT-02-POSITIONING-AND-WOW.md` quedó aprobada cuando Javier pidió proceder con las mejoras. La implementación resultante está explicada en `IMPLEMENTATION-02-SIGNATURE-EXPERIENCE.md`.
+
+La línea anterior, `I design the calm inside complex products`, puede reaparecer como manifiesto secundario, pero ya no es el posicionamiento principal.
 
 ## Hosting
 

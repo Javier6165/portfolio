@@ -1,8 +1,10 @@
 /* Theme-swapped portraits are pre-compressed local assets; native images keep both variants immediately available. */
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import { AIPractice } from "./components/AIPractice";
+import { ComplexityEngine } from "./components/ComplexityEngine";
+import { ProjectCard } from "./components/ProjectCard";
 import { ArrowIcon } from "./components/SiteShell";
-import { ProjectVisual } from "./components/ProjectVisual";
 import { projects } from "./data";
 
 function Portrait({ context = "hero" }: { context?: "hero" | "about" }) {
@@ -40,96 +42,109 @@ function Portrait({ context = "hero" }: { context?: "hero" | "about" }) {
   );
 }
 
+const expertise = [
+  {
+    index: "01",
+    label: "Operational complexity",
+    title: "I turn rules and edge cases into confident decisions.",
+    body: "Rule engines, CMSs and backoffice tools where one small change can travel across an entire system.",
+    visual: "logic",
+  },
+  {
+    index: "02",
+    label: "Interactive craft",
+    title: "I make the interaction explain the product.",
+    body: "Prototypes, motion and visual systems that reveal hierarchy, consequence and state without adding noise.",
+    visual: "states",
+  },
+  {
+    index: "03",
+    label: "AI + code",
+    title: "I close the gap between the idea and the working thing.",
+    body: "AI-assisted exploration and vibe-coded prototypes used to test the hard part, not to decorate the easy part.",
+    visual: "build",
+  },
+];
+
 export default function Home() {
   return (
     <>
-      <section className="hero shell" aria-labelledby="hero-title">
+      <section className="hero hero--v2 shell" aria-labelledby="hero-title">
         <div className="hero__copy">
           <p className="eyebrow js-hero-reveal">Senior Product Designer · Marbella / Remote</p>
           <h1 id="hero-title" className="display js-hero-reveal">
-            I design the <span className="display__quiet">calm</span> inside complex products.
+            I design the systems <span className="display__signal">behind the screen.</span>
           </h1>
           <p className="hero__intro js-hero-reveal">
-            I turn dense platforms, design systems and AI-assisted workflows into clear experiences people can understand—and teams can scale.
+            Rule engines, CMSs, multi-product platforms and player experiences—made clear, testable and ready to scale. I use AI and code to prototype what comes next.
           </p>
           <div className="hero__actions js-hero-reveal">
             <Link className="button button--primary" href="#work">See selected work <ArrowIcon /></Link>
-            <Link className="button button--quiet" href="/about">About me</Link>
+            <Link className="button button--quiet" href="#ai-practice">How I design with AI</Link>
           </div>
         </div>
-        <Portrait />
-        <aside className="hero__status js-hero-reveal" aria-label="Current role">
-          <span className="status-dot" />
-          <p><strong>Currently</strong> Lead Product Designer at Gaming Innovation Group</p>
-        </aside>
-        <p className="hero__scroll js-hero-reveal" aria-hidden="true"><span /> Scroll to trace the system</p>
+
+        <div className="hero__stage js-hero-stage">
+          <Portrait />
+          <ComplexityEngine />
+        </div>
+
+        <ul className="hero__proof js-hero-reveal" aria-label="Areas of practice">
+          <li><span>01</span> Complex operations</li>
+          <li><span>02</span> AI-assisted prototyping</li>
+          <li><span>03</span> Recent lead experience</li>
+        </ul>
       </section>
 
       <section className="selected-work section shell" id="work" aria-labelledby="work-title">
         <header className="section-heading js-reveal">
           <p className="kicker">01 / Selected work</p>
-          <h2 id="work-title">Three ways to make complexity legible.</h2>
+          <h2 id="work-title">Systems I make legible.</h2>
           <p>Concept case studies for layout preview. Names, organisations, metrics and outcomes are fictitious.</p>
         </header>
         <div className="project-list">
-          {projects.map((project) => (
-            <Link className={`project-card project-card--${project.accent} js-reveal`} href={`/work/${project.slug}`} key={project.slug}>
-              <div className="project-card__meta">
-                <span>{project.index}</span><span>Concept case</span><span>{project.year}</span>
-              </div>
-              <div className="project-card__copy">
-                <p>{project.name}</p>
-                <h3>{project.title}</h3>
-                <p className="project-card__summary">{project.summary}</p>
-                <ul>{project.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
-              </div>
-              <ProjectVisual project={project} />
-              <span className="project-card__cta">Open case study <ArrowIcon /></span>
-            </Link>
+          {projects.map((project) => <ProjectCard project={project} key={project.slug} />)}
+        </div>
+      </section>
+
+      <section className="expertise section shell" id="approach" aria-labelledby="expertise-title">
+        <header className="section-heading section-heading--split js-reveal">
+          <p className="kicker">02 / What I do unusually well</p>
+          <h2 id="expertise-title">The hard part is where I start.</h2>
+          <p>I work best where system logic, interaction quality and new technology need to become one coherent product.</p>
+        </header>
+        <div className="expertise-grid">
+          {expertise.map((item) => (
+            <article className={`expertise-card expertise-card--${item.visual} js-reveal`} key={item.index}>
+              <div className="expertise-card__meta"><span>{item.index}</span><span>{item.label}</span></div>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <div className="expertise-artifact" aria-hidden="true"><i /><i /><i /><b /><span /></div>
+            </article>
           ))}
         </div>
       </section>
 
-      <section className="throughline section shell" aria-labelledby="throughline-title">
-        <header className="section-heading section-heading--split js-reveal">
-          <p className="kicker">02 / Throughline</p>
-          <h2 id="throughline-title">The role changed. The question stayed the same.</h2>
-          <p>How can the product—and the team around it—make better decisions with less friction?</p>
-        </header>
-        <div className="throughline__body">
-          <div className="throughline__line" aria-hidden="true"><span className="throughline__progress" /></div>
-          <ol>
-            <li className="js-reveal"><span>01</span><p>Junior Product Designer</p><strong>Learn the system</strong><small>Turn curiosity into useful questions.</small></li>
-            <li className="js-reveal"><span>02</span><p>Product Designer</p><strong>Shape the system</strong><small>Connect journeys, rules and edge cases.</small></li>
-            <li className="js-reveal"><span>03</span><p>Senior Product Designer</p><strong>Scale the system</strong><small>Create clarity across products and teams.</small></li>
-            <li className="js-reveal"><span>04</span><p>Lead Product Designer</p><strong>Enable the system</strong><small>Align direction, craft and delivery.</small></li>
-          </ol>
+      <section className="ai-practice section shell" id="ai-practice" aria-labelledby="ai-title">
+        <div className="ai-practice__copy js-reveal">
+          <p className="kicker">03 / Designing with AI</p>
+          <h2 id="ai-title">AI is not the feature. Leverage is.</h2>
+          <p>I use AI to frame faster, explore wider and turn decisions into working prototypes. The judgement stays human; the feedback loop gets dramatically shorter.</p>
+          <Link className="text-link" href="/playground">See experiments <ArrowIcon /></Link>
         </div>
-        <div className="throughline__note js-reveal"><span>5+ years</span><p>Growing inside complex platform work—from hands-on interaction design to recent lead responsibility.</p></div>
-      </section>
-
-      <section className="approach section shell" id="approach" aria-labelledby="approach-title">
-        <header className="section-heading js-reveal">
-          <p className="kicker">03 / How I work</p>
-          <h2 id="approach-title">Clarity is not a final polish. It is the way through.</h2>
-        </header>
-        <ol className="approach-grid">
-          <li className="js-reveal"><span>01</span><div><p>Frame</p><h3>Find the decision beneath the request.</h3><small>I map the actors, constraints and cost of being wrong before drawing the happy path.</small></div></li>
-          <li className="js-reveal"><span>02</span><div><p>Shape</p><h3>Make complexity tangible together.</h3><small>Prototypes and workshops create a shared object for product, design and engineering to challenge.</small></div></li>
-          <li className="js-reveal"><span>03</span><div><p>Ship</p><h3>Leave a stronger system behind.</h3><small>The work is not complete until the pattern, rationale and operating model can outlive the project.</small></div></li>
-        </ol>
+        <AIPractice />
       </section>
 
       <section className="playground-preview section shell" aria-labelledby="playground-title">
         <div className="playground-preview__canvas js-reveal" aria-hidden="true">
-          <div className="kinetic-type"><span>MAKE</span><span>IT</span><span>CLEAR</span></div>
+          <div className="kinetic-type"><span>MAKE</span><span>IT</span><span>REAL</span></div>
           <div className="cursor-orbit"><i /><i /><i /></div>
           <div className="lab-tag">LAB / 001—003</div>
         </div>
         <div className="playground-preview__copy js-reveal">
           <p className="kicker">04 / Playground</p>
-          <h2 id="playground-title">Craft needs somewhere to misbehave.</h2>
-          <p>Small experiments in motion, interface behaviour, 3D and visual systems—kept away from critical product flows until they earn their place.</p>
+          <h2 id="playground-title">The fastest way to understand an idea is to make it move.</h2>
+          <p>Prototypes, motion studies and small pieces of software—where visual curiosity becomes product evidence.</p>
           <Link className="text-link" href="/playground">Enter the playground <ArrowIcon /></Link>
         </div>
       </section>
@@ -140,7 +155,7 @@ export default function Home() {
           <p className="kicker">05 / The person in the system</p>
           <h2 id="about-preview-title">Hands-on by nature. Lead when the work needs it.</h2>
           <p>I’m Javier, a Senior Product Designer based in Marbella. My path crosses product strategy, complex platforms, design systems, visual craft and AI-assisted ways of working.</p>
-          <p>I have recently stepped into lead responsibility, while staying close to the details where product quality is actually made.</p>
+          <p>I have recent lead experience, while staying close to the details where product quality is actually made.</p>
           <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
         </div>
       </section>

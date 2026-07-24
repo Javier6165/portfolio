@@ -5,12 +5,22 @@
 1. Validar con Javier que el proyecto se puede publicar.
 2. Separar hechos, inferencias y datos confidenciales.
 3. Actualizar o ampliar el tipo `Project` en `app/data.ts` si la historia real necesita otra estructura.
-4. Sustituir nombre, contexto, rol, decisiones y outcomes.
+4. Sustituir nombre, contexto, rol, superficie, formato de evidencia, decisiones y outcomes.
 5. Eliminar etiquetas de ficticio solo en el caso completamente reemplazado; la UI actual las aplica de forma global, así que un portfolio mixto requerirá un campo `isConcept` por proyecto.
-6. Sustituir `ProjectVisual` por artefactos reales optimizados o por una visualización honesta.
+6. Sustituir `ProjectVisual` por artefactos reales optimizados o por una visualización honesta. Mantener un primer artefacto visible en el hero del caso.
 7. Actualizar smoke tests y metadata.
 
 No fuerces un caso real a caber en tres decisiones si eso empeora la historia. La plantilla es un punto de partida, no una restricción editorial.
+
+## Formatos previstos para evidencia real
+
+- **Captura Figma**: exportar AVIF/WebP en varios tamaños, conservar el texto legible y añadir anotaciones en HTML cuando sea posible.
+- **Prototipo Figma**: embed solo si aporta una interacción que una secuencia de vídeo no explica mejor; incluir imagen fallback y enlace directo.
+- **Vídeo**: MP4/WebM corto, sin autoplay con sonido, con `poster`, controles y alternativa para reduced motion.
+- **Demo vibe-coded**: enlace externo claro o embed aislado; nunca bloquear el caso si la demo tarda o deja de estar disponible.
+- **Sistema/flow**: usar una imagen navegable o fragmentos progresivos, no reducir un diagrama denso hasta hacerlo ilegible.
+
+Antes de implementar estos formatos, ampliar `Project` con una unión discriminada para media (`image`, `video`, `figma`, `demo`) en lugar de añadir condicionales por slug.
 
 ## Añadir contacto y CV
 

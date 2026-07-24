@@ -20,8 +20,10 @@ test("server-renders the complete portfolio home", async () => {
 
   const html = await response.text();
   assert.match(html, /I design the/);
-  assert.match(html, /calm/);
+  assert.match(html, /systems behind the screen/);
   assert.match(html, /Selected work/);
+  assert.match(html, /Designing with AI/);
+  assert.match(html, /AI is not the feature/);
   assert.match(html, /fictitious/i);
   assert.match(html, /href="\/work\/atlas"/);
   assert.match(html, /javier-theme/);
@@ -44,13 +46,14 @@ test("server-renders About and a concept case", async () => {
     caseResponse.text(),
   ]);
   assert.match(about, /Senior Product Designer based in Marbella/);
-  assert.match(about, /recently Lead Product Designer/);
+  assert.match(about, /recent experience stepping into lead responsibility/);
   assert.match(caseHtml, /Rules without the maze/);
   assert.match(caseHtml, /Fictitious preview content/);
+  assert.match(caseHtml, /Annotated Figma flow/);
   assert.match(caseHtml, /Illustrative metrics only/);
 });
 
-test("keeps Preview 1 out of search engines", async () => {
+test("keeps the private preview out of search engines", async () => {
   const [robotsResponse, sitemapResponse] = await Promise.all([
     render("/robots.txt"),
     render("/sitemap.xml"),
