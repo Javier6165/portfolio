@@ -1,5 +1,9 @@
 import type { Project } from "../data";
 
+/**
+ * Abstract CSS art for preview cases. These are intentionally not screenshots
+ * and must not be presented as shipped product UI or research evidence.
+ */
 export function ProjectVisual({ project, compact = false }: { project: Project; compact?: boolean }) {
   if (project.slug === "atlas") {
     return (

@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { projects } from "./data";
+import { siteConfig } from "./config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://javier-ortiz-portfolio.malapipa.chatgpt.site";
+  const base = siteConfig.url;
   return [
     { url: base, priority: 1 },
     { url: `${base}/about`, priority: 0.8 },

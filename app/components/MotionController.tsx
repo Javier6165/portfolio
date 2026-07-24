@@ -6,11 +6,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function MotionController() {
   useEffect(() => {
+    // Motion is progressive enhancement. Base CSS leaves every section visible,
+    // and this early return preserves that document for reduced-motion users.
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduceMotion.matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Selector hooks are documented in AGENTS.md. Keeping them semantic avoids
+    // coupling timelines to the page component tree.
     const context = gsap.context(() => {
       gsap.fromTo(
         ".js-hero-reveal",
@@ -68,6 +72,8 @@ export function MotionController() {
 
     return () => {
       window.removeEventListener("portfolio-theme-change", onThemeChange);
+      // Required for client navigation and development HMR: without revert(),
+      // ScrollTriggers and inline transforms would accumulate.
       context.revert();
     };
   }, []);

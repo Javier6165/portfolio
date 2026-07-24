@@ -7,6 +7,8 @@ export function ThemeToggle() {
     document.documentElement.dataset.theme = next;
     document.documentElement.style.colorScheme = next === "system" ? "dark" : "light";
     localStorage.setItem("javier-theme", next);
+    // Motion listens to this small DOM contract; the theme itself never depends
+    // on GSAP, so the toggle remains functional when motion is unavailable.
     window.dispatchEvent(new CustomEvent("portfolio-theme-change"));
   }
 

@@ -19,6 +19,15 @@ An editorial portfolio for a Senior Product Designer working on complex platform
 - Visual system and responsive rules: `app/globals.css`
 - Local portraits and social preview: `public/`
 
+## Documentation
+
+- `AGENTS.md`: operational rules for future Codex sessions.
+- `docs/PROJECT-CONTEXT.md`: original brief, profile and design response.
+- `docs/DECISIONS.md`: current product and technical decisions.
+- `docs/ARCHITECTURE.md`: routes, theme, motion and infrastructure contracts.
+- `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
+- `docs/ASSETS.md`: source and usage of portraits, favicon and social card.
+
 ## Run and validate
 
 ```bash
@@ -31,3 +40,5 @@ npm test
 ## Before public launch
 
 Replace the concept cases and illustrative metrics, add final contact details and CV, set the real site URL, allow indexing, and run final browser/device accessibility and performance QA.
+
+The single release switch is `app/config.ts`. Do not set `isPreview` to `false` until Javier explicitly approves public launch and indexing.

@@ -27,6 +27,7 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /javier-theme/);
   assert.match(html, /Skip to content/);
   assert.match(html, /og\.png/);
+  assert.match(html, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/og\.png/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/i);
 });
 
@@ -47,4 +48,21 @@ test("server-renders About and a concept case", async () => {
   assert.match(caseHtml, /Rules without the maze/);
   assert.match(caseHtml, /Fictitious preview content/);
   assert.match(caseHtml, /Illustrative metrics only/);
+});
+
+test("keeps Preview 1 out of search engines", async () => {
+  const [robotsResponse, sitemapResponse] = await Promise.all([
+    render("/robots.txt"),
+    render("/sitemap.xml"),
+  ]);
+  assert.equal(robotsResponse.status, 200);
+  assert.equal(sitemapResponse.status, 200);
+
+  const [robots, sitemap] = await Promise.all([
+    robotsResponse.text(),
+    sitemapResponse.text(),
+  ]);
+  assert.match(robots, /Disallow: \/\s*$/m);
+  assert.match(robots, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/sitemap\.xml/);
+  assert.match(sitemap, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/work\/atlas/);
 });

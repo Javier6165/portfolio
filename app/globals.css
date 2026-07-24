@@ -1,3 +1,13 @@
+/*
+ * Visual system map:
+ * 1. reset      — predictable browser baseline
+ * 2. base       — semantic tokens, typography and shared primitives
+ * 3. components — header, controls, portraits and concept visuals
+ * 4. pages      — editorial compositions by route/section
+ * 5. responsive — intentional tablet/mobile recomposition and reduced motion
+ *
+ * Theme changes should use semantic variables in :root, not page-level colors.
+ */
 @layer reset, base, components, pages, responsive;
 
 @layer reset {

@@ -15,6 +15,11 @@ export type Project = {
   outcomes: { value: string; label: string }[];
 };
 
+/**
+ * Preview content only. Names, scenarios and outcomes below are fictitious.
+ * See docs/CONTENT-AND-RELEASE.md before replacing a project or removing any
+ * visible concept/metric disclaimer from the UI.
+ */
 export const projects: Project[] = [
   {
     slug: "atlas",
