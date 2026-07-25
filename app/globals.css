@@ -58,13 +58,12 @@
     --muted: #625c55;
     --line: rgba(24, 45, 81, 0.16);
     --line-strong: rgba(24, 45, 81, 0.36);
-    --signal: #a9342d;
+    --signal: #8f2d28;
     --signal-on-inverse: #ffab9b;
     --cold: #2455cf;
     --violet: #8f3f8c;
     --blue: #176b8b;
     --shadow: rgba(62, 43, 27, 0.16);
-    --font-display: "Instrument Serif", "Iowan Old Style", Baskerville, serif;
     --narrative-blue: #2455cf;
     color-scheme: light;
   }
@@ -83,18 +82,6 @@
     line-height: 1.5;
     text-rendering: optimizeLegibility;
     transition: background-color 500ms cubic-bezier(.2,.7,.2,1), color 400ms ease;
-  }
-
-  [data-theme="human"] body {
-    background:
-      linear-gradient(118deg, transparent 0 68%, color-mix(in srgb, var(--signal) 5%, transparent) 68% 100%),
-      radial-gradient(circle at 8% 20%, color-mix(in srgb, var(--cold) 8%, transparent), transparent 32rem),
-      var(--canvas);
-  }
-
-  [data-theme="human"] :is(h1, h2, h3, .page-display) {
-    font-family: var(--font-display);
-    font-weight: 400;
   }
 
   ::selection { background: var(--signal); color: var(--canvas); }
@@ -135,7 +122,6 @@
   .wordmark { display: flex; align-items: center; gap: .8rem; font-size: .9rem; font-weight: 600; }
   .wordmark__mark { display: grid; place-items: center; width: 2.3rem; aspect-ratio: 1; border: 1px solid var(--line-strong); border-radius: 50%; font: .62rem var(--font-mono); transition: rotate 450ms cubic-bezier(.2,.7,.2,1), background 250ms ease; }
   .wordmark:hover .wordmark__mark { rotate: 12deg; background: var(--ink); color: var(--canvas); }
-  [data-theme="human"] .wordmark__mark { border-radius: .4rem 50% 50% .4rem; background: var(--signal); color: #fff9ef; border-color: var(--signal); }
   .desktop-nav { display: flex; align-items: center; gap: clamp(1.5rem, 3vw, 3.4rem); margin-left: auto; font-size: .84rem; }
   .desktop-nav a { position: relative; color: var(--muted); transition: color 180ms ease; }
   .desktop-nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -.35rem; height: 1px; background: var(--ink); transition: right 250ms cubic-bezier(.2,.7,.2,1); }
@@ -733,46 +719,6 @@
   .ai-practice__interactive { grid-column: 6 / 13; }
   .ai-practice__narrative { grid-column: 6 / 13; }
   .ai-practice__narrative .ai-practice__interactive { grid-column: auto; }
-
-  [data-theme="human"] .section-heading h2,
-  [data-theme="human"] .profile-intro__headline h2 {
-    color: var(--ink);
-    letter-spacing: -.038em;
-  }
-
-  [data-theme="human"] .section-heading h2::first-line,
-  [data-theme="human"] .profile-intro__headline h2::first-line {
-    color: var(--cold);
-  }
-
-  [data-theme="human"] .project-card:nth-child(odd),
-  [data-theme="human"] .project-card-shell:nth-child(odd) .project-card {
-    border-radius: 3.2rem .8rem 3.2rem .8rem;
-  }
-
-  [data-theme="human"] .project-card-shell:nth-child(even) .project-card {
-    border-radius: .8rem 3.2rem .8rem 3.2rem;
-  }
-
-  [data-theme="human"] .expertise-grid {
-    border-radius: 4rem 1rem 4rem 1rem;
-    box-shadow: 1.2rem 1.2rem 0 color-mix(in srgb, var(--signal) 9%, transparent);
-  }
-
-  [data-theme="human"] .ai-practice {
-    background: var(--cold);
-    color: #fff9ef;
-    border-radius: 5rem 1rem 5rem 1rem;
-  }
-
-  [data-theme="human"] .ai-practice__copy .kicker,
-  [data-theme="human"] .ai-practice__copy > p:not(.kicker) {
-    color: #fff9ef;
-  }
-
-  [data-theme="human"] .ai-practice__steps button:not([aria-selected="true"]) {
-    color: #fff9ef;
-  }
 
   .case-hero--v2 { min-height: max(48rem, 100svh); grid-template-rows: auto 1fr auto; padding-bottom: 2rem; }
   .case-hero--v2 .case-hero__title { grid-column: 1 / 7; align-self: center; padding-right: 2vw; }

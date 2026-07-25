@@ -92,7 +92,7 @@ type SimulationState = "idle" | "running" | "complete";
 
 `Testimonials` es servidor y consume `testimonialSlots`, una unión discriminada que separa `placeholder` de `verified`. La entrega vigente contiene tres perspectivas editoriales —producto, ingeniería y liderazgo de diseño— con `Placeholder · source required`. No existe ninguna cita, nombre o cargo inventado. El estado `verified` exige en TypeScript `source` y `approvedForPublication: true`, además de cita, nombre y cargo.
 
-La escena `Verify` es deliberadamente silenciosa: presenta el chequeo después de `700 ms` de lectura y conserva `References / Source pending`. System usa una composición de archivo técnico; Human reinterpreta el mismo contenido como tarjetas crema sobre cobalto. El hover eleva una ficha y reduce las demás sin alterar lectura o layout.
+La escena `Verify` es deliberadamente silenciosa: presenta el chequeo después de `700 ms` de lectura y conserva `References / Source pending`. Dark y Light comparten la misma composición de archivo; los tokens recolorean canvas, líneas, fichas y señal. El hover eleva una ficha y reduce las demás sin alterar lectura o layout.
 
 ## Memoria y tiers
 
@@ -154,7 +154,7 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 - Fast-scroll entrega el estado settled.
 - Sin JavaScript permanecen hero, copy, links, cards y CTAs.
 - Status decorativos se ajustaron para contraste AA aunque estén fuera del árbol accesible.
-- Human usa `--muted` y coral reforzados; el bloque cobalto de AI define texto crema explícito. axe cubre Home y Northstar en ambos temas y viewports.
+- Light usa los mismos contratos tipográficos y geométricos que Dark; sus tokens de contraste cubren canvas, surfaces, muted y señales. axe cubre Home y Northstar en ambos temas y viewports.
 - ThemeToggle anuncia destino y estado con `aria-label` y `aria-pressed`.
 - Menú móvil cierra tras navegación y Escape.
 
@@ -162,13 +162,13 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 
 - `npm run lint`: limpio.
 - `npm test`: build + 3 smoke tests SSR, todos pasan.
-- `npm run test:e2e`: 31 pasan y 11 duplicaciones móviles se omiten intencionalmente.
-- axe: Home y Northstar, System/Human, sin violaciones automáticas en desktop/móvil.
+- `npm run test:e2e`: 32 pasan y 12 duplicaciones móviles se omiten intencionalmente.
+- axe: Home y Northstar, Dark/Light, sin violaciones automáticas en desktop/móvil.
 - teclado: AI Practice y token propagation.
 - interacción: simulación AI, Replay Playground, tema con storage bloqueado y menú móvil.
 - narrativa: armado y pausa editorial, comentario diferido, cancelación al seguir navegando, settled, tiers y reduced motion.
 - resiliencia: no-JS y fallo de retrato.
-- matriz visual full-page: System/Human en 1440×900, 1280×800, 768×1024 y 390×844.
+- matriz visual full-page: Dark/Light en 1440×900, 1280×800, 768×1024 y 390×844.
 - `npm audit --omit=dev`: 0 vulnerabilidades.
 
 ## Riesgos residuales

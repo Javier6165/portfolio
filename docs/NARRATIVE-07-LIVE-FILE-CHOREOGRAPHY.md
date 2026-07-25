@@ -218,7 +218,7 @@ Coreografía desktop, `1,7–1,9 s`:
 3. Cada marcador confirma `source required`; no aparece ningún nombre, cargo o comillas atribuidas.
 4. Queda `REFERENCES / SOURCE PENDING` y la nota `No quote without a source.`
 
-La composición tiene dirección propia por tema: archivo técnico oscuro en System y bloque editorial cobalto/crema en Human. Cuando lleguen recomendaciones aprobadas, el mismo contrato admite cita, nombre y cargo sin cambiar la estructura ni fabricar transición entre estados.
+La composición de Testimonials es idéntica en Dark y Light; los tokens recolorean canvas, fichas, líneas y señal. Cuando lleguen recomendaciones aprobadas, el mismo contrato admite cita, nombre y cargo sin cambiar la estructura ni fabricar transición entre estados.
 
 ### Acto 8 — Footer / Hand off
 
@@ -299,19 +299,11 @@ Las escenas duran `0,9–1,4 s`, no usan coordenadas absolutas entre bloques y n
 - Ninguna escena secundaria toma la iniciativa; se activa únicamente mediante interacción del visitante.
 - La memoria persistente de estos tiers continúa requiriendo consentimiento. Sin consentimiento, la lógica es solo de sesión.
 
-## 10. System y Human
+## 10. Dark y Light
 
-El guion y el significado son idénticos. Cambia la interpretación artística:
+El guion, el timing y la presentación son idénticos. Ambos modos usan Instrument Sans + Fragment Mono, los mismos handles, radios, trayectorias, grids y estados. Light cambia únicamente la paleta mediante tokens y las fotografías asociadas al tema; no introduce serif, asimetrías o presenters alternativos.
 
-| Elemento | System | Human |
-| --- | --- | --- |
-| Trayectoria | segmentos rectos y snap preciso | curva breve y asentamiento más suave |
-| Handles | cuadrados, 1 px | redondeados, algo más grandes |
-| Status | Fragment Mono, mayúsculas | serif + micro-label mono |
-| Señal | lima para resultado, azul para Javier | coral para resultado, cobalto para Javier |
-| Geometría | alineación técnica | tensión editorial/asimétrica |
-
-Javier conserva una identidad cromática reconocible en ambos temas. El modo nunca cambia el orden, el timing esencial ni qué contenido se comunica.
+Los valores internos continúan siendo `system` y `human` para preservar preferencias existentes, pero la interfaz los presenta como Dark y Light.
 
 ## 11. Contrato técnico propuesto
 
@@ -377,7 +369,7 @@ En case studies la evidencia manda. Live File aparece solo donde ayuda a explica
 2. Prototipar los tres picos: Profile, primer proyecto y AI.
 3. Validar el ritmo completo en una captura de scroll desktop y móvil.
 4. Añadir Expertise, Playground, About, Testimonials y Handoff como beats silenciosos.
-5. Ajustar System/Human sin cambiar el guion.
+5. Ajustar la paleta Dark/Light sin cambiar guion, tipografía o geometría.
 6. Convertir cada estado final en fallback no-JS/reduced.
 7. Automatizar pruebas de triggers, fast-scroll, interacción temprana y orden.
 
@@ -394,7 +386,7 @@ La estabilización del hero sin CLS precede o acompaña a la infraestructura, pe
 - Ningún cursor tapa heading, CTA o texto en lectura.
 - El visitante puede seguir desplazándose y usar cualquier control durante la experiencia.
 - Fast-scroll, reduced motion y no-JS aterrizan en un resultado compuesto, no en una web “sin efecto”.
-- System y Human ejecutan la misma partitura con dirección artística propia.
+- Dark y Light ejecutan exactamente la misma partitura; solo cambian color y fotografía.
 
 ## 15. Lo que queda fuera
 

@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/instrument-sans";
 import "@fontsource/fragment-mono/400.css";
-import "@fontsource/instrument-serif/400.css";
-import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 import { ExperienceSettings } from "./components/live-file/ExperienceSettings";
 import { LiveSceneDirector } from "./components/live-file/LiveSceneDirector";

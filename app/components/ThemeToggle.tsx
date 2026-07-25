@@ -34,16 +34,16 @@ export function ThemeToggle() {
       className="theme-toggle"
       type="button"
       onClick={toggleTheme}
-      aria-label={theme === "human" ? "Use System visual mode" : "Use Human visual mode"}
+      aria-label={theme === "human" ? "Use Dark mode" : "Use Light mode"}
       aria-pressed={theme === "human"}
-      title={`Current mode: ${theme === "human" ? "Human" : "System"}. Switch mode.`}
+      title={`Current mode: ${theme === "human" ? "Light" : "Dark"}. Switch mode.`}
     >
       <span className="theme-toggle__track" aria-hidden="true">
         <span className="theme-toggle__dot" />
       </span>
       <span className="theme-toggle__label" aria-hidden="true">
-        <span className="theme-toggle__system">System</span>
-        <span className="theme-toggle__human">Human</span>
+        <span className="theme-toggle__system">Dark</span>
+        <span className="theme-toggle__human">Light</span>
       </span>
     </button>
   );

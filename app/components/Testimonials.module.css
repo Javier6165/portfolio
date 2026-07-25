@@ -235,39 +235,6 @@
   }
 }
 
-:global(html[data-theme="human"]) .stage {
-  border-radius: 5rem 1rem 5rem 1rem;
-  background:
-    linear-gradient(color-mix(in srgb, #fff9ef 16%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, #fff9ef 16%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 52% 42%, color-mix(in srgb, var(--signal) 24%, transparent), transparent 31rem),
-    var(--cold);
-  background-size: 4rem 4rem, 4rem 4rem, auto, auto;
-}
-
-:global(html[data-theme="human"]) .stageMeta,
-:global(html[data-theme="human"]) .integrityNote {
-  color: rgba(255, 249, 239, .72);
-}
-
-:global(html[data-theme="human"]) .stageMeta {
-  border-color: rgba(255, 249, 239, .22);
-}
-
-:global(html[data-theme="human"]) .stage::before {
-  color: rgba(255, 249, 239, .09);
-}
-
-:global(html[data-theme="human"]) .card {
-  border-color: rgba(24, 45, 81, .2);
-  background: #fff9ef;
-  color: var(--ink);
-}
-
-:global(html[data-theme="human"]) .card:nth-child(1) { border-radius: 3.8rem .75rem 3.8rem .75rem; }
-:global(html[data-theme="human"]) .card:nth-child(2) { border-radius: .75rem 3.8rem .75rem 3.8rem; }
-:global(html[data-theme="human"]) .card:nth-child(3) { border-radius: 3.8rem 3.8rem .75rem .75rem; }
-
 @keyframes verify-card {
   0% { opacity: .55; filter: saturate(.35); transform: translateY(1.25rem) rotate(var(--card-rotation, -1.1deg)); }
   100% { opacity: 1; filter: saturate(1); transform: translateY(0) rotate(var(--card-rotation, -1.1deg)); }
@@ -344,10 +311,6 @@
     bottom: 1.05rem;
   }
 
-  :global(html[data-theme="human"]) .stage,
-  :global(html[data-theme="human"]) .card:nth-child(n) {
-    border-radius: 2.4rem .65rem 2.4rem .65rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

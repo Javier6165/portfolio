@@ -22,7 +22,7 @@ Además, Selected Work pasó de 2,5–3 viewports a 1,69 desktop y 2,00 móvil; 
 - scroll deliberado, fast-scroll, primera/segunda/tercera visita;
 - no-JS, reduced motion, fallo de retrato y storage bloqueado;
 - teclado, axe y controles funcionales;
-- full-page System/Human en cuatro viewports;
+- full-page Dark/Light en cuatro viewports;
 - timing real de armado, comentario diferido y cancelación al abandonar una sección;
 - auditoría de dependencias de producción y desarrollo;
 - lectura editorial de 30/60 segundos basada en posiciones reales.
@@ -43,7 +43,7 @@ Además, Selected Work pasó de 2,5–3 viewports a 1,69 desktop y 2,00 móvil; 
 | Contenido visible antes de la intervención | Cumple: 450–750 ms de pausa |
 | Comentarios posteriores a lectura/corrección | Cumple: ~1,6–1,75 s desde armado |
 | Scroll nativo y control del visitante | Cumple |
-| System/Human con dirección propia | Cumple |
+| Dark/Light con estructura idéntica | Cumple |
 
 ## Gates técnicos
 
@@ -68,9 +68,9 @@ Además, Selected Work pasó de 2,5–3 viewports a 1,69 desktop y 2,00 móvil; 
 - La primera card transforma el framing en evidencia sin bloquear su link.
 - AI respalda el posicionamiento con comportamiento ejecutable.
 - Playground permite repetir, de modo que su movimiento no es un autoplay decorativo.
-- Human cambia tipografía, composición, color, retrato y geometría en toda Home.
+- Light mantiene tipografía, composición y geometría de Dark; la diferenciación se concentra en color y retrato.
 - Testimonials introduce un pico editorial tardío sin fingir prueba social: `Verify`, `source required` y el contrato tipado hacen visible la integridad del contenido.
-- La ampliación de axe a Human móvil detectó y cerró una deuda previa: muted, coral pequeño y texto sobre cobalto cumplen ahora el control automático AA en Home y Northstar.
+- La ampliación de axe a Light móvil cubre contraste de muted, señales y superficies claras en Home y Northstar.
 - La implementación conserva servidor, no-JS y fallos seguros.
 - Las correcciones ya no compiten con la llegada a la sección: primero se arma, después actúa; si el visitante continúa, la escena cede sin reaparecer tarde.
 
@@ -97,7 +97,7 @@ Además, Selected Work pasó de 2,5–3 viewports a 1,69 desktop y 2,00 móvil; 
 2. El CSS codificado es ~103 KB y `globals.css` aún mezcla Home, About, casos y legacy; Testimonials ya está co-localizado en su módulo.
 3. `CaseEvidence` hidrata el renderer completo aunque algunos tipos sean estáticos.
 4. Ocho avisos quedan en tooling de desarrollo: Babel/ESLint y dependencias antiguas de Drizzle. Producción tiene cero; eliminar D1/Drizzle cuando Sites confirme que no son necesarios reducirá superficie.
-5. E2E usa el dev server; la build de producción sí tiene smoke tests y performance audit, pero falta un comando E2E de producción unificado. La suite actual deja 26 pruebas verdes y 10 duplicaciones móviles omitidas de forma explícita.
+5. E2E usa el dev server; la build de producción sí tiene smoke tests y performance audit, pero falta un comando E2E de producción unificado. La suite actual deja 32 pruebas verdes y 12 duplicaciones móviles omitidas de forma explícita.
 6. Faltan cabeceras CSP, Referrer-Policy, X-Content-Type-Options y Permissions-Policy antes de publicación abierta.
 
 ### P3 — polish

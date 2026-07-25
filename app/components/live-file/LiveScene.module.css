@@ -142,21 +142,6 @@
   62%, 90% { opacity: 1; transform: translateY(0); }
 }
 
-:global(html[data-theme="human"]) .selection,
-:global(html[data-theme="human"]) .selection i {
-  border-radius: 0.18rem;
-}
-
-:global(html[data-theme="human"]) .status {
-  background: color-mix(in srgb, var(--surface-raised) 96%, transparent);
-  color: var(--ink);
-}
-
-:global(html[data-theme="human"]) .scene:is([data-live-state="settled"], [data-live-state="reduced"]) .status {
-  border-color: var(--signal);
-  color: var(--ink);
-}
-
 @media (max-width: 720px), (pointer: coarse) {
   .cursor { display: none; }
   .selection::after {

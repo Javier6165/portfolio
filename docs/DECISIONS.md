@@ -4,7 +4,7 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 
 ## Producto y narrativa
 
-- Concepto: `Live File` dentro del sistema `Human / System`.
+- Concepto: `Live File` con modos Dark / Light coordinados.
 - Primer viewport: Javier Ortiz, Senior Product Designer, retrato y `Explore`; la explicación empieza en la segunda sección.
 - Idioma principal: inglés.
 - Posicionamiento: Senior Product Designer de sistemas complejos, con experiencia reciente de lead y práctica explícita de IA + prototipos con código.
@@ -18,9 +18,9 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 ## Dirección visual
 
 - Grid editorial asimétrico de doce columnas en desktop; recomposición específica en móvil.
-- `System`: Instrument Sans/Fragment Mono, oscuro, técnico y señal lima.
-- `Human`: Instrument Serif, crema, cobalto/coral, más asimétrico y expresivo.
-- El cambio de tema coordina tokens, tipografía, fotografía y tratamiento de componentes.
+- `Dark` (`system` internamente): Instrument Sans/Fragment Mono, grafito y señal lima, con retratos oscuros.
+- `Light` (`human` internamente): la misma tipografía, geometría, composición y motion; cambia a crema, azul/coral y retratos claros.
+- El cambio de tema solo coordina tokens de color, `color-scheme` y fotografías. No admite excepciones tipográficas o estructurales.
 - `Complexity Engine`, partículas, controles sobre la foto y `Living Fold` están retirados.
 - Live File usa chrome mínimo, frames, selecciones, handles, asset tray, cursor y comentarios propios; no copia Figma.
 

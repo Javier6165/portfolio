@@ -27,8 +27,8 @@ La Home vigente recorre impacto → cuatro flashes profesionales → trabajo fic
 ## Por qué no es una template
 
 - Intro editor → producto terminada con timeline transform-only y un cursor singleton MotionPath.
-- Retrato integrado en el hero y vinculado a dos identidades visuales claramente distintas.
-- Human cambia tipografía, paleta, geometría y tono editorial.
+- Retrato integrado en el hero y vinculado a las variantes fotográficas Dark/Light.
+- Light conserva exactamente la tipografía, geometría, composición y motion de Dark; solo cambian paleta y fotografías.
 - Trayectoria y AI Practice son interacciones accesibles, no ilustraciones vacías.
 - Northstar demuestra propagación de tokens en tres contextos.
 - El framework de evidencia admite capturas, comparativas, vídeo, Figma y demos click-to-load.

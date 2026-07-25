@@ -79,7 +79,7 @@ Testimonials es un componente de servidor y usa una unión discriminada en `app/
 
 `data-theme` define tokens compartidos. ThemeToggle actualiza atributo, `colorScheme`, `javier-theme` y `portfolio-theme-change`.
 
-Las fotografías de Hero y About comparten geometría, usan AVIF/WebP responsive con JPEG fallback y se intercambian por CSS para evitar saltos. Human añade Instrument Serif y una composición editorial propia; la semántica y el orden se mantienen.
+Las fotografías de Hero y About comparten geometría, usan AVIF/WebP responsive con JPEG fallback y se intercambian por CSS para evitar saltos. Dark y Light usan Instrument Sans + Fragment Mono y la misma composición; únicamente cambian tokens cromáticos y fuentes de imagen. Los valores internos `system`/`human` se conservan para no romper preferencias guardadas.
 
 ## Evidencia de casos
 

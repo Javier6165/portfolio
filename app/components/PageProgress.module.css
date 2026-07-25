@@ -110,24 +110,6 @@
   transform: translate(0, -50%);
 }
 
-:global([data-theme="human"]) .rail {
-  border-radius: 1rem 1rem 2.4rem 1rem;
-  background: color-mix(in srgb, var(--canvas) 88%, transparent);
-}
-
-:global([data-theme="human"]) .current {
-  color: var(--cold);
-  font-family: var(--font-display);
-  font-size: .68rem;
-  font-style: italic;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-:global([data-theme="human"]) .link[aria-current="location"] {
-  color: #fff9ef;
-}
-
 @media (max-width: 1180px) {
   .rail { display: none; }
 }

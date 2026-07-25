@@ -531,23 +531,6 @@
   pointer-events: none !important;
 }
 
-:global(html[data-theme="human"]) .frame {
-  background:
-    radial-gradient(circle at 82% 17%, color-mix(in srgb, var(--signal) 13%, transparent), transparent 28rem),
-    linear-gradient(126deg, transparent 0 57%, color-mix(in srgb, var(--cold) 5%, transparent) 57% 100%),
-    var(--canvas);
-}
-
-:global(html[data-theme="human"]) .title {
-  font-weight: 400;
-  letter-spacing: -0.055em;
-  line-height: 0.82;
-}
-
-:global(html[data-theme="human"]) .finalWord {
-  font-style: italic;
-}
-
 @keyframes editing-pulse {
   50% { opacity: 0.36; transform: scale(0.78); }
 }

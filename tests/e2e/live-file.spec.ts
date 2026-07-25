@@ -42,6 +42,63 @@ test("reduced motion resolves directly to the finished portfolio", async ({ page
   await expect(page.getByRole("button", { name: "Skip intro" })).toBeHidden();
 });
 
+test("Light mode changes only colour and photography", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The shared theme contract is verified once on desktop.");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  // The memory preference is intentionally revealed once the narrative has
+  // settled. Wait for it before taking both geometry snapshots so the test is
+  // comparing themes, not two different lifecycle moments.
+  await expect(page.getByLabel("Portfolio memory preference")).toBeVisible();
+
+  const selectors = [
+    "h1",
+    "#experience-title",
+    "#work-title",
+    ".project-card",
+    ".expertise-grid",
+    ".ai-practice",
+    '[data-live-scene="testimonials-verify"] > div:first-child',
+  ];
+  const readDesign = () => page.evaluate((targets) => targets.map((selector) => {
+    const element = document.querySelector(selector)!;
+    const style = getComputedStyle(element);
+    const bounds = element.getBoundingClientRect();
+    return {
+      selector,
+      top: Math.round((bounds.top + window.scrollY) * 10) / 10,
+      width: Math.round(bounds.width * 10) / 10,
+      height: Math.round(bounds.height * 10) / 10,
+      fontFamily: style.fontFamily,
+      fontSize: style.fontSize,
+      fontWeight: style.fontWeight,
+      lineHeight: style.lineHeight,
+      letterSpacing: style.letterSpacing,
+      borderRadius: style.borderRadius,
+    };
+  }), selectors);
+
+  const darkDesign = await readDesign();
+  const darkCanvas = await page.locator("html").evaluate((element) => getComputedStyle(element).backgroundColor);
+  const lightToggle = page.getByRole("button", { name: "Use Light mode" });
+  await expect(lightToggle).toBeVisible();
+  // Reduced motion can finish before the small client island has hydrated,
+  // especially while the full visual matrix is running in parallel.
+  for (let attempt = 0; attempt < 6 && await page.locator("html").getAttribute("data-theme") !== "human"; attempt += 1) {
+    await lightToggle.click();
+    await page.waitForTimeout(500);
+  }
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "human");
+  await page.waitForTimeout(150);
+
+  const lightDesign = await readDesign();
+  const lightCanvas = await page.locator("html").evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(lightDesign).toEqual(darkDesign);
+  expect(lightCanvas).not.toBe(darkCanvas);
+  await expect(page.locator(".portrait--system").first()).toHaveCSS("opacity", "0");
+  await expect(page.locator(".portrait--human").first()).toHaveCSS("opacity", "1");
+});
+
 test("AI practice and case evidence expose roving keyboard tabs", async ({ page, isMobile }) => {
   test.skip(isMobile, "The same tab contract is covered on desktop; mobile QA focuses on reflow.");
   await page.goto("/?narrative=first");
@@ -76,7 +133,7 @@ test("core pages have no automatically detectable accessibility violations", asy
   expect(systemCaseStudy.violations).toEqual([]);
 
   await page.goto("/");
-  await page.getByRole("button", { name: "Use Human visual mode" }).click();
+  await page.getByRole("button", { name: "Use Light mode" }).click();
   const humanHome = await new AxeBuilder({ page }).analyze();
   expect(humanHome.violations).toEqual([]);
 
@@ -136,10 +193,10 @@ test("theme, mobile navigation and semantic controls remain robust", async ({ pa
   const heading = page.getByRole("heading", { level: 1, name: "Senior Product Designer" });
   await expect(heading).toHaveText("Senior Product Designer");
 
-  const themeToggle = page.getByRole("button", { name: "Use Human visual mode" });
+  const themeToggle = page.getByRole("button", { name: "Use Light mode" });
   await expect(themeToggle).toHaveAttribute("aria-pressed", "false");
   await themeToggle.click();
-  const humanToggle = page.getByRole("button", { name: "Use System visual mode" });
+  const humanToggle = page.getByRole("button", { name: "Use Dark mode" });
   await expect(humanToggle).toHaveAttribute("aria-pressed", "true");
   await expect(humanToggle).toBeVisible();
 

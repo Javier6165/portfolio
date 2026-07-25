@@ -8,7 +8,7 @@ const viewports = [
 ] as const;
 
 for (const viewport of viewports) {
-  test(`captures System and Human at ${viewport.width}×${viewport.height}`, async ({ page, isMobile }, testInfo) => {
+  test(`captures Dark and Light at ${viewport.width}×${viewport.height}`, async ({ page, isMobile }, testInfo) => {
     test.skip(isMobile, "The explicit matrix runs once from the desktop project.");
     await page.setViewportSize(viewport);
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -27,12 +27,12 @@ for (const viewport of viewports) {
       await section.scrollIntoViewIfNeeded();
     }
     await page.waitForFunction(() => [...document.images].every((image) => image.complete));
-    await page.screenshot({ path: testInfo.outputPath(`system-${viewport.width}x${viewport.height}.png`), fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath(`dark-${viewport.width}x${viewport.height}.png`), fullPage: true });
 
-    await page.getByRole("button", { name: "Use Human visual mode" }).click();
+    await page.getByRole("button", { name: "Use Light mode" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "human");
     await page.waitForFunction(() => [...document.images].every((image) => image.complete));
     await page.waitForTimeout(650);
-    await page.screenshot({ path: testInfo.outputPath(`human-${viewport.width}x${viewport.height}.png`), fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath(`light-${viewport.width}x${viewport.height}.png`), fullPage: true });
   });
 }

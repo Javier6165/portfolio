@@ -10,7 +10,7 @@ Añadir otro efecto aumentaría el ruido sin mejorar la comprensión. Esta itera
 
 ## Objetivos
 
-1. Mantener navegación y cambio de identidad disponibles durante toda la visita.
+1. Mantener navegación y cambio Dark/Light disponibles durante toda la visita.
 2. Hacer visible la posición dentro de la Home sin convertir el scroll en una timeline controlada.
 3. Dar a las secciones una estructura de capítulos discreta y accesible.
 4. Igualar la calidad de respuesta de teclado y ratón en los casos.
@@ -65,7 +65,7 @@ El cálculo usa eventos pasivos y una única actualización por frame. El scroll
 - Capítulo activo y progreso correctos en Home.
 - Rail ausente en rutas interiores y pantallas estrechas.
 - Navegación por teclado equivalente en casos.
-- Sin solapes, overflow ni regresiones en System/Human.
+- Sin solapes, overflow ni regresiones en Dark/Light.
 - Reduced motion, no-JavaScript y los cuatro viewports de referencia.
 - `npm run lint`, `npm test` y `npm run test:e2e` completos.
 - Comparación visual y de rendimiento antes de publicar una nueva versión privada.

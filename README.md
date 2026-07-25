@@ -6,7 +6,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 
 - `Live File`: the portfolio opens as a working design file and resolves into the finished product.
 - A semantic hero with Javier Ortiz, Senior Product Designer, theme-linked portrait and `Explore`.
-- `System` and `Human` as two distinct visual identities, not a cosmetic dark/light toggle.
+- Coordinated Dark and Light modes: identical typography, geometry and motion, with palette and portraits as the only visual changes.
 - Three clearly labelled fictitious case studies.
 - A complete nine-act Home score: Compose, Clarify, Frame, Propagate, Activate, Experiment, Reframe, Verify and Hand off.
 - An explicitly provisional testimonial preview: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
@@ -55,7 +55,7 @@ npm test
 npm run test:e2e
 ```
 
-`npm test` includes the production build and server-rendered smoke tests. `test:e2e` covers choreography, functional AI/Playground controls, keyboard, axe, reduced motion, no-JS, memory, image failure and the full-page System/Human responsive matrix. `node tests/performance-audit.mjs <production-url>` records the local performance comparison.
+`npm test` includes the production build and server-rendered smoke tests. `test:e2e` covers choreography, functional AI/Playground controls, keyboard, axe, reduced motion, no-JS, memory, image failure and the full-page Dark/Light responsive matrix. `node tests/performance-audit.mjs <production-url>` records the local performance comparison.
 
 ## Before public launch
 
