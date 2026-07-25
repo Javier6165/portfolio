@@ -11,6 +11,7 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - Los casos actuales son ficticios y permanecen rotulados.
 - La narrativa del editor es decorativa: nunca comunica información necesaria.
 - El guion transversal distingue escenas, comentarios y microinteracciones: una escena breve por sección, máximo tres comentarios prominentes después del hero y reproducción automática limitada por tier de visita.
+- El contenido siempre llega antes que el efecto: cada escena se arma al entrar, respira `450–750 ms` y solo entonces corrige. Los comentarios de Profile, Work y AI aparecen después de esa corrección, nunca al aterrizar.
 
 ## Dirección visual
 
@@ -45,7 +46,11 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - Netlify es una opción de lanzamiento, no una migración aprobada.
 - Nunca crear un segundo proyecto, habilitar indexación o conectar dominio por iniciativa propia.
 
-Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` y `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` para el contrato vigente. Los documentos 05–06 explican el origen histórico.
+### Por qué se descartaron las direcciones anteriores
+
+Los primeros recursos de wow resolvían impacto local, pero no explicaban el resto de la experiencia. `Living Fold` añadía un chunk cliente cercano a 866 KB y seguía siendo un hero aislado. Live File se eligió porque convierte el refinamiento en una gramática transversal y puede resolverse con DOM/CSS/GSAP, manteniendo semántica, responsive y fallback sin JavaScript. El razonamiento durable está aquí; las auditorías intermedias se retiraron del árbol activo y permanecen en Git.
+
+Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` y `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` para el contrato vigente.
 
 ## Partitura transversal aprobada
 

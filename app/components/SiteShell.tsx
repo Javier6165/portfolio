@@ -44,6 +44,7 @@ export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactN
         label="Ready / Your turn"
         targetSelector=".footer-contact"
         durationMs={1350}
+        dwellMs={450}
         className="footer-live-scene"
       >
         <div className="shell footer-grid">

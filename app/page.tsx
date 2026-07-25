@@ -79,6 +79,7 @@ export default function Home() {
           label="Profile / Refined"
           targetSelector=".profile-intro__facts"
           durationMs={1750}
+          dwellMs={750}
           comment="Keep the signal. Lose the résumé."
           className="profile-live-scene"
         >
@@ -114,6 +115,7 @@ export default function Home() {
               label="Case 01 / Live"
               targetSelector=".project-card__media"
               durationMs={2300}
+              dwellMs={650}
               autoVisitTier={2}
               comment="Show the decision, not the decoration."
               className="work-live-scene"
@@ -137,6 +139,7 @@ export default function Home() {
           label="1 change → 3 surfaces"
           targetSelector=".expertise-live-token"
           durationMs={1650}
+          dwellMs={650}
           className="expertise-live-scene"
         >
           <div className="expertise-live-token" aria-hidden="true"><span>Decision model</span><b>Local</b><i /><strong>Shared</strong></div>
@@ -166,6 +169,7 @@ export default function Home() {
           label="Prototype / Live"
           targetSelector=".ai-practice__panel"
           durationMs={2700}
+          dwellMs={750}
           autoVisitTier={2}
           comment="Screens explain it. Behaviour proves it."
           className="ai-practice__narrative"
@@ -181,6 +185,7 @@ export default function Home() {
           label="Experiment / Played"
           targetSelector=".playground-playhead"
           durationMs={1700}
+          dwellMs={600}
           className="playground-live-scene"
         >
           <PlaygroundStudy />
@@ -200,6 +205,7 @@ export default function Home() {
           label="Crop / Approved"
           targetSelector=".about-preview__portrait"
           durationMs={1400}
+          dwellMs={600}
           className="about-live-scene"
         >
           <Portrait context="about" />

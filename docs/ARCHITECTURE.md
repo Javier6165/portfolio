@@ -60,7 +60,7 @@ Claves:
 
 El hero termina antes de `#experience`. Home declara siete `LiveScene` posteriores: Profile, Work, Expertise, AI, Playground, About preview y Footer. Cada una tiene verbo, target, duración, tier y estado final propios.
 
-`LiveSceneDirector` garantiza una sola escena activa. ScrollTrigger empieza aproximadamente en `top 72%`, sin scrub/pinning/snapping. Fast-scroll, retorno o escenas ya vistas fijan `settled`; reduced motion fija `reduced`. El límite de tres se aplica a comentarios prominentes —Profile, Work y AI—, no a las trazas silenciosas.
+`LiveSceneDirector` garantiza una sola escena activa. ScrollTrigger arma la escena en `top 66%` desktop o `top 74%` touch y espera `450–750 ms` antes de intervenir. Ese estado `armed` deja leer primero la sección; los comentarios aparecen aproximadamente un segundo después de empezar la corrección. No hay scrub, pinning, snapping ni bloqueo. Fast-scroll, salida de viewport, pestaña oculta, retorno o escenas ya vistas fijan `settled`; reduced motion fija `reduced`. El límite de tres se aplica a comentarios prominentes —Profile, Work y AI—, no a las trazas silenciosas.
 
 AI y Playground escuchan `portfolio-live-scene-play` y ejecutan controles React reales. Pointer/foco del visitante sobre cualquier escena gana y fuerza handoff. El contrato completo está en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
 

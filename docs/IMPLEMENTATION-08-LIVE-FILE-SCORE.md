@@ -52,7 +52,9 @@ type LiveSceneConfig = {
 };
 ```
 
-ScrollTrigger observa el wrapper con `start: "top 72%"` y `once: true`. El target es siempre un elemento real de la sección. `data-live-state="idle|playing|settled|reduced"` es la fuente de verdad para CSS y tests; GSAP solo interpola el cursor.
+`LiveScene` añade `dwellMs` como timing editorial. ScrollTrigger arma el wrapper con `start: "top 66%"` en desktop o `"top 74%"` en touch. La escena permanece en `armed` durante `450–750 ms`; solo después solicita la reproducción al director. El target es siempre un elemento real de la sección. `data-live-state="idle|armed|playing|settled|reduced"` es la fuente de verdad para CSS y tests; GSAP solo interpola el cursor.
+
+Timings de observación: Profile y AI `750 ms`, Work y Expertise `650 ms`, Playground y About `600 ms`, Footer `450 ms`. Los comentarios comienzan a aparecer cerca del 62 % de su animación de `1,6 s`, por lo que el visitante recibe aproximadamente `1,6–1,75 s` de lectura antes del comentario. Si acelera el scroll, abandona la escena, cambia de pestaña, enfoca o interactúa, la espera/timeline se cancela y queda el resultado final.
 
 Pointer o foco del visitante dentro de una escena ejecutan handoff inmediato. Su interacción gana sobre la reproducción automática.
 
@@ -126,9 +128,9 @@ Build local de producción, Chromium, contenido actual:
 | --- | ---: | ---: |
 | Intro completa | 3,92 s | 3,90 s |
 | CLS | 0,0073 | 0 |
-| LCP observado local | 156 ms | 140 ms |
-| Transferencia codificada inicial | 726 KB | 698 KB |
-| JS codificado | 452 KB | 452 KB |
+| LCP observado local | 160 ms | 136 ms |
+| Transferencia codificada inicial | 727 KB | 699 KB |
+| JS codificado | 453 KB | 453 KB |
 | CSS codificado | 95 KB | 95 KB |
 | Inicio de Selected Work | 1.521 px / 1,69 vp | 1.690 px / 2,00 vp |
 | Overflow horizontal | no | no |
@@ -151,11 +153,11 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 
 - `npm run lint`: limpio.
 - `npm test`: build + 3 smoke tests SSR, todos pasan.
-- `npm run test:e2e`: 25 pasan y 9 duplicaciones móviles se omiten intencionalmente.
+- `npm run test:e2e`: 26 pasan y 10 duplicaciones móviles se omiten intencionalmente.
 - axe: Home y Northstar sin violaciones automáticas en desktop/móvil.
 - teclado: AI Practice y token propagation.
 - interacción: simulación AI, Replay Playground, tema con storage bloqueado y menú móvil.
-- narrativa: reproducción con scroll deliberado, settled, tiers y reduced motion.
+- narrativa: armado y pausa editorial, comentario diferido, cancelación al seguir navegando, settled, tiers y reduced motion.
 - resiliencia: no-JS y fallo de retrato.
 - matriz visual full-page: System/Human en 1440×900, 1280×800, 768×1024 y 390×844.
 - `npm audit --omit=dev`: 0 vulnerabilidades.

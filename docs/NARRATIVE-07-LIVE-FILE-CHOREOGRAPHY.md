@@ -4,7 +4,7 @@ Fecha: 25 de julio de 2026.
 
 Estado: **implementado y validado**. El contrato técnico, métricas y deltas finales están en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
 
-Este documento cerró el hueco detectado en `AUDIT-06-POST-LIVE-FILE.md`: el hero tenía una escena, pero el resto de Home solo overlays ocasionales. La implementación vigente trata la landing como una pieza completa, con una acción breve y específica en cada sección.
+Este documento define la respuesta al problema original: el hero tenía una escena, pero el resto de Home solo overlays ocasionales. La implementación vigente trata la landing como una pieza completa, con una acción breve y específica en cada sección.
 
 ## 1. Tesis creativa
 
@@ -222,15 +222,16 @@ No se implementará el destino definitivo hasta recibir email, LinkedIn y CV rea
 
 El sistema actual espera un `intersectionRatio` alto y reintenta cada dos segundos. Se reemplazará por una partitura determinista con GSAP ScrollTrigger:
 
-- trigger en el objeto de acción, no en el wrapper completo;
-- comienzo aproximado `top 72%` en desktop y `top 78%` en tablet;
-- `once: true` por sesión;
-- sin demora de dos segundos;
+- trigger en el wrapper que contiene el objeto real de acción;
+- armado en `top 66%` desktop y `top 74%` touch;
+- pausa editorial de `450–750 ms` antes de cualquier selección, corrección o cambio;
+- una reproducción por sesión, gobernada por memoria y tier de visita;
+- comentarios solo después de que la corrección haya empezado: aproximadamente `1,6–1,75 s` después del armado;
 - una sola escena activa;
 - si entra una escena nueva, la anterior completa su estado final antes de ceder;
 - fast-scroll lleva inmediatamente a `settled` sin reproducir una animación a medias;
 - resize y cambio de orientación recalculan anchors;
-- navegación o pestaña oculta cancelan la timeline y fijan estado final;
+- salida de la escena, navegación o pestaña oculta cancelan espera/timeline y fijan estado final;
 - `scrub`, pinning, snapping y normalización de scroll quedan prohibidos.
 
 No se animarán coordenadas entre secciones. El cursor global desaparece al terminar una escena y reaparece cerca del siguiente anchor; la continuidad es de personaje y gramática, no una línea imposible que atraviesa el documento.
@@ -365,7 +366,7 @@ En case studies la evidencia manda. Live File aparece solo donde ayuda a explica
 6. Convertir cada estado final en fallback no-JS/reduced.
 7. Automatizar pruebas de triggers, fast-scroll, interacción temprana y orden.
 
-La estabilización del Plan 06 y el hero sin CLS se ejecutan antes o junto a la infraestructura, pero no se considera Live File transversal hasta completar los ocho actos.
+La estabilización del hero sin CLS precede o acompaña a la infraestructura, pero no se considera Live File transversal hasta completar los ocho actos.
 
 ## 14. Gates de aceptación creativa
 

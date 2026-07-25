@@ -13,6 +13,7 @@ type LiveSceneProps = {
   children: ReactNode;
   targetSelector: string;
   durationMs?: number;
+  dwellMs?: number;
   autoVisitTier?: 1 | 2;
   comment?: string;
   className?: string;
@@ -25,6 +26,7 @@ export function LiveScene({
   children,
   targetSelector,
   durationMs = 1_600,
+  dwellMs = 650,
   autoVisitTier = 1,
   comment,
   className = "",
@@ -42,16 +44,47 @@ export function LiveScene({
 
     gsap.registerPlugin(ScrollTrigger);
     const config: LiveSceneConfig = { id, verb, targetSelector, durationMs, autoVisitTier };
+    let dwellTimer = 0;
+
+    const finishOnExit = () => {
+      window.clearTimeout(dwellTimer);
+      if (root.dataset.liveState === "armed" || root.dataset.liveState === "playing") settleScene(root);
+    };
+
     const trigger = ScrollTrigger.create({
       id: `live-scene-${id}`,
       trigger: root,
-      start: "top 72%",
-      once: true,
-      onEnter: (self) => requestScene(root, config, self.getVelocity()),
+      // The section is allowed to land before Javier intervenes. This keeps the
+      // choreography subordinate to reading and avoids effects firing off-screen.
+      start: () => window.matchMedia("(max-width: 720px), (pointer: coarse)").matches ? "top 74%" : "top 66%",
+      onEnter: (self) => {
+        if (root.dataset.liveState !== "idle") return;
+        const entryVelocity = self.getVelocity();
+        if (Math.abs(entryVelocity) > 1_800) {
+          requestScene(root, config, entryVelocity);
+          return;
+        }
+        root.dataset.liveState = "armed";
+        dwellTimer = window.setTimeout(() => requestScene(root, config, entryVelocity), dwellMs);
+      },
+      onUpdate: (self) => {
+        if (root.dataset.liveState === "armed" && Math.abs(self.getVelocity()) > 1_800) finishOnExit();
+      },
+      onLeave: finishOnExit,
+      onLeaveBack: finishOnExit,
     });
 
-    return () => trigger.kill();
-  }, [autoVisitTier, durationMs, id, introComplete, reducedMotion, requestScene, settleScene, targetSelector, verb]);
+    const handleVisibility = () => {
+      if (document.hidden) finishOnExit();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.clearTimeout(dwellTimer);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      trigger.kill();
+    };
+  }, [autoVisitTier, durationMs, dwellMs, id, introComplete, reducedMotion, requestScene, settleScene, targetSelector, verb]);
 
   function handOff(event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) {
     const root = rootRef.current;

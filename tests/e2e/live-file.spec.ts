@@ -172,7 +172,7 @@ test("Live File scenes resolve into distinct finished states", async ({ page }) 
   expect(await scenes.count()).toBeGreaterThanOrEqual(7);
 });
 
-test("the Live File director plays choreography during deliberate scrolling", async ({ page, isMobile }) => {
+test("the Live File director lets the section land before choreography and comments", async ({ page, isMobile }) => {
   test.skip(isMobile, "Touch choreography is covered by the shared state test; this checks the desktop cursor score.");
   await page.goto("/?narrative=first");
   await page.getByRole("button", { name: "Skip intro" }).click();
@@ -183,8 +183,37 @@ test("the Live File director plays choreography during deliberate scrolling", as
     await page.waitForTimeout(110);
   }
 
-  await expect(profile).toHaveAttribute("data-live-state", "playing");
+  await expect(profile).toHaveAttribute("data-live-state", "armed");
+  const comment = profile.getByText("Keep the signal. Lose the résumé.");
+  await expect.poll(() => comment.evaluate((item) => getComputedStyle(item.parentElement!).opacity)).toBe("0");
+
+  await page.waitForTimeout(350);
+  await expect(profile).toHaveAttribute("data-live-state", "armed");
+  await expect(profile).toHaveAttribute("data-live-state", "playing", { timeout: 700 });
+  await expect.poll(
+    () => comment.evaluate((item) => Number.parseFloat(getComputedStyle(item.parentElement!).opacity)),
+    { timeout: 1_500 },
+  ).toBeGreaterThan(0.2);
   await expect(profile).toHaveAttribute("data-live-state", "settled", { timeout: 2_500 });
+});
+
+test("Live File cancels a pending intervention when the visitor moves on", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The cancellation contract is shared; touch QA is covered by finished states.");
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+
+  const profile = page.locator('[data-live-scene="profile-clarify"]');
+  for (let step = 0; step < 12 && await profile.getAttribute("data-live-state") === "idle"; step += 1) {
+    await page.mouse.wheel(0, 80);
+    await page.waitForTimeout(110);
+  }
+  await expect(profile).toHaveAttribute("data-live-state", "armed");
+
+  await page.locator('[data-live-scene="work-frame"]').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(900);
+  await expect(profile).toHaveAttribute("data-live-state", "settled");
+  const comment = profile.getByText("Keep the signal. Lose the résumé.");
+  await expect.poll(() => comment.evaluate((item) => getComputedStyle(item.parentElement!).opacity)).toBe("0");
 });
 
 test("the AI cue activates a real, repeatable prototype simulation", async ({ page }) => {

@@ -31,10 +31,6 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/PROJECT-CONTEXT.md`: brief, profile and current response.
 - `docs/DECISIONS.md`: current product and technical decisions.
 - `docs/ARCHITECTURE.md`: routes, theme, narrative, storage and evidence contracts.
-- `docs/AUDIT-05-LIVE-FILE.md`: diagnosis and rationale behind the current concept.
-- `docs/IMPLEMENTATION-05-LIVE-FILE.md`: timings, states, components, privacy, QA and extension rules.
-- `docs/AUDIT-06-POST-LIVE-FILE.md`: measured post-implementation audit, defects and gaps.
-- `docs/PLAN-06-IMPROVEMENTS.md`: prioritised stabilisation, transversal narrative and content plan.
 - `docs/NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`: complete section-by-section score, triggers, states and responsive contract.
 - `docs/IMPLEMENTATION-08-LIVE-FILE-SCORE.md`: current components, timings, memory, metrics and QA.
 - `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`: complete post-implementation audit.
@@ -42,7 +38,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 
-Documents numbered 01–06 and Implementation 05 can contain historical states. When they conflict with 07–09, `AGENTS.md` or the current code, the newer contract wins.
+Superseded hero experiments and interim audits were removed after their durable decisions were consolidated into `DECISIONS.md`. Git history remains the archive; the documentation above is the current handoff set.
 
 ## Run and validate
 

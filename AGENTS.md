@@ -8,16 +8,12 @@ Lee, en este orden:
 2. `docs/PROJECT-CONTEXT.md`
 3. `docs/DECISIONS.md`
 4. `docs/ARCHITECTURE.md`
-5. `docs/AUDIT-05-LIVE-FILE.md`
-6. `docs/IMPLEMENTATION-05-LIVE-FILE.md`
-7. `docs/AUDIT-06-POST-LIVE-FILE.md`
-8. `docs/PLAN-06-IMPROVEMENTS.md`
-9. `docs/NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`
-10. `docs/IMPLEMENTATION-08-LIVE-FILE-SCORE.md`
-11. `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`
-12. `docs/PLAN-09-NEXT-IMPROVEMENTS.md`
-13. `docs/CONTENT-AND-RELEASE.md`
-14. `docs/ASSETS.md` si vas a tocar imágenes.
+5. `docs/NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`
+6. `docs/IMPLEMENTATION-08-LIVE-FILE-SCORE.md`
+7. `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`
+8. `docs/PLAN-09-NEXT-IMPROVEMENTS.md`
+9. `docs/CONTENT-AND-RELEASE.md`
+10. `docs/ASSETS.md` si vas a tocar imágenes.
 
 ## Contratos que debes preservar
 
@@ -30,7 +26,7 @@ Lee, en este orden:
 - `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion. El contenido base empieza visible y reduced motion debe resolver directamente al estado final.
 - La coreografía 07 está implementada con un beat distinto en cada sección: `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe` y `Hand off`. No la regreses a overlays genéricos ni cursores independientes por wrapper.
 - Profile, Work y AI son los únicos comentarios prominentes posteriores al hero. Las demás escenas conservan trazas silenciosas.
-- Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Fast-scroll, reduced motion y retorno deben fijar un resultado terminado.
+- Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Cada escena pasa por `armed` y una pausa editorial antes de intervenir. Fast-scroll, salida de viewport, pestaña oculta, reduced motion y retorno deben fijar un resultado terminado.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - `.openai/hosting.json` identifica el sitio existente; no cambies ni derives su `project_id`.
@@ -48,4 +44,4 @@ Lee, en este orden:
 
 Ejecuta `npm run lint` y `npm test`. Para cambios interactivos ejecuta también `npm run test:e2e`. La matriz cubre 1440×900, 1280×800, 768×1024 y 390×844, System/Human, axe, memoria, no-JS, reduced motion y fallos de imagen.
 
-Los cambios desplegables se publican como una nueva versión privada del mismo proyecto Sites mediante las skills de Sites. El último contrato de QA y release está en Documentos 08–09.
+Los cambios desplegables se publican como una nueva versión privada del mismo proyecto Sites mediante las skills de Sites. El contrato vigente de QA y release está en los documentos 08–09.
