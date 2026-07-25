@@ -56,7 +56,7 @@ Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-
 
 ## Siguiente evolución propuesta — todavía no implementada
 
-`PLAN-11-LIVE-WIP-SPOTLIGHT.md` sustituirá la sensación de UI ya terminada por estados WIP/final distintos en cada sección. Añade herramientas contextuales, comentarios justificados y Follow mode temporal. Spotlight solo podrá activarse con el target mayoritariamente visible y scroll estable; dura menos de cinco segundos, ofrece Stop/Escape, se interrumpe con una segunda intención de scroll y desaparece en reduced motion. Hasta completar y validar sus fases, los ADR y documentos 07–08 continúan describiendo la versión publicada.
+`PLAN-11-LIVE-WIP-SPOTLIGHT.md` empieza por rediseñar la landing final: hero con stage editorial, Snapshot legible, Product practice como workflow real, AI como operating model con tools/outputs/guardrails, Testimonials como reference ledger y Playground después de la prueba profesional. Solo después crea estados WIP/final distintos, herramientas contextuales, comentarios y Follow mode. Spotlight solo podrá activarse con el target mayoritariamente visible y scroll estable; dura menos de cinco segundos, ofrece Stop/Escape, se interrumpe con una segunda intención de scroll y desaparece en reduced motion. Hasta completar y validar sus fases, los ADR y documentos 07–08 continúan describiendo la versión publicada.
 
 ## Partitura transversal aprobada
 
