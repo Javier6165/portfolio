@@ -8,7 +8,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - A semantic hero with Javier Ortiz, Senior Product Designer, theme-linked portrait and `Explore`.
 - `System` and `Human` as two distinct visual identities, not a cosmetic dark/light toggle.
 - Three clearly labelled fictitious case studies.
-- Three optional narrative cues across Home, bounded and cancelable.
+- Three optional narrative cues across Home in the current build, bounded and cancelable; the section-by-section replacement is specified in Narrative 07.
 - A consented returning-visitor memory with replay, forget and motion controls.
 - An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.
 - Progressive motion, reduced-motion and no-JavaScript fallbacks.
@@ -34,6 +34,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/IMPLEMENTATION-05-LIVE-FILE.md`: timings, states, components, privacy, QA and extension rules.
 - `docs/AUDIT-06-POST-LIVE-FILE.md`: measured post-implementation audit, defects and gaps.
 - `docs/PLAN-06-IMPROVEMENTS.md`: prioritised stabilisation, transversal narrative and content plan.
+- `docs/NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`: complete section-by-section score, triggers, states and responsive contract.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 

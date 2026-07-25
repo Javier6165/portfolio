@@ -248,4 +248,4 @@ Esto depende de contenido de Javier y no debe resolverse con datos inventados.
 
 La fase no ha fallado: ha convertido una dirección aislada en un hero creativo viable. Todavía no la ha convertido en el sistema transversal que prometía el plan. El siguiente ciclo debe ser de **estabilización, extensión narrativa y edición**, no de acumular overlays. Primero hay que proteger el payoff, corregir el cursor, eliminar el CLS, optimizar retratos y hacer que Live File reaparezca de forma evidente y útil en trayectoria, trabajo y AI/prototipos. Después tendrá sentido insertar el primer caso real y ampliar la narrativa con evidencia auténtica.
 
-El orden ejecutable y sus gates están en `PLAN-06-IMPROVEMENTS.md`.
+El orden ejecutable y sus gates están en `PLAN-06-IMPROVEMENTS.md`. La partitura creativa sección por sección está cerrada en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`.

@@ -22,7 +22,7 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La home recorre impacto → perfil real → trayectoria → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → contacto. El editor aparece solo en el hero y tres cues; el contenido profesional nunca depende de él.
+La Home desplegada recorre impacto → perfil real → trayectoria → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → contacto. El editor aparece solo en el hero y tres cues; el contenido profesional nunca depende de él. Narrativa 07 moverá la trayectoria detallada a About, subirá Work y añadirá una escena persistente en cada sección.
 
 ## Por qué no es una template
 
@@ -36,6 +36,6 @@ La home recorre impacto → perfil real → trayectoria → trabajo ficticio →
 
 ## Estado y límites
 
-La arquitectura y el hero del concepto están implementados. La auditoría posterior confirmó que Live File todavía no es transversal: los cues fuera del hero apenas se perciben y Work no puede activarse con su threshold actual. Antes de sustituir casos hay que completar el sprint de estabilización y extensión de `AUDIT-06-POST-LIVE-FILE.md` y `PLAN-06-IMPROVEMENTS.md`.
+La arquitectura y el hero del concepto están implementados. La auditoría posterior confirmó que Live File todavía no es transversal: los cues fuera del hero apenas se perciben y Work no puede activarse con su threshold actual. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` ya define la solución creativa completa —un verbo, un cambio y un estado final por sección—, pero todavía no está implementada. Antes de sustituir casos hay que completar el sprint de estabilización y ejecutar esa partitura según `PLAN-06-IMPROVEMENTS.md`.
 
 Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. Después de estabilizar y extender la gramática, el siguiente paso de contenido es un único caso real representativo.

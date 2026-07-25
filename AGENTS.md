@@ -12,8 +12,9 @@ Lee, en este orden:
 6. `docs/IMPLEMENTATION-05-LIVE-FILE.md`
 7. `docs/AUDIT-06-POST-LIVE-FILE.md`
 8. `docs/PLAN-06-IMPROVEMENTS.md`
-9. `docs/CONTENT-AND-RELEASE.md`
-10. `docs/ASSETS.md` si vas a tocar imágenes.
+9. `docs/NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`
+10. `docs/CONTENT-AND-RELEASE.md`
+11. `docs/ASSETS.md` si vas a tocar imágenes.
 
 ## Contratos que debes preservar
 
@@ -24,8 +25,9 @@ Lee, en este orden:
 - `NarrativeProvider` es el único propietario de consentimiento, visita, cues y motion manual. Las claves y el esquema están documentados en `IMPLEMENTATION-05-LIVE-FILE.md`.
 - La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
 - `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion. El contenido base empieza visible y reduced motion debe resolver directamente al estado final.
-- Los tres cues de Home son cancelables, limitados y nunca comunican información esencial.
+- Los tres cues actuales de Home son cancelables, limitados y nunca comunican información esencial. Son una implementación temporal: el guion 07 los sustituye por escenas con cambio persistente, un cursor singleton y solo tres comentarios prominentes después del hero.
 - La auditoría 06 confirmó que los cues actuales no hacen Live File transversal: Work no puede alcanzar su threshold y los otros dos exigen una pausa poco natural. No presentes esta parte como terminada; sigue el Plan 06.
+- La coreografía 07 exige un beat distinto en cada sección: `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe` y `Hand off`. No implementes un overlay genérico ni cursores independientes por wrapper.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - `.openai/hosting.json` identifica el sitio existente; no cambies ni derives su `project_id`.

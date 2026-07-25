@@ -65,6 +65,8 @@ El hero termina antes de `#experience`. Después existen tres cues declarativos:
 
 `NarrativeProvider` limita tres por sesión, impone cooldown, evita repetir IDs y cancela al scroll/ocultar pestaña. `NarrativeCue` no cambia layout ni intercepta puntero.
 
+Esta es la arquitectura vigente, no el destino aprobado. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` la sustituirá por `NarrativeDirector`, un cursor singleton y una escena con resultado persistente por sección. El límite futuro se aplica a tres comentarios prominentes después del hero, no a la presencia de micro-beats silenciosos.
+
 ## Temas
 
 `data-theme` define tokens compartidos. ThemeToggle actualiza atributo, `colorScheme`, `javier-theme` y `portfolio-theme-change`.

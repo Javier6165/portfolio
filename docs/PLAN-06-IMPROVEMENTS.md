@@ -4,6 +4,8 @@ Fecha: 25 de julio de 2026.
 
 Este plan parte de `AUDIT-06-POST-LIVE-FILE.md`. No reabre la dirección creativa: estabiliza `Live File`, mejora la velocidad de comprensión y prepara la entrada de proyectos reales.
 
+La partitura creativa completa se define en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`. Ese documento es el contrato de la Fase 3: Home deja de tener tres overlays genéricos y pasa a ocho actos con un verbo, una acción y un estado final propios.
+
 ## Principios del siguiente ciclo
 
 - Mantener `Live File`, System/Human, scroll nativo y GSAP como motor único.
@@ -12,6 +14,37 @@ Este plan parte de `AUDIT-06-POST-LIVE-FILE.md`. No reabre la dirección creativ
 - Separar fixes que no requieren contenido de las decisiones que necesitan datos de Javier.
 - Cada fase termina con un gate; no se acumulan cambios sin validar.
 - El sitio sigue privado y no indexado durante todo el plan.
+- Cada sección conserva una traza de Live File, aunque no todas tengan comentario ni la misma intensidad.
+- El cursor ficticio ejecuta cambios; nunca aparece únicamente para señalar decoración.
+
+## Fase 0 — Guion y partitura transversal
+
+Estado: **completada en documentación; pendiente de prototipo visual**.
+
+Objetivo: definir la experiencia completa antes de implementar escenas aisladas.
+
+Entregable:
+
+- tesis `última pasada de criterio`;
+- gramática `Frame → Select → Change → Settle → Hand off`;
+- score de ocho actos: Compose, Clarify, Frame, Propagate, Activate, Experiment, Reframe y Hand off;
+- un cursor global en desktop y traducción táctil en móvil;
+- tres comentarios prominentes después del hero y beats silenciosos en el resto;
+- trigger determinista mediante ScrollTrigger, sin ratios imposibles ni esperas arbitrarias;
+- estados finales persistentes para reduced motion, fast-scroll y retorno;
+- guion System/Human y gates de atención.
+
+Gate documental:
+
+- cada sección tiene un verbo diferente;
+- Work y AI son los dos picos posteriores al hero;
+- ninguna escena es solo un overlay temporal;
+- el recorrido completo mantiene scroll nativo y control del visitante.
+
+Gate de prototipo, a completar en Fase 3:
+
+- captura continua desktop/móvil de Hero → Profile → Work → AI;
+- ritmo aprobado antes de completar los beats secundarios.
 
 ## Fase 1 — Estabilización inmediata
 
@@ -75,24 +108,33 @@ Trabajo:
 
 1. mantener el hero sin párrafo explicativo;
 2. reducir la segunda sección a cuatro flashes: seniority, GiG/5+ años, territorio de producto y AI + coded prototypes;
-3. mover el timeline detallado tras Selected Work o a About;
+3. mover el timeline profesional detallado a `/about`; Home conserva cuatro flashes y una escena `Clarify` compacta;
 4. iniciar Selected Work antes de `1,8` viewports desktop y `2,2` móvil;
-5. rediseñar trayectoria como una selección/refinamiento visible ligada a la interacción de sus tabs;
-6. dividir el cue de Work por card y convertir el primer frame en card/evidencia de forma determinista;
-7. hacer que AI Practice transforme una pantalla estática en comportamiento real al interactuar, en lugar de depender de un cursor tardío;
-8. retirar el threshold imposible y cualquier espera arbitraria para descubrir la narrativa;
-9. mantener un máximo de tres intervenciones, pero asegurar que al menos dos aparecen en un recorrido normal;
-10. eliminar repetición entre Profile, Approach, AI, Playground y About preview;
-11. decidir qué preview de Playground merece permanecer en Home;
-12. añadir un acceso claro a contacto en header/footer cuando Javier entregue los datos;
-13. probar una lectura de `30 s`, `60 s` y `3 min`.
+5. construir `NarrativeDirector`, `JavierCursor` singleton y el contrato declarativo `LiveScene`;
+6. sustituir `NarrativeCue`/IntersectionObserver por triggers sobre anchors reales mediante ScrollTrigger, sin scrub ni pinning;
+7. implementar `Profile / Clarify`: agrupar los cuatro flashes y dejar `PROFILE / REFINED`;
+8. implementar `Selected Work / Frame`: convertir el primer frame en card/evidencia viva y dejar `CASE 01 / LIVE`;
+9. implementar `Expertise / Propagate`: una decisión compartida actualiza tres superficies y deja `1 CHANGE → 3 SURFACES`;
+10. implementar `AI / Activate`: pasar de pantalla estática a una simulación real mediante un control funcional;
+11. implementar `Playground / Experiment`: ejecutar un estudio cinético corto mediante playhead/replay real;
+12. implementar `About / Reframe`: ajustar y aprobar el crop del retrato como rima visual del hero;
+13. implementar `Footer / Hand off`: pasar de `Editing` a `Ready to share` y ceder control;
+14. limitar los comentarios posteriores al hero a Profile, Work y AI; los demás beats son silenciosos;
+15. añadir estados `settled` persistentes para fast-scroll, reduced motion, no-JS y visitas de retorno;
+16. retirar el threshold imposible, los retries y cualquier espera arbitraria para descubrir la narrativa;
+17. eliminar repetición entre Profile, Approach, AI, Playground y About preview;
+18. añadir un acceso claro a contacto en header/footer cuando Javier entregue los datos;
+19. probar una lectura de `30 s`, `60 s` y `3 min`.
 
 Gate:
 
 - un reviewer puede responder en 30 segundos: quién es Javier, nivel, experiencia, tipo de producto y diferencial;
 - el primer caso aparece dentro de los límites de scroll;
 - en 60 segundos se perciben al menos dos manifestaciones de Live File además del hero;
-- cada intervención demuestra refinamiento, framing o comportamiento; ninguna es un overlay gratuito;
+- al completar Home, todas las secciones conservan una traza de Live File;
+- cada intervención demuestra clarificación, framing, propagación, comportamiento, experimentación, refinamiento o handoff; ninguna es un overlay gratuito;
+- Work y AI son los dos momentos más memorables después del hero;
+- ninguna escena necesita esperar quieto, conocer el concepto o usar hover;
 - la Home pierde altura sin perder ninguna evidencia esencial;
 - no hay párrafos redundantes entre Home y About.
 
@@ -141,7 +183,7 @@ Trabajo:
 1. auditar todos los hovers/focus/touch con una gramática común;
 2. revisar cards de proyecto, CTA y previews en System/Human;
 3. ampliar diferencias de Human solo donde ayuden a ritmo y personalidad;
-4. pulir las tres intervenciones transversales definidas en Fase 3 y eliminar cualquier cue redundante;
+4. pulir la partitura transversal definida en Narrativa 07 y eliminar cualquier beat o cue redundante;
 5. convertir AI Practice y token propagation en demostraciones coherentes, no controles simulados;
 6. cargar ScrollTrigger después del hero o sustituir reveals simples por una primitive más ligera;
 7. dividir estilos por ruta/componente y retirar legacy por zonas;
@@ -190,13 +232,13 @@ Complejidad: L.
 ```text
 Fase 1: bugs y seguridad
   → Fase 2: hero estable y rápido
-    → Fase 3: recorrido recruiter + Live File transversal
+    → Fase 3: implementar la partitura Live File transversal
       → Fase 4: caso real
         → Fase 5: polish sistémico
           → Fase 6: candidato público
 ```
 
-Fases 1 y 2 no necesitan contenido real y deben ejecutarse primero. La Fase 3 es obligatoria para cumplir el concepto aprobado y puede avanzar mientras Javier reúne material. La Fase 4 no debe comenzar con datos incompletos o inventados.
+La Fase 0 ya está resuelta como guion en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`. Fases 1 y 2 no necesitan contenido real y deben ejecutarse primero. La Fase 3 es obligatoria para convertir ese guion en producto y puede avanzar mientras Javier reúne material. La Fase 4 no debe comenzar con datos incompletos o inventados.
 
 ## Inputs pendientes de Javier
 
@@ -208,4 +250,4 @@ Fases 1 y 2 no necesitan contenido real y deben ejecutarse primero. La Fase 3 es
 
 ## Siguiente acción recomendada
 
-Abrir el próximo ciclo con Fase 1 y Fase 2 juntas como un **stabilisation sprint de Live File**. El resultado debe ser la misma idea, pero más nítida: cursor legible, payoff sin banner, intro más corta, cero layout shift y una carga visual mucho más ligera. La Fase 3 debe ejecutarse inmediatamente después para cumplir la promesa transversal: trayectoria, Selected Work y AI/prototipos tienen que hablar el mismo lenguaje mediante comportamiento perceptible, no solo mediante componentes que existen en el código. Solo entonces conviene empezar el primer caso real.
+Abrir el próximo ciclo con Fase 1 y Fase 2 juntas como un **stabilisation sprint de Live File**. El resultado debe ser la misma idea, pero más nítida: cursor legible, payoff sin banner, intro más corta, cero layout shift y una carga visual mucho más ligera. La Fase 3 implementará después la partitura 07 completa: un cambio observable y un estado final en cada sección, con Work y AI como grandes picos. Solo entonces conviene empezar el primer caso real.

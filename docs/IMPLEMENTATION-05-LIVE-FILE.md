@@ -8,6 +8,8 @@ Implementado y validado localmente. La publicación debe seguir siendo privada s
 
 La auditoría posterior está en `AUDIT-06-POST-LIVE-FILE.md`. Confirmó que el hero funciona, pero la promesa transversal sigue incompleta: el cue de Work no puede alcanzar el ratio de intersección actual y los otros cues son demasiado fáciles de perder.
 
+La sustitución aprobada se especifica en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`: un cursor singleton, una escena con cambio persistente por sección y tres comentarios prominentes después del hero. Este documento 05 sigue describiendo el código vigente hasta que se implemente esa partitura.
+
 ## Hero e intro
 
 `EditorIntro.tsx` contiene un único hero semántico y una capa de editor decorativa. La intro de primera visita:

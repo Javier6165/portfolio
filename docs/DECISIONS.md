@@ -10,7 +10,7 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - Posicionamiento: Senior Product Designer de sistemas complejos, con experiencia reciente de lead y práctica explícita de IA + prototipos con código.
 - Los casos actuales son ficticios y permanecen rotulados.
 - La narrativa del editor es decorativa: nunca comunica información necesaria.
-- Máximo tres cues en Home, uno por sección y por sesión, cancelables al leer, desplazarse o cambiar de pestaña.
+- El guion transversal distingue escenas, comentarios y microinteracciones: una escena breve por sección, máximo tres comentarios prominentes después del hero y reproducción automática limitada por tier de visita.
 
 ## Dirección visual
 
@@ -46,3 +46,14 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - Nunca crear un segundo proyecto, habilitar indexación o conectar dominio por iniciativa propia.
 
 Consulta `AUDIT-05-LIVE-FILE.md` e `IMPLEMENTATION-05-LIVE-FILE.md` para el razonamiento y los contratos completos.
+
+## Partitura transversal aprobada
+
+- Tesis: Javier deja el archivo abierto y hace una última pasada de criterio durante el recorrido.
+- Gramática: `Frame → Select → Change → Settle → Hand off`.
+- Un solo cursor global en desktop; touch halo y handles en móvil.
+- Verbos de Home: `Compose`, `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe` y `Hand off`.
+- Profile, Work y AI son los únicos comentarios prominentes posteriores al hero.
+- Work y AI son los picos principales; el resto mantiene continuidad con beats silenciosos.
+- ScrollTrigger sustituirá al observer actual para triggers deterministas, sin scrub, pinning, snapping ni scroll-jacking.
+- El contrato completo vive en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` y aún no está implementado.
