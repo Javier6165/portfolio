@@ -1,16 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import type { PointerEvent } from "react";
+import { useEffect, useRef, type PointerEvent } from "react";
 import type { Project } from "../data";
 import { ProjectVisual } from "./ProjectVisual";
 import { ArrowIcon } from "./SiteShell";
 
 export function ProjectCard({ project }: { project: Project }) {
+  const frameRef = useRef<number | null>(null);
+  const boundsRef = useRef<DOMRect | null>(null);
+  const pointerRef = useRef({ x: 0, y: 0, target: null as HTMLAnchorElement | null });
+
+  useEffect(() => () => {
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+  }, []);
+
+  function startTracking(event: PointerEvent<HTMLAnchorElement>) {
+    if (event.pointerType !== "mouse") return;
+    boundsRef.current = event.currentTarget.getBoundingClientRect();
+  }
+
   function trackPointer(event: PointerEvent<HTMLAnchorElement>) {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.style.setProperty("--pointer-x", `${event.clientX - bounds.left}px`);
-    event.currentTarget.style.setProperty("--pointer-y", `${event.clientY - bounds.top}px`);
+    if (event.pointerType !== "mouse") return;
+    const bounds = boundsRef.current ?? event.currentTarget.getBoundingClientRect();
+    pointerRef.current = {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+      target: event.currentTarget,
+    };
+    if (frameRef.current !== null) return;
+
+    frameRef.current = requestAnimationFrame(() => {
+      const { x, y, target } = pointerRef.current;
+      target?.style.setProperty("--pointer-x", `${x}px`);
+      target?.style.setProperty("--pointer-y", `${y}px`);
+      frameRef.current = null;
+    });
+  }
+
+  function stopTracking(event: PointerEvent<HTMLAnchorElement>) {
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
+    boundsRef.current = null;
+    pointerRef.current.target = null;
+    event.currentTarget.style.removeProperty("--pointer-x");
+    event.currentTarget.style.removeProperty("--pointer-y");
   }
 
   return (
@@ -18,7 +52,9 @@ export function ProjectCard({ project }: { project: Project }) {
       <Link
         className={`project-card project-card--${project.accent}`}
         href={`/work/${project.slug}`}
+        onPointerEnter={startTracking}
         onPointerMove={trackPointer}
+        onPointerLeave={stopTracking}
       >
         <div className="project-card__meta">
           <span>{project.index}</span><span>{project.surface}</span><span>{project.year}</span>

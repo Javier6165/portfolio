@@ -12,8 +12,9 @@ Lee, en este orden:
 6. `docs/IMPLEMENTATION-08-LIVE-FILE-SCORE.md`
 7. `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`
 8. `docs/PLAN-09-NEXT-IMPROVEMENTS.md`
-9. `docs/CONTENT-AND-RELEASE.md`
-10. `docs/ASSETS.md` si vas a tocar imágenes.
+9. `docs/PLAN-10-EXPERIENCE-CHROME.md`
+10. `docs/CONTENT-AND-RELEASE.md`
+11. `docs/ASSETS.md` si vas a tocar imágenes.
 
 ## Contratos que debes preservar
 

@@ -7,6 +7,15 @@
 3. **Interacción cliente**: tema, motion, narrativa, tabs y case evidence.
 4. **Infraestructura Sites**: vinext, worker, build y `.openai/hosting.json`.
 
+## Experience chrome
+
+`PageProgress` se monta una vez desde `layout.tsx` y cumple dos funciones sin controlar el scroll:
+
+- actualiza `--page-progress` y `data-page-scrolled` mediante listener pasivo + `requestAnimationFrame` para densificar la cabecera fija;
+- en Home identifica el último capítulo que cruza una línea de lectura y marca su enlace lateral con `aria-current="location"`.
+
+El rail solo se presenta en desktop y queda `visibility: hidden` —también fuera del orden de foco— antes del primer desplazamiento y durante la intro. Tablet/móvil conservan la línea de progreso y un menú móvil persistente. En casos, `.case-index` se fija debajo de la cabecera. Los anchors usan `scroll-margin-top`; no existe smooth scroll, scrub ni scroll-jacking.
+
 ## Rutas
 
 - `/`: narrativa principal.

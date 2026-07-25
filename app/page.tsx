@@ -179,7 +179,7 @@ export default function Home() {
         </LiveScene>
       </section>
 
-      <section className="playground-preview section shell" aria-labelledby="playground-title">
+      <section className="playground-preview section shell" id="playground" aria-labelledby="playground-title">
         <LiveScene
           id="playground-experiment"
           verb="experiment"
@@ -199,7 +199,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="about-preview section shell" aria-labelledby="about-preview-title">
+      <section className="about-preview section shell" id="about-preview" aria-labelledby="about-preview-title">
         <LiveScene
           id="about-reframe"
           verb="reframe"

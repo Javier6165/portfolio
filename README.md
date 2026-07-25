@@ -23,6 +23,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - Case content/schema: `app/data.ts`
 - Case evidence renderer: `app/components/CaseEvidence.tsx`
 - Testimonial preview: `app/components/Testimonials.tsx` and `app/components/Testimonials.module.css`
+- Persistent navigation/progress: `app/components/PageProgress.tsx` and `app/components/PageProgress.module.css`
 - Visual system: `app/globals.css` and co-located CSS Modules
 - Automated QA: `tests/rendered-html.test.mjs` and `tests/e2e/`
 - Local assets: `public/`
@@ -37,6 +38,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/IMPLEMENTATION-08-LIVE-FILE-SCORE.md`: current components, timings, memory, metrics and QA.
 - `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`: complete post-implementation audit.
 - `docs/PLAN-09-NEXT-IMPROVEMENTS.md`: next work, ordered around real evidence and launch readiness.
+- `docs/PLAN-10-EXPERIENCE-CHROME.md`: current navigation, progress and interaction-polish iteration.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 

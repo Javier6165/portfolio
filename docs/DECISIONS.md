@@ -13,6 +13,7 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - La narrativa del editor es decorativa: nunca comunica información necesaria.
 - El guion transversal distingue escenas, comentarios y microinteracciones: una escena breve por sección, máximo tres comentarios prominentes después del hero y reproducción automática limitada por tier de visita.
 - El contenido siempre llega antes que el efecto: cada escena se arma al entrar, respira `450–750 ms` y solo entonces corrige. Los comentarios de Profile, Work y AI aparecen después de esa corrección, nunca al aterrizar.
+- La orientación es chrome de producto, no una décima escena: cabecera fija, progreso global y capítulos laterales de Home en desktop. El scroll sigue siendo nativo.
 
 ## Dirección visual
 
@@ -62,4 +63,5 @@ Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-
 - Profile, Work y AI son los únicos comentarios prominentes posteriores al hero.
 - Work y AI son los picos principales; el resto mantiene continuidad con beats silenciosos.
 - ScrollTrigger sustituye al observer anterior con triggers deterministas, sin scrub, pinning, snapping ni scroll-jacking.
+- `PageProgress` puede leer scroll con listener pasivo + `requestAnimationFrame`; no es un segundo motor de animación ni controla la posición del visitante.
 - El contrato completo vive en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` y su implementación en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.

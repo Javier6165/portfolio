@@ -136,10 +136,10 @@ Build local de producción, Chromium, contenido actual:
 | --- | ---: | ---: |
 | Intro completa | 3,94 s | 3,89 s |
 | CLS | 0,0073 | 0 |
-| LCP observado local | 172 ms | 100 ms |
-| Transferencia codificada inicial | 745 KB | 716 KB |
-| JS codificado | 453 KB | 453 KB |
-| CSS codificado | 103 KB | 103 KB |
+| LCP observado local | 172 ms | 96 ms |
+| Transferencia codificada inicial | 752 KB | 724 KB |
+| JS codificado | 456 KB | 456 KB |
+| CSS codificado | 107 KB | 107 KB |
 | Inicio de Selected Work | 1.521 px / 1,69 vp | 1.690 px / 2,00 vp |
 | Overflow horizontal | no | no |
 
@@ -162,7 +162,7 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 
 - `npm run lint`: limpio.
 - `npm test`: build + 3 smoke tests SSR, todos pasan.
-- `npm run test:e2e`: 26 pasan y 10 duplicaciones móviles se omiten intencionalmente.
+- `npm run test:e2e`: 31 pasan y 11 duplicaciones móviles se omiten intencionalmente.
 - axe: Home y Northstar, System/Human, sin violaciones automáticas en desktop/móvil.
 - teclado: AI Practice y token propagation.
 - interacción: simulación AI, Replay Playground, tema con storage bloqueado y menú móvil.
@@ -181,4 +181,4 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 - `globals.css` todavía mezcla estilos de rutas y merece división progresiva.
 - No hay field data, Safari/Firefox ni dispositivo físico en esta fase.
 
-Consulta `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` y `PLAN-09-NEXT-IMPROVEMENTS.md` antes del siguiente ciclo.
+La iteración posterior de navegación persistente está documentada en `PLAN-10-EXPERIENCE-CHROME.md`. Consulta también `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` y `PLAN-09-NEXT-IMPROVEMENTS.md` antes del siguiente ciclo.

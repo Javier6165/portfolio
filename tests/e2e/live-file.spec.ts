@@ -164,6 +164,62 @@ test("theme, mobile navigation and semantic controls remain robust", async ({ pa
   }
 });
 
+test("the experience chrome preserves orientation throughout Home", async ({ page, isMobile }) => {
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+  await page.locator("#work").scrollIntoViewIfNeeded();
+
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-page-scrolled", "true");
+  await expect.poll(() => page.evaluate(() => Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--page-progress"),
+  ))).toBeGreaterThan(0.05);
+  await expect(page.locator(".site-header")).toHaveCSS("position", "fixed");
+
+  const rail = page.getByRole("navigation", { name: "On this page" });
+  if (isMobile) {
+    await expect(rail).toBeHidden();
+    await page.locator(".mobile-nav summary").click();
+    await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeVisible();
+  } else {
+    await expect(rail).toBeVisible();
+    await expect(rail.getByRole("link", { name: "02 — Work" })).toHaveAttribute("aria-current", "location");
+  }
+});
+
+test("project depth feedback is available from the keyboard", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Mobile cards use the stable touch composition.");
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+
+  const card = page.locator(".project-card").first();
+  await card.scrollIntoViewIfNeeded();
+  await card.focus();
+  await expect(card).toBeFocused();
+  await expect.poll(() => card.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
+  await expect.poll(() => card.locator(".project-card__layer--back").evaluate(
+    (element) => getComputedStyle(element).transform,
+  )).not.toBe("none");
+});
+
+test("case navigation remains visible below the persistent header", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/work/northstar");
+
+  const caseIndex = page.locator(".case-index");
+  await caseIndex.scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollBy(0, 120));
+  await expect(page.locator("html")).toHaveAttribute("data-page-scrolled", "true");
+  await expect(caseIndex).toBeVisible();
+
+  const geometry = await page.evaluate(() => {
+    const header = document.querySelector(".site-header")!.getBoundingClientRect();
+    const index = document.querySelector(".case-index")!.getBoundingClientRect();
+    return { headerBottom: header.bottom, indexTop: index.top };
+  });
+  expect(geometry.indexTop).toBeGreaterThanOrEqual(geometry.headerBottom - 1);
+});
+
 test("Live File scenes resolve into distinct finished states", async ({ page }) => {
   await page.goto("/?narrative=first");
   await page.getByRole("button", { name: "Skip intro" }).click();

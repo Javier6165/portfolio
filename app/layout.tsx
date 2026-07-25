@@ -8,6 +8,7 @@ import { ExperienceSettings } from "./components/live-file/ExperienceSettings";
 import { LiveSceneDirector } from "./components/live-file/LiveSceneDirector";
 import { NarrativeProvider } from "./components/live-file/NarrativeProvider";
 import { MotionController } from "./components/MotionController";
+import { PageProgress } from "./components/PageProgress";
 import { SiteFooter, SiteHeader } from "./components/SiteShell";
 import { siteConfig } from "./config";
 
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <a className="skip-link" href="#main-content">Skip to content</a>
             <div className="theme-wipe" aria-hidden="true" />
             <SiteHeader />
+            <PageProgress />
             <main id="main-content">{children}</main>
             <SiteFooter experienceSettings={<ExperienceSettings />} />
             <MotionController />
