@@ -2,112 +2,131 @@
 
 ## Capas
 
-1. **Servidor y contenido**: rutas de `app/`, `app/data.ts` y HTML semántico.
-2. **Sistema visual**: `app/globals.css` para tokens/layout; CSS Modules para Live File y evidencia.
-3. **Interacción cliente**: tema, motion, narrativa, tabs y case evidence.
-4. **Infraestructura Sites**: vinext, worker, build y `.openai/hosting.json`.
-
-## Experience chrome
-
-`PageProgress` se monta una vez desde `layout.tsx` y cumple dos funciones sin controlar el scroll:
-
-- actualiza `--page-progress` y `data-page-scrolled` mediante listener pasivo + `requestAnimationFrame` para densificar la cabecera fija;
-- en Home identifica el último capítulo que cruza una línea de lectura y marca su enlace lateral con `aria-current="location"`.
-
-El rail solo se presenta en desktop y queda `visibility: hidden` —también fuera del orden de foco— antes del primer desplazamiento y durante la intro. Tablet/móvil conservan la línea de progreso y un menú móvil persistente. En casos, `.case-index` se fija debajo de la cabecera. Los anchors usan `scroll-margin-top`; no existe smooth scroll, scrub ni scroll-jacking.
+1. **Servidor y contenido:** rutas de `app/`, `app/data.ts` y HTML semántico.
+2. **Sistema visual:** tokens/layout en `app/globals.css`; CSS Modules para Home, Live File y evidencia.
+3. **Interacción cliente:** tema, narrativa, Spotlight, tabs, prototipos y settings.
+4. **Infraestructura Sites:** vinext, worker, build y `.openai/hosting.json`.
 
 ## Rutas
 
-- `/`: narrativa principal.
+- `/`: Home Live File.
 - `/about`: trayectoria, capacidades y contacto temporal.
 - `/playground`: exploración conceptual.
 - `/work/[slug]`: plantilla de casos desde `projects`.
 - `not-found.tsx`: 404 editorial.
 - `sitemap.ts` y `robots.ts`: derivados de `app/config.ts`.
 
-## Bootstrap antes de paint
+## Bootstrap pre-paint
 
-El script inline de `layout.tsx` resuelve solo atributos:
+El script inline de `layout.tsx` resuelve atributos sin cambiar markup:
 
 - `data-theme`: `system` o `human` desde `javier-theme`.
-- `data-motion`: preferencia de sistema o ajuste manual.
+- `data-motion`: sistema o ajuste manual.
 - `data-narrative`: `first`, `return`, `familiar` o `static`.
 
-No renderiza contenido distinto, por lo que servidor y cliente conservan el mismo HTML. No mover estas lecturas al primer render React: produciría flash de tema o diferencias de hidratación.
+El HTML cliente/servidor permanece idéntico. No leer storage durante el primer render React.
+
+## Experience chrome
+
+`PageProgress` actualiza `--page-progress`, densidad de header y capítulo actual mediante listener pasivo + `requestAnimationFrame`. El rail de ocho capítulos solo existe en Home desktop; móvil conserva header y menu. Los anchors usan `scroll-margin-top`; no hay smooth scroll ni timeline global de scroll.
 
 ## Live File
 
-`app/components/live-file/` contiene:
+Directorio `app/components/live-file/`:
 
-- `NarrativeProvider`: consentimiento, memoria, tiers, escenas vistas, replay y motion.
-- `EditorIntro`: reducer visual, timeline transform-only, skip y fallos.
-- `LiveSceneDirector`: cursor singleton, exclusión, MotionPath, fast-scroll y eventos de acción.
-- `LiveScene`: declaración y trigger ScrollTrigger sobre anchors DOM reales.
-- `ExperienceSettings` y `MemoryConsent`: controles locales.
+- `NarrativeProvider`: consentimiento, memoria, tiers, motion, Auto-follow, Replay intro y Replay live edits.
+- `EditorIntro`: timeline del hero, skip, fallback de imagen y entrega final explícita.
+- `LiveSceneDirector`: registro central, selección dominante, lectura, Spotlight, lock/restauración, cursor y cancelación.
+- `LiveScene`: declaración de id, target, tool, propiedades, timings y estado visual.
+- `EditorPrimitives`: selection frame, handles, property panel y comment thread.
+- `SpotlightChrome`: dock, foco, progreso, Stop y hint de cancelación.
+- `ExperienceSettings` / `MemoryConsent`: preferencias locales.
 
-Los estados lógicos viven en React/atributos. GSAP solo interpola. El contenido semántico del hero está en `EditorIntro`; chrome, selecciones, cursor, asset tray y comentarios son decorativos.
+El servidor entrega cada escena en `settled`. Tras hidratación, el director la lleva a `wip` solo si es elegible. La máquina de atributos es:
 
-El inicio espera a que el retrato activo decodifique o un máximo de 350 ms. Un fallo cancela la secuencia y fija el hero final. En retorno la secuencia empieza inmediatamente y dura menos de dos segundos. El hero conserva geometría final durante toda la intro; el frame editor es solo un transform visual.
+```text
+wip → observing → spotlight-entering → editing
+    → commenting? → settling → settled
+```
+
+La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No hay ScrollTrigger por escena, auto-scroll ni queue.
+
+Elegibilidad:
+
+- intro terminada y Home activa;
+- Auto-follow on y tier permitido;
+- target visible por encima de `minVisibility`;
+- centro dentro de zona segura;
+- scroll estable `220–280 ms`;
+- `readMs` cumplido;
+- escena no vista en la sesión.
+
+Spotlight fija `body`, compensa scrollbar, guarda `scrollY` y lo restaura al cerrar. Stop, Escape, PageDown, Space, touch, resize, pestaña oculta o segunda rueda interrumpen. No es modal y no atrapa foco.
+
+## Home
+
+Orden y escenas:
+
+| Capítulo | Scene id | Verbo | Target principal |
+| --- | --- | --- | --- |
+| Snapshot | `snapshot-clarify` | clarify | facts |
+| Work | `work-frame` | frame | media del primer case |
+| Product practice | `practice-connect` | connect | workflow/viewer |
+| AI | `ai-operationalise` | operationalise | pipeline/viewer |
+| About | `about-reframe` | reframe | portrait |
+| References | `testimonials-verify` | verify | ledger |
+| Playground | `playground-experiment` | experiment | timeline |
+| Contact | `footer-handoff` | handoff | contacto |
+
+`app/HomePage.module.css` contiene composición y desviaciones WIP de las secciones server. `ProductPractice`, `AIPractice`, `Testimonials` y `PlaygroundStudy` son islands únicamente porque tienen controles reales.
+
+## Motion progresivo
+
+- Home: `EditorIntro` + `LiveSceneDirector` son la partitura exclusiva.
+- Rutas secundarias: `MotionController` importa ScrollTrigger dinámicamente y activa `.js-hero-reveal` / `.js-reveal`.
+- Theme: `.theme-swap` usa GSAP para una transición breve.
+- CSS resuelve hover, focus, tabs locales y presenters de estado.
+- `data-motion="reduce"` desactiva intro, WIP, cursor, Spotlight, reveals y transiciones no esenciales.
 
 ## Memoria
 
 Claves:
 
-- `javier-narrative-consent`
-- `javier-narrative-memory-v1`
-- `javier-narrative-session-v1`
-- `javier-narrative-counted-v1`
-- `javier-motion`
+- local: `javier-narrative-consent`, `javier-narrative-memory-v1`, `javier-motion`, `javier-theme`;
+- session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`.
 
-`NarrativeMemory` guarda únicamente schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia se habilita tras `Allow`; sessionStorage funciona como fallback y no identifica al visitante.
+`NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. Auto-follow anterior al consentimiento es una preferencia de sesión.
 
-## Motion progresivo
+## Temas y fotografías
 
-`MotionController` conserva `.js-hero-reveal`, `.js-reveal` y `.theme-swap`. Los reveals parten de contenido visible y nunca dejan transforms inline que anulen hover. `data-motion="reduce"` y `prefers-reduced-motion` eliminan intro, cues y transiciones no esenciales.
+ThemeToggle actualiza `data-theme`, `colorScheme`, `javier-theme` y `portfolio-theme-change`. Dark/Light comparten layout y fuentes. Hero y About montan AVIF/WebP responsive con JPEG fallback; CSS cruza opacidades sin cambiar geometría.
 
-## Home y escenas
+## References
 
-El hero termina antes de `#experience`. Home declara ocho `LiveScene` posteriores: Profile, Work, Expertise, AI, Playground, About preview, Testimonials y Footer. Cada una tiene verbo, target, duración, tier y estado final propios.
+`TestimonialSlot` es una unión discriminada:
 
-`LiveSceneDirector` garantiza una sola escena activa. ScrollTrigger arma la escena en `top 66%` desktop o `top 74%` touch y espera `450–750 ms` antes de intervenir. Ese estado `armed` deja leer primero la sección; los comentarios aparecen aproximadamente un segundo después de empezar la corrección. No hay scrub, pinning, snapping ni bloqueo. Fast-scroll, salida de viewport, pestaña oculta, retorno o escenas ya vistas fijan `settled`; reduced motion fija `reduced`. El límite de tres se aplica a comentarios prominentes —Profile, Work y AI—, no a las trazas silenciosas.
+- `placeholder`: perspective, title y prompt;
+- `verified`: quote, name, role, source y `approvedForPublication: true`.
 
-AI y Playground escuchan `portfolio-live-scene-play` y ejecutan controles React reales. Pointer/foco del visitante sobre cualquier escena gana y fuerza handoff. El contrato completo está en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
-
-Testimonials es un componente de servidor y usa una unión discriminada en `app/data.ts`: `placeholder` conserva título/prompt sin atribución y `verified` exige quote, name, role, source y `approvedForPublication: true`. `Verify` solo presenta el estado de procedencia; no inventa prueba social ni vuelve esencial la animación.
-
-## Temas
-
-`data-theme` define tokens compartidos. ThemeToggle actualiza atributo, `colorScheme`, `javier-theme` y `portfolio-theme-change`.
-
-Las fotografías de Hero y About comparten geometría, usan AVIF/WebP responsive con JPEG fallback y se intercambian por CSS para evitar saltos. Dark y Light usan Instrument Sans + Fragment Mono y la misma composición; únicamente cambian tokens cromáticos y fuentes de imagen. Los valores internos `system`/`human` se conservan para no romper preferencias guardadas.
+`Testimonials` implementa un tablist vertical con roving focus y un tabpanel. La preview no renderiza `<blockquote>` hasta que exista un slot verificado.
 
 ## Evidencia de casos
 
-`CaseBlock` admite:
-
-- `text`, `image`, `gallery`, `before-after`;
-- `token-propagation`;
-- `video`, `figma`, `prototype`.
-
-Cada bloque tiene id, eyebrow, título y descripción. Media exige alt/caption/aspect ratio. `CaseEvidence` renderiza el bloque y mantiene tabs con roving focus. Figma y prototipos muestran fallback local y solo crean el iframe tras interacción explícita.
-
-Northstar usa `token-propagation` como demostrador ficticio. Los otros tipos están listos para contenido real; no crear condicionales por slug.
+`CaseBlock` admite text, image, gallery, before-after, token-propagation, video, figma y prototype. Media exige alt/caption/aspect ratio; Figma/prototipos cargan tras interacción. Northstar usa un demostrador ficticio de propagación.
 
 ## Fallbacks
 
-- Sin JavaScript: hero final, contenido, navegación y CTAs visibles.
-- Reduced motion: resultado final inmediato.
-- Storage bloqueado: experiencia de sesión sin persistencia.
-- Retrato fallido: intro cancelada, identidad y navegación intactas.
-- Embed no cargado: fallback y caption permanecen.
+- Sin JavaScript: hero y escenas finales; navegación y CTAs operativos.
+- Reduced motion: estado `reduced`, sin captura.
+- Storage bloqueado: experiencia de sesión.
+- Retrato fallido: intro cancelada.
+- Embed fallido/no cargado: fallback local y caption.
 
 ## QA
 
 - `npm run lint`
-- `npm test`: build + smoke tests de HTML.
-- `npm run test:e2e`: coreografía, interacción real, teclado, axe, no-JS, reduced motion, memoria, fallo de imagen y matriz visual full-page.
-- `node tests/performance-audit.mjs <url>`: intro, CLS/LCP local, transferencia, overflow y posiciones de secciones contra build de producción.
+- `npm test`
+- `npm run test:e2e`
+- `node tests/performance-audit.mjs <url>`
 
-## Starter preservado
-
-La infraestructura opcional D1/Drizzle/Auth proviene del starter, pero no participa en el portfolio. No añadas persistencia o login sin una necesidad aprobada y documentada.
+La matriz incluye Dark/Light, cuatro viewports, axe, teclado, mobile, no-JS, reduced, storage, memoria, fallo de imagen, WIP/final, Spotlight y overflow.

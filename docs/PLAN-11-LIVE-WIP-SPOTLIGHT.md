@@ -2,7 +2,7 @@
 
 Fecha: 25 de julio de 2026.
 
-Estado: **plan propuesto para la siguiente implementación; todavía no implementado**.
+Estado: **implementado y auditado**. Contrato técnico en `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md` y auditoría en `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`.
 
 Alcance: Home completa, incluido el hero y las previews de proyecto. Los case studies interiores quedan fuera hasta una fase posterior y continúan usando contenido ficticio.
 
@@ -763,9 +763,9 @@ Gate: Follow mode aporta narrativa sin impedir completar Home y la UI base manti
 - CLS ≤`0,03` en Home y sin overflow;
 - Spotlight responde en el siguiente frame y no añade canvas/WebGL.
 
-## 14. Decisiones que esta fase sustituirá al implementarse
+## 14. Decisiones sustituidas por la implementación
 
-El plan requiere actualizar formalmente los ADR solo cuando el código esté validado:
+El código está validado y los ADR ya reflejan estos cambios:
 
 - ADR-006: scroll seguirá siendo nativo fuera de Spotlight, pero existirá una captura temporal, acotada y cancelable.
 - ADR-016: deja de limitar comments prominentes a tres; el límite pasa a ser uno justificado por escena.
@@ -774,7 +774,7 @@ El plan requiere actualizar formalmente los ADR solo cuando el código esté val
 - los timings actuales `450–750 ms` + `1,35–2,7 s` se sustituyen por read time `1–1,7 s` y Spotlight `2,8–4,9 s`.
 - `idle` deja de ser visualmente final: en primera visita representa un WIP intencional y accesible.
 
-Hasta completar la implementación, `NARRATIVE-07` e `IMPLEMENTATION-08` siguen describiendo el comportamiento publicado.
+Los documentos 07–10 se consolidaron y retiraron para evitar dos contratos activos; Git conserva su evolución.
 
 ## 15. Fuera de alcance
 

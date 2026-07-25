@@ -22,8 +22,10 @@ export type NarrativeMemory = {
 };
 
 type NarrativeContextValue = {
+  autoFollow: boolean;
   consent: NarrativeConsent;
   introComplete: boolean;
+  liveReplayToken: number;
   reducedMotion: boolean;
   replayToken: number;
   showConsent: boolean;
@@ -33,8 +35,10 @@ type NarrativeContextValue = {
   declineMemory: () => void;
   forgetExperience: () => void;
   replayIntro: () => void;
+  replayLiveEdits: () => void;
   hasSeenCue: (cueId: string) => boolean;
   markCueSeen: (cueId: string) => void;
+  setAutoFollow: (enabled: boolean) => void;
   setManualReducedMotion: (reduced: boolean) => void;
 };
 
@@ -43,6 +47,7 @@ const MEMORY_KEY = "javier-narrative-memory-v1";
 const SESSION_COMPLETE_KEY = "javier-narrative-session-v1";
 const SESSION_COUNTED_KEY = "javier-narrative-counted-v1";
 const MOTION_KEY = "javier-motion";
+const AUTO_FOLLOW_KEY = "javier-auto-follow-v1";
 const MEMORY_LIFETIME = 90 * 24 * 60 * 60 * 1000;
 const NarrativeContext = createContext<NarrativeContextValue | null>(null);
 
@@ -81,11 +86,13 @@ function createMemory(visitCount = 1): NarrativeMemory {
 }
 
 export function NarrativeProvider({ children }: { children: ReactNode }) {
+  const [autoFollow, setAutoFollowState] = useState(true);
   const [consent, setConsent] = useState<NarrativeConsent>("unknown");
   const [introComplete, setIntroComplete] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
   const [visitTier, setVisitTier] = useState<1 | 2 | 3>(1);
   const [replayToken, setReplayToken] = useState(0);
+  const [liveReplayToken, setLiveReplayToken] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const consentRef = useRef<NarrativeConsent>(consent);
   const seenCueIds = useRef(new Set<string>());
@@ -112,6 +119,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     const hydrationFrame = window.requestAnimationFrame(() => {
       try {
         const savedConsent = window.localStorage.getItem(CONSENT_KEY);
+        setAutoFollowState(window.sessionStorage.getItem(AUTO_FOLLOW_KEY) !== "off");
         const nextConsent: NarrativeConsent = savedConsent === "granted"
           ? "granted"
           : savedConsent === "denied"
@@ -204,10 +212,12 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
       window.localStorage.removeItem(MEMORY_KEY);
       window.sessionStorage.removeItem(SESSION_COMPLETE_KEY);
       window.sessionStorage.removeItem(SESSION_COUNTED_KEY);
+      window.sessionStorage.removeItem(AUTO_FOLLOW_KEY);
     } catch {
       // State below is enough to reset the current document.
     }
     seenCueIds.current.clear();
+    setAutoFollowState(true);
     setConsent("unknown");
     consentRef.current = "unknown";
     setVisitTier(1);
@@ -229,6 +239,22 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     setReplayToken((token) => token + 1);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
+
+  const setAutoFollow = useCallback((enabled: boolean) => {
+    setAutoFollowState(enabled);
+    try {
+      if (enabled) window.sessionStorage.removeItem(AUTO_FOLLOW_KEY);
+      else window.sessionStorage.setItem(AUTO_FOLLOW_KEY, "off");
+    } catch {
+      // Follow remains a document preference when storage is unavailable.
+    }
+  }, []);
+
+  const replayLiveEdits = useCallback(() => {
+    setAutoFollow(true);
+    setLiveReplayToken((token) => token + 1);
+    window.dispatchEvent(new CustomEvent("portfolio-live-replay"));
+  }, [setAutoFollow]);
 
   const setManualReducedMotion = useCallback((reduced: boolean) => {
     try {
@@ -255,8 +281,10 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<NarrativeContextValue>(() => ({
+    autoFollow,
     consent,
     introComplete,
+    liveReplayToken,
     reducedMotion,
     replayToken,
     showConsent,
@@ -266,12 +294,16 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     declineMemory,
     forgetExperience,
     replayIntro,
+    replayLiveEdits,
     hasSeenCue,
     markCueSeen,
+    setAutoFollow,
     setManualReducedMotion,
   }), [
+    autoFollow,
     consent,
     introComplete,
+    liveReplayToken,
     reducedMotion,
     replayToken,
     showConsent,
@@ -281,8 +313,10 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     declineMemory,
     forgetExperience,
     replayIntro,
+    replayLiveEdits,
     hasSeenCue,
     markCueSeen,
+    setAutoFollow,
     setManualReducedMotion,
   ]);
 

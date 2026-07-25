@@ -1,129 +1,181 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import styles from "./AIPractice.module.css";
 
-const steps = [
-  { id: "frame", label: "01 / Frame", title: "Find the expensive uncertainty" },
-  { id: "explore", label: "02 / Explore", title: "Generate options with constraints" },
-  { id: "build", label: "03 / Build", title: "Turn the decision into behaviour" },
+const stages = [
+  {
+    id: "frame",
+    index: "01",
+    label: "Frame",
+    title: "Structure context and risk",
+    task: "Turn a broad request into constraints, unknowns and a decision to test.",
+    tools: ["Claude", "Codex"],
+    output: "Structured brief + risk map",
+    check: "Accuracy · confidentiality · product intent",
+  },
+  {
+    id: "explore",
+    index: "02",
+    label: "Explore",
+    title: "Create constrained options",
+    task: "Compare interaction models against rules, edge cases and delivery cost.",
+    tools: ["Figma Make", "Claude"],
+    output: "Option set + explicit trade-offs",
+    check: "Coherence · feasibility · inclusion",
+  },
+  {
+    id: "build",
+    index: "03",
+    label: "Build",
+    title: "Make the behaviour testable",
+    task: "Move beyond static screens and expose the risky interaction in code.",
+    tools: ["Codex", "Cursor", "Lovable"],
+    output: "Functional prototype",
+    check: "Interaction · accessibility · failure states",
+  },
+  {
+    id: "validate",
+    index: "04",
+    label: "Validate",
+    title: "Collect evidence, not approval",
+    task: "Observe where the model breaks and feed the evidence back into the product decision.",
+    tools: ["Prototype", "Figma"],
+    output: "Findings + next decision",
+    check: "Signal quality · bias · accountable choice",
+  },
 ] as const;
 
-type Step = (typeof steps)[number]["id"];
+type Stage = (typeof stages)[number]["id"];
 type SimulationState = "idle" | "running" | "complete";
 
-function PracticeArtifact({
-  step,
-  simulationState,
-  onRun,
-}: {
-  step: Step;
-  simulationState: SimulationState;
-  onRun: () => void;
-}) {
-  if (step === "frame") {
+function StageArtifact({ stage, simulation, onRun }: { stage: Stage; simulation: SimulationState; onRun: () => void }) {
+  if (stage === "frame") {
     return (
-      <div className="ai-artifact ai-artifact--frame">
-        <div className="ai-artifact__bar"><i /> Product brief / raw input <span>08:42</span></div>
-        <p>“Operators need to publish complex rules faster.”</p>
-        <div className="ai-artifact__signals"><span>Risk</span><strong>Unknown consequence</strong><span>Decision</span><strong>What must remain true?</strong></div>
-      </div>
-    );
-  }
-  if (step === "explore") {
-    return (
-      <div className="ai-artifact ai-artifact--explore">
-        <div className="ai-artifact__bar"><i /> Option space / constrained <span>3 routes</span></div>
-        <div className="option-grid"><article><small>A</small><b>Form first</b><span>Fast / opaque</span></article><article className="is-selected"><small>B</small><b>Impact first</b><span>Clear / testable</span></article><article><small>C</small><b>Graph first</b><span>Powerful / dense</span></article></div>
-      </div>
-    );
-  }
-  const running = simulationState === "running";
-  const complete = simulationState === "complete";
-  return (
-    <div className="ai-artifact ai-artifact--build">
-      <div className="ai-artifact__bar"><i /> Working prototype / local <span>{running ? "Checking" : complete ? "Proved" : "Ready"}</span></div>
-      <div className="prototype-rule"><small>IF</small><span>Market changes</span><small>THEN</small><span>Preview impact</span></div>
-      <div className="prototype-progress" data-state={simulationState} aria-hidden="true"><i /></div>
-      <div className="prototype-result" data-state={simulationState}>
-        <i />
-        <div aria-live="polite">
-          <small>{running ? "Simulation running" : complete ? "Simulation complete" : "Working behaviour"}</small>
-          <strong>{running ? "Checking edge cases…" : complete ? "12,480 states checked" : "Ready to test the consequence"}</strong>
+      <div className={`${styles.artifact} ${styles.frame}`}>
+        <div className={styles.artifactBar}><span>CONTEXT / STRUCTURED</span><b>Draft 03</b></div>
+        <div className={styles.brief}>
+          <p>“Operators need to publish complex rules faster.”</p>
+          <dl><div><dt>Risk</dt><dd>Unknown consequence</dd></div><div><dt>Decision</dt><dd>What must remain true?</dd></div><div><dt>Constraint</dt><dd>No silent changes</dd></div></dl>
         </div>
-        <button type="button" onClick={onRun} disabled={running}>
-          {running ? "Running…" : complete ? "Run again" : "Run simulation"}
-        </button>
+      </div>
+    );
+  }
+
+  if (stage === "explore") {
+    return (
+      <div className={`${styles.artifact} ${styles.explore}`}>
+        <div className={styles.artifactBar}><span>OPTION SPACE / CONSTRAINED</span><b>3 routes</b></div>
+        <div className={styles.options}>
+          <article><small>A</small><strong>Form first</strong><span>Fast · opaque</span></article>
+          <article className={styles.selected}><small>B</small><strong>Impact first</strong><span>Clear · testable</span></article>
+          <article><small>C</small><strong>Graph first</strong><span>Powerful · dense</span></article>
+        </div>
+      </div>
+    );
+  }
+
+  if (stage === "validate") {
+    return (
+      <div className={`${styles.artifact} ${styles.validate}`}>
+        <div className={styles.artifactBar}><span>VALIDATION LOG / SESSION 04</span><b>Evidence captured</b></div>
+        <div className={styles.findings}>
+          <div><span>Observed</span><strong>Impact preview changed the decision</strong><i>High signal</i></div>
+          <div><span>Break point</span><strong>Recovery state lacked enough context</strong><i>Revise</i></div>
+          <div><span>Next</span><strong>Test selective undo before handoff</strong><i>Queued</i></div>
+        </div>
+      </div>
+    );
+  }
+
+  const running = simulation === "running";
+  const complete = simulation === "complete";
+  return (
+    <div className={`${styles.artifact} ${styles.build}`}>
+      <div className={styles.artifactBar}><span>WORKING PROTOTYPE / LOCAL</span><b>{running ? "Checking" : complete ? "Proved" : "Ready"}</b></div>
+      <div className={styles.prototype}>
+        <div className={styles.rule}><small>IF</small><span>Market changes</span><small>THEN</small><span>Preview impact</span></div>
+        <div className={styles.progress} data-state={simulation} aria-hidden="true"><i /></div>
+        <div className={styles.result} data-state={simulation}>
+          <div aria-live="polite">
+            <small>{running ? "Simulation running" : complete ? "Simulation complete" : "Working behaviour"}</small>
+            <strong>{running ? "Checking edge cases…" : complete ? "12,480 states checked" : "Ready to test the consequence"}</strong>
+          </div>
+          <button type="button" onClick={onRun} disabled={running}>{running ? "Running…" : complete ? "Run again" : "Run simulation"}</button>
+        </div>
       </div>
     </div>
   );
 }
 
 export function AIPractice() {
-  const [active, setActive] = useState<Step>("frame");
-  const [simulationState, setSimulationState] = useState<SimulationState>("idle");
-  const simulationTimerRef = useRef<number | null>(null);
-  const current = steps.find((step) => step.id === active) ?? steps[0];
+  const [active, setActive] = useState<Stage>("frame");
+  const [simulation, setSimulation] = useState<SimulationState>("idle");
+  const timerRef = useRef<number | null>(null);
+  const current = stages.find((stage) => stage.id === active) ?? stages[0];
 
   function runSimulation() {
-    if (simulationTimerRef.current) window.clearTimeout(simulationTimerRef.current);
-    setSimulationState("running");
-    simulationTimerRef.current = window.setTimeout(() => {
-      setSimulationState("complete");
-      simulationTimerRef.current = null;
-    }, 1_150);
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    setSimulation("running");
+    timerRef.current = window.setTimeout(() => {
+      setSimulation("complete");
+      timerRef.current = null;
+    }, 1_250);
   }
 
   useEffect(() => {
-    function activatePrototype(event: Event) {
-      if (!(event instanceof CustomEvent) || event.detail?.id !== "ai-activate") return;
+    function runFromNarrative(event: Event) {
+      if (!(event instanceof CustomEvent) || event.detail?.id !== "ai-operationalise") return;
       setActive("build");
-      // Let the selected panel render before its functional state changes.
       window.requestAnimationFrame(runSimulation);
     }
-
-    window.addEventListener("portfolio-live-scene-play", activatePrototype);
+    window.addEventListener("portfolio-live-scene-play", runFromNarrative);
     return () => {
-      window.removeEventListener("portfolio-live-scene-play", activatePrototype);
-      if (simulationTimerRef.current) window.clearTimeout(simulationTimerRef.current);
+      window.removeEventListener("portfolio-live-scene-play", runFromNarrative);
+      if (timerRef.current) window.clearTimeout(timerRef.current);
     };
   }, []);
 
   function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    const nextIndex = event.key === "Home"
-      ? 0
-      : event.key === "End"
-        ? steps.length - 1
-        : (index + (event.key === "ArrowRight" ? 1 : -1) + steps.length) % steps.length;
-    setActive(steps[nextIndex].id);
-    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("[role='tab']");
-    tabs?.[nextIndex]?.focus();
+    const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? stages.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + stages.length) % stages.length;
+    setActive(stages[nextIndex].id);
+    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("[role='tab']")[nextIndex]?.focus();
   }
 
   return (
-    <div className="ai-practice__interactive js-reveal">
-      <div className="ai-practice__steps" role="tablist" aria-label="AI-assisted product design practice">
-        {steps.map((step, index) => (
+    <div className={styles.root}>
+      <div className={styles.toolCloud} aria-hidden="true">
+        <span>Claude</span><span>Codex</span><span>Figma Make</span><span>Cursor</span><span>Lovable</span><b>AI makes me faster</b>
+      </div>
+      <div className={styles.pipeline} role="tablist" aria-label="AI-native product workflow">
+        {stages.map((stage, index) => (
           <button
             type="button"
             role="tab"
-            id={`ai-practice-tab-${step.id}`}
-            aria-selected={active === step.id}
-            aria-controls="ai-practice-panel"
-            tabIndex={active === step.id ? 0 : -1}
-            key={step.id}
-            onClick={() => setActive(step.id)}
+            id={`ai-tab-${stage.id}`}
+            aria-selected={active === stage.id}
+            aria-controls="ai-workflow-viewer"
+            tabIndex={active === stage.id ? 0 : -1}
+            key={stage.id}
+            onClick={() => setActive(stage.id)}
             onKeyDown={(event) => moveTab(event, index)}
           >
-            <span>{step.label}</span><strong>{step.title}</strong>
+            <span>{stage.index}</span><strong>{stage.label}</strong><small>{stage.title}</small>
           </button>
         ))}
       </div>
-      <div id="ai-practice-panel" role="tabpanel" aria-labelledby={`ai-practice-tab-${active}`} className="ai-practice__panel">
-        <div className="ai-practice__panel-meta"><span>{current.label}</span><span>Human judgement stays in the loop</span></div>
-        <PracticeArtifact step={active} simulationState={simulationState} onRun={runSimulation} />
+      <div className={styles.viewer} id="ai-workflow-viewer" role="tabpanel" aria-labelledby={`ai-tab-${active}`}>
+        <StageArtifact stage={active} simulation={simulation} onRun={runSimulation} />
+        <dl className={styles.meta}>
+          <div><dt>Task</dt><dd>{current.task}</dd></div>
+          <div><dt>Tools</dt><dd className={styles.tools}>{current.tools.map((tool) => <span key={tool}>{tool}</span>)}</dd></div>
+          <div><dt>Output</dt><dd>{current.output}</dd></div>
+          <div><dt>Human check</dt><dd>{current.check}</dd></div>
+        </dl>
       </div>
+      <aside className={styles.guardrail}><span>Where I do not delegate</span><p>Product judgement, privacy decisions, accessibility and final quality remain accountable human work.</p></aside>
     </div>
   );
 }

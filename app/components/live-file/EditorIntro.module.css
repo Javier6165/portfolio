@@ -571,9 +571,12 @@
   }
 
   .explore {
-    grid-column: 7 / 13;
-    grid-row: 3;
-    padding-top: 1rem;
+    position: absolute;
+    right: var(--page-pad);
+    bottom: 1.15rem;
+    grid-column: auto;
+    grid-row: auto;
+    padding-top: 0;
   }
 
   .editorChrome {
@@ -648,3 +651,115 @@
 :global(html[data-motion="reduce"]) .canvasGrid {
   display: none !important;
 }
+
+/* Plan 11: the finished hero is an editorial stage rather than a split layout. */
+.frame {
+  background:
+    radial-gradient(circle at 81% 18%, color-mix(in srgb, var(--cold) 15%, transparent), transparent 35rem),
+    var(--canvas);
+}
+
+.frame::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 16%;
+  right: var(--page-pad);
+  width: clamp(5rem, 9vw, 9rem);
+  height: 1px;
+  background: var(--signal);
+}
+
+.identity {
+  z-index: 4;
+  grid-column: 1 / 10;
+  padding-bottom: clamp(5rem, 10vh, 8rem);
+}
+
+.name { font-size: .72rem; }
+
+.title {
+  max-width: 10.5ch;
+  font-size: clamp(4.7rem, 8.7vw, 10.4rem);
+  line-height: .8;
+}
+
+.portrait {
+  min-height: 36rem;
+  margin-top: clamp(1rem, 4vh, 3rem);
+  margin-bottom: clamp(1.5rem, 4vh, 3.5rem);
+}
+
+.frameStatus {
+  position: absolute;
+  z-index: 5;
+  right: var(--page-pad);
+  bottom: 1.55rem;
+  left: var(--page-pad);
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font: .58rem var(--font-mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.frameStatus span:first-child { color: var(--signal); }
+
+.propertyStrip {
+  position: absolute;
+  z-index: 10;
+  top: 44%;
+  left: 9.5%;
+  width: min(29rem, 44vw);
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, 1fr);
+  gap: .35rem;
+  padding: .55rem;
+  border: 1px solid var(--editor-line);
+  border-radius: .7rem;
+  background: var(--editor-chrome);
+  color: var(--editor-ink);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, .25);
+  opacity: 0;
+  pointer-events: none;
+  font: .5rem var(--font-mono);
+  transition: opacity 220ms ease, transform 450ms cubic-bezier(.16, 1, .3, 1);
+  transform: translateY(.5rem);
+}
+
+.propertyStrip span,
+.propertyStrip b {
+  min-width: 0;
+  padding: .45rem;
+  overflow: hidden;
+  border: 1px solid var(--editor-line);
+  border-radius: .35rem;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.propertyStrip span { color: var(--editor-muted); }
+.stage[data-phase="typing"][data-expanded="false"] .propertyStrip { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .identity { grid-column: 1 / 10; }
+  .title { font-size: clamp(4rem, 9.4vw, 7rem); }
+}
+
+@media (max-width: 720px) {
+  .identity { grid-column: 1 / 13; }
+  .title { max-width: 9.2ch; font-size: clamp(3.45rem, 16vw, 5.6rem); line-height: .82; }
+  .portrait { margin: 0; }
+  .propertyStrip { top: 31%; right: .75rem; left: .75rem; width: auto; grid-template-columns: 1fr 1fr; }
+  .propertyStrip b:last-child { display: none; }
+  .frameStatus { font-size: .5rem; }
+  .frameStatus span:last-child { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .propertyStrip { display: none !important; }
+}
+
+:global(html[data-motion="reduce"]) .propertyStrip { display: none !important; }

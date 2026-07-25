@@ -6,13 +6,13 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./PageProgress.module.css";
 
 const homeSections = [
-  { id: "experience", index: "01", label: "Profile" },
+  { id: "experience", index: "01", label: "Snapshot" },
   { id: "work", index: "02", label: "Work" },
-  { id: "approach", index: "03", label: "Approach" },
-  { id: "ai-practice", index: "04", label: "AI + code" },
-  { id: "playground", index: "05", label: "Playground" },
-  { id: "about-preview", index: "06", label: "About" },
-  { id: "testimonials", index: "07", label: "Testimonials" },
+  { id: "approach", index: "03", label: "Practice" },
+  { id: "ai-practice", index: "04", label: "AI workflow" },
+  { id: "about-preview", index: "05", label: "About" },
+  { id: "testimonials", index: "06", label: "References" },
+  { id: "playground", index: "07", label: "Playground" },
   { id: "contact", index: "08", label: "Contact" },
 ] as const;
 

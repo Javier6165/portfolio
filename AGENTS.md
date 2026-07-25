@@ -8,14 +8,13 @@ Lee, en este orden:
 2. `docs/PROJECT-CONTEXT.md`
 3. `docs/DECISIONS.md`
 4. `docs/ARCHITECTURE.md`
-5. `docs/NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`
-6. `docs/IMPLEMENTATION-08-LIVE-FILE-SCORE.md`
-7. `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`
-8. `docs/PLAN-09-NEXT-IMPROVEMENTS.md`
-9. `docs/PLAN-10-EXPERIENCE-CHROME.md`
-10. `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`
-11. `docs/CONTENT-AND-RELEASE.md`
-12. `docs/ASSETS.md` si vas a tocar imágenes.
+5. `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`
+6. `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`
+7. `docs/AUDIT-11-LIVE-WIP-SPOTLIGHT.md`
+8. `docs/CONTENT-AND-RELEASE.md`
+9. `docs/ASSETS.md` si vas a tocar imágenes.
+
+Los documentos 07–10 fueron consolidados y retirados; Git conserva su historial.
 
 ## Contratos que debes preservar
 
@@ -23,13 +22,13 @@ Lee, en este orden:
 - Los temas internos válidos siguen siendo `system` y `human` por compatibilidad; en UI son Dark y Light. Ambos comparten tipografía, geometría, composición y motion. Solo pueden cambiar tokens de color y fotografías.
 - `Live File` es la firma vigente. Sus estados visuales se resuelven con `data-narrative`, `data-motion`, `data-live-file` e `IntroPhase`; no conviertas GSAP en la fuente de verdad lógica.
 - El hero semántico contiene nombre, rol, retrato y `Explore`. El editor es decorativo y no puede ocultar ese contenido a lectores de pantalla ni dejarlo inaccesible sin JavaScript.
-- `NarrativeProvider` es el único propietario de consentimiento, visita, escenas vistas y motion manual. `LiveSceneDirector` posee el cursor singleton y la exclusión entre escenas. Las claves y el esquema están documentados en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
+- `NarrativeProvider` es el único propietario de consentimiento, visita, Auto-follow y motion manual. `LiveSceneDirector` posee registro, Spotlight, cursor singleton, exclusión y restauración de scroll. Las claves y estados están documentados en `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`.
 - La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
-- `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion. El contenido base empieza visible y reduced motion debe resolver directamente al estado final.
-- La coreografía 07 está implementada con un beat distinto en cada sección: `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe`, `Verify` y `Hand off`. No la regreses a overlays genéricos ni cursores independientes por wrapper.
-- Profile, Work y AI son los únicos comentarios prominentes posteriores al hero. Las demás escenas conservan trazas silenciosas.
-- Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Cada escena pasa por `armed` y una pausa editorial antes de intervenir. Fast-scroll, salida de viewport, pestaña oculta, reduced motion y retorno deben fijar un resultado terminado.
-- `PLAN-11-LIVE-WIP-SPOTLIGHT.md` es la próxima iteración propuesta, aún no implementada. Primero rediseña copy, arquitectura y UI final; después crea estados WIP y solo entonces Spotlight. Sustituirá el fast-scroll actual por stages dominantes y añadirá una captura temporal, cancelable y sin focus trap. No mezcles parcialmente ambos contratos ni construyas la coreografía sobre las secciones 03/04/07 vigentes: implementa sus fases y actualiza ADR/08 solo después de validar el nuevo sistema.
+- `.js-hero-reveal` y `.js-reveal` solo se ejecutan en rutas secundarias; Home pertenece exclusivamente al director Live File. `.theme-swap` coordina fotos. Reduced motion resuelve final.
+- Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Preserva `wip → observing → spotlight-entering → editing → commenting? → settling → settled`.
+- Una escena solo inicia con target dominante, visibilidad suficiente, scroll estable y `readMs` completo. No añadas auto-scroll ni cola.
+- Spotlight es la única captura temporal de scroll autorizada. Debe conservar Stop, Escape/PageDown/Space, segunda rueda/touch, reduced motion, no focus trap y restauración exacta.
+- Cada sección debe tener UI final fuerte y WIP inequívocamente peor. No uses un presenter genérico para fingir una edición.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - Testimonials permanece en estado preview hasta recibir fuentes reales. No conviertas un slot a `verified` sin cita aprobada, atribución, permiso de publicación y validación de Javier.
@@ -42,10 +41,10 @@ Lee, en este orden:
 - GSAP es el único motor de coreografía; CSS puede resolver hover, focus y microestados locales.
 - Añade comentarios para fallbacks, privacidad o contratos entre archivos, no para narrar JSX evidente.
 - Conserva navegación semántica, roving focus, skip link y estados de teclado/touch.
-- No añadas smooth scroll, scroll-jacking global, canvas, WebGL o motion imprescindible para entender contenido. La única excepción prevista es el Spotlight acotado de Plan 11, con Stop, Escape, reduced motion y restauración exacta del scroll.
+- No añadas smooth scroll, scroll-jacking global, canvas, WebGL o motion imprescindible para entender contenido. Spotlight es la única excepción acotada.
 
 ## Validación
 
 Ejecuta `npm run lint` y `npm test`. Para cambios interactivos ejecuta también `npm run test:e2e`. La matriz cubre 1440×900, 1280×800, 768×1024 y 390×844, Dark/Light, axe, memoria, no-JS, reduced motion y fallos de imagen.
 
-Los cambios desplegables se publican como una nueva versión privada del mismo proyecto Sites mediante las skills de Sites. El contrato vigente de QA y release está en los documentos 08–09.
+Los cambios desplegables se publican como una nueva versión privada del mismo proyecto Sites mediante las skills de Sites. El contrato vigente de QA está en Implementation/Audit 11.

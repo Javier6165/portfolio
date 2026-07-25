@@ -24,9 +24,11 @@ export function MemoryConsent() {
 export function ExperienceSettings() {
   const {
     consent,
+    autoFollow,
     forgetExperience,
     reducedMotion,
     replayIntro,
+    replayLiveEdits,
     setManualReducedMotion,
   } = useNarrative();
 
@@ -42,7 +44,12 @@ export function ExperienceSettings() {
           <span>Motion</span>
           <strong>{reducedMotion ? "Reduced" : "Full"}</strong>
         </div>
+        <div>
+          <span>Auto-follow</span>
+          <strong>{autoFollow ? "On" : "Off"}</strong>
+        </div>
         <button type="button" onClick={replayIntro}>Replay intro</button>
+        <button type="button" onClick={replayLiveEdits}>Replay live edits</button>
         <button type="button" onClick={() => setManualReducedMotion(!reducedMotion)}>
           {reducedMotion ? "Use device motion setting" : "Reduce motion"}
         </button>

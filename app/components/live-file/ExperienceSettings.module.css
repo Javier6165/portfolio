@@ -100,6 +100,10 @@
   border-bottom: 1px solid var(--line);
 }
 
+.panel > div:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
 .panel span {
   color: var(--muted);
   text-transform: uppercase;

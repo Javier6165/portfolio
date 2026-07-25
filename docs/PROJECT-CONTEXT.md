@@ -22,21 +22,21 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La Home vigente recorre impacto → cuatro flashes profesionales → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → testimonials provisionales → contacto. Live File reaparece con un verbo y una traza persistente en cada sección; el contenido profesional nunca depende de él. La trayectoria detallada vive en About y Work empieza antes de 1,8 viewports desktop.
+La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Spotlight espera a que el target esté visible y el usuario haya tenido tiempo de leer, captura atención durante menos de cinco segundos y devuelve el scroll exacto. El contenido profesional nunca depende de esa capa.
 
 ## Por qué no es una template
 
 - Intro editor → producto terminada con timeline transform-only y un cursor singleton MotionPath.
 - Retrato integrado en el hero y vinculado a las variantes fotográficas Dark/Light.
 - Light conserva exactamente la tipografía, geometría, composición y motion de Dark; solo cambian paleta y fotografías.
-- Trayectoria y AI Practice son interacciones accesibles, no ilustraciones vacías.
+- Product practice y AI son workflows accesibles con outputs y comportamiento real, no ilustraciones vacías.
 - Northstar demuestra propagación de tokens en tres contextos.
 - El framework de evidencia admite capturas, comparativas, vídeo, Figma y demos click-to-load.
-- Testimonials usa tres perspectivas tipadas y un beat `Verify`; no atribuye citas o identidades mientras no existan fuentes y permisos.
+- References usa un ledger tipado y un beat `Verify`; no atribuye citas o identidades mientras no existan fuentes y permisos.
 - La experiencia recuerda visitas solo con consentimiento y se degrada a una web estática completa.
 
 ## Estado y límites
 
-La arquitectura, el hero y la primera partitura transversal están implementados. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` define el guion publicado y `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` el código vigente. La revisión creativa posterior concluye que, además de estados demasiado terminados, timing corto y fast-scroll, la UI base necesita mayor jerarquía, claridad y dirección de arte. `PLAN-11-LIVE-WIP-SPOTLIGHT.md` propone primero rediseñar la Home final y después construir sus contrapartes WIP y Follow mode. El orden propuesto es Hero → Snapshot → Work → Product practice → AI-native workflow → About → Testimonials → Playground → Contact. Aún no está implementado. El trabajo con contenido real de `PLAN-09-NEXT-IMPROVEMENTS.md` continúa después; los case studies interiores quedan fuera de Plan 11.
+Plan 11 está implementado y prevalece para Home. `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md` documenta arquitectura y timings; `AUDIT-11-LIVE-WIP-SPOTLIGHT.md` registra QA, fallos corregidos y riesgos restantes. Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial. El siguiente salto es contenido real mediante `CaseBlock`.
 
 Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; testimonials, contacto, LinkedIn y CV son temporales. Los siguientes inputs son un único caso real representativo y recomendaciones aprobadas con atribución y permiso.

@@ -22,8 +22,9 @@ export function SiteHeader() {
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <Link href="/#work">Work</Link>
-          <Link href="/#approach">Approach</Link>
-          <Link href="/#testimonials">Testimonials</Link>
+          <Link href="/#approach">Practice</Link>
+          <Link href="/#ai-practice">AI workflow</Link>
+          <Link href="/#testimonials">References</Link>
           <Link href="/about">About</Link>
           <Link href="/playground">Playground</Link>
         </nav>
@@ -42,25 +43,28 @@ export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactN
       <LiveScene
         id="footer-handoff"
         verb="handoff"
-        label="Ready / Your turn"
+        label="Preview ready / Your turn"
         targetSelector=".footer-contact"
-        durationMs={1350}
-        dwellMs={450}
+        tool="file-status"
+        action="Preparing the handoff"
+        properties={["Editing → Ready for review", "Private preview", "Your turn"]}
+        readMs={1000}
+        spotlightMs={2800}
         className="footer-live-scene"
       >
         <div className="shell footer-grid">
           <div className="footer-heading">
-            <p className="kicker">Have a hard system to untangle?</p>
-            <p>Let’s make the next move obvious.</p>
+            <p className="kicker">08 / Contact · Private preview</p>
+            <p>The file is ready for review.</p>
           </div>
           <div className="footer-contact">
-            <p>Contact details arrive in the final content pass.</p>
+            <p>The real work starts with a hard product problem. Contact details arrive with the final content pass.</p>
             <Link className="text-link" href="/about#contact-note">
-              About Javier <ArrowIcon />
+              Continue with Javier <ArrowIcon />
             </Link>
           </div>
           <div className="footer-meta">
-            <p>Marbella, Spain · Open to meaningful conversations</p>
+            <p>Marbella, Spain · Preview ready · Contact pending</p>
             <p>© {new Date().getFullYear()} Javier Ortiz</p>
             {experienceSettings}
           </div>

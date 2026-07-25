@@ -49,6 +49,17 @@ for (const target of targets) {
       top: Math.round(section.getBoundingClientRect().top + window.scrollY),
       height: Math.round(section.getBoundingClientRect().height),
     }));
+    const overflowers = [...document.querySelectorAll("body *")]
+      .map((element) => ({ element, bounds: element.getBoundingClientRect() }))
+      .filter(({ bounds }) => bounds.right > document.documentElement.clientWidth + 1 || bounds.left < -1)
+      .slice(0, 12)
+      .map(({ element, bounds }) => ({
+        tag: element.tagName.toLowerCase(),
+        className: typeof element.className === "string" ? element.className : "",
+        left: Math.round(bounds.left),
+        right: Math.round(bounds.right),
+        width: Math.round(bounds.width),
+      }));
     return {
       ...window.__portfolioAudit,
       encodedBytes: Math.round((navigation?.encodedBodySize || 0) + sum(resources)),
@@ -57,6 +68,7 @@ for (const target of targets) {
       imageBytes: sum(resources.filter((entry) => entry.initiatorType === "img" || /\.(avif|webp|jpe?g)(\?|$)/.test(entry.name))),
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth,
+      overflowers,
       sections,
     };
   });

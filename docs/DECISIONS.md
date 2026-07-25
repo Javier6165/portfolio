@@ -1,71 +1,71 @@
 # Decisiones vigentes
 
-Este documento resume lo que un colaborador necesita si recibe solo el repositorio `site/`.
+Este documento resume lo que necesita un colaborador si recibe solo el repositorio `site/`.
 
 ## Producto y narrativa
 
-- Concepto: `Live File` con modos Dark / Light coordinados.
-- Primer viewport: Javier Ortiz, Senior Product Designer, retrato y `Explore`; la explicación empieza en la segunda sección.
+- Concepto: `Live File`. Javier hace una última pasada de criterio sobre un portfolio abierto; la web profesional sigue siendo el producto principal.
+- Primer viewport: Javier Ortiz, Senior Product Designer, retrato y `Explore`. La explicación empieza en Snapshot.
+- Posicionamiento: diseñador senior de sistemas y productos complejos, con responsabilidad reciente de lead y práctica explícita de AI + coded prototypes.
 - Idioma principal: inglés.
-- Posicionamiento: Senior Product Designer de sistemas complejos, con experiencia reciente de lead y práctica explícita de IA + prototipos con código.
-- Los casos actuales son ficticios y permanecen rotulados.
-- Testimonials es una preview explícita: no contiene citas ni identidades inventadas. Cada recomendación futura exige fuente, atribución, permiso y aprobación.
-- La narrativa del editor es decorativa: nunca comunica información necesaria.
-- El guion transversal distingue escenas, comentarios y microinteracciones: una escena breve por sección, máximo tres comentarios prominentes después del hero y reproducción automática limitada por tier de visita.
-- El contenido siempre llega antes que el efecto: cada escena se arma al entrar, respira `450–750 ms` y solo entonces corrige. Los comentarios de Profile, Work y AI aparecen después de esa corrección, nunca al aterrizar.
-- La orientación es chrome de producto, no una décima escena: cabecera fija, progreso global y capítulos laterales de Home en desktop. El scroll sigue siendo nativo.
+- Orden de Home: Hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact.
+- Los casos actuales, escenarios, outcomes y métricas son ficticios y permanecen rotulados.
+- References es una preview honesta. No contiene citas ni identidades inventadas; una recomendación futura exige fuente, atribución, permiso y aprobación.
+- La capa de editor es decorativa. Ningún dato profesional depende de ver una animación o comentario.
 
 ## Dirección visual
 
-- Grid editorial asimétrico de doce columnas en desktop; recomposición específica en móvil.
-- `Dark` (`system` internamente): Instrument Sans/Fragment Mono, grafito y señal lima, con retratos oscuros.
-- `Light` (`human` internamente): la misma tipografía, geometría, composición y motion; cambia a crema, azul/coral y retratos claros.
-- El cambio de tema solo coordina tokens de color, `color-scheme` y fotografías. No admite excepciones tipográficas o estructurales.
-- `Complexity Engine`, partículas, controles sobre la foto y `Living Fold` están retirados.
-- Live File usa chrome mínimo, frames, selecciones, handles, asset tray, cursor y comentarios propios; no copia Figma.
+- Grid editorial asimétrico de doce columnas y recomposición específica en móvil.
+- Hero, About y Contact usan stages editoriales; Work/Practice/AI usan evidence viewers; References usa un ledger; Playground un shelf.
+- Dark (`system`) y Light (`human`) comparten Instrument Sans + Fragment Mono, geometría, composición, radios y motion. Solo cambian tokens de color y fotografías.
+- `Complexity Engine`, partículas, `Living Fold`, Three y R3F están retirados.
+- UI de editor propia: frames, handles, property panels, asset treatment y comments. No copia la estructura ni el branding de Figma.
+
+## Live WIP y Spotlight
+
+- El resultado final se diseña antes que su desviación WIP. Cada escena debe mostrar una diferencia observable, no un highlight arbitrario.
+- Gramática: `Notice → Follow → Select → Adjust → Comment? → Resolve → Return`.
+- Estados: `settled → wip → observing → spotlight-entering → editing → commenting? → settling → settled`; reduced motion usa `reduced`.
+- El director elige solo el target dominante cuando está mayoritariamente visible, el centro cae en la zona segura y el scroll lleva estable `220–280 ms`.
+- Cada escena espera `1–1,7 s` de lectura y Spotlight dura `2,8–4,9 s`.
+- No hay auto-scroll ni cola. Las secciones atravesadas con fast-scroll conservan su oportunidad para una visita posterior.
+- Durante Spotlight se bloquea únicamente el scroll de esa captura y se restaura la posición exacta. Stop, Escape, PageDown, Space, touch, pestaña oculta o segunda rueda cancelan.
+- No existe focus trap. El cursor visitante nunca se sustituye; el cursor Javier solo aparece con pointer fino.
+- Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
+- Auto-follow se puede detener y reproducir desde Experience settings. Antes del consentimiento solo vive en sessionStorage.
 
 ## Tecnología
 
-- Next.js 16 + React 19 sobre vinext/Sites.
-- CSS nativo + CSS Modules; GSAP Timeline/MotionPath/ScrollTrigger como único motor de coreografía. La entrega del hero es transform-only; Flip ya no participa en esa transición.
+- Next.js 16 + React 19 sobre vinext/Sites y TypeScript estricto.
+- CSS nativo + CSS Modules; GSAP Timeline/MotionPath como motor de Home.
+- `MotionController` no ejecuta reveals genéricos en Home. ScrollTrigger se importa dinámicamente únicamente en rutas secundarias con `.js-reveal`.
 - Sin Three.js, R3F, WebGL, Lenis, Motion, XState, React Flow o Liveblocks.
-- `NarrativeProvider` controla memoria, escenas vistas y motion manual; `LiveSceneDirector` controla exclusión y timing de escenas.
-- `CaseBlock` controla evidencia; iframes externos solo tras click.
+- `NarrativeProvider` controla consentimiento, visits, motion, Auto-follow y Replay. `LiveSceneDirector` controla registro, exclusión, timing, scroll lock y cursor.
+- `CaseBlock` controla evidencia; Figma y prototipos externos solo cargan tras click.
 - Sin base de datos, autenticación, analytics o persistencia remota.
 
 ## Accesibilidad y privacidad
 
-- Hero final semántico; simulación `aria-hidden`.
-- Skip real, foco visible, roving tabs, reflow a 320 px y scroll nativo.
-- Reduced motion resuelve directamente al resultado final.
-- `sessionStorage` puede evitar repetir la intro en la pestaña.
-- `localStorage` de narrativa solo después de `Allow`, esquema 1, expiración lógica de 90 días.
+- Contenido final semántico en servidor; duplicados WIP/editor fuera del árbol accesible.
+- Skip real, skip link, foco visible, roving tabs, reflow móvil y scroll nativo.
+- Reduced motion y no-JS resuelven directamente el resultado final sin Spotlight.
+- `sessionStorage` evita repetir la intro y puede guardar Auto-follow en la pestaña.
+- `localStorage` de narrativa solo tras `Allow`, esquema 1 y expiración lógica de 90 días.
 - Sin cookies ni identificadores personales.
 
 ## Hosting
 
 - Preview privado en el proyecto Sites existente de `.openai/hosting.json`.
-- Netlify es una opción de lanzamiento, no una migración aprobada.
-- Nunca crear un segundo proyecto, habilitar indexación o conectar dominio por iniciativa propia.
+- Netlify es opción de lanzamiento, no migración aprobada.
+- Nunca crear otro proyecto, habilitar indexación o conectar un dominio sin autorización explícita.
 
-### Por qué se descartaron las direcciones anteriores
+## Contrato de entrega
 
-Los primeros recursos de wow resolvían impacto local, pero no explicaban el resto de la experiencia. `Living Fold` añadía un chunk cliente cercano a 866 KB y seguía siendo un hero aislado. Live File se eligió porque convierte el refinamiento en una gramática transversal y puede resolverse con DOM/CSS/GSAP, manteniendo semántica, responsive y fallback sin JavaScript. El razonamiento durable está aquí; las auditorías intermedias se retiraron del árbol activo y permanecen en Git.
+- Gates: `npm run lint`, `npm test` y `npm run test:e2e` para cambios interactivos.
+- Matriz: 1440×900, 1280×800, 768×1024 y 390×844; Dark/Light; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
+- Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
+- Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial.
 
-Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` y `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` para el contrato vigente.
+## Siguiente evolución
 
-## Siguiente evolución propuesta — todavía no implementada
-
-`PLAN-11-LIVE-WIP-SPOTLIGHT.md` empieza por rediseñar la landing final: hero con stage editorial, Snapshot legible, Product practice como workflow real, AI como operating model con tools/outputs/guardrails, Testimonials como reference ledger y Playground después de la prueba profesional. Solo después crea estados WIP/final distintos, herramientas contextuales, comentarios y Follow mode. Spotlight solo podrá activarse con el target mayoritariamente visible y scroll estable; dura menos de cinco segundos, ofrece Stop/Escape, se interrumpe con una segunda intención de scroll y desaparece en reduced motion. Hasta completar y validar sus fases, los ADR y documentos 07–08 continúan describiendo la versión publicada.
-
-## Partitura transversal aprobada
-
-- Tesis: Javier deja el archivo abierto y hace una última pasada de criterio durante el recorrido.
-- Gramática: `Frame → Select → Change → Settle → Hand off`.
-- Un solo cursor global en desktop; touch halo y handles en móvil.
-- Verbos de Home: `Compose`, `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe`, `Verify` y `Hand off`.
-- Profile, Work y AI son los únicos comentarios prominentes posteriores al hero.
-- Work y AI son los picos principales; el resto mantiene continuidad con beats silenciosos.
-- ScrollTrigger sustituye al observer anterior con triggers deterministas, sin scrub, pinning, snapping ni scroll-jacking.
-- `PageProgress` puede leer scroll con listener pasivo + `requestAnimationFrame`; no es un segundo motor de animación ni controla la posición del visitante.
-- El contrato completo vive en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` y su implementación en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
+El siguiente salto no es añadir más efectos. Es reemplazar un case ficticio por evidencia real, recibir recomendaciones verificadas o retirar References del candidato público, añadir contacto/CV/LinkedIn y ejecutar QA cross-browser + CWV sobre media final.

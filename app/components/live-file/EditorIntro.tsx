@@ -57,6 +57,11 @@ export function EditorIntro() {
     setExpanded(true);
     setPhase(nextPhase);
     document.body.dataset.liveFile = "complete";
+    // A skip can happen before the reveal timeline has touched either asset.
+    // Resolve the semantic hero explicitly instead of leaving an early
+    // timeline value (dimmed title or clipped portrait) on the final frame.
+    gsap.set(finalWordRef.current, { opacity: 1, clipPath: "inset(0 0% 0 0)", clearProps: "transform" });
+    gsap.set(portraitRef.current, { "--portrait-reveal": "0%", x: 0, y: 0 });
     gsap.set(
       [cursorRef.current, assetRef.current, commentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
       { clearProps: "all" },
@@ -193,35 +198,35 @@ export function EditorIntro() {
     if (mode === "first") {
       timeline
         .to(cursor, {
-          duration: 0.45,
+          duration: 0.7,
           motionPath: { path: [cursorStart, { x: titlePoint.x + 34, y: titlePoint.y - 30 }, titlePoint], curviness: 1.2 },
-        }, 0.16)
-        .call(() => setPhase("typing"), [], 0.4)
-        .to(titleSelection, { opacity: 1, duration: 0.16 }, 0.42)
-        .to(finalWord, { opacity: 1, duration: 0.46, ease: "power2.out" }, 0.52)
-        .to(titleSelection, { opacity: 0.28, duration: 0.18 }, 0.96)
+        }, 0.28)
+        .call(() => setPhase("typing"), [], 0.72)
+        .to(titleSelection, { opacity: 1, duration: 0.22 }, 0.76)
+        .to(finalWord, { opacity: 1, duration: 0.68, ease: "power2.out" }, 0.9)
+        .to(titleSelection, { opacity: 0.28, duration: 0.25 }, 1.54)
         .to(cursor, {
-          duration: 0.46,
+          duration: 0.7,
           motionPath: { path: [titlePoint, { x: assetPoint.x + 65, y: titlePoint.y + 30 }, assetPoint], curviness: 1.1 },
-        }, 1.02)
-        .call(() => setPhase("placing-portrait"), [], 1.28)
-        .to(asset, { scale: 0.94, duration: 0.12 }, 1.4)
+        }, 1.62)
+        .call(() => setPhase("placing-portrait"), [], 2.08)
+        .to(asset, { scale: 0.94, duration: 0.18 }, 2.18)
         .to(cursor, {
-          duration: 0.66,
+          duration: 0.9,
           motionPath: { path: [assetPoint, { x: portraitPoint.x - 52, y: assetPoint.y - 68 }, portraitPoint], curviness: 1.25 },
-        }, 1.45)
+        }, 2.36)
         .to(asset, {
           x: portraitPoint.x - assetPoint.x,
           y: portraitPoint.y - assetPoint.y,
-          duration: 0.66,
-        }, 1.45)
-        .to(portrait, { "--portrait-reveal": "0%", duration: 0.5, ease: "power3.out" }, 1.75)
-        .to(asset, { opacity: 0, scale: 0.82, duration: 0.24 }, 1.94)
-        .to(portraitSelection, { opacity: 1, duration: 0.18 }, 2.1)
-        .call(() => setPhase("refining"), [], 2.22)
-        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.26, ease: "power2.inOut" }, 2.3)
-        .to(comment, { opacity: 1, y: -8, duration: 0.24, ease: "power3.out" }, 2.48)
-        .add(expandFrame, 2.82);
+          duration: 0.9,
+        }, 2.36)
+        .to(portrait, { "--portrait-reveal": "0%", duration: 0.72, ease: "power3.out" }, 2.78)
+        .to(asset, { opacity: 0, scale: 0.82, duration: 0.32 }, 3.22)
+        .to(portraitSelection, { opacity: 1, duration: 0.24 }, 3.42)
+        .call(() => setPhase("refining"), [], 3.58)
+        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.42, ease: "power2.inOut" }, 3.7)
+        .to(comment, { opacity: 1, y: -8, duration: 0.3, ease: "power3.out" }, 4.05)
+        .add(expandFrame, 5.18);
     } else {
       gsap.set(portraitSelection, { opacity: 1 });
       timeline
@@ -236,7 +241,7 @@ export function EditorIntro() {
     if (mode === "first") {
       const theme = document.documentElement.dataset.theme === "human" ? "human" : "system";
       const activeImage = portrait.querySelector<HTMLImageElement>(`.portrait--${theme}`);
-      readinessTimer = window.setTimeout(startTimeline, 350);
+      readinessTimer = window.setTimeout(startTimeline, 550);
       if (activeImage) {
         activeImage.addEventListener("error", failPortrait, { once: true });
         activeImage.decode().then(startTimeline).catch(failPortrait);
@@ -294,7 +299,11 @@ export function EditorIntro() {
           <div className={styles.zoom}>82%</div>
         </div>
 
-        <button className={styles.skip} type="button" onClick={() => skip(true)}>
+        <button
+          className={styles.skip}
+          type="button"
+          onClick={(event) => skip(event.detail === 0)}
+        >
           Skip intro
         </button>
 
@@ -309,6 +318,10 @@ export function EditorIntro() {
               {" "}
               <span ref={finalWordRef} className={styles.finalWord}>Designer</span>
             </h1>
+          </div>
+
+          <div className={styles.frameStatus} aria-hidden="true">
+            <span>LIVE FILE / READY</span><span>36.5102° N · 4.8864° W</span>
           </div>
 
           <figure
@@ -383,6 +396,9 @@ export function EditorIntro() {
         </div>
         <div ref={portraitSelectionRef} className={`${styles.selection} ${styles.portraitSelection}`} aria-hidden="true">
           <i /><i /><i /><i /><span>IMAGE / COVER</span>
+        </div>
+        <div className={styles.propertyStrip} aria-hidden="true">
+          <span>Typography</span><b>Weight 520</b><b>Leading 84%</b><b>2 lines</b>
         </div>
 
         <div ref={cursorRef} className={styles.cursor} aria-hidden="true">

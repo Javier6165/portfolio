@@ -20,16 +20,16 @@ test("server-renders the complete portfolio home", async () => {
 
   const html = await response.text();
   assert.match(html, /Javier Ortiz/);
-  assert.match(html, /5\+ years at Gaming Innovation Group/);
+  assert.match(html, /5\+ years at GiG/);
   assert.match(html, /Senior Product Designer/);
-  assert.match(html, /Complex products\. Clear decisions\. Working proof\./);
-  assert.match(html, /AI-assisted design · coded prototypes/);
-  assert.match(html, /Rule engines · CMS · backoffice · design systems/);
-  assert.match(html, /Case-study previews/);
-  assert.match(html, /AI-assisted product design/);
-  assert.match(html, /From ambiguity to working behaviour/);
-  assert.match(html, /Testimonials — preview/);
-  assert.match(html, /no quotes or identities are fabricated/i);
+  assert.match(html, /I turn complex product logic into decisions people can see, test and trust/);
+  assert.match(html, /AI \+ coded prototypes/);
+  assert.match(html, /Rules · CMS · Backoffice/);
+  assert.match(html, /Product systems made inspectable/);
+  assert.match(html, /AI-native product practice/);
+  assert.match(html, /I make the system visible before I make the interface/);
+  assert.match(html, /References — preview/);
+  assert.match(html, /no quote or identity is simulated/i);
   assert.match(html, /Placeholder · source required/);
   assert.match(html, /fictitious/i);
   assert.match(html, /href="\/work\/atlas"/);

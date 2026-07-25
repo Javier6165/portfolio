@@ -1,112 +1,69 @@
-/* Theme-swapped portraits are pre-compressed local assets; native images keep both variants immediately available. */
 import Link from "next/link";
 import { AIPractice } from "./components/AIPractice";
 import { EditorIntro } from "./components/live-file/EditorIntro";
 import { MemoryConsent } from "./components/live-file/ExperienceSettings";
 import { LiveScene } from "./components/live-file/LiveScene";
 import { PlaygroundStudy } from "./components/PlaygroundStudy";
+import { ProductPractice } from "./components/ProductPractice";
 import { ProjectCard } from "./components/ProjectCard";
 import { ArrowIcon } from "./components/SiteShell";
 import { Testimonials } from "./components/Testimonials";
 import { projects } from "./data";
+import styles from "./HomePage.module.css";
 
-function Portrait({ context = "profile" }: { context?: "profile" | "about" }) {
-  const profile = context === "profile";
+function AboutPortrait() {
   return (
-    <figure
-      className={`${profile ? "profile-intro__portrait" : "about-preview__portrait"} theme-swap`}
-      role="img"
-      aria-label="Portrait of Javier Ortiz; the photograph changes with the Human or System theme."
-    >
-      {(["system", "human"] as const).map((theme) => {
-        const asset = profile ? `hero-${theme}` : `about-${theme}`;
-        return (
-          <picture key={theme}>
-            <source type="image/avif" srcSet={`/images/portraits/${asset}-960.avif 960w, /images/portraits/${asset}-1440.avif 1440w`} sizes="(max-width: 720px) 100vw, 42vw" />
-            <source type="image/webp" srcSet={`/images/portraits/${asset}-960.webp 960w, /images/portraits/${asset}-1440.webp 1440w`} sizes="(max-width: 720px) 100vw, 42vw" />
-            <img
-              className={`portrait portrait--${theme}`}
-              src={`/images/portraits/${asset}.jpg`}
-              alt=""
-              aria-hidden="true"
-              width={theme === "system" ? (profile ? 1800 : 1439) : (profile ? 2200 : 1314)}
-              height={theme === "human" && profile ? 1753 : profile ? 1799 : 1800}
-              loading="lazy"
-            />
-          </picture>
-        );
-      })}
-      <figcaption>
-        <span className="mode-caption mode-caption--system">SYSTEM / Dark</span>
-        <span className="mode-caption mode-caption--human">HUMAN / Light</span>
-      </figcaption>
+    <figure className={`${styles.aboutPortrait} theme-swap`} role="img" aria-label="Portrait of Javier Ortiz; the photograph changes with the selected theme.">
+      {(["system", "human"] as const).map((theme) => (
+        <picture key={theme}>
+          <source type="image/avif" srcSet={`/images/portraits/about-${theme}-960.avif 960w, /images/portraits/about-${theme}-1440.avif 1440w`} sizes="(max-width: 720px) 100vw, 58vw" />
+          <source type="image/webp" srcSet={`/images/portraits/about-${theme}-960.webp 960w, /images/portraits/about-${theme}-1440.webp 1440w`} sizes="(max-width: 720px) 100vw, 58vw" />
+          <img className={`portrait portrait--${theme}`} src={`/images/portraits/about-${theme}.jpg`} alt="" aria-hidden="true" width={theme === "system" ? 1439 : 1314} height="1800" loading="lazy" />
+        </picture>
+      ))}
+      <figcaption aria-hidden="true"><span>PORTRAIT / 02</span><b>Y 48%</b></figcaption>
     </figure>
   );
 }
-
-const expertise = [
-  {
-    index: "01",
-    label: "Backoffice & product logic",
-    title: "I design where rules, permissions and edge cases collide.",
-    body: "Experience across a real-time rule engine, proprietary CMS, data products and operational tools where consequence matters as much as configuration.",
-    visual: "logic",
-  },
-  {
-    index: "02",
-    label: "Systems & scale",
-    title: "I turn repeated decisions into shared product language.",
-    body: "A backoffice design system, reusable themes and internal knowledge tools that help product teams move together without flattening every context.",
-    visual: "states",
-  },
-  {
-    index: "03",
-    label: "AI + code",
-    title: "I prototype behaviour—not just another polished screen.",
-    body: "AI-assisted framing, workshops and vibe-coded prototypes used to test the risky interaction earlier and bring design closer to the working product.",
-    visual: "build",
-  },
-];
 
 export default function Home() {
   return (
     <>
       <EditorIntro />
 
-      <section className="experience section shell" id="experience" aria-labelledby="experience-title">
+      <section className={`section shell ${styles.snapshot}`} id="experience" aria-labelledby="snapshot-title">
         <LiveScene
-          id="profile-clarify"
+          id="snapshot-clarify"
           verb="clarify"
           label="Profile / Refined"
-          targetSelector=".profile-intro__facts"
-          durationMs={1750}
-          dwellMs={750}
+          targetSelector={`.${styles.snapshotFacts}`}
+          tool="layout"
+          action="Clarifying the signal"
+          properties={["Split into 4", "Text 10 → 18", "Gap 0 → 24"]}
+          readMs={1400}
+          spotlightMs={4400}
           comment="Keep the signal. Lose the résumé."
-          className="profile-live-scene"
+          className={styles.snapshotScene}
         >
-          <div className="profile-intro profile-intro--live-file">
-            <header className="profile-intro__headline js-reveal">
-              <p className="kicker">01 / In four lines</p>
-              <h2 id="experience-title">Complex products. Clear decisions. Working proof.</h2>
-            </header>
-            <div className="profile-intro__copy js-reveal">
-              <ul className="profile-intro__facts" aria-label="Javier Ortiz at a glance">
-                <li><span>Level</span><strong>Senior Product Designer · recent Lead responsibility</strong></li>
-                <li><span>Experience</span><strong>5+ years at Gaming Innovation Group · Marbella / remote</strong></li>
-                <li><span>Product terrain</span><strong>Rule engines · CMS · backoffice · design systems</strong></li>
-                <li><span>Working edge</span><strong>AI-assisted design · coded prototypes</strong></li>
-              </ul>
-            </div>
+          <div className={styles.snapshotLead}>
+            <p className="kicker">01 / Snapshot</p>
+            <h2 id="snapshot-title">I turn complex product logic into decisions people can see, test and trust.</h2>
           </div>
+          <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance">
+            <li><span>Level</span><strong>Senior Product Designer</strong><small>Recent Lead responsibility</small></li>
+            <li><span>Experience</span><strong>5+ years at GiG</strong><small>Marbella · Remote</small></li>
+            <li><span>Product terrain</span><strong>Rules · CMS · Backoffice</strong><small>Systems and operational tools</small></li>
+            <li><span>Working edge</span><strong>AI + coded prototypes</strong><small>From screen to behaviour</small></li>
+          </ul>
         </LiveScene>
         <MemoryConsent />
       </section>
 
-      <section className="selected-work section shell" id="work" aria-labelledby="work-title">
-        <header className="section-heading js-reveal">
-          <p className="kicker">02 / Case-study previews</p>
-          <h2 id="work-title">Systems I make legible.</h2>
-          <p>These concepts preview how real rule engine, design system and AI work will be told. Names, organisations, metrics and outcomes are fictitious.</p>
+      <section className={`section shell ${styles.work}`} id="work" aria-labelledby="work-title">
+        <header className={styles.sectionHeading}>
+          <p className="kicker">02 / Selected work</p>
+          <h2 id="work-title">Product systems made inspectable.</h2>
+          <p>Concept previews for how real rule engine, design system and AI case studies will be told. Names, metrics and outcomes remain fictitious.</p>
         </header>
         <div className="project-list">
           {projects.map((project, index) => index === 0 ? (
@@ -115,11 +72,14 @@ export default function Home() {
               verb="frame"
               label="Case 01 / Live"
               targetSelector=".project-card__media"
-              durationMs={2300}
-              dwellMs={650}
+              tool="asset"
+              action="Placing evidence"
+              properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
+              readMs={1600}
+              spotlightMs={4800}
               autoVisitTier={2}
               comment="Show the decision, not the decoration."
-              className="work-live-scene"
+              className={styles.workScene}
               key={project.slug}
             >
               <ProjectCard project={project} />
@@ -128,99 +88,107 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="expertise section shell" id="approach" aria-labelledby="expertise-title">
-        <header className="section-heading section-heading--split js-reveal">
-          <p className="kicker">03 / What I actually do</p>
-          <h2 id="expertise-title">Deep in the system. Close to the interface.</h2>
-          <p>I work best where dense product logic, interaction quality and the way teams build need to become one coherent experience.</p>
+      <section className={`section shell ${styles.practice}`} id="approach" aria-labelledby="practice-title">
+        <header className={styles.sectionHeading}>
+          <p className="kicker">03 / Product practice</p>
+          <h2 id="practice-title">I make the system visible before I make the interface.</h2>
+          <p>I turn rules, actors and edge cases into a shared model that product, design and engineering can question—and then prove through behaviour.</p>
         </header>
         <LiveScene
-          id="expertise-propagate"
-          verb="propagate"
-          label="1 change → 3 surfaces"
-          targetSelector=".expertise-live-token"
-          durationMs={1650}
-          dwellMs={650}
-          className="expertise-live-scene"
+          id="practice-connect"
+          verb="connect"
+          label="Practice / Connected"
+          targetSelector={`.${styles.practiceStage}`}
+          tool="connections"
+          action="Connecting decisions to outputs"
+          properties={["3 triggers", "3 destinations", "On click"]}
+          readMs={1500}
+          spotlightMs={4600}
+          comment="Show the path, not a list of skills."
+          className={styles.practiceScene}
         >
-          <div className="expertise-live-token" aria-hidden="true"><span>Decision model</span><b>Local</b><i /><strong>Shared</strong></div>
-          <div className="expertise-grid">
-            {expertise.map((item) => (
-              <article className={`expertise-card expertise-card--${item.visual} js-reveal`} key={item.index}>
-                <div className="expertise-card__meta"><span>{item.index}</span><span>{item.label}</span></div>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-                <div className="expertise-artifact" aria-hidden="true"><i /><i /><i /><b /><span /></div>
-              </article>
-            ))}
+          <div className={styles.practiceStage}><ProductPractice /></div>
+        </LiveScene>
+      </section>
+
+      <section className={`section ${styles.aiSection}`} id="ai-practice" aria-labelledby="ai-title">
+        <div className={`shell ${styles.aiInner}`}>
+          <header className={styles.aiHeading}>
+            <p className="kicker">04 / AI-native product practice</p>
+            <h2 id="ai-title">How I use AI to frame, prototype and validate product decisions.</h2>
+            <p>AI shortens the distance between a question and useful evidence. Product judgement, privacy and final quality remain accountable human work.</p>
+          </header>
+          <LiveScene
+            id="ai-operationalise"
+            verb="operationalise"
+            label="AI workflow / Live"
+            targetSelector={`.${styles.aiStage}`}
+            tool="workflow"
+            action="Mapping tools to outcomes"
+            properties={["Frame → Validate", "Output linked", "Human check · On"]}
+            readMs={1700}
+            spotlightMs={4900}
+            autoVisitTier={2}
+            comment="Tools change. The operating model matters."
+            className={styles.aiScene}
+          >
+            <div className={styles.aiStage}><AIPractice /></div>
+          </LiveScene>
+        </div>
+      </section>
+
+      <section className={`section shell ${styles.about}`} id="about-preview" aria-labelledby="about-title">
+        <LiveScene
+          id="about-reframe"
+          verb="reframe"
+          label="Portrait + story / Approved"
+          targetSelector={`.${styles.aboutPortrait}`}
+          tool="crop"
+          action="Reframing the story"
+          properties={["Fill", "Zoom 112%", "Y 31 → 48"]}
+          readMs={1300}
+          spotlightMs={3700}
+          className={styles.aboutScene}
+        >
+          <div className={styles.aboutSpread}>
+            <AboutPortrait />
+            <div className={styles.aboutCopy}>
+              <p className="kicker">05 / About</p>
+              <h2 id="about-title">Close enough to lead the system. Hands-on enough to fix the detail.</h2>
+              <p>I’m a Senior Product Designer based in Marbella. My recent lead experience expanded the frame—from polishing an interaction to helping a team hold quality, context and momentum together.</p>
+              <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
+              <span className={styles.aboutDraft} aria-hidden="true">Senior · 5+ years · Rules · CMS · Backoffice · AI · Marbella · Recent Lead</span>
+            </div>
           </div>
         </LiveScene>
       </section>
 
-      <section className="ai-practice section shell" id="ai-practice" aria-labelledby="ai-title">
-        <div className="ai-practice__copy js-reveal">
-          <p className="kicker">04 / AI-assisted product design</p>
-          <h2 id="ai-title">From ambiguity to working behaviour, faster.</h2>
-          <p>I use AI to structure context, challenge assumptions, explore constrained options and build functional prototypes. It accelerates the feedback loop; product judgement and accountability stay human.</p>
-          <Link className="text-link" href="/playground">See experiments <ArrowIcon /></Link>
-        </div>
-        <LiveScene
-          id="ai-activate"
-          verb="activate"
-          label="Prototype / Live"
-          targetSelector=".ai-practice__panel"
-          durationMs={2700}
-          dwellMs={750}
-          autoVisitTier={2}
-          comment="Screens explain it. Behaviour proves it."
-          className="ai-practice__narrative"
-        >
-          <AIPractice />
-        </LiveScene>
-      </section>
+      <Testimonials />
 
-      <section className="playground-preview section shell" id="playground" aria-labelledby="playground-title">
+      <section className={`section shell ${styles.playground}`} id="playground" aria-labelledby="playground-title">
+        <header className={styles.playgroundHeading}>
+          <div><p className="kicker">07 / Experimental shelf</p><h2 id="playground-title">Small experiments. Serious curiosity.</h2></div>
+          <p>Motion studies and coded ideas used to explore a behaviour, not decorate a page.</p>
+        </header>
         <LiveScene
           id="playground-experiment"
           verb="experiment"
           label="Experiment / Played"
           targetSelector=".playground-playhead"
-          durationMs={1700}
-          dwellMs={600}
-          className="playground-live-scene"
+          tool="timeline"
+          action="Tuning the motion"
+          properties={["00:02", "Cubic out", "1×"]}
+          readMs={1200}
+          spotlightMs={4100}
+          className={styles.playgroundScene}
         >
-          <PlaygroundStudy />
+          <div className={styles.playgroundShelf}>
+            <PlaygroundStudy />
+            <div className={styles.playgroundMeta}><span>LAB / 001</span><strong>Kinetic type study</strong><p>Testing rhythm, hierarchy and handoff through a restrained typographic loop.</p><Link className="text-link" href="/playground">Open playground <ArrowIcon /></Link></div>
+            <div className={styles.futureSlot}><span>LAB / 002</span><strong>Next experiment</strong><p>Reserved for a real prototype.</p></div>
+          </div>
         </LiveScene>
-        <div className="playground-preview__copy js-reveal">
-          <p className="kicker">05 / Playground</p>
-          <h2 id="playground-title">The fastest way to understand an idea is to make it move.</h2>
-          <p>Prototypes, motion studies and small pieces of software—where visual curiosity becomes product evidence.</p>
-          <Link className="text-link" href="/playground">Enter the playground <ArrowIcon /></Link>
-        </div>
       </section>
-
-      <section className="about-preview section shell" id="about-preview" aria-labelledby="about-preview-title">
-        <LiveScene
-          id="about-reframe"
-          verb="reframe"
-          label="Crop / Approved"
-          targetSelector=".about-preview__portrait"
-          durationMs={1400}
-          dwellMs={600}
-          className="about-live-scene"
-        >
-          <Portrait context="about" />
-        </LiveScene>
-        <div className="about-preview__copy js-reveal">
-          <p className="kicker">06 / The person in the system</p>
-          <h2 id="about-preview-title">Hands-on by nature. Lead when the work needs it.</h2>
-          <p>I’m Javier, a Senior Product Designer based in Marbella. My path crosses product strategy, complex platforms, design systems, visual craft and AI-assisted ways of working.</p>
-          <p>I have recent lead experience, while staying close to the details where product quality is actually made.</p>
-          <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
-        </div>
-      </section>
-
-      <Testimonials />
     </>
   );
 }

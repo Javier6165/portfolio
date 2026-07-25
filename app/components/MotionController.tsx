@@ -2,62 +2,17 @@
 
 import { useEffect } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePathname } from "next/navigation";
 
 export function MotionController() {
+  const pathname = usePathname();
+
   useEffect(() => {
-    // Motion is progressive enhancement. Base CSS leaves every section visible,
-    // and this early return preserves that document for reduced-motion users.
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduceMotion.matches || document.documentElement.dataset.motion === "reduce") return;
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Selector hooks are documented in AGENTS.md. Keeping them semantic avoids
-    // coupling timelines to the page component tree.
-    const context = gsap.context(() => {
-      const heroReveals = gsap.utils.toArray<HTMLElement>(".js-hero-reveal");
-      if (heroReveals.length) {
-        gsap.fromTo(
-          heroReveals,
-          { y: 36, opacity: 0.25 },
-          { y: 0, opacity: 1, duration: 1.05, stagger: 0.09, ease: "power4.out", clearProps: "transform" },
-        );
-      }
-
-      gsap.utils.toArray<HTMLElement>(".js-reveal").forEach((element) => {
-        gsap.fromTo(
-          element,
-          { y: 24, opacity: 0.68 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.85,
-            ease: "power3.out",
-            clearProps: "transform",
-            scrollTrigger: { trigger: element, start: "top 88%", once: true },
-          },
-        );
-      });
-
-      const line = document.querySelector<HTMLElement>(".throughline__progress");
-      if (line) {
-        gsap.fromTo(
-          line,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".throughline",
-              start: "top 70%",
-              end: "bottom 70%",
-              scrub: 0.5,
-            },
-          },
-        );
-      }
-    });
+    let cancelled = false;
+    let context: gsap.Context | null = null;
 
     const onThemeChange = () => {
       gsap.fromTo(
@@ -74,15 +29,66 @@ export function MotionController() {
         );
       }
     };
+
     window.addEventListener("portfolio-theme-change", onThemeChange);
 
+    async function setupRouteMotion() {
+      // Home has a deliberate Live File score. A second set of generic reveal
+      // triggers would dim content before the authored WIP → edit transition.
+      if (pathname === "/") return;
+
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      context = gsap.context(() => {
+        const heroReveals = gsap.utils.toArray<HTMLElement>(".js-hero-reveal");
+        if (heroReveals.length) {
+          gsap.fromTo(
+            heroReveals,
+            { y: 36, opacity: 0.25 },
+            { y: 0, opacity: 1, duration: 1.05, stagger: 0.09, ease: "power4.out", clearProps: "transform" },
+          );
+        }
+
+        gsap.utils.toArray<HTMLElement>(".js-reveal").forEach((element) => {
+          gsap.fromTo(
+            element,
+            { y: 24, opacity: 0.68 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.85,
+              ease: "power3.out",
+              clearProps: "transform",
+              scrollTrigger: { trigger: element, start: "top 88%", once: true },
+            },
+          );
+        });
+
+        const line = document.querySelector<HTMLElement>(".throughline__progress");
+        if (line) {
+          gsap.fromTo(
+            line,
+            { scaleY: 0 },
+            {
+              scaleY: 1,
+              ease: "none",
+              scrollTrigger: { trigger: ".throughline", start: "top 70%", end: "bottom 70%", scrub: 0.5 },
+            },
+          );
+        }
+      });
+    }
+
+    void setupRouteMotion();
+
     return () => {
+      cancelled = true;
       window.removeEventListener("portfolio-theme-change", onThemeChange);
-      // Required for client navigation and development HMR: without revert(),
-      // ScrollTriggers and inline transforms would accumulate.
-      context.revert();
+      context?.revert();
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
