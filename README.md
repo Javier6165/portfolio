@@ -8,7 +8,8 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - A semantic hero with Javier Ortiz, Senior Product Designer, theme-linked portrait and `Explore`.
 - `System` and `Human` as two distinct visual identities, not a cosmetic dark/light toggle.
 - Three clearly labelled fictitious case studies.
-- A complete eight-act Home score: Compose, Clarify, Frame, Propagate, Activate, Experiment, Reframe and Hand off.
+- A complete nine-act Home score: Compose, Clarify, Frame, Propagate, Activate, Experiment, Reframe, Verify and Hand off.
+- An explicitly provisional testimonial preview: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
 - One global Javier cursor on desktop, a touch translation on mobile and persistent settled traces.
 - A consented returning-visitor memory with replay, forget and motion controls.
 - An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.
@@ -21,6 +22,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - Live File: `app/components/live-file/`
 - Case content/schema: `app/data.ts`
 - Case evidence renderer: `app/components/CaseEvidence.tsx`
+- Testimonial preview: `app/components/Testimonials.tsx` and `app/components/Testimonials.module.css`
 - Visual system: `app/globals.css` and co-located CSS Modules
 - Automated QA: `tests/rendered-html.test.mjs` and `tests/e2e/`
 - Local assets: `public/`

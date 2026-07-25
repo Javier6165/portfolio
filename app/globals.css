@@ -55,10 +55,10 @@
     --surface: #eee2d4;
     --surface-raised: #fff9ef;
     --ink: #182d51;
-    --muted: #6b665f;
+    --muted: #625c55;
     --line: rgba(24, 45, 81, 0.16);
     --line-strong: rgba(24, 45, 81, 0.36);
-    --signal: #db4d3f;
+    --signal: #a9342d;
     --signal-on-inverse: #ffab9b;
     --cold: #2455cf;
     --violet: #8f3f8c;
@@ -759,6 +759,15 @@
     background: var(--cold);
     color: #fff9ef;
     border-radius: 5rem 1rem 5rem 1rem;
+  }
+
+  [data-theme="human"] .ai-practice__copy .kicker,
+  [data-theme="human"] .ai-practice__copy > p:not(.kicker) {
+    color: #fff9ef;
+  }
+
+  [data-theme="human"] .ai-practice__steps button:not([aria-selected="true"]) {
+    color: #fff9ef;
   }
 
   .case-hero--v2 { min-height: max(48rem, 100svh); grid-template-rows: auto 1fr auto; padding-bottom: 2rem; }

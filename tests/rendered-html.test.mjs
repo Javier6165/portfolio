@@ -28,6 +28,9 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /Case-study previews/);
   assert.match(html, /AI-assisted product design/);
   assert.match(html, /From ambiguity to working behaviour/);
+  assert.match(html, /Testimonials — preview/);
+  assert.match(html, /no quotes or identities are fabricated/i);
+  assert.match(html, /Placeholder · source required/);
   assert.match(html, /fictitious/i);
   assert.match(html, /href="\/work\/atlas"/);
   assert.match(html, /javier-theme/);

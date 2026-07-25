@@ -9,6 +9,7 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - Idioma principal: inglés.
 - Posicionamiento: Senior Product Designer de sistemas complejos, con experiencia reciente de lead y práctica explícita de IA + prototipos con código.
 - Los casos actuales son ficticios y permanecen rotulados.
+- Testimonials es una preview explícita: no contiene citas ni identidades inventadas. Cada recomendación futura exige fuente, atribución, permiso y aprobación.
 - La narrativa del editor es decorativa: nunca comunica información necesaria.
 - El guion transversal distingue escenas, comentarios y microinteracciones: una escena breve por sección, máximo tres comentarios prominentes después del hero y reproducción automática limitada por tier de visita.
 - El contenido siempre llega antes que el efecto: cada escena se arma al entrar, respira `450–750 ms` y solo entonces corrige. Los comentarios de Profile, Work y AI aparecen después de esa corrección, nunca al aterrizar.
@@ -57,7 +58,7 @@ Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-
 - Tesis: Javier deja el archivo abierto y hace una última pasada de criterio durante el recorrido.
 - Gramática: `Frame → Select → Change → Settle → Hand off`.
 - Un solo cursor global en desktop; touch halo y handles en móvil.
-- Verbos de Home: `Compose`, `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe` y `Hand off`.
+- Verbos de Home: `Compose`, `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe`, `Verify` y `Hand off`.
 - Profile, Work y AI son los únicos comentarios prominentes posteriores al hero.
 - Work y AI son los picos principales; el resto mantiene continuidad con beats silenciosos.
 - ScrollTrigger sustituye al observer anterior con triggers deterministas, sin scrub, pinning, snapping ni scroll-jacking.

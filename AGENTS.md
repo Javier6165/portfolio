@@ -24,11 +24,12 @@ Lee, en este orden:
 - `NarrativeProvider` es el único propietario de consentimiento, visita, escenas vistas y motion manual. `LiveSceneDirector` posee el cursor singleton y la exclusión entre escenas. Las claves y el esquema están documentados en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
 - La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
 - `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion. El contenido base empieza visible y reduced motion debe resolver directamente al estado final.
-- La coreografía 07 está implementada con un beat distinto en cada sección: `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe` y `Hand off`. No la regreses a overlays genéricos ni cursores independientes por wrapper.
+- La coreografía 07 está implementada con un beat distinto en cada sección: `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe`, `Verify` y `Hand off`. No la regreses a overlays genéricos ni cursores independientes por wrapper.
 - Profile, Work y AI son los únicos comentarios prominentes posteriores al hero. Las demás escenas conservan trazas silenciosas.
 - Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Cada escena pasa por `armed` y una pausa editorial antes de intervenir. Fast-scroll, salida de viewport, pestaña oculta, reduced motion y retorno deben fijar un resultado terminado.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
+- Testimonials permanece en estado preview hasta recibir fuentes reales. No conviertas un slot a `verified` sin cita aprobada, atribución, permiso de publicación y validación de Javier.
 - `.openai/hosting.json` identifica el sitio existente; no cambies ni derives su `project_id`.
 
 ## Estilo de implementación

@@ -7,6 +7,7 @@ import { LiveScene } from "./components/live-file/LiveScene";
 import { PlaygroundStudy } from "./components/PlaygroundStudy";
 import { ProjectCard } from "./components/ProjectCard";
 import { ArrowIcon } from "./components/SiteShell";
+import { Testimonials } from "./components/Testimonials";
 import { projects } from "./data";
 
 function Portrait({ context = "profile" }: { context?: "profile" | "about" }) {
@@ -218,6 +219,8 @@ export default function Home() {
           <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
         </div>
       </section>
+
+      <Testimonials />
     </>
   );
 }

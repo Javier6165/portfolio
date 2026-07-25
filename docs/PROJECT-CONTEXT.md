@@ -22,7 +22,7 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La Home vigente recorre impacto → cuatro flashes profesionales → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → contacto. Live File reaparece con un verbo y una traza persistente en cada sección; el contenido profesional nunca depende de él. La trayectoria detallada vive en About y Work empieza antes de 1,8 viewports desktop.
+La Home vigente recorre impacto → cuatro flashes profesionales → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → testimonials provisionales → contacto. Live File reaparece con un verbo y una traza persistente en cada sección; el contenido profesional nunca depende de él. La trayectoria detallada vive en About y Work empieza antes de 1,8 viewports desktop.
 
 ## Por qué no es una template
 
@@ -32,10 +32,11 @@ La Home vigente recorre impacto → cuatro flashes profesionales → trabajo fic
 - Trayectoria y AI Practice son interacciones accesibles, no ilustraciones vacías.
 - Northstar demuestra propagación de tokens en tres contextos.
 - El framework de evidencia admite capturas, comparativas, vídeo, Figma y demos click-to-load.
+- Testimonials usa tres perspectivas tipadas y un beat `Verify`; no atribuye citas o identidades mientras no existan fuentes y permisos.
 - La experiencia recuerda visitas solo con consentimiento y se degrada a una web estática completa.
 
 ## Estado y límites
 
 La arquitectura, el hero y la partitura transversal están implementados. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` define el guion y `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` el código vigente. La auditoría 08 confirma intro estable, Work temprano, escenas deterministas, fallbacks y QA limpia. Antes de ampliar efectos hay que sustituir un caso ficticio por evidencia real según `PLAN-09-NEXT-IMPROVEMENTS.md`.
 
-Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. El siguiente paso de contenido es un único caso real representativo.
+Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; testimonials, contacto, LinkedIn y CV son temporales. Los siguientes inputs son un único caso real representativo y recomendaciones aprobadas con atribución y permiso.

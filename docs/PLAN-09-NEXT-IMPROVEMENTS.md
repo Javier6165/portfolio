@@ -14,9 +14,10 @@ Necesario:
 - confirmar confidencialidad, empresa/producto, rol, colaboradores y créditos;
 - recibir screenshots o exports de Figma, vídeo/prototipo si existe y outcomes verificables;
 - decidir qué puede nombrarse y qué necesita anonimización;
+- recibir 2–3 recomendaciones verificadas con cita, nombre, cargo o relación profesional y permiso de publicación;
 - facilitar email, LinkedIn y CV final.
 
-Gate: dossier de caso completo, sin datos inventados ni dudas de permiso.
+Gate: dossier de caso completo y testimonials aprobados —o decisión de ocultarlos en el candidato público—, sin datos inventados ni dudas de permiso.
 
 ## Fase B — Un caso real como vertical slice
 

@@ -22,6 +22,7 @@ export type LiveSceneVerb =
   | "activate"
   | "experiment"
   | "reframe"
+  | "verify"
   | "handoff";
 
 export type LiveSceneConfig = {

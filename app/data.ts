@@ -52,6 +52,55 @@ export type Project = {
   outcomes: { value: string; label: string }[];
 };
 
+export type TestimonialSlot =
+  | {
+      status: "placeholder";
+      index: string;
+      perspective: string;
+      title: string;
+      prompt: string;
+    }
+  | {
+      status: "verified";
+      index: string;
+      perspective: string;
+      quote: string;
+      name: string;
+      role: string;
+      source: string;
+      approvedForPublication: true;
+    };
+
+/**
+ * Testimonials must remain visibly provisional until Javier supplies an
+ * approved quote, attribution, source and publication permission. The
+ * discriminated union prevents a placeholder from accidentally rendering
+ * with the verified treatment.
+ */
+export const testimonialSlots: TestimonialSlot[] = [
+  {
+    status: "placeholder",
+    index: "01",
+    perspective: "Product partnership",
+    title: "Decision clarity under pressure.",
+    prompt: "Reserved for a verified recommendation about framing ambiguity and helping a team move towards a decision.",
+  },
+  {
+    status: "placeholder",
+    index: "02",
+    perspective: "Engineering partnership",
+    title: "From intent to buildable behaviour.",
+    prompt: "Reserved for a verified recommendation about prototypes, handoff and resolving difficult edge cases together.",
+  },
+  {
+    status: "placeholder",
+    index: "03",
+    perspective: "Design leadership",
+    title: "Standards without losing the people.",
+    prompt: "Reserved for a verified recommendation about feedback, visual craft and Javier’s recent lead responsibility.",
+  },
+];
+
 /**
  * Preview content only. Names, scenarios and outcomes below are fictitious.
  * See docs/CONTENT-AND-RELEASE.md before replacing a project or removing any

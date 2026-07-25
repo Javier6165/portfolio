@@ -2,7 +2,7 @@
 
 Fecha: 25 de julio de 2026.
 
-Estado: **implementado y validado localmente**. Sustituye la arquitectura temporal de cues descrita en Implementación 05. El guion creativo original permanece en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`.
+Estado: **implementado y validado localmente**. Sustituye el antiguo sistema temporal de cues. El guion creativo original permanece en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`.
 
 ## Resultado
 
@@ -17,6 +17,7 @@ Home ya no depende de que el hero explique por sí solo el concepto. Después de
 | AI | `ai-activate` | Activate | selecciona Build y ejecuta una simulación funcional | `Prototype / Live` + resultado |
 | Playground | `playground-experiment` | Experiment | reproduce playhead y estudio cinético | `Experiment / Played` + Replay |
 | About preview | `about-reframe` | Reframe | ajusta el crop del retrato | `Crop / Approved` |
+| Testimonials | `testimonials-verify` | Verify | recorre tres slots y confirma que su fuente sigue pendiente | `References / Source pending` |
 | Footer | `footer-handoff` | Hand off | señala el contacto y cede la experiencia | `Ready / Your turn` |
 
 Solo Profile, Work y AI muestran comentario después del hero. Las demás escenas son silenciosas.
@@ -54,7 +55,7 @@ type LiveSceneConfig = {
 
 `LiveScene` añade `dwellMs` como timing editorial. ScrollTrigger arma el wrapper con `start: "top 66%"` en desktop o `"top 74%"` en touch. La escena permanece en `armed` durante `450–750 ms`; solo después solicita la reproducción al director. El target es siempre un elemento real de la sección. `data-live-state="idle|armed|playing|settled|reduced"` es la fuente de verdad para CSS y tests; GSAP solo interpola el cursor.
 
-Timings de observación: Profile y AI `750 ms`, Work y Expertise `650 ms`, Playground y About `600 ms`, Footer `450 ms`. Los comentarios comienzan a aparecer cerca del 62 % de su animación de `1,6 s`, por lo que el visitante recibe aproximadamente `1,6–1,75 s` de lectura antes del comentario. Si acelera el scroll, abandona la escena, cambia de pestaña, enfoca o interactúa, la espera/timeline se cancela y queda el resultado final.
+Timings de observación: Profile y AI `750 ms`, Testimonials `700 ms`, Work y Expertise `650 ms`, Playground y About `600 ms`, Footer `450 ms`. Los comentarios comienzan a aparecer cerca del 62 % de su animación de `1,6 s`, por lo que el visitante recibe aproximadamente `1,6–1,75 s` de lectura antes del comentario. Si acelera el scroll, abandona la escena, cambia de pestaña, enfoca o interactúa, la espera/timeline se cancela y queda el resultado final.
 
 Pointer o foco del visitante dentro de una escena ejecutan handoff inmediato. Su interacción gana sobre la reproducción automática.
 
@@ -68,6 +69,7 @@ Pointer o foco del visitante dentro de una escena ejecutan handoff inmediato. Su
 - Activate controla estado React real.
 - Experiment controla estado React real y ofrece Replay.
 - Reframe solo transforma el asset.
+- Verify escalona tres fichas, recorre su estado de procedencia y conserva `source required`.
 - Hand off anima una señal asociada al contacto.
 
 ## Interacciones funcionales
@@ -85,6 +87,12 @@ type SimulationState = "idle" | "running" | "complete";
 ### Playground Study
 
 `PlaygroundStudy` escucha el mismo evento del director y expone `Replay study`. El autoplay sucede una vez al entrar; después el usuario puede repetirlo. Reduced motion conserva el control, pero las animaciones se resuelven prácticamente de inmediato por CSS.
+
+### Testimonials
+
+`Testimonials` es servidor y consume `testimonialSlots`, una unión discriminada que separa `placeholder` de `verified`. La entrega vigente contiene tres perspectivas editoriales —producto, ingeniería y liderazgo de diseño— con `Placeholder · source required`. No existe ninguna cita, nombre o cargo inventado. El estado `verified` exige en TypeScript `source` y `approvedForPublication: true`, además de cita, nombre y cargo.
+
+La escena `Verify` es deliberadamente silenciosa: presenta el chequeo después de `700 ms` de lectura y conserva `References / Source pending`. System usa una composición de archivo técnico; Human reinterpreta el mismo contenido como tarjetas crema sobre cobalto. El hover eleva una ficha y reduce las demás sin alterar lectura o layout.
 
 ## Memoria y tiers
 
@@ -106,7 +114,7 @@ El consentimiento está integrado después de Profile, no superpuesto al hero. N
 - desktop: `translate(7%, 5.2rem) scale(.86)`;
 - móvil: `translate(4%, 3.9rem) scale(.92)`;
 - rol completo visible desde el primer frame;
-- intro medida: `3,92 s` desktop y `3,90 s` móvil;
+- intro medida: `3,94 s` desktop y `3,89 s` móvil;
 - CLS: `0,0073` desktop y `0` móvil.
 
 El retrato activo espera decode un máximo de 350 ms. Skip, Escape, PageDown, wheel, touch, fallo de imagen, reduced motion y no-JS fijan el resultado final.
@@ -126,12 +134,12 @@ Build local de producción, Chromium, contenido actual:
 
 | Métrica | 1440×900 | 390×844 |
 | --- | ---: | ---: |
-| Intro completa | 3,92 s | 3,90 s |
+| Intro completa | 3,94 s | 3,89 s |
 | CLS | 0,0073 | 0 |
-| LCP observado local | 160 ms | 136 ms |
-| Transferencia codificada inicial | 727 KB | 699 KB |
+| LCP observado local | 172 ms | 100 ms |
+| Transferencia codificada inicial | 745 KB | 716 KB |
 | JS codificado | 453 KB | 453 KB |
-| CSS codificado | 95 KB | 95 KB |
+| CSS codificado | 103 KB | 103 KB |
 | Inicio de Selected Work | 1.521 px / 1,69 vp | 1.690 px / 2,00 vp |
 | Overflow horizontal | no | no |
 
@@ -146,6 +154,7 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 - Fast-scroll entrega el estado settled.
 - Sin JavaScript permanecen hero, copy, links, cards y CTAs.
 - Status decorativos se ajustaron para contraste AA aunque estén fuera del árbol accesible.
+- Human usa `--muted` y coral reforzados; el bloque cobalto de AI define texto crema explícito. axe cubre Home y Northstar en ambos temas y viewports.
 - ThemeToggle anuncia destino y estado con `aria-label` y `aria-pressed`.
 - Menú móvil cierra tras navegación y Escape.
 
@@ -154,7 +163,7 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 - `npm run lint`: limpio.
 - `npm test`: build + 3 smoke tests SSR, todos pasan.
 - `npm run test:e2e`: 26 pasan y 10 duplicaciones móviles se omiten intencionalmente.
-- axe: Home y Northstar sin violaciones automáticas en desktop/móvil.
+- axe: Home y Northstar, System/Human, sin violaciones automáticas en desktop/móvil.
 - teclado: AI Practice y token propagation.
 - interacción: simulación AI, Replay Playground, tema con storage bloqueado y menú móvil.
 - narrativa: armado y pausa editorial, comentario diferido, cancelación al seguir navegando, settled, tiers y reduced motion.
@@ -166,6 +175,7 @@ El script reproducible es `tests/performance-audit.mjs`. Las cifras locales perm
 
 - Los casos y resultados siguen siendo ficticios.
 - No existen contacto, LinkedIn o CV definitivos.
+- No existen todavía recomendaciones verificadas; Testimonials es una preview inequívoca y no debe publicarse como prueba social final sin fuentes.
 - Las escenas secundarias se extienden a otras rutas cuando llegue contenido real; Home es la Fase 3 cerrada.
 - La auditoría completa incluye ocho avisos en tooling de desarrollo, principalmente Drizzle y ESLint; producción tiene cero.
 - `globals.css` todavía mezcla estilos de rutas y merece división progresiva.

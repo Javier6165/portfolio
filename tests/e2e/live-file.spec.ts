@@ -72,8 +72,17 @@ test("core pages have no automatically detectable accessibility violations", asy
   expect(home.violations).toEqual([]);
 
   await page.goto("/work/northstar");
-  const caseStudy = await new AxeBuilder({ page }).analyze();
-  expect(caseStudy.violations).toEqual([]);
+  const systemCaseStudy = await new AxeBuilder({ page }).analyze();
+  expect(systemCaseStudy.violations).toEqual([]);
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Use Human visual mode" }).click();
+  const humanHome = await new AxeBuilder({ page }).analyze();
+  expect(humanHome.violations).toEqual([]);
+
+  await page.goto("/work/northstar");
+  const humanCaseStudy = await new AxeBuilder({ page }).analyze();
+  expect(humanCaseStudy.violations).toEqual([]);
 });
 
 test("consented memory produces deterministic return tiers", async ({ page, context, isMobile }) => {
@@ -168,8 +177,14 @@ test("Live File scenes resolve into distinct finished states", async ({ page }) 
   await expect(work).not.toHaveAttribute("data-live-state", "idle");
   await expect(work.locator(".project-card__media-label")).toBeVisible();
 
+  const testimonials = page.locator('[data-live-scene="testimonials-verify"]');
+  await testimonials.scrollIntoViewIfNeeded();
+  await expect(testimonials).not.toHaveAttribute("data-live-state", "idle");
+  await expect(page.getByRole("heading", { name: "Trusted in the room. Precise in the work." })).toBeVisible();
+  await expect(page.getByText("Placeholder · source required")).toHaveCount(3);
+
   const scenes = page.locator("[data-live-scene]");
-  expect(await scenes.count()).toBeGreaterThanOrEqual(7);
+  expect(await scenes.count()).toBeGreaterThanOrEqual(8);
 });
 
 test("the Live File director lets the section land before choreography and comments", async ({ page, isMobile }) => {

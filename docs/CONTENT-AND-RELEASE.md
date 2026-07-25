@@ -49,11 +49,21 @@ No añadas condicionales por slug. Si una historia necesita otro formato, amplí
 - Sustituir el texto temporal del footer y `about#contact-note`.
 - Guardar el CV público en `public/` solo tras revisar datos personales.
 
+## Sustituir testimonials provisionales
+
+- `testimonialSlots` vive en `app/data.ts` y separa `placeholder` de `verified`.
+- No redactar una cita atribuida a partir de una impresión, una conversación o el perfil de LinkedIn.
+- Pedir texto aprobado, nombre, cargo o relación profesional, fuente y permiso de publicación.
+- Conservar la voz literal salvo correcciones acordadas; documentar cualquier edición relevante.
+- Cambiar un slot a `verified` solo después de la aprobación de Javier y de la persona citada.
+- Si las fuentes no llegan antes del lanzamiento, retirar la sección del candidato público o mantenerla únicamente en el preview privado claramente provisional.
+
 ## Checklist antes de permitir indexación
 
 - Casos, métricas, roles y créditos verificados.
 - Confidencialidad y permisos aprobados.
 - Contacto y CV definitivos.
+- Testimonials verificados y autorizados, o sección provisional retirada.
 - Media optimizada y fallbacks comprobados.
 - `app/config.ts` apunta al dominio final.
 - Lint, build, smoke, Playwright, axe, responsive y teclado limpios.

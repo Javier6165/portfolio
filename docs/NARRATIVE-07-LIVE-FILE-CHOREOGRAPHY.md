@@ -26,7 +26,7 @@ FRAME → SELECT → CHANGE → SETTLE → HAND OFF
 - `Settle`: el resultado queda integrado en la sección; no desaparece como un overlay.
 - `Hand off`: Javier se retira y el visitante conserva control completo.
 
-El concepto no exige que todas las escenas tengan la misma intensidad. La Home necesita picos y respiraciones, no ocho demos compitiendo entre sí.
+El concepto no exige que todas las escenas tengan la misma intensidad. La Home necesita picos y respiraciones, no nueve demos compitiendo entre sí.
 
 ## 2. Lo aprendido de las referencias
 
@@ -46,10 +46,11 @@ BREATH     Expertise    Propagate
 PEAK       AI           Activate
 PLAY       Playground   Experiment
 BREATH     About        Reframe
+BREATH     Testimonials Verify
 CODA       Contact      Hand off
 ```
 
-Tres escenas concentran el mayor `wow`: Hero, Selected Work y AI. Profile, Expertise, Playground, About y Footer mantienen la continuidad mediante acciones más breves. Así el visitante percibe una pieza diseñada de principio a fin sin sufrir motion fatigue.
+Tres escenas concentran el mayor `wow`: Hero, Selected Work y AI. Profile, Expertise, Playground, About, Testimonials y Footer mantienen la continuidad mediante acciones más breves. Así el visitante percibe una pieza diseñada de principio a fin sin sufrir motion fatigue.
 
 El timeline profesional detallado sale de Home y pasa a `/about`. La segunda sección se comprime a cuatro flashes profesionales y Selected Work sube. Esto protege tanto la narrativa como la velocidad de comprensión.
 
@@ -98,7 +99,8 @@ El hero conserva `Two pixels. Much better.`. Las demás escenas usan status o la
 | 4 | AI + code | `activate` | Pasa de pantalla estática a simulación ejecutable | Resultado funcional | Peak |
 | 5 | Playground | `experiment` | Mueve el playhead y activa el estudio cinético | `EXPERIMENT / PLAYED` | Play |
 | 6 | About | `reframe` | Ajusta el crop del retrato y aprueba la versión humana | `CROP / APPROVED` | Breath |
-| 7 | Contact | `handoff` | Cambia el archivo de `Editing` a `Ready to share` y abandona el frame | `READY / YOUR TURN` | Coda |
+| 7 | Testimonials | `verify` | Revisa la procedencia de tres perspectivas sin simular recomendaciones | `REFERENCES / SOURCE PENDING` | Breath |
+| 8 | Contact | `handoff` | Cambia el archivo de `Editing` a `Ready to share` y abandona el frame | `READY / YOUR TURN` | Coda |
 
 ## 6. Storyboard detallado
 
@@ -205,7 +207,20 @@ Coreografía desktop, `1,2–1,5 s`:
 
 La repetición del ajuste de imagen funciona como rima visual con el hero. No se añade una frase autobiográfica ni un comentario sentimental.
 
-### Acto 7 — Footer / Hand off
+### Acto 7 — Testimonials / Verify
+
+Propósito: introducir prueba social sin comprometer la credibilidad mientras faltan citas autorizadas.
+
+Coreografía desktop, `1,7–1,9 s`:
+
+1. Las tres perspectivas ya son legibles como slots de referencia, no como testimonios reales.
+2. Javier recorre brevemente las tres fichas y activa una línea de verificación.
+3. Cada marcador confirma `source required`; no aparece ningún nombre, cargo o comillas atribuidas.
+4. Queda `REFERENCES / SOURCE PENDING` y la nota `No quote without a source.`
+
+La composición tiene dirección propia por tema: archivo técnico oscuro en System y bloque editorial cobalto/crema en Human. Cuando lleguen recomendaciones aprobadas, el mismo contrato admite cita, nombre y cargo sin cambiar la estructura ni fabricar transición entre estados.
+
+### Acto 8 — Footer / Hand off
 
 Propósito: señalar que la revisión terminó y ceder la experiencia al visitante.
 
@@ -220,7 +235,7 @@ No se implementará el destino definitivo hasta recibir email, LinkedIn y CV rea
 
 ## 7. Trigger y comportamiento durante scroll
 
-El sistema actual espera un `intersectionRatio` alto y reintenta cada dos segundos. Se reemplazará por una partitura determinista con GSAP ScrollTrigger:
+La partitura usa GSAP ScrollTrigger sobre anchors reales:
 
 - trigger en el wrapper que contiene el objeto real de acción;
 - armado en `top 66%` desktop y `top 74%` touch;
@@ -320,7 +335,7 @@ type LiveSceneDefinition = {
   id: string;
   route: string;
   anchorId: string;
-  verb: "clarify" | "frame" | "propagate" | "activate" | "experiment" | "reframe" | "handoff";
+  verb: "clarify" | "frame" | "propagate" | "activate" | "experiment" | "reframe" | "verify" | "handoff";
   intensity: "peak" | "breath" | "play" | "coda";
   durationMs: number;
   commentId?: string;
@@ -361,12 +376,12 @@ En case studies la evidencia manda. Live File aparece solo donde ayuda a explica
 1. Construir `NarrativeDirector`, el cursor singleton y el contrato `LiveScene`.
 2. Prototipar los tres picos: Profile, primer proyecto y AI.
 3. Validar el ritmo completo en una captura de scroll desktop y móvil.
-4. Añadir Expertise, Playground, About y Handoff como beats silenciosos.
+4. Añadir Expertise, Playground, About, Testimonials y Handoff como beats silenciosos.
 5. Ajustar System/Human sin cambiar el guion.
 6. Convertir cada estado final en fallback no-JS/reduced.
 7. Automatizar pruebas de triggers, fast-scroll, interacción temprana y orden.
 
-La estabilización del hero sin CLS precede o acompaña a la infraestructura, pero no se considera Live File transversal hasta completar los ocho actos.
+La estabilización del hero sin CLS precede o acompaña a la infraestructura, pero no se considera Live File transversal hasta completar los nueve actos.
 
 ## 14. Gates de aceptación creativa
 
