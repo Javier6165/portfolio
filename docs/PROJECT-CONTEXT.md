@@ -36,4 +36,6 @@ La home recorre impacto → perfil real → trayectoria → trabajo ficticio →
 
 ## Estado y límites
 
-La arquitectura y el concepto están implementados. Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. El siguiente trabajo correcto es sustituir un caso por material real y medir rendimiento con esa media, no añadir efectos decorativos sin función.
+La arquitectura y el hero del concepto están implementados. La auditoría posterior confirmó que Live File todavía no es transversal: los cues fuera del hero apenas se perciben y Work no puede activarse con su threshold actual. Antes de sustituir casos hay que completar el sprint de estabilización y extensión de `AUDIT-06-POST-LIVE-FILE.md` y `PLAN-06-IMPROVEMENTS.md`.
+
+Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. Después de estabilizar y extender la gramática, el siguiente paso de contenido es un único caso real representativo.

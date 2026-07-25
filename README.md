@@ -32,6 +32,8 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/ARCHITECTURE.md`: routes, theme, narrative, storage and evidence contracts.
 - `docs/AUDIT-05-LIVE-FILE.md`: diagnosis and rationale behind the current concept.
 - `docs/IMPLEMENTATION-05-LIVE-FILE.md`: timings, states, components, privacy, QA and extension rules.
+- `docs/AUDIT-06-POST-LIVE-FILE.md`: measured post-implementation audit, defects and gaps.
+- `docs/PLAN-06-IMPROVEMENTS.md`: prioritised stabilisation, transversal narrative and content plan.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 

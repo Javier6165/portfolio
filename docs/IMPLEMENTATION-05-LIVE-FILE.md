@@ -6,6 +6,8 @@ Fecha: 25 de julio de 2026.
 
 Implementado y validado localmente. La publicación debe seguir siendo privada sobre el proyecto Sites existente.
 
+La auditoría posterior está en `AUDIT-06-POST-LIVE-FILE.md`. Confirmó que el hero funciona, pero la promesa transversal sigue incompleta: el cue de Work no puede alcanzar el ratio de intersección actual y los otros cues son demasiado fáciles de perder.
+
 ## Hero e intro
 
 `EditorIntro.tsx` contiene un único hero semántico y una capa de editor decorativa. La intro de primera visita:
@@ -173,6 +175,7 @@ La QA automática no sustituye Lighthouse ni field data. Medir LCP/INP/CLS cuand
 - No existe reacción de proximidad entre cursor real y ficticio; se dejó fuera del MVP por riesgo de distracción.
 - No hay analytics, contacto real, CV o embeds activos.
 - `globals.css` conserva estilos editoriales previos; los sistemas nuevos ya están co-localizados, pero la migración completa puede continuar por zonas.
+- La gramática Live File solo se percibe con claridad en el hero; los cues posteriores necesitan rediseño y triggers deterministas.
 
 ## Cómo extender sin romper el concepto
 
