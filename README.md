@@ -1,52 +1,55 @@
 # Javier Ortiz — Portfolio Preview
 
-An editorial portfolio for a Senior Product Designer working on complex platforms, systems and AI-assisted workflows.
+An editorial, interactive portfolio for a Senior Product Designer working on complex platforms, systems and AI-assisted product development.
 
 ## Experience concept
 
-- `System / Dark` and `Human / Light` themes swap both tokens and photography.
-- English-first, asymmetric editorial layout.
-- Three clearly labelled concept case studies.
-- A custom, theme-aware WebGL `Living Fold` as the hero signature.
-- A deliberately minimal first viewport followed by an evidence-led profile section.
-- An AI-assisted design practice demonstrated as a working interaction.
-- Visual-first case openings and decision/evidence modules ready for real artefacts.
-- Progressive motion with a reduced-motion fallback.
+- `Live File`: the portfolio opens as a working design file and resolves into the finished product.
+- A semantic hero with Javier Ortiz, Senior Product Designer, theme-linked portrait and `Explore`.
+- `System` and `Human` as two distinct visual identities, not a cosmetic dark/light toggle.
+- Three clearly labelled fictitious case studies.
+- Three optional narrative cues across Home, bounded and cancelable.
+- A consented returning-visitor memory with replay, forget and motion controls.
+- An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.
+- Progressive motion, reduced-motion and no-JavaScript fallbacks.
 - Responsive Home, About, Playground, case template and 404.
 
-## Content map
+## Key paths
 
-- Main narrative: `app/page.tsx`
-- Concept case content: `app/data.ts`
-- About: `app/about/page.tsx`
-- Playground: `app/playground/page.tsx`
-- Visual system and responsive rules: `app/globals.css`
-- Local portraits and social preview: `public/`
+- Home: `app/page.tsx`
+- Live File: `app/components/live-file/`
+- Case content/schema: `app/data.ts`
+- Case evidence renderer: `app/components/CaseEvidence.tsx`
+- Visual system: `app/globals.css` and co-located CSS Modules
+- Automated QA: `tests/rendered-html.test.mjs` and `tests/e2e/`
+- Local assets: `public/`
 
 ## Documentation
 
 - `AGENTS.md`: operational rules for future Codex sessions.
-- `docs/PROJECT-CONTEXT.md`: original brief, profile and design response.
+- `docs/PROJECT-CONTEXT.md`: brief, profile and current response.
 - `docs/DECISIONS.md`: current product and technical decisions.
-- `docs/ARCHITECTURE.md`: routes, theme, motion and infrastructure contracts.
+- `docs/ARCHITECTURE.md`: routes, theme, narrative, storage and evidence contracts.
+- `docs/AUDIT-05-LIVE-FILE.md`: diagnosis and rationale behind the current concept.
+- `docs/IMPLEMENTATION-05-LIVE-FILE.md`: timings, states, components, privacy, QA and extension rules.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
-- `docs/ASSETS.md`: source and usage of portraits, favicon and social card.
-- `docs/AUDIT-02-POSITIONING-AND-WOW.md`: research-backed proposal for stronger positioning, interaction, 3D/media and future case-study architecture.
-- `docs/IMPLEMENTATION-02-SIGNATURE-EXPERIENCE.md`: what Preview 2 changed, why, and how to extend it safely.
-- `docs/AUDIT-04-HERO-RETHINK.md`: why the previous hero was rejected and how the replacement direction was chosen.
-- `docs/IMPLEMENTATION-04-LIVING-FOLD-HERO.md`: current hero composition, shader architecture, fallbacks and extension rules.
+- `docs/ASSETS.md`: portrait and social-card provenance.
+
+Documents numbered 01–04 are historical context. When they conflict with 05, `AGENTS.md` or the current code, the newer contract wins.
 
 ## Run and validate
 
 ```bash
 npm install
+npx playwright install chromium
 npm run dev
 npm run lint
 npm test
+npm run test:e2e
 ```
+
+`npm test` includes the production build and server-rendered smoke tests. `test:e2e` covers keyboard, axe, reduced motion, no-JS, memory, image failure and the System/Human responsive matrix.
 
 ## Before public launch
 
-Replace the concept cases and illustrative metrics, add final contact details and CV, set the real site URL, allow indexing, and run final browser/device accessibility and performance QA.
-
-The single release switch is `app/config.ts`. Do not set `isPreview` to `false` until Javier explicitly approves public launch and indexing.
+Replace fictitious cases and illustrative metrics, add final contact details and CV, validate ownership/confidentiality, set the real URL, run performance QA with final media and obtain Javier’s explicit approval before enabling indexation. `app/config.ts` remains the single release switch.

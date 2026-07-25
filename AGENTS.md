@@ -8,33 +8,36 @@ Lee, en este orden:
 2. `docs/PROJECT-CONTEXT.md`
 3. `docs/DECISIONS.md`
 4. `docs/ARCHITECTURE.md`
-5. `docs/CONTENT-AND-RELEASE.md`
-6. `docs/ASSETS.md` si vas a tocar imágenes.
+5. `docs/AUDIT-05-LIVE-FILE.md`
+6. `docs/IMPLEMENTATION-05-LIVE-FILE.md`
+7. `docs/CONTENT-AND-RELEASE.md`
+8. `docs/ASSETS.md` si vas a tocar imágenes.
 
 ## Contratos que debes preservar
 
 - `app/config.ts` es la única fuente para URL y estado preview/público.
-- Los valores de tema válidos son `system` y `human`.
-- La clave local del tema es `javier-theme`.
-- El evento `portfolio-theme-change` sincroniza el selector con la animación de fotografías.
-- `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion, no clases visuales arbitrarias.
-- El contenido debe seguir siendo visible si GSAP no carga o reduced motion está activo.
-- `LivingFold` es la firma visual vigente del hero. Mantén un único canvas, su fallback CSS, el DPR limitado y el render estático para reduced motion; consulta `docs/IMPLEMENTATION-04-LIVING-FOLD-HERO.md` antes de modificarlo.
-- El hero se limita a nombre, rol y cue. Trayectoria, dominios de producto, IA y fotografía empiezan en la segunda sección.
-- Los reveals de GSAP no deben dejar transforms inline que anulen hovers de CSS.
+- Los temas válidos son `system` y `human`; la clave local es `javier-theme` y el evento `portfolio-theme-change` sincroniza sus transiciones.
+- `Live File` es la firma vigente. Sus estados visuales se resuelven con `data-narrative`, `data-motion`, `data-live-file` e `IntroPhase`; no conviertas GSAP en la fuente de verdad lógica.
+- El hero semántico contiene nombre, rol, retrato y `Explore`. El editor es decorativo y no puede ocultar ese contenido a lectores de pantalla ni dejarlo inaccesible sin JavaScript.
+- `NarrativeProvider` es el único propietario de consentimiento, visita, cues y motion manual. Las claves y el esquema están documentados en `IMPLEMENTATION-05-LIVE-FILE.md`.
+- La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
+- `.js-hero-reveal`, `.js-reveal` y `.theme-swap` son hooks de motion. El contenido base empieza visible y reduced motion debe resolver directamente al estado final.
+- Los tres cues de Home son cancelables, limitados y nunca comunican información esencial.
+- `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - `.openai/hosting.json` identifica el sitio existente; no cambies ni derives su `project_id`.
 
 ## Estilo de implementación
 
 - Prefiere componentes de servidor; añade cliente solo si una interacción lo necesita.
-- Usa tokens de `globals.css`; no dupliques colores literales en páginas.
-- Añade comentarios para explicar decisiones, fallbacks o contratos entre archivos, no para narrar JSX evidente.
-- Conserva navegación semántica, foco visible, skip link y estados de teclado/touch.
-- No añadas smooth scroll, scroll-jacking o motion imprescindible para entender contenido.
+- Usa tokens de `globals.css` y CSS Modules co-localizados para nuevos sistemas complejos.
+- GSAP es el único motor de coreografía; CSS puede resolver hover, focus y microestados locales.
+- Añade comentarios para fallbacks, privacidad o contratos entre archivos, no para narrar JSX evidente.
+- Conserva navegación semántica, roving focus, skip link y estados de teclado/touch.
+- No añadas smooth scroll, scroll-jacking, canvas, WebGL o motion imprescindible para entender contenido.
 
 ## Validación
 
-Ejecuta `npm run lint` y `npm test`. Si cambia el contenido que cubren los smoke tests, actualiza las aserciones para comprobar la nueva intención, no para silenciar fallos.
+Ejecuta `npm run lint` y `npm test`. Para cambios interactivos ejecuta también `npm run test:e2e`. La matriz cubre 1440×900, 1280×800, 768×1024 y 390×844, System/Human, axe, memoria, no-JS, reduced motion y fallos de imagen.
 
-Los cambios desplegables deben publicarse como una nueva versión privada del mismo proyecto Sites mediante la skill de Sites.
+Los cambios desplegables se publican como una nueva versión privada del mismo proyecto Sites mediante las skills de Sites.

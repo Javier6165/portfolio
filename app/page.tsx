@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { AIPractice } from "./components/AIPractice";
 import { ExperienceSignal } from "./components/ExperienceSignal";
-import { LivingFold } from "./components/LivingFold";
+import { EditorIntro } from "./components/live-file/EditorIntro";
+import { NarrativeCue } from "./components/live-file/NarrativeCue";
 import { ProjectCard } from "./components/ProjectCard";
 import { ArrowIcon } from "./components/SiteShell";
 import { projects } from "./data";
@@ -69,31 +70,15 @@ const expertise = [
 export default function Home() {
   return (
     <>
-      <section className="hero hero--fold shell" aria-labelledby="hero-title">
-        <div className="hero-fold__visual js-hero-stage">
-          <LivingFold />
-        </div>
-
-        <div className="hero-fold__identity">
-          <p className="hero-fold__name js-hero-reveal">Javier Ortiz</p>
-          <h1 id="hero-title" className="hero-fold__title js-hero-reveal">
-            <span>Senior Product</span>
-            <span>Designer</span>
-          </h1>
-        </div>
-
-        <Link className="hero-fold__explore js-hero-reveal" href="#experience">
-          <span>Explore</span>
-          <i aria-hidden="true" />
-        </Link>
-      </section>
+      <EditorIntro />
 
       <section className="experience section shell" id="experience" aria-labelledby="experience-title">
-        <div className="profile-intro">
-          <Portrait />
-          <header className="profile-intro__copy js-reveal">
+        <div className="profile-intro profile-intro--live-file">
+          <header className="profile-intro__headline js-reveal">
             <p className="kicker">01 / Profile</p>
             <h2 id="experience-title">From visual worlds to product systems.</h2>
+          </header>
+          <div className="profile-intro__copy js-reveal">
             <p>I’m a Senior Product Designer based in Marbella, working remotely. Across <strong>5+ years at Gaming Innovation Group</strong>, I progressed from Junior to Senior and briefly stepped into Lead—while staying hands-on with complex digital products.</p>
             <p>My edge is combining product judgement with visual craft, AI-assisted workflows and coded prototypes that make difficult behaviour tangible sooner.</p>
             <ul className="profile-intro__facts" aria-label="Javier Ortiz at a glance">
@@ -101,9 +86,11 @@ export default function Home() {
               <li><span>Product terrain</span><strong>Rules · CMS · Backoffice · Design systems</strong></li>
               <li><span>Working edge</span><strong>AI-assisted design + coded prototypes</strong></li>
             </ul>
-          </header>
+          </div>
         </div>
-        <ExperienceSignal />
+        <NarrativeCue cueId="trajectory-refinement" kind="trajectory" message="Not a straight line. Better that way.">
+          <ExperienceSignal />
+        </NarrativeCue>
       </section>
 
       <section className="selected-work section shell" id="work" aria-labelledby="work-title">
@@ -112,9 +99,11 @@ export default function Home() {
           <h2 id="work-title">Systems I make legible.</h2>
           <p>These concepts preview how real rule engine, design system and AI work will be told. Names, organisations, metrics and outcomes are fictitious.</p>
         </header>
-        <div className="project-list">
-          {projects.map((project) => <ProjectCard project={project} key={project.slug} />)}
-        </div>
+        <NarrativeCue cueId="work-framing" kind="work" message="The frame should explain the decision.">
+          <div className="project-list">
+            {projects.map((project) => <ProjectCard project={project} key={project.slug} />)}
+          </div>
+        </NarrativeCue>
       </section>
 
       <section className="expertise section shell" id="approach" aria-labelledby="expertise-title">
@@ -142,7 +131,9 @@ export default function Home() {
           <p>I use AI to structure context, challenge assumptions, explore constrained options and build functional prototypes. It accelerates the feedback loop; product judgement and accountability stay human.</p>
           <Link className="text-link" href="/playground">See experiments <ArrowIcon /></Link>
         </div>
-        <AIPractice />
+        <NarrativeCue className="ai-practice__narrative" cueId="prototype-handoff" kind="prototype" message="Screens explain it. Behaviour proves it.">
+          <AIPractice />
+        </NarrativeCue>
       </section>
 
       <section className="playground-preview section shell" aria-labelledby="playground-title">

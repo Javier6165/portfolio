@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon } from "../../components/SiteShell";
+import { CaseEvidence } from "../../components/CaseEvidence";
 import { ProjectVisual } from "../../components/ProjectVisual";
 import { getProject, projects } from "../../data";
 
@@ -76,6 +77,10 @@ export default async function ProjectPage({ params }: { params: Params }) {
         <div className="js-reveal"><p className="kicker">Challenge</p><h2 id="challenge-title">{project.challengeTitle}</h2></div>
         <p className="js-reveal">{project.challenge}</p>
       </section>
+
+      {project.evidenceBlocks?.map((block) => (
+        <CaseEvidence block={block} key={block.id} />
+      ))}
 
       <section className="case-decisions section shell" id="decisions" aria-labelledby="decisions-title">
         <header className="section-heading section-heading--split js-reveal">

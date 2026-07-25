@@ -1,3 +1,35 @@
+type CaseBlockBase = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+};
+
+type CaseImage = {
+  src: string;
+  alt: string;
+  caption: string;
+  aspectRatio: string;
+};
+
+export type CaseBlock =
+  | (CaseBlockBase & { type: "text"; body: string })
+  | (CaseBlockBase & { type: "image"; image: CaseImage })
+  | (CaseBlockBase & { type: "gallery"; images: CaseImage[] })
+  | (CaseBlockBase & { type: "before-after"; before: CaseImage; after: CaseImage })
+  | (CaseBlockBase & { type: "token-propagation" })
+  | (CaseBlockBase & { type: "video"; src: string; poster: string; caption: string; aspectRatio: string })
+  | (CaseBlockBase & {
+    type: "figma";
+    embedUrl: string;
+    fallback: CaseImage;
+  })
+  | (CaseBlockBase & {
+    type: "prototype";
+    url: string;
+    fallback: CaseImage;
+  });
+
 export type Project = {
   slug: string;
   index: string;
@@ -15,6 +47,7 @@ export type Project = {
   thesis: string;
   challengeTitle: string;
   challenge: string;
+  evidenceBlocks?: CaseBlock[];
   decisions: { label: string; title: string; body: string }[];
   outcomes: { value: string; label: string }[];
 };
@@ -88,6 +121,15 @@ export const projects: Project[] = [
     challengeTitle: "The component mismatch was a symptom of decision drift.",
     challenge:
       "Parallel teams had solved similar problems in different ways. The visible inconsistency was only a symptom; the deeper issue was that ownership, contribution and decision-making had no shared structure.",
+    evidenceBlocks: [
+      {
+        id: "system-behaviour",
+        type: "token-propagation",
+        eyebrow: "Interactive evidence / Fictitious",
+        title: "Change one decision. Watch the system respond.",
+        description: "A small demonstrator for how real case studies will make system behaviour inspectable instead of showing a static component inventory.",
+      },
+    ],
     decisions: [
       {
         label: "01 · Diagnose",

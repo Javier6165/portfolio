@@ -1,5 +1,7 @@
 # Auditoría 04 — replanteamiento completo del hero
 
+> Documento histórico. `Living Fold` fue sustituido por `Live File` tras la aprobación del plan posterior. Consulta `AUDIT-05-LIVE-FILE.md` y `IMPLEMENTATION-05-LIVE-FILE.md` antes de tomar decisiones actuales.
+
 Fecha: 24 de julio de 2026  
 Estado: dirección aprobada e implementada el 24 de julio de 2026.
 

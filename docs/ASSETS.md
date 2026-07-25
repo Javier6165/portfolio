@@ -2,31 +2,35 @@
 
 ## Fuentes originales
 
-Los originales están fuera del repositorio `site/`, en la carpeta hermana `../Assets/`.
+Los originales están fuera del repositorio `site/`, en `../Assets/`.
 
 - Perfil profesional: `../Assets/Profile.pdf`.
 - Retratos: `../Assets/Images/Portraits/`.
 
-No sobrescribir los originales. Las versiones servidas se generaron como copias optimizadas.
+No sobrescribir originales. Las versiones servidas son copias optimizadas.
 
-## Mapeo de retratos
+## Retratos
 
 | Asset servido | Fuente original | Uso |
 | --- | --- | --- |
-| `public/images/portraits/hero-system.jpg` | `JaviNewPhotoDark-min.png` | Hero oscuro/System |
-| `public/images/portraits/hero-human.jpg` | `JaviNewPhoto-min.png` | Hero claro/Human |
-| `public/images/portraits/about-system.jpg` | `editadas/_MGL0339.jpg` | About oscuro/System |
-| `public/images/portraits/about-human.jpg` | `editadas/_MGL0269.jpg` | About claro/Human |
+| `public/images/portraits/hero-system.jpg` | `JaviNewPhotoDark-min.png` | Hero Live File / System |
+| `public/images/portraits/hero-human.jpg` | `JaviNewPhoto-min.png` | Hero Live File / Human |
+| `public/images/portraits/about-system.jpg` | `editadas/_MGL0339.jpg` | About / System |
+| `public/images/portraits/about-human.jpg` | `editadas/_MGL0269.jpg` | About / Human |
 
-Las copias se redimensionaron y comprimieron a JPEG para proteger LCP sin alterar los originales.
+Los dos retratos de hero comparten la misma caja y se cargan localmente para que el cambio de tema no altere geometría. `EditorIntro` espera el decode de la imagen activa hasta 800 ms y tiene fallback de fallo.
 
-## Tarjeta social
+## Tarjeta social vigente
 
-`public/og.png` se renovó para Preview 2 a partir de una única generación con la herramienta integrada de imagen y una composición tipográfica determinista.
+`public/og-live-file.jpg` mide `1200 × 630` y es la tarjeta usada por metadata Open Graph/Twitter. Se exportó a JPEG de alta calidad para reducir el peso aproximado de 758 KB a 134 KB sin perder legibilidad.
 
-Dirección del prompt: sistema digital 3D de paneles de vidrio grafito, filamentos precisos y nodos lima que convergen en un núcleo claro; detalle concentrado a la derecha, casi negro y espacio negativo a la izquierda; sin personas, dashboards literales, texto, logos ni marcas de agua.
+Se generó con la herramienta integrada de imagen a partir de una única dirección cohesionada para Live File: canvas System grafito/lima a la izquierda, identidad Human crema/cobalto/coral a la derecha y primitives originales de frame, selección, cursor y asset chip. El texto solicitado y validado visualmente es:
 
-La tipografía (`I design the systems behind the screen.`, nombre y rol) se renderizó después en el navegador para asegurar texto exacto. La imagen final se validó visualmente y mide `1200 × 630`.
+- `JAVIER ORTIZ`
+- `SENIOR PRODUCT DESIGNER`
+- `LIVE FILE / PORTFOLIO`
+
+La generación original está fuera del repo bajo el almacenamiento de Codex; la copia final se recortó y redimensionó de forma determinista. `public/og.png` pertenece a una preview histórica y ya no se referencia.
 
 ## Favicon
 

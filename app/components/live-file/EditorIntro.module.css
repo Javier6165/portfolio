@@ -1,0 +1,688 @@
+.hero {
+  position: relative;
+  min-height: max(44rem, 100svh);
+  isolation: isolate;
+}
+
+.stage {
+  position: relative;
+  min-height: max(44rem, 100svh);
+  overflow: hidden;
+  background: var(--canvas);
+}
+
+.canvasGrid {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--editor-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--editor-grid) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: radial-gradient(circle at 50% 48%, #000 12%, transparent 76%);
+  transition: opacity 280ms ease;
+}
+
+.frame {
+  container-type: inline-size;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: 1fr auto;
+  gap: 1rem;
+  min-height: max(44rem, 100svh);
+  padding: clamp(8rem, 13vh, 10rem) var(--page-pad) 2rem;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 76% 22%, color-mix(in srgb, var(--cold) 12%, transparent), transparent 31rem),
+    var(--canvas);
+  box-shadow: none;
+  transition: background-color 500ms ease, color 400ms ease;
+}
+
+.frame::before {
+  content: "";
+  position: absolute;
+  inset: auto var(--page-pad) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.frameMeta {
+  position: absolute;
+  z-index: 4;
+  top: 1rem;
+  right: 1rem;
+  left: 1rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  opacity: 0;
+  font: 0.48rem/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.identity {
+  z-index: 3;
+  grid-column: 1 / 7;
+  grid-row: 1;
+  align-self: end;
+  padding-bottom: clamp(4rem, 9vh, 7rem);
+}
+
+.name {
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font: 0.64rem var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 9ch;
+  color: var(--ink);
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(4rem, 7.2vw, 8.4rem);
+  font-weight: 520;
+  letter-spacing: -0.068em;
+  line-height: 0.84;
+  text-wrap: balance;
+}
+
+.title > span {
+  display: block;
+}
+
+.finalWord {
+  width: fit-content;
+  color: var(--signal);
+  transform-origin: left center;
+}
+
+.portrait {
+  --portrait-reveal: 0%;
+  position: relative;
+  z-index: 2;
+  grid-column: 7 / 13;
+  grid-row: 1;
+  align-self: stretch;
+  min-height: 34rem;
+  overflow: hidden;
+  border-radius: clamp(1rem, 2vw, 2rem);
+  background: var(--surface);
+  box-shadow: 0 2rem 7rem var(--shadow);
+  clip-path: inset(0 var(--portrait-reveal) 0 0 round clamp(1rem, 2vw, 2rem));
+}
+
+.portrait :global(.portrait--system) {
+  object-position: 52% 36%;
+  filter: contrast(1.06) saturate(0.76);
+}
+
+.portrait :global(.portrait--human) {
+  object-position: 54% 47%;
+}
+
+.portraitCaption {
+  position: absolute;
+  z-index: 3;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  left: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  color: #f5f1e8;
+  font: 0.48rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  mix-blend-mode: difference;
+}
+
+.portraitCaption b {
+  font-weight: 400;
+}
+
+.explore {
+  z-index: 3;
+  grid-column: 10 / 13;
+  grid-row: 2;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--muted);
+  font: 0.58rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.explore i {
+  width: 3rem;
+  height: 1px;
+  background: currentColor;
+  transition: width 350ms cubic-bezier(.16, 1, .3, 1), background 200ms ease;
+}
+
+.explore:hover {
+  color: var(--ink);
+}
+
+.explore:hover i {
+  width: 4rem;
+  background: var(--signal);
+}
+
+.editorChrome,
+.assetTray,
+.selection,
+.cursor,
+.comment,
+.skip {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.editorChrome {
+  position: absolute;
+  z-index: 7;
+  inset: 0 0 auto;
+  height: 4.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding-inline: clamp(1rem, 3vw, 3rem);
+  border-bottom: 1px solid var(--editor-line);
+  background: var(--editor-chrome);
+  color: var(--editor-ink);
+  font: 0.54rem var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.fileMeta,
+.editingState {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.fileMeta i,
+.editingState i {
+  width: 0.48rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 1rem color-mix(in srgb, var(--signal) 55%, transparent);
+}
+
+.fileMeta b {
+  padding: 0.28rem 0.45rem;
+  border: 1px solid var(--editor-line);
+  border-radius: 999px;
+  color: var(--editor-muted);
+  font-weight: 400;
+}
+
+.editingState {
+  justify-self: center;
+}
+
+.editingState i {
+  width: 0.38rem;
+  animation: editing-pulse 1.5s ease-in-out infinite;
+}
+
+.zoom {
+  justify-self: end;
+  color: var(--editor-muted);
+}
+
+.skip {
+  position: absolute;
+  z-index: 12;
+  top: 5.05rem;
+  right: clamp(1rem, 3vw, 3rem);
+  min-height: 2.6rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--editor-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--editor-chrome) 82%, transparent);
+  color: var(--editor-ink);
+  backdrop-filter: blur(14px);
+  font: 0.54rem var(--font-mono);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.assetTray {
+  position: absolute;
+  z-index: 8;
+  left: 1.25rem;
+  bottom: 1.1rem;
+  width: min(17rem, 26vw);
+  padding: 0.72rem;
+  border: 1px solid var(--editor-line);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--editor-chrome) 92%, transparent);
+  color: var(--editor-ink);
+  box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.22);
+}
+
+.assetTray > span {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--editor-muted);
+  font: 0.48rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assetCard {
+  display: grid;
+  grid-template-columns: 3.15rem 1fr;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid var(--editor-line);
+  border-radius: 0.55rem;
+  background: var(--editor-surface);
+  transform-origin: center;
+}
+
+.assetCard > i {
+  width: 3.15rem;
+  aspect-ratio: 1;
+  border-radius: 0.35rem;
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.32)),
+    url("/images/portraits/hero-system.jpg") 50% 32% / cover;
+}
+
+:global(html[data-theme="human"]) .assetCard > i {
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(25, 35, 60, 0.2)),
+    url("/images/portraits/hero-human.jpg") 50% 42% / cover;
+}
+
+.assetCard div {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.assetCard b {
+  overflow: hidden;
+  font-size: 0.65rem;
+  font-weight: 520;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assetCard span {
+  color: var(--editor-muted);
+  font: 0.45rem var(--font-mono);
+  text-transform: uppercase;
+}
+
+.selection {
+  position: absolute;
+  z-index: 9;
+  border: 1px solid var(--selection);
+  color: var(--selection);
+}
+
+.selection > i {
+  position: absolute;
+  width: 0.46rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--selection);
+  background: var(--editor-chrome);
+}
+
+.selection > i:nth-child(1) { top: -0.28rem; left: -0.28rem; }
+.selection > i:nth-child(2) { top: -0.28rem; right: -0.28rem; }
+.selection > i:nth-child(3) { right: -0.28rem; bottom: -0.28rem; }
+.selection > i:nth-child(4) { bottom: -0.28rem; left: -0.28rem; }
+
+.selection > span {
+  position: absolute;
+  top: -1.35rem;
+  left: -1px;
+  padding: 0.24rem 0.34rem;
+  background: var(--selection);
+  color: #fff;
+  font: 0.42rem var(--font-mono);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.titleSelection {
+  top: 36%;
+  left: 9.1%;
+  width: 37%;
+  height: 25%;
+}
+
+.portraitSelection {
+  top: 20.5%;
+  right: 8.4%;
+  width: 42%;
+  height: 58%;
+}
+
+.cursor {
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  color: var(--selection);
+  will-change: transform;
+}
+
+.cursor > i {
+  position: absolute;
+  top: -0.1rem;
+  left: -0.1rem;
+  width: 0;
+  height: 0;
+  border-top: 0.82rem solid currentColor;
+  border-right: 0.52rem solid transparent;
+  filter: drop-shadow(0 0.25rem 0.35rem rgba(0, 0, 0, 0.25));
+  transform: rotate(-18deg);
+}
+
+.cursor > span {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.7rem;
+  padding: 0.28rem 0.42rem;
+  border-radius: 0 0.35rem 0.35rem 0.35rem;
+  background: currentColor;
+  color: #fff;
+  font: 0.46rem var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.comment {
+  position: absolute;
+  z-index: 10;
+  right: 6.6%;
+  bottom: 9.2%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.52rem 0.68rem 0.52rem 0.52rem;
+  border: 1px solid var(--editor-line);
+  border-radius: 999px;
+  background: var(--editor-chrome);
+  color: var(--editor-ink);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
+  font-size: 0.68rem;
+}
+
+.comment i {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--selection);
+  color: #fff;
+  font: 0.43rem var(--font-mono);
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"],
+:global(html[data-narrative="return"]) .stage[data-expanded="false"],
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] {
+  --editor-chrome: #17191d;
+  --editor-surface: #22252a;
+  --editor-ink: #f3f1eb;
+  --editor-muted: #92969d;
+  --editor-line: rgba(255, 255, 255, 0.14);
+  --editor-grid: rgba(255, 255, 255, 0.035);
+  --selection: #6a7dff;
+  background: #111317;
+}
+
+:global(html[data-theme="human"][data-narrative="first"]) .stage[data-expanded="false"],
+:global(html[data-theme="human"][data-narrative="return"]) .stage[data-expanded="false"],
+:global(html[data-theme="human"][data-narrative="familiar"]) .stage[data-expanded="false"] {
+  --editor-chrome: #e8dfd2;
+  --editor-surface: #f6efe4;
+  --editor-ink: #182d51;
+  --editor-muted: #6f6d6a;
+  --editor-line: rgba(24, 45, 81, 0.18);
+  --editor-grid: rgba(24, 45, 81, 0.055);
+  --selection: #1d55d5;
+  background: #ded6ca;
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .canvasGrid,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .canvasGrid,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .canvasGrid,
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .editorChrome,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .editorChrome,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .editorChrome,
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .skip,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .skip,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .skip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Do not expose an inert server-rendered control before React has attached
+   the skip handler. The ready phase is set on the next animation frame. */
+.stage[data-phase="boot"] .skip {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .assetTray,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .assetTray,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .assetTray {
+  opacity: 1;
+  pointer-events: none;
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .selection,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .selection,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .selection,
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .cursor,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .cursor,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .cursor,
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .comment,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .comment,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .comment {
+  pointer-events: none;
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .frame,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .frame,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .frame {
+  inset: 6.3rem 6vw 3.8rem;
+  min-height: 0;
+  padding: clamp(4.4rem, 8vh, 6rem) clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vh, 2.5rem);
+  border-color: var(--editor-line);
+  border-radius: 0.9rem;
+  background: var(--canvas);
+  box-shadow: 0 2.5rem 7rem rgba(0, 0, 0, 0.34);
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .frameMeta,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .frameMeta,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .frameMeta {
+  opacity: 1;
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .title,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .title,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .title {
+  font-size: clamp(2.6rem, 5.4vw, 6.4rem);
+}
+
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .portrait,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .portrait,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .portrait {
+  min-height: 0;
+  border-radius: 0.65rem;
+}
+
+:global(html[data-narrative="complete"]) .editorChrome,
+:global(html[data-narrative="complete"]) .skip,
+:global(html[data-narrative="complete"]) .assetTray,
+:global(html[data-narrative="complete"]) .selection,
+:global(html[data-narrative="complete"]) .cursor,
+:global(html[data-narrative="complete"]) .comment {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+:global(html[data-theme="human"]) .frame {
+  background:
+    radial-gradient(circle at 82% 17%, color-mix(in srgb, var(--signal) 13%, transparent), transparent 28rem),
+    linear-gradient(126deg, transparent 0 57%, color-mix(in srgb, var(--cold) 5%, transparent) 57% 100%),
+    var(--canvas);
+}
+
+:global(html[data-theme="human"]) .title {
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.82;
+}
+
+:global(html[data-theme="human"]) .finalWord {
+  font-style: italic;
+}
+
+@keyframes editing-pulse {
+  50% { opacity: 0.36; transform: scale(0.78); }
+}
+
+@media (max-width: 900px) {
+  .identity { grid-column: 1 / 7; }
+  .portrait { grid-column: 7 / 13; }
+  .title { font-size: clamp(3.6rem, 8.7vw, 6.4rem); }
+  .assetTray { width: 14rem; }
+}
+
+@media (max-width: 720px) {
+  .hero,
+  .stage {
+    min-height: max(43rem, 100svh);
+  }
+
+  .frame {
+    min-height: max(43rem, 100svh);
+    grid-template-rows: 0.78fr 1fr auto;
+    padding: 6.8rem var(--page-pad) 1.25rem;
+  }
+
+  .identity {
+    grid-column: 1 / 13;
+    grid-row: 1;
+    align-self: end;
+    padding-bottom: 1.5rem;
+  }
+
+  .name { margin-bottom: 0.65rem; }
+  .title { max-width: 8.2ch; font-size: clamp(3rem, 14vw, 5rem); }
+
+  .portrait {
+    grid-column: 1 / 13;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .explore {
+    grid-column: 7 / 13;
+    grid-row: 3;
+    padding-top: 1rem;
+  }
+
+  .editorChrome {
+    height: 3.5rem;
+    grid-template-columns: 1fr auto;
+    padding-inline: 0.85rem;
+  }
+
+  .fileMeta b,
+  .zoom { display: none; }
+  .editingState { justify-self: end; }
+  .skip { top: 4rem; right: 0.85rem; }
+
+  :global(html[data-narrative="first"]) .stage[data-expanded="false"] .frame,
+  :global(html[data-narrative="return"]) .stage[data-expanded="false"] .frame,
+  :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .frame {
+    inset: 4rem 0.72rem 5.4rem;
+    grid-template-rows: 0.72fr 1fr auto;
+    padding: 3.6rem 1rem 1rem;
+  }
+
+  :global(html[data-narrative="first"]) .stage[data-expanded="false"] .title,
+  :global(html[data-narrative="return"]) .stage[data-expanded="false"] .title,
+  :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .title {
+    font-size: clamp(2.5rem, 12.5vw, 3.9rem);
+  }
+
+  .assetTray {
+    right: 0.72rem;
+    bottom: 0.65rem;
+    left: 0.72rem;
+    width: auto;
+    padding: 0.55rem;
+  }
+
+  .assetTray > span { display: none; }
+  .assetCard { grid-template-columns: 2.55rem 1fr; }
+  .assetCard > i { width: 2.55rem; }
+  .cursor { display: none; }
+
+  .titleSelection {
+    top: 17.5%;
+    left: 8%;
+    width: 78%;
+    height: 22%;
+  }
+
+  .portraitSelection {
+    top: 40%;
+    right: 7.5%;
+    width: 85%;
+    height: 42%;
+  }
+
+  .comment {
+    right: 1.25rem;
+    bottom: 6.5rem;
+    font-size: 0.62rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorChrome,
+  .skip,
+  .assetTray,
+  .selection,
+  .cursor,
+  .comment,
+  .canvasGrid {
+    display: none !important;
+  }
+}
+
+:global(html[data-motion="reduce"]) .editorChrome,
+:global(html[data-motion="reduce"]) .skip,
+:global(html[data-motion="reduce"]) .assetTray,
+:global(html[data-motion="reduce"]) .selection,
+:global(html[data-motion="reduce"]) .cursor,
+:global(html[data-motion="reduce"]) .comment,
+:global(html[data-motion="reduce"]) .canvasGrid {
+  display: none !important;
+}

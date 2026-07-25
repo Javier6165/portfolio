@@ -1,5 +1,7 @@
 # Implementación 04 — Living Fold hero
 
+> Documento histórico. Este engine y sus dependencias Three/R3F fueron retirados. La implementación vigente está en `IMPLEMENTATION-05-LIVE-FILE.md`.
+
 Fecha: 24 de julio de 2026  
 Estado: implementado; pendiente de aprobación visual de Javier en el preview privado.
 

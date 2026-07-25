@@ -1,6 +1,6 @@
 # Contexto del proyecto
 
-Este resumen permite continuar si se recibe únicamente el repositorio `site/`. El workspace completo contiene investigación adicional en la carpeta hermana `planning/`.
+Este resumen permite continuar si se recibe únicamente el repositorio `site/`. El workspace completo contiene investigación y handoff adicional en la carpeta hermana `planning/`.
 
 ## Perfil
 
@@ -10,36 +10,30 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 ## Brief original
 
-- Crear un portfolio de nivel internacional con libertad creativa.
-- Priorizar UX, claridad y personalidad.
-- Incluir microinteracciones y motion de calidad.
-- Evitar tanto la estética caótica de agencia como una plantilla de marketplace.
-- Usar placeholders hasta disponer de proyectos reales.
-- Aprovechar las fotografías de fondo oscuro preferidas por Javier.
-- Explorar el cambio de retratos claros/oscuros con el selector de tema.
-- Mantener Netlify como opción, sin limitar librerías por peso si una decisión aporta calidad real.
+- Portfolio de nivel internacional con libertad creativa.
+- UX, claridad y personalidad antes que una experiencia críptica.
+- Microinteracciones y motion de alta calidad.
+- Nada de plantilla de marketplace ni caos de agencia.
+- Placeholders hasta disponer de proyectos reales.
+- Fotografía oscura preferida por Javier y cambio coordinado entre temas.
+- Netlify sigue abierto como hosting final; el preview usa Sites.
 
-## Respuesta de diseño
+## Respuesta vigente
 
-El concepto `Human / System` convierte el selector claro/oscuro en una expresión de la práctica de Javier:
+`Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-- rigor de sistemas y precisión;
-- empatía, claridad y colaboración humana.
-
-La home sigue el recorrido posicionamiento específico → trayectoria real → trabajo conceptual → capacidades diferenciales → práctica de IA → exploración → personalidad → contacto.
+La home recorre impacto → perfil real → trayectoria → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → contacto. El editor aparece solo en el hero y tres cues; el contenido profesional nunca depende de él.
 
 ## Por qué no es una template
 
-- Hero asimétrico donde retrato, headline y una topología 3D reaccionan como un único sistema.
-- Casos con tres art directions dentro de un mismo sistema.
-- Capacidades expresadas como problemas concretos, no como un método genérico.
-- Práctica de IA demostrada con una interacción Frame → Explore → Build.
-- Playground contenido para separar exploración de flujos críticos.
-- Fotografía integrada en el sistema de tema.
-- Motion progresivo con scroll nativo.
+- Intro editor → producto terminada con timeline, MotionPath y Flip.
+- Retrato integrado en el hero y vinculado a dos identidades visuales claramente distintas.
+- Human cambia tipografía, paleta, geometría y tono editorial.
+- Trayectoria y AI Practice son interacciones accesibles, no ilustraciones vacías.
+- Northstar demuestra propagación de tokens en tres contextos.
+- El framework de evidencia admite capturas, comparativas, vídeo, Figma y demos click-to-load.
+- La experiencia recuerda visitas solo con consentimiento y se degrada a una web estática completa.
 
-## Estado
+## Estado y límites
 
-Preview 3 parte de esa firma y corrige la jerarquía del mensaje: el hero explica de forma inmediata rol, terreno, track record y ventaja; una trayectoria interactiva cuenta el origen multidisciplinar antes de mostrar casos ficticios. `AUDIT-03-COPY-POSITIONING-AND-INTERACTION.md` contiene las fuentes, el razonamiento y los efectos aceptados/rechazados.
-
-Los casos, resultados y experimentos siguen siendo ficticios. El siguiente trabajo correcto es sustituirlos por casos reales y sus artefactos. Vídeo, Figma embeds o demos se deben añadir cuando una historia concreta los justifique; no crear efectos adicionales sin una función narrativa.
+La arquitectura y el concepto están implementados. Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. El siguiente trabajo correcto es sustituir un caso por material real y medir rendimiento con esa media, no añadir efectos decorativos sin función.

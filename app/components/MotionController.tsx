@@ -9,7 +9,7 @@ export function MotionController() {
     // Motion is progressive enhancement. Base CSS leaves every section visible,
     // and this early return preserves that document for reduced-motion users.
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduceMotion.matches) return;
+    if (reduceMotion.matches || document.documentElement.dataset.motion === "reduce") return;
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -20,7 +20,7 @@ export function MotionController() {
       if (heroReveals.length) {
         gsap.fromTo(
           heroReveals,
-          { y: 48, opacity: 0 },
+          { y: 36, opacity: 0.25 },
           { y: 0, opacity: 1, duration: 1.05, stagger: 0.09, ease: "power4.out", clearProps: "transform" },
         );
       }
@@ -28,7 +28,7 @@ export function MotionController() {
       gsap.utils.toArray<HTMLElement>(".js-reveal").forEach((element) => {
         gsap.fromTo(
           element,
-          { y: 42, opacity: 0 },
+          { y: 24, opacity: 0.68 },
           {
             y: 0,
             opacity: 1,

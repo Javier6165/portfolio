@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 
 const steps = [
   { id: "frame", label: "01 / Frame", title: "Find the expensive uncertainty" },
@@ -41,18 +41,33 @@ export function AIPractice() {
   const [active, setActive] = useState<Step>("frame");
   const current = steps.find((step) => step.id === active) ?? steps[0];
 
+  function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const nextIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? steps.length - 1
+        : (index + (event.key === "ArrowRight" ? 1 : -1) + steps.length) % steps.length;
+    setActive(steps[nextIndex].id);
+    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("[role='tab']");
+    tabs?.[nextIndex]?.focus();
+  }
+
   return (
     <div className="ai-practice__interactive js-reveal">
       <div className="ai-practice__steps" role="tablist" aria-label="AI-assisted product design practice">
-        {steps.map((step) => (
+        {steps.map((step, index) => (
           <button
             type="button"
             role="tab"
             id={`ai-practice-tab-${step.id}`}
             aria-selected={active === step.id}
             aria-controls="ai-practice-panel"
+            tabIndex={active === step.id ? 0 : -1}
             key={step.id}
             onClick={() => setActive(step.id)}
+            onKeyDown={(event) => moveTab(event, index)}
           >
             <span>{step.label}</span><strong>{step.title}</strong>
           </button>

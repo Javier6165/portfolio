@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function ArrowIcon() {
@@ -40,7 +41,7 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactNode }) {
   return (
     <footer className="site-footer" id="contact">
       <div className="shell footer-grid">
@@ -57,6 +58,7 @@ export function SiteFooter() {
         <div className="footer-meta">
           <p>Marbella, Spain · Open to meaningful conversations</p>
           <p>© {new Date().getFullYear()} Javier Ortiz</p>
+          {experienceSettings}
         </div>
       </div>
     </footer>

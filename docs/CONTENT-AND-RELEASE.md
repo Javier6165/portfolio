@@ -3,59 +3,68 @@
 ## Sustituir un caso conceptual
 
 1. Validar con Javier que el proyecto se puede publicar.
-2. Separar hechos, inferencias y datos confidenciales.
-3. Actualizar o ampliar el tipo `Project` en `app/data.ts` si la historia real necesita otra estructura.
-4. Sustituir nombre, contexto, rol, superficie, formato de evidencia, decisiones y outcomes.
-5. Eliminar etiquetas de ficticio solo en el caso completamente reemplazado; la UI actual las aplica de forma global, así que un portfolio mixto requerirá un campo `isConcept` por proyecto.
-6. Sustituir `ProjectVisual` por artefactos reales optimizados o por una visualización honesta. Mantener un primer artefacto visible en el hero del caso.
-7. Actualizar smoke tests y metadata.
+2. Separar hechos, inferencias, ownership y datos confidenciales.
+3. Elegir una historia; no asumir que todos los casos necesitan la misma longitud.
+4. Actualizar `Project` y componer `evidenceBlocks` con `CaseBlock`.
+5. Sustituir nombre, contexto, rol, superficie, decisiones y outcomes.
+6. Eliminar etiquetas de ficticio solo para el caso totalmente reemplazado. Un portfolio mixto necesitará `isConcept` por proyecto.
+7. Actualizar metadata, tests y captions.
 
-No fuerces un caso real a caber en tres decisiones si eso empeora la historia. La plantilla es un punto de partida, no una restricción editorial.
+## Contrato de evidencia
 
-## Formatos previstos para evidencia real
+La unión `CaseBlock` ya admite:
 
-- **Captura Figma**: exportar AVIF/WebP en varios tamaños, conservar el texto legible y añadir anotaciones en HTML cuando sea posible.
-- **Prototipo Figma**: embed solo si aporta una interacción que una secuencia de vídeo no explica mejor; incluir imagen fallback y enlace directo.
-- **Vídeo**: MP4/WebM corto, sin autoplay con sonido, con `poster`, controles y alternativa para reduced motion.
-- **Demo vibe-coded**: enlace externo claro o embed aislado; nunca bloquear el caso si la demo tarda o deja de estar disponible.
-- **Sistema/flow**: usar una imagen navegable o fragmentos progresivos, no reducir un diagrama denso hasta hacerlo ilegible.
+- `text`: argumento editorial.
+- `image`: captura con alt, caption y aspect ratio.
+- `gallery`: secuencia de imágenes legibles.
+- `before-after`: comparación con tabs y teclado.
+- `token-propagation`: comportamiento sistémico interactivo.
+- `video`: controles, poster, caption y sin autoplay con sonido.
+- `figma`: fallback local e iframe tras click.
+- `prototype`: fallback local y demo tras click.
 
-Antes de implementar estos formatos, ampliar `Project` con una unión discriminada para media (`image`, `video`, `figma`, `demo`) en lugar de añadir condicionales por slug.
+No añadas condicionales por slug. Si una historia necesita otro formato, amplía la unión, el renderer, el fallback, la accesibilidad y las pruebas.
+
+## Preparación de media real
+
+- Exporta screenshots a AVIF/WebP/JPEG en tamaños razonables; conserva texto legible.
+- Añade anotaciones importantes en HTML, no horneadas en una imagen diminuta.
+- Vídeo corto, sin autoplay con sonido, con poster y alternativa textual.
+- Figma solo si la interacción aporta más que un vídeo; siempre click-to-load.
+- Demos vibe-coded aisladas y con fallback por si dejan de responder.
+- Todo bloque multimedia necesita caption, alt o descripción y aspect ratio reservado.
+- Nunca sobrescribas `../Assets/`; guarda optimizaciones en `public/`.
+
+## Memoria y privacidad
+
+- No conviertas la memoria narrativa en analytics.
+- No guardes URLs visitadas, movimientos, identidad o contenido de formularios.
+- `Allow` y `No thanks` deben ser equivalentes y no bloqueantes.
+- Mantén Replay, Forget y Motion accesibles desde el footer.
+- Un cambio de schema requiere migración o limpieza explícita y actualización documental.
 
 ## Añadir contacto y CV
 
 - No inventar email o perfiles.
 - Sustituir el texto temporal del footer y `about#contact-note`.
-- Guardar el CV público en `public/` únicamente tras revisar datos personales.
-- Verificar que enlaces externos usan la URL definitiva.
+- Guardar el CV público en `public/` solo tras revisar datos personales.
 
 ## Checklist antes de permitir indexación
 
-- Todos los casos y métricas están verificados.
-- Claims de rol y ownership son precisos.
-- Clientes, colaboradores y créditos están aprobados.
-- Contacto y CV son definitivos.
+- Casos, métricas, roles y créditos verificados.
+- Confidencialidad y permisos aprobados.
+- Contacto y CV definitivos.
+- Media optimizada y fallbacks comprobados.
 - `app/config.ts` apunta al dominio final.
-- QA responsive y de teclado completado.
-- axe sin errores críticos.
-- Lighthouse y Core Web Vitals revisados.
-- OG image, sitemap y canonical validados.
+- Lint, build, smoke, Playwright, axe, responsive y teclado limpios.
+- Lighthouse/Core Web Vitals revisados con contenido final.
+- OG, sitemap y canonical validados.
 - Javier autoriza publicación e indexación.
 
 Solo entonces cambia `isPreview` a `false`.
 
-## Publicación en Sites
+## Publicación
 
 - Reutilizar siempre el `project_id` de `.openai/hosting.json`.
-- Validar, guardar el source exacto y desplegar una nueva versión privada.
-- No incluir tokens, credenciales o IDs temporales en documentación.
-
-## Posible migración a Netlify
-
-La migración no está aprobada. Si se decide:
-
-1. Confirmar compatibilidad del runtime y rutas dinámicas.
-2. Definir el adapter/deployment target antes de cambiar código.
-3. Mantener el contrato de `app/config.ts`.
-4. Repetir build, pruebas, QA y metadata sobre la URL de Netlify.
-5. No borrar el proyecto Sites hasta validar la nueva producción.
+- Validar y desplegar una nueva versión privada sobre el proyecto existente.
+- Netlify no está aprobado. Si se elige, definir adapter, repetir QA y no borrar Sites hasta validar la migración.

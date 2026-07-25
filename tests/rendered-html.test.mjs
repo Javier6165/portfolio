@@ -31,24 +31,31 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /fictitious/i);
   assert.match(html, /href="\/work\/atlas"/);
   assert.match(html, /javier-theme/);
+  assert.match(html, /Working file/);
+  assert.match(html, /Javier is editing/);
+  assert.match(html, /javier-narrative-memory-v1/);
+  assert.match(html, /hero-system\.jpg/);
   assert.match(html, /Skip to content/);
-  assert.match(html, /og\.png/);
-  assert.match(html, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/og\.png/);
+  assert.match(html, /og-live-file\.jpg/);
+  assert.match(html, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/og-live-file\.jpg/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/i);
-  assert.doesNotMatch(html, /I design complex platforms|complexity-engine/i);
+  assert.doesNotMatch(html, /I design complex platforms|complexity-engine|LivingFold|@react-three|three\.module/i);
 });
 
 test("server-renders About and a concept case", async () => {
-  const [aboutResponse, caseResponse] = await Promise.all([
+  const [aboutResponse, caseResponse, evidenceResponse] = await Promise.all([
     render("/about"),
     render("/work/atlas"),
+    render("/work/northstar"),
   ]);
   assert.equal(aboutResponse.status, 200);
   assert.equal(caseResponse.status, 200);
+  assert.equal(evidenceResponse.status, 200);
 
-  const [about, caseHtml] = await Promise.all([
+  const [about, caseHtml, evidenceHtml] = await Promise.all([
     aboutResponse.text(),
     caseResponse.text(),
+    evidenceResponse.text(),
   ]);
   assert.match(about, /Senior Product Designer based in Marbella/);
   assert.match(about, /recent experience stepping into lead responsibility/);
@@ -56,6 +63,9 @@ test("server-renders About and a concept case", async () => {
   assert.match(caseHtml, /Fictitious preview content/);
   assert.match(caseHtml, /Annotated Figma flow/);
   assert.match(caseHtml, /Illustrative metrics only/);
+  assert.match(evidenceHtml, /Change one decision\. Watch the system respond\./);
+  assert.match(evidenceHtml, /One token\. Three contexts\./);
+  assert.match(evidenceHtml, /Fictitious/);
 });
 
 test("keeps the private preview out of search engines", async () => {
