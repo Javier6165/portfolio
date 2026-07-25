@@ -54,6 +54,10 @@ Los primeros recursos de wow resolvían impacto local, pero no explicaban el res
 
 Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` y `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` para el contrato vigente.
 
+## Siguiente evolución propuesta — todavía no implementada
+
+`PLAN-11-LIVE-WIP-SPOTLIGHT.md` sustituirá la sensación de UI ya terminada por estados WIP/final distintos en cada sección. Añade herramientas contextuales, comentarios justificados y Follow mode temporal. Spotlight solo podrá activarse con el target mayoritariamente visible y scroll estable; dura menos de cinco segundos, ofrece Stop/Escape, se interrumpe con una segunda intención de scroll y desaparece en reduced motion. Hasta completar y validar sus fases, los ADR y documentos 07–08 continúan describiendo la versión publicada.
+
 ## Partitura transversal aprobada
 
 - Tesis: Javier deja el archivo abierto y hace una última pasada de criterio durante el recorrido.

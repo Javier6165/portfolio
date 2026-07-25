@@ -13,8 +13,9 @@ Lee, en este orden:
 7. `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`
 8. `docs/PLAN-09-NEXT-IMPROVEMENTS.md`
 9. `docs/PLAN-10-EXPERIENCE-CHROME.md`
-10. `docs/CONTENT-AND-RELEASE.md`
-11. `docs/ASSETS.md` si vas a tocar imágenes.
+10. `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`
+11. `docs/CONTENT-AND-RELEASE.md`
+12. `docs/ASSETS.md` si vas a tocar imágenes.
 
 ## Contratos que debes preservar
 
@@ -28,6 +29,7 @@ Lee, en este orden:
 - La coreografía 07 está implementada con un beat distinto en cada sección: `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe`, `Verify` y `Hand off`. No la regreses a overlays genéricos ni cursores independientes por wrapper.
 - Profile, Work y AI son los únicos comentarios prominentes posteriores al hero. Las demás escenas conservan trazas silenciosas.
 - Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Cada escena pasa por `armed` y una pausa editorial antes de intervenir. Fast-scroll, salida de viewport, pestaña oculta, reduced motion y retorno deben fijar un resultado terminado.
+- `PLAN-11-LIVE-WIP-SPOTLIGHT.md` es la próxima iteración propuesta, aún no implementada. Sustituirá el fast-scroll actual por stages dominantes y añadirá una captura Spotlight temporal, cancelable y sin focus trap. No mezcles parcialmente ambos contratos: implementa sus fases y actualiza ADR/08 solo después de validar el nuevo sistema.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - Testimonials permanece en estado preview hasta recibir fuentes reales. No conviertas un slot a `verified` sin cita aprobada, atribución, permiso de publicación y validación de Javier.
@@ -40,7 +42,7 @@ Lee, en este orden:
 - GSAP es el único motor de coreografía; CSS puede resolver hover, focus y microestados locales.
 - Añade comentarios para fallbacks, privacidad o contratos entre archivos, no para narrar JSX evidente.
 - Conserva navegación semántica, roving focus, skip link y estados de teclado/touch.
-- No añadas smooth scroll, scroll-jacking, canvas, WebGL o motion imprescindible para entender contenido.
+- No añadas smooth scroll, scroll-jacking global, canvas, WebGL o motion imprescindible para entender contenido. La única excepción prevista es el Spotlight acotado de Plan 11, con Stop, Escape, reduced motion y restauración exacta del scroll.
 
 ## Validación
 

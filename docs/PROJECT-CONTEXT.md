@@ -37,6 +37,6 @@ La Home vigente recorre impacto → cuatro flashes profesionales → trabajo fic
 
 ## Estado y límites
 
-La arquitectura, el hero y la partitura transversal están implementados. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` define el guion y `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` el código vigente. La auditoría 08 confirma intro estable, Work temprano, escenas deterministas, fallbacks y QA limpia. Antes de ampliar efectos hay que sustituir un caso ficticio por evidencia real según `PLAN-09-NEXT-IMPROVEMENTS.md`.
+La arquitectura, el hero y la primera partitura transversal están implementados. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` define el guion publicado y `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` el código vigente. La revisión creativa posterior concluye que sus estados iniciales parecen demasiado terminados, el timing es corto y fast-scroll oculta la causa de las correcciones. `PLAN-11-LIVE-WIP-SPOTLIGHT.md` propone la siguiente fase para Home: WIP/final explícitos, Follow mode acotado y un storyboard por sección. Aún no está implementado. El trabajo con contenido real de `PLAN-09-NEXT-IMPROVEMENTS.md` continúa después; los case studies interiores quedan fuera de Plan 11.
 
 Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; testimonials, contacto, LinkedIn y CV son temporales. Los siguientes inputs son un único caso real representativo y recomendaciones aprobadas con atribución y permiso.

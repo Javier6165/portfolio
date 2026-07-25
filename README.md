@@ -39,6 +39,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/AUDIT-08-LIVE-FILE-TRANSVERSAL.md`: complete post-implementation audit.
 - `docs/PLAN-09-NEXT-IMPROVEMENTS.md`: next work, ordered around real evidence and launch readiness.
 - `docs/PLAN-10-EXPERIENCE-CHROME.md`: current navigation, progress and interaction-polish iteration.
+- `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`: next proposed Home iteration: explicit WIP/final states, Follow mode, section score and implementation gates.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 
