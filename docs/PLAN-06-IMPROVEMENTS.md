@@ -19,7 +19,7 @@ La partitura creativa completa se define en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY
 
 ## Fase 0 — Guion y partitura transversal
 
-Estado: **completada en documentación; pendiente de prototipo visual**.
+Estado: **completada e implementada**. Evidencia en Documentos 08.
 
 Objetivo: definir la experiencia completa antes de implementar escenas aisladas.
 
@@ -48,6 +48,8 @@ Gate de prototipo, a completar en Fase 3:
 
 ## Fase 1 — Estabilización inmediata
 
+Estado: **completada**. Cursor, navegación, tema, controles, storage, dependencias y regresiones están corregidos; producción audita con cero vulnerabilidades.
+
 Objetivo: eliminar bugs visibles y trampas de interacción antes de seguir diseñando.
 
 Trabajo:
@@ -75,6 +77,8 @@ Complejidad: M.
 
 ## Fase 2 — Hero estable, más rápido y sin interrupción
 
+Estado: **completada**. Intro `3,92/3,90 s`, CLS `0,0073/0`, retratos iniciales ~31 KB y consentimiento fuera del hero.
+
 Objetivo: conservar el wow reduciendo coste, espera y layout shift.
 
 Trabajo:
@@ -101,6 +105,8 @@ Gate:
 Complejidad: L. Es la fase con mayor riesgo técnico/creativo.
 
 ## Fase 3 — Arquitectura de información y Live File transversal
+
+Estado: **completada**. Ocho actos, cursor singleton, ScrollTrigger, simulación AI, Replay Playground, traces settled y Work a `1,69/2,00` viewports.
 
 Objetivo: que identidad, experiencia y trabajo se entiendan en un recorrido corto y que Live File deje de ser un efecto exclusivo del hero.
 
@@ -142,6 +148,8 @@ Complejidad: M.
 
 ## Fase 4 — Primer case study real como vertical slice
 
+Estado: **bloqueada por contenido y permisos reales de Javier**.
+
 Objetivo: demostrar que el sistema sirve para trabajo auténtico y no solo para placeholders.
 
 Dependencias de Javier:
@@ -176,6 +184,8 @@ Complejidad: XL, dependiente de contenido.
 
 ## Fase 5 — Sistema visual y microinteracciones
 
+Estado: **parcial**. Home, System/Human y controles principales están pulidos; división de CSS, hidratación y carga selectiva quedan para el Plan 09.
+
 Objetivo: elevar craft una vez que el recorrido principal sea estable.
 
 Trabajo:
@@ -199,6 +209,8 @@ Gate:
 Complejidad: L.
 
 ## Fase 6 — QA de lanzamiento y hardening
+
+Estado: **parcial**. Chromium, axe, teclado, no-JS, reduced, storage, matriz full-page y performance local pasan. Quedan contenido/contacto, WebKit/Firefox, dispositivos reales, headers y medición pública.
 
 Objetivo: convertir el preview en candidato público, todavía sin abrirlo hasta aprobación.
 
@@ -238,7 +250,7 @@ Fase 1: bugs y seguridad
           → Fase 6: candidato público
 ```
 
-La Fase 0 ya está resuelta como guion en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`. Fases 1 y 2 no necesitan contenido real y deben ejecutarse primero. La Fase 3 es obligatoria para convertir ese guion en producto y puede avanzar mientras Javier reúne material. La Fase 4 no debe comenzar con datos incompletos o inventados.
+Fases 0–3 están cerradas. Fases 5–6 tienen una base parcial. La Fase 4 no debe comenzar con datos incompletos o inventados; el orden vigente se detalla en `PLAN-09-NEXT-IMPROVEMENTS.md`.
 
 ## Inputs pendientes de Javier
 
@@ -250,4 +262,4 @@ La Fase 0 ya está resuelta como guion en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.m
 
 ## Siguiente acción recomendada
 
-Abrir el próximo ciclo con Fase 1 y Fase 2 juntas como un **stabilisation sprint de Live File**. El resultado debe ser la misma idea, pero más nítida: cursor legible, payoff sin banner, intro más corta, cero layout shift y una carga visual mucho más ligera. La Fase 3 implementará después la partitura 07 completa: un cambio observable y un estado final en cada sección, con Work y AI como grandes picos. Solo entonces conviene empezar el primer caso real.
+Recibir el dossier del primer proyecto real y ejecutar una única vertical slice con `CaseBlock`. Mientras llegan esos inputs, solo avanzar hardening reversible: dividir estilos, preparar baselines, retirar starter no usado y probar navegadores adicionales. Consulta `PLAN-09-NEXT-IMPROVEMENTS.md`.

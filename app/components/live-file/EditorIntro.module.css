@@ -42,6 +42,8 @@
     radial-gradient(circle at 76% 22%, color-mix(in srgb, var(--cold) 12%, transparent), transparent 31rem),
     var(--canvas);
   box-shadow: none;
+  transform-origin: top left;
+  will-change: transform;
   transition: background-color 500ms ease, color 400ms ease;
 }
 
@@ -300,13 +302,13 @@
   border-radius: 0.35rem;
   background:
     linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.32)),
-    url("/images/portraits/hero-system.jpg") 50% 32% / cover;
+    url("/images/portraits/hero-system-thumb.avif") 50% 32% / cover;
 }
 
 :global(html[data-theme="human"]) .assetCard > i {
   background:
     linear-gradient(180deg, transparent 40%, rgba(25, 35, 60, 0.2)),
-    url("/images/portraits/hero-human.jpg") 50% 42% / cover;
+    url("/images/portraits/hero-human-thumb.avif") 50% 42% / cover;
 }
 
 .assetCard div {
@@ -404,7 +406,7 @@
   left: 0.7rem;
   padding: 0.28rem 0.42rem;
   border-radius: 0 0.35rem 0.35rem 0.35rem;
-  background: currentColor;
+  background: var(--selection);
   color: #fff;
   font: 0.46rem var(--font-mono);
   letter-spacing: 0.04em;
@@ -506,9 +508,7 @@
 :global(html[data-narrative="first"]) .stage[data-expanded="false"] .frame,
 :global(html[data-narrative="return"]) .stage[data-expanded="false"] .frame,
 :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .frame {
-  inset: 6.3rem 6vw 3.8rem;
-  min-height: 0;
-  padding: clamp(4.4rem, 8vh, 6rem) clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vh, 2.5rem);
+  transform: translate(7%, 5.2rem) scale(0.86);
   border-color: var(--editor-line);
   border-radius: 0.9rem;
   background: var(--canvas);
@@ -519,19 +519,6 @@
 :global(html[data-narrative="return"]) .stage[data-expanded="false"] .frameMeta,
 :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .frameMeta {
   opacity: 1;
-}
-
-:global(html[data-narrative="first"]) .stage[data-expanded="false"] .title,
-:global(html[data-narrative="return"]) .stage[data-expanded="false"] .title,
-:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .title {
-  font-size: clamp(2.6rem, 5.4vw, 6.4rem);
-}
-
-:global(html[data-narrative="first"]) .stage[data-expanded="false"] .portrait,
-:global(html[data-narrative="return"]) .stage[data-expanded="false"] .portrait,
-:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .portrait {
-  min-height: 0;
-  border-radius: 0.65rem;
 }
 
 :global(html[data-narrative="complete"]) .editorChrome,
@@ -620,15 +607,7 @@
   :global(html[data-narrative="first"]) .stage[data-expanded="false"] .frame,
   :global(html[data-narrative="return"]) .stage[data-expanded="false"] .frame,
   :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .frame {
-    inset: 4rem 0.72rem 5.4rem;
-    grid-template-rows: 0.72fr 1fr auto;
-    padding: 3.6rem 1rem 1rem;
-  }
-
-  :global(html[data-narrative="first"]) .stage[data-expanded="false"] .title,
-  :global(html[data-narrative="return"]) .stage[data-expanded="false"] .title,
-  :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .title {
-    font-size: clamp(2.5rem, 12.5vw, 3.9rem);
+    transform: translate(4%, 3.9rem) scale(0.92);
   }
 
   .assetTray {

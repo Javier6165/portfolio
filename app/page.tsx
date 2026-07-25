@@ -1,10 +1,10 @@
 /* Theme-swapped portraits are pre-compressed local assets; native images keep both variants immediately available. */
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { AIPractice } from "./components/AIPractice";
-import { ExperienceSignal } from "./components/ExperienceSignal";
 import { EditorIntro } from "./components/live-file/EditorIntro";
-import { NarrativeCue } from "./components/live-file/NarrativeCue";
+import { MemoryConsent } from "./components/live-file/ExperienceSettings";
+import { LiveScene } from "./components/live-file/LiveScene";
+import { PlaygroundStudy } from "./components/PlaygroundStudy";
 import { ProjectCard } from "./components/ProjectCard";
 import { ArrowIcon } from "./components/SiteShell";
 import { projects } from "./data";
@@ -17,24 +17,24 @@ function Portrait({ context = "profile" }: { context?: "profile" | "about" }) {
       role="img"
       aria-label="Portrait of Javier Ortiz; the photograph changes with the Human or System theme."
     >
-      <img
-        className="portrait portrait--system"
-        src={`/images/portraits/${profile ? "hero-system" : "about-system"}.jpg`}
-        alt=""
-        aria-hidden="true"
-        width={profile ? 1800 : 1439}
-        height={profile ? 1799 : 1800}
-        loading="lazy"
-      />
-      <img
-        className="portrait portrait--human"
-        src={`/images/portraits/${profile ? "hero-human" : "about-human"}.jpg`}
-        alt=""
-        aria-hidden="true"
-        width={profile ? 2200 : 1314}
-        height={profile ? 1753 : 1800}
-        loading="lazy"
-      />
+      {(["system", "human"] as const).map((theme) => {
+        const asset = profile ? `hero-${theme}` : `about-${theme}`;
+        return (
+          <picture key={theme}>
+            <source type="image/avif" srcSet={`/images/portraits/${asset}-960.avif 960w, /images/portraits/${asset}-1440.avif 1440w`} sizes="(max-width: 720px) 100vw, 42vw" />
+            <source type="image/webp" srcSet={`/images/portraits/${asset}-960.webp 960w, /images/portraits/${asset}-1440.webp 1440w`} sizes="(max-width: 720px) 100vw, 42vw" />
+            <img
+              className={`portrait portrait--${theme}`}
+              src={`/images/portraits/${asset}.jpg`}
+              alt=""
+              aria-hidden="true"
+              width={theme === "system" ? (profile ? 1800 : 1439) : (profile ? 2200 : 1314)}
+              height={theme === "human" && profile ? 1753 : profile ? 1799 : 1800}
+              loading="lazy"
+            />
+          </picture>
+        );
+      })}
       <figcaption>
         <span className="mode-caption mode-caption--system">SYSTEM / Dark</span>
         <span className="mode-caption mode-caption--human">HUMAN / Light</span>
@@ -73,24 +73,31 @@ export default function Home() {
       <EditorIntro />
 
       <section className="experience section shell" id="experience" aria-labelledby="experience-title">
-        <div className="profile-intro profile-intro--live-file">
-          <header className="profile-intro__headline js-reveal">
-            <p className="kicker">01 / Profile</p>
-            <h2 id="experience-title">From visual worlds to product systems.</h2>
-          </header>
-          <div className="profile-intro__copy js-reveal">
-            <p>I’m a Senior Product Designer based in Marbella, working remotely. Across <strong>5+ years at Gaming Innovation Group</strong>, I progressed from Junior to Senior and briefly stepped into Lead—while staying hands-on with complex digital products.</p>
-            <p>My edge is combining product judgement with visual craft, AI-assisted workflows and coded prototypes that make difficult behaviour tangible sooner.</p>
-            <ul className="profile-intro__facts" aria-label="Javier Ortiz at a glance">
-              <li><span>Trajectory</span><strong>Junior → Product → Senior → Lead</strong></li>
-              <li><span>Product terrain</span><strong>Rules · CMS · Backoffice · Design systems</strong></li>
-              <li><span>Working edge</span><strong>AI-assisted design + coded prototypes</strong></li>
-            </ul>
+        <LiveScene
+          id="profile-clarify"
+          verb="clarify"
+          label="Profile / Refined"
+          targetSelector=".profile-intro__facts"
+          durationMs={1750}
+          comment="Keep the signal. Lose the résumé."
+          className="profile-live-scene"
+        >
+          <div className="profile-intro profile-intro--live-file">
+            <header className="profile-intro__headline js-reveal">
+              <p className="kicker">01 / In four lines</p>
+              <h2 id="experience-title">Complex products. Clear decisions. Working proof.</h2>
+            </header>
+            <div className="profile-intro__copy js-reveal">
+              <ul className="profile-intro__facts" aria-label="Javier Ortiz at a glance">
+                <li><span>Level</span><strong>Senior Product Designer · recent Lead responsibility</strong></li>
+                <li><span>Experience</span><strong>5+ years at Gaming Innovation Group · Marbella / remote</strong></li>
+                <li><span>Product terrain</span><strong>Rule engines · CMS · backoffice · design systems</strong></li>
+                <li><span>Working edge</span><strong>AI-assisted design · coded prototypes</strong></li>
+              </ul>
+            </div>
           </div>
-        </div>
-        <NarrativeCue cueId="trajectory-refinement" kind="trajectory" message="Not a straight line. Better that way.">
-          <ExperienceSignal />
-        </NarrativeCue>
+        </LiveScene>
+        <MemoryConsent />
       </section>
 
       <section className="selected-work section shell" id="work" aria-labelledby="work-title">
@@ -99,11 +106,23 @@ export default function Home() {
           <h2 id="work-title">Systems I make legible.</h2>
           <p>These concepts preview how real rule engine, design system and AI work will be told. Names, organisations, metrics and outcomes are fictitious.</p>
         </header>
-        <NarrativeCue cueId="work-framing" kind="work" message="The frame should explain the decision.">
-          <div className="project-list">
-            {projects.map((project) => <ProjectCard project={project} key={project.slug} />)}
-          </div>
-        </NarrativeCue>
+        <div className="project-list">
+          {projects.map((project, index) => index === 0 ? (
+            <LiveScene
+              id="work-frame"
+              verb="frame"
+              label="Case 01 / Live"
+              targetSelector=".project-card__media"
+              durationMs={2300}
+              autoVisitTier={2}
+              comment="Show the decision, not the decoration."
+              className="work-live-scene"
+              key={project.slug}
+            >
+              <ProjectCard project={project} />
+            </LiveScene>
+          ) : <ProjectCard project={project} key={project.slug} />)}
+        </div>
       </section>
 
       <section className="expertise section shell" id="approach" aria-labelledby="expertise-title">
@@ -112,16 +131,26 @@ export default function Home() {
           <h2 id="expertise-title">Deep in the system. Close to the interface.</h2>
           <p>I work best where dense product logic, interaction quality and the way teams build need to become one coherent experience.</p>
         </header>
-        <div className="expertise-grid">
-          {expertise.map((item) => (
-            <article className={`expertise-card expertise-card--${item.visual} js-reveal`} key={item.index}>
-              <div className="expertise-card__meta"><span>{item.index}</span><span>{item.label}</span></div>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-              <div className="expertise-artifact" aria-hidden="true"><i /><i /><i /><b /><span /></div>
-            </article>
-          ))}
-        </div>
+        <LiveScene
+          id="expertise-propagate"
+          verb="propagate"
+          label="1 change → 3 surfaces"
+          targetSelector=".expertise-live-token"
+          durationMs={1650}
+          className="expertise-live-scene"
+        >
+          <div className="expertise-live-token" aria-hidden="true"><span>Decision model</span><b>Local</b><i /><strong>Shared</strong></div>
+          <div className="expertise-grid">
+            {expertise.map((item) => (
+              <article className={`expertise-card expertise-card--${item.visual} js-reveal`} key={item.index}>
+                <div className="expertise-card__meta"><span>{item.index}</span><span>{item.label}</span></div>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <div className="expertise-artifact" aria-hidden="true"><i /><i /><i /><b /><span /></div>
+              </article>
+            ))}
+          </div>
+        </LiveScene>
       </section>
 
       <section className="ai-practice section shell" id="ai-practice" aria-labelledby="ai-title">
@@ -131,17 +160,31 @@ export default function Home() {
           <p>I use AI to structure context, challenge assumptions, explore constrained options and build functional prototypes. It accelerates the feedback loop; product judgement and accountability stay human.</p>
           <Link className="text-link" href="/playground">See experiments <ArrowIcon /></Link>
         </div>
-        <NarrativeCue className="ai-practice__narrative" cueId="prototype-handoff" kind="prototype" message="Screens explain it. Behaviour proves it.">
+        <LiveScene
+          id="ai-activate"
+          verb="activate"
+          label="Prototype / Live"
+          targetSelector=".ai-practice__panel"
+          durationMs={2700}
+          autoVisitTier={2}
+          comment="Screens explain it. Behaviour proves it."
+          className="ai-practice__narrative"
+        >
           <AIPractice />
-        </NarrativeCue>
+        </LiveScene>
       </section>
 
       <section className="playground-preview section shell" aria-labelledby="playground-title">
-        <div className="playground-preview__canvas js-reveal" aria-hidden="true">
-          <div className="kinetic-type"><span>MAKE</span><span>IT</span><span>REAL</span></div>
-          <div className="cursor-orbit"><i /><i /><i /></div>
-          <div className="lab-tag">LAB / 001—003</div>
-        </div>
+        <LiveScene
+          id="playground-experiment"
+          verb="experiment"
+          label="Experiment / Played"
+          targetSelector=".playground-playhead"
+          durationMs={1700}
+          className="playground-live-scene"
+        >
+          <PlaygroundStudy />
+        </LiveScene>
         <div className="playground-preview__copy js-reveal">
           <p className="kicker">05 / Playground</p>
           <h2 id="playground-title">The fastest way to understand an idea is to make it move.</h2>
@@ -151,7 +194,16 @@ export default function Home() {
       </section>
 
       <section className="about-preview section shell" aria-labelledby="about-preview-title">
-        <Portrait context="about" />
+        <LiveScene
+          id="about-reframe"
+          verb="reframe"
+          label="Crop / Approved"
+          targetSelector=".about-preview__portrait"
+          durationMs={1400}
+          className="about-live-scene"
+        >
+          <Portrait context="about" />
+        </LiveScene>
         <div className="about-preview__copy js-reveal">
           <p className="kicker">06 / The person in the system</p>
           <h2 id="about-preview-title">Hands-on by nature. Lead when the work needs it.</h2>

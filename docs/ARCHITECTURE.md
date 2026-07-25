@@ -30,14 +30,15 @@ No renderiza contenido distinto, por lo que servidor y cliente conservan el mism
 
 `app/components/live-file/` contiene:
 
-- `NarrativeProvider`: consentimiento, memoria, tiers, cues, replay y motion.
-- `EditorIntro`: reducer visual, timeline, Flip, MotionPath, skip y fallos.
-- `NarrativeCue`: ancla declarativa mediante IntersectionObserver.
+- `NarrativeProvider`: consentimiento, memoria, tiers, escenas vistas, replay y motion.
+- `EditorIntro`: reducer visual, timeline transform-only, skip y fallos.
+- `LiveSceneDirector`: cursor singleton, exclusión, MotionPath, fast-scroll y eventos de acción.
+- `LiveScene`: declaración y trigger ScrollTrigger sobre anchors DOM reales.
 - `ExperienceSettings` y `MemoryConsent`: controles locales.
 
 Los estados lógicos viven en React/atributos. GSAP solo interpola. El contenido semántico del hero está en `EditorIntro`; chrome, selecciones, cursor, asset tray y comentarios son decorativos.
 
-El inicio espera a que el retrato activo decodifique o un máximo de 800 ms. Un fallo cancela la secuencia y fija el hero final. En retorno la secuencia empieza inmediatamente y dura menos de dos segundos.
+El inicio espera a que el retrato activo decodifique o un máximo de 350 ms. Un fallo cancela la secuencia y fija el hero final. En retorno la secuencia empieza inmediatamente y dura menos de dos segundos. El hero conserva geometría final durante toda la intro; el frame editor es solo un transform visual.
 
 ## Memoria
 
@@ -55,23 +56,19 @@ Claves:
 
 `MotionController` conserva `.js-hero-reveal`, `.js-reveal` y `.theme-swap`. Los reveals parten de contenido visible y nunca dejan transforms inline que anulen hover. `data-motion="reduce"` y `prefers-reduced-motion` eliminan intro, cues y transiciones no esenciales.
 
-## Home y cues
+## Home y escenas
 
-El hero termina antes de `#experience`. Después existen tres cues declarativos:
+El hero termina antes de `#experience`. Home declara siete `LiveScene` posteriores: Profile, Work, Expertise, AI, Playground, About preview y Footer. Cada una tiene verbo, target, duración, tier y estado final propios.
 
-- trayectoria;
-- selected work;
-- AI + coded prototypes.
+`LiveSceneDirector` garantiza una sola escena activa. ScrollTrigger empieza aproximadamente en `top 72%`, sin scrub/pinning/snapping. Fast-scroll, retorno o escenas ya vistas fijan `settled`; reduced motion fija `reduced`. El límite de tres se aplica a comentarios prominentes —Profile, Work y AI—, no a las trazas silenciosas.
 
-`NarrativeProvider` limita tres por sesión, impone cooldown, evita repetir IDs y cancela al scroll/ocultar pestaña. `NarrativeCue` no cambia layout ni intercepta puntero.
-
-Esta es la arquitectura vigente, no el destino aprobado. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` la sustituirá por `NarrativeDirector`, un cursor singleton y una escena con resultado persistente por sección. El límite futuro se aplica a tres comentarios prominentes después del hero, no a la presencia de micro-beats silenciosos.
+AI y Playground escuchan `portfolio-live-scene-play` y ejecutan controles React reales. Pointer/foco del visitante sobre cualquier escena gana y fuerza handoff. El contrato completo está en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
 
 ## Temas
 
 `data-theme` define tokens compartidos. ThemeToggle actualiza atributo, `colorScheme`, `javier-theme` y `portfolio-theme-change`.
 
-Las dos fotografías del hero comparten geometría y se intercambian por CSS para evitar saltos. Human añade Instrument Serif y una composición editorial propia; la semántica y el orden se mantienen.
+Las fotografías de Hero y About comparten geometría, usan AVIF/WebP responsive con JPEG fallback y se intercambian por CSS para evitar saltos. Human añade Instrument Serif y una composición editorial propia; la semántica y el orden se mantienen.
 
 ## Evidencia de casos
 
@@ -97,7 +94,8 @@ Northstar usa `token-propagation` como demostrador ficticio. Los otros tipos est
 
 - `npm run lint`
 - `npm test`: build + smoke tests de HTML.
-- `npm run test:e2e`: interacción, teclado, axe, no-JS, reduced motion, memoria, fallo de imagen y matriz visual.
+- `npm run test:e2e`: coreografía, interacción real, teclado, axe, no-JS, reduced motion, memoria, fallo de imagen y matriz visual full-page.
+- `node tests/performance-audit.mjs <url>`: intro, CLS/LCP local, transferencia, overflow y posiciones de secciones contra build de producción.
 
 ## Starter preservado
 

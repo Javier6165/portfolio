@@ -1,15 +1,12 @@
 .consent {
-  position: fixed;
-  z-index: 200;
-  right: 1rem;
-  bottom: 1rem;
-  left: 1rem;
+  position: relative;
+  z-index: 2;
   max-width: 48rem;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1.25rem;
   align-items: center;
-  margin-inline: auto;
+  margin: clamp(1rem, 2.5vw, 2rem) auto 0;
   padding: 1rem;
   border: 1px solid var(--line-strong);
   border-radius: 1rem;

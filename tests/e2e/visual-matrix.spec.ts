@@ -23,10 +23,16 @@ for (const viewport of viewports) {
       scrollWidth: document.documentElement.scrollWidth,
     }));
     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
-    await page.screenshot({ path: testInfo.outputPath(`system-${viewport.width}x${viewport.height}.png`) });
+    for (const section of await page.locator("main > section").all()) {
+      await section.scrollIntoViewIfNeeded();
+    }
+    await page.waitForFunction(() => [...document.images].every((image) => image.complete));
+    await page.screenshot({ path: testInfo.outputPath(`system-${viewport.width}x${viewport.height}.png`), fullPage: true });
 
-    await page.getByRole("button", { name: "Toggle between Human and System modes" }).click();
+    await page.getByRole("button", { name: "Use Human visual mode" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "human");
+    await page.waitForFunction(() => [...document.images].every((image) => image.complete));
     await page.waitForTimeout(650);
-    await page.screenshot({ path: testInfo.outputPath(`human-${viewport.width}x${viewport.height}.png`) });
+    await page.screenshot({ path: testInfo.outputPath(`human-${viewport.width}x${viewport.height}.png`), fullPage: true });
   });
 }

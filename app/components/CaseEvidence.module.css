@@ -144,7 +144,7 @@
 .surfaces article > div { display: flex; gap: 0.35rem; margin-top: 1rem; }
 .surfaces article > div i { flex: 1; height: 3rem; border-radius: calc(var(--demo-radius) * .65); background: color-mix(in srgb, var(--demo-accent) 18%, #252831); transition: border-radius 500ms ease, background 450ms ease; }
 .surfaces article > b { margin-top: 0.8rem; color: var(--demo-accent); font-size: 2.8rem; font-weight: 520; }
-.surfaces article button { width: fit-content; margin-top: auto; padding: 0.48rem 0.65rem; border: 0; border-radius: var(--demo-radius); background: var(--demo-accent); color: #101218; font-size: 0.58rem; cursor: pointer; transition: border-radius 500ms ease, background 450ms ease; }
+.surfaceAction { width: fit-content; margin-top: auto; padding: 0.48rem 0.65rem; border-radius: var(--demo-radius); background: var(--demo-accent); color: #101218; font-size: 0.58rem; transition: border-radius 500ms ease, background 450ms ease; }
 
 .propagation {
   position: absolute;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 const steps = [
   { id: "frame", label: "01 / Frame", title: "Find the expensive uncertainty" },
@@ -9,8 +9,17 @@ const steps = [
 ] as const;
 
 type Step = (typeof steps)[number]["id"];
+type SimulationState = "idle" | "running" | "complete";
 
-function PracticeArtifact({ step }: { step: Step }) {
+function PracticeArtifact({
+  step,
+  simulationState,
+  onRun,
+}: {
+  step: Step;
+  simulationState: SimulationState;
+  onRun: () => void;
+}) {
   if (step === "frame") {
     return (
       <div className="ai-artifact ai-artifact--frame">
@@ -28,18 +37,56 @@ function PracticeArtifact({ step }: { step: Step }) {
       </div>
     );
   }
+  const running = simulationState === "running";
+  const complete = simulationState === "complete";
   return (
     <div className="ai-artifact ai-artifact--build">
-      <div className="ai-artifact__bar"><i /> Working prototype / local <span>Ready</span></div>
+      <div className="ai-artifact__bar"><i /> Working prototype / local <span>{running ? "Checking" : complete ? "Proved" : "Ready"}</span></div>
       <div className="prototype-rule"><small>IF</small><span>Market changes</span><small>THEN</small><span>Preview impact</span></div>
-      <div className="prototype-result"><i /><div><small>Simulation complete</small><strong>12,480 states checked</strong></div><button type="button">Review</button></div>
+      <div className="prototype-progress" data-state={simulationState} aria-hidden="true"><i /></div>
+      <div className="prototype-result" data-state={simulationState}>
+        <i />
+        <div aria-live="polite">
+          <small>{running ? "Simulation running" : complete ? "Simulation complete" : "Working behaviour"}</small>
+          <strong>{running ? "Checking edge cases…" : complete ? "12,480 states checked" : "Ready to test the consequence"}</strong>
+        </div>
+        <button type="button" onClick={onRun} disabled={running}>
+          {running ? "Running…" : complete ? "Run again" : "Run simulation"}
+        </button>
+      </div>
     </div>
   );
 }
 
 export function AIPractice() {
   const [active, setActive] = useState<Step>("frame");
+  const [simulationState, setSimulationState] = useState<SimulationState>("idle");
+  const simulationTimerRef = useRef<number | null>(null);
   const current = steps.find((step) => step.id === active) ?? steps[0];
+
+  function runSimulation() {
+    if (simulationTimerRef.current) window.clearTimeout(simulationTimerRef.current);
+    setSimulationState("running");
+    simulationTimerRef.current = window.setTimeout(() => {
+      setSimulationState("complete");
+      simulationTimerRef.current = null;
+    }, 1_150);
+  }
+
+  useEffect(() => {
+    function activatePrototype(event: Event) {
+      if (!(event instanceof CustomEvent) || event.detail?.id !== "ai-activate") return;
+      setActive("build");
+      // Let the selected panel render before its functional state changes.
+      window.requestAnimationFrame(runSimulation);
+    }
+
+    window.addEventListener("portfolio-live-scene-play", activatePrototype);
+    return () => {
+      window.removeEventListener("portfolio-live-scene-play", activatePrototype);
+      if (simulationTimerRef.current) window.clearTimeout(simulationTimerRef.current);
+    };
+  }, []);
 
   function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -75,7 +122,7 @@ export function AIPractice() {
       </div>
       <div id="ai-practice-panel" role="tabpanel" aria-labelledby={`ai-practice-tab-${active}`} className="ai-practice__panel">
         <div className="ai-practice__panel-meta"><span>{current.label}</span><span>Human judgement stays in the loop</span></div>
-        <PracticeArtifact step={active} />
+        <PracticeArtifact step={active} simulationState={simulationState} onRun={runSimulation} />
       </div>
     </div>
   );

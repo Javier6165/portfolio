@@ -4,11 +4,11 @@ Fecha: 25 de julio de 2026.
 
 ## Estado
 
-Implementado y validado localmente. La publicación debe seguir siendo privada sobre el proyecto Sites existente.
+Documento histórico de la primera implementación. El hero, memoria y `CaseBlock` siguen siendo contexto válido, pero los cues/Flip descritos aquí fueron sustituidos por `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`. La publicación debe seguir siendo privada sobre el proyecto Sites existente.
 
 La auditoría posterior está en `AUDIT-06-POST-LIVE-FILE.md`. Confirmó que el hero funciona, pero la promesa transversal sigue incompleta: el cue de Work no puede alcanzar el ratio de intersección actual y los otros cues son demasiado fáciles de perder.
 
-La sustitución aprobada se especifica en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`: un cursor singleton, una escena con cambio persistente por sección y tres comentarios prominentes después del hero. Este documento 05 sigue describiendo el código vigente hasta que se implemente esa partitura.
+La sustitución aprobada en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` ya está implementada: cursor singleton, escena con cambio persistente por sección y tres comentarios prominentes después del hero. Este documento 05 solo describe el baseline anterior.
 
 ## Hero e intro
 

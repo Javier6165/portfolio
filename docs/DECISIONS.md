@@ -24,9 +24,9 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 ## Tecnología
 
 - Next.js 16 + React 19 sobre vinext/Sites.
-- CSS nativo + CSS Modules; GSAP Timeline/Flip/MotionPath como único motor de coreografía.
+- CSS nativo + CSS Modules; GSAP Timeline/MotionPath/ScrollTrigger como único motor de coreografía. La entrega del hero es transform-only; Flip ya no participa en esa transición.
 - Sin Three.js, R3F, WebGL, Lenis, Motion, XState, React Flow o Liveblocks.
-- `NarrativeProvider` controla memoria, cues y motion manual.
+- `NarrativeProvider` controla memoria, escenas vistas y motion manual; `LiveSceneDirector` controla exclusión y timing de escenas.
 - `CaseBlock` controla evidencia; iframes externos solo tras click.
 - Sin base de datos, autenticación, analytics o persistencia remota.
 
@@ -45,7 +45,7 @@ Este documento resume lo que un colaborador necesita si recibe solo el repositor
 - Netlify es una opción de lanzamiento, no una migración aprobada.
 - Nunca crear un segundo proyecto, habilitar indexación o conectar dominio por iniciativa propia.
 
-Consulta `AUDIT-05-LIVE-FILE.md` e `IMPLEMENTATION-05-LIVE-FILE.md` para el razonamiento y los contratos completos.
+Consulta `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md`, `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` y `AUDIT-08-LIVE-FILE-TRANSVERSAL.md` para el contrato vigente. Los documentos 05–06 explican el origen histórico.
 
 ## Partitura transversal aprobada
 
@@ -55,5 +55,5 @@ Consulta `AUDIT-05-LIVE-FILE.md` e `IMPLEMENTATION-05-LIVE-FILE.md` para el razo
 - Verbos de Home: `Compose`, `Clarify`, `Frame`, `Propagate`, `Activate`, `Experiment`, `Reframe` y `Hand off`.
 - Profile, Work y AI son los únicos comentarios prominentes posteriores al hero.
 - Work y AI son los picos principales; el resto mantiene continuidad con beats silenciosos.
-- ScrollTrigger sustituirá al observer actual para triggers deterministas, sin scrub, pinning, snapping ni scroll-jacking.
-- El contrato completo vive en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` y aún no está implementado.
+- ScrollTrigger sustituye al observer anterior con triggers deterministas, sin scrub, pinning, snapping ni scroll-jacking.
+- El contrato completo vive en `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` y su implementación en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.

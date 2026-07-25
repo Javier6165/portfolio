@@ -18,7 +18,7 @@ No sobrescribir originales. Las versiones servidas son copias optimizadas.
 | `public/images/portraits/about-system.jpg` | `editadas/_MGL0339.jpg` | About / System |
 | `public/images/portraits/about-human.jpg` | `editadas/_MGL0269.jpg` | About / Human |
 
-Los dos retratos de hero comparten la misma caja y se cargan localmente para que el cambio de tema no altere geometría. `EditorIntro` espera el decode de la imagen activa hasta 800 ms y tiene fallback de fallo.
+Hero y About conservan estos JPEG como fallback y añaden AVIF/WebP responsive `-960`/`-1440`. Los originales servidos no se sobrescriben. El bootstrap precarga solo el AVIF del tema activo; la primera carga de retratos medida es ~31 KB. `EditorIntro` espera el decode de la imagen activa hasta 350 ms y tiene fallback de fallo.
 
 ## Tarjeta social vigente
 

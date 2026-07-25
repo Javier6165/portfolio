@@ -22,11 +22,11 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La Home desplegada recorre impacto → perfil real → trayectoria → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → contacto. El editor aparece solo en el hero y tres cues; el contenido profesional nunca depende de él. Narrativa 07 moverá la trayectoria detallada a About, subirá Work y añadirá una escena persistente en cada sección.
+La Home vigente recorre impacto → cuatro flashes profesionales → trabajo ficticio → capacidades → IA/prototipos → exploración → persona → contacto. Live File reaparece con un verbo y una traza persistente en cada sección; el contenido profesional nunca depende de él. La trayectoria detallada vive en About y Work empieza antes de 1,8 viewports desktop.
 
 ## Por qué no es una template
 
-- Intro editor → producto terminada con timeline, MotionPath y Flip.
+- Intro editor → producto terminada con timeline transform-only y un cursor singleton MotionPath.
 - Retrato integrado en el hero y vinculado a dos identidades visuales claramente distintas.
 - Human cambia tipografía, paleta, geometría y tono editorial.
 - Trayectoria y AI Practice son interacciones accesibles, no ilustraciones vacías.
@@ -36,6 +36,6 @@ La Home desplegada recorre impacto → perfil real → trayectoria → trabajo f
 
 ## Estado y límites
 
-La arquitectura y el hero del concepto están implementados. La auditoría posterior confirmó que Live File todavía no es transversal: los cues fuera del hero apenas se perciben y Work no puede activarse con su threshold actual. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` ya define la solución creativa completa —un verbo, un cambio y un estado final por sección—, pero todavía no está implementada. Antes de sustituir casos hay que completar el sprint de estabilización y ejecutar esa partitura según `PLAN-06-IMPROVEMENTS.md`.
+La arquitectura, el hero y la partitura transversal están implementados. `NARRATIVE-07-LIVE-FILE-CHOREOGRAPHY.md` define el guion y `IMPLEMENTATION-08-LIVE-FILE-SCORE.md` el código vigente. La auditoría 08 confirma intro estable, Work temprano, escenas deterministas, fallbacks y QA limpia. Antes de ampliar efectos hay que sustituir un caso ficticio por evidencia real según `PLAN-09-NEXT-IMPROVEMENTS.md`.
 
-Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. Después de estabilizar y extender la gramática, el siguiente paso de contenido es un único caso real representativo.
+Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; contacto, LinkedIn y CV son temporales. El siguiente paso de contenido es un único caso real representativo.

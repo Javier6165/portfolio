@@ -91,9 +91,9 @@ export function CaseEvidence({ block }: { block: CaseBlock }) {
               <div><i />Density <b>↗</b></div>
             </div>
             <div className={styles.surfaces} aria-label={`${mode} token mode applied to three sample product surfaces`}>
-              <article><span>OPERATIONS</span><strong>Rule review</strong><i /><i /><button type="button">Review</button></article>
-              <article><span>KNOWLEDGE</span><strong>Pattern library</strong><div><i /><i /><i /></div><button type="button">Open</button></article>
-              <article><span>PLAYER</span><strong>Reward state</strong><b>+24</b><button type="button">Continue</button></article>
+              <article><span>OPERATIONS</span><strong>Rule review</strong><i /><i /><span className={styles.surfaceAction}>Review ready</span></article>
+              <article><span>KNOWLEDGE</span><strong>Pattern library</strong><div><i /><i /><i /></div><span className={styles.surfaceAction}>Library linked</span></article>
+              <article><span>PLAYER</span><strong>Reward state</strong><b>+24</b><span className={styles.surfaceAction}>State applied</span></article>
             </div>
             <div className={styles.propagation} aria-hidden="true"><i /><i /><i /></div>
             <div className={styles.comment} aria-hidden="true"><b>JO</b><span>One token. Three contexts. No forced uniformity.</span></div>

@@ -53,6 +53,9 @@ export default defineConfig(async () => {
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         config: localBindingConfig,
+        // The sandbox cannot open workerd's optional debugger socket. Runtime
+        // behaviour is unchanged; only the local DevTools endpoint is disabled.
+        inspectorPort: isCodexSeatbeltSandbox ? false : undefined,
       }),
     ],
   };

@@ -22,7 +22,6 @@ export type NarrativeMemory = {
 };
 
 type NarrativeContextValue = {
-  activeCueId: string | null;
   consent: NarrativeConsent;
   introComplete: boolean;
   reducedMotion: boolean;
@@ -34,7 +33,8 @@ type NarrativeContextValue = {
   declineMemory: () => void;
   forgetExperience: () => void;
   replayIntro: () => void;
-  requestCue: (cueId: string) => boolean;
+  hasSeenCue: (cueId: string) => boolean;
+  markCueSeen: (cueId: string) => void;
   setManualReducedMotion: (reduced: boolean) => void;
 };
 
@@ -44,9 +44,6 @@ const SESSION_COMPLETE_KEY = "javier-narrative-session-v1";
 const SESSION_COUNTED_KEY = "javier-narrative-counted-v1";
 const MOTION_KEY = "javier-motion";
 const MEMORY_LIFETIME = 90 * 24 * 60 * 60 * 1000;
-const MAX_CUES_PER_VISIT = 3;
-const CUE_COOLDOWN = 10_000;
-
 const NarrativeContext = createContext<NarrativeContextValue | null>(null);
 
 function readMemory(): NarrativeMemory | null {
@@ -88,20 +85,20 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
   const [introComplete, setIntroComplete] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
   const [visitTier, setVisitTier] = useState<1 | 2 | 3>(1);
-  const [activeCueId, setActiveCueId] = useState<string | null>(null);
   const [replayToken, setReplayToken] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const consentRef = useRef<NarrativeConsent>(consent);
   const seenCueIds = useRef(new Set<string>());
-  const cueCount = useRef(0);
-  const lastCueAt = useRef(0);
-  const lastScrollAt = useRef(0);
-  const cueTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const systemReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const syncMotion = () => {
-      const manualReduced = window.localStorage.getItem(MOTION_KEY) === "reduce";
+      let manualReduced = false;
+      try {
+        manualReduced = window.localStorage.getItem(MOTION_KEY) === "reduce";
+      } catch {
+        // Device preference remains the safe fallback when storage is blocked.
+      }
       const next = systemReduced.matches || manualReduced;
       setReducedMotion(next);
       document.documentElement.dataset.motion = next ? "reduce" : "full";
@@ -162,29 +159,6 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  useEffect(() => () => {
-    if (cueTimer.current) window.clearTimeout(cueTimer.current);
-  }, []);
-
-  useEffect(() => {
-    const cancelCueForReadingIntent = () => {
-      lastScrollAt.current = Date.now();
-      if (cueTimer.current) window.clearTimeout(cueTimer.current);
-      cueTimer.current = null;
-      setActiveCueId(null);
-    };
-    const cancelWhenHidden = () => {
-      if (document.hidden) cancelCueForReadingIntent();
-    };
-
-    window.addEventListener("scroll", cancelCueForReadingIntent, { passive: true });
-    document.addEventListener("visibilitychange", cancelWhenHidden);
-    return () => {
-      window.removeEventListener("scroll", cancelCueForReadingIntent);
-      document.removeEventListener("visibilitychange", cancelWhenHidden);
-    };
-  }, []);
-
   const completeIntro = useCallback(() => {
     setIntroComplete(true);
     document.documentElement.dataset.narrative = "complete";
@@ -198,7 +172,8 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
 
   const acceptMemory = useCallback(() => {
     const memory = readMemory() ?? createMemory(1);
-    writeMemory(memory);
+    const updated = { ...memory, seenCueIds: [...new Set([...memory.seenCueIds, ...seenCueIds.current])] };
+    writeMemory(updated);
     try {
       window.localStorage.setItem(CONSENT_KEY, "granted");
       window.sessionStorage.setItem(SESSION_COUNTED_KEY, "true");
@@ -207,7 +182,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     }
     setConsent("granted");
     consentRef.current = "granted";
-    setVisitTier(Math.min(3, memory.visitCount) as 1 | 2 | 3);
+    setVisitTier(Math.min(3, updated.visitCount) as 1 | 2 | 3);
     setShowConsent(false);
   }, []);
 
@@ -233,7 +208,6 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
       // State below is enough to reset the current document.
     }
     seenCueIds.current.clear();
-    cueCount.current = 0;
     setConsent("unknown");
     consentRef.current = "unknown";
     setVisitTier(1);
@@ -270,34 +244,17 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     window.setTimeout(() => window.location.reload(), 0);
   }, []);
 
-  const requestCue = useCallback((cueId: string) => {
-    const now = Date.now();
-    if (
-      !introComplete
-      || reducedMotion
-      || activeCueId
-      || seenCueIds.current.has(cueId)
-      || cueCount.current >= MAX_CUES_PER_VISIT
-      || now - lastScrollAt.current < 800
-      || now - lastCueAt.current < CUE_COOLDOWN
-    ) return false;
+  const hasSeenCue = useCallback((cueId: string) => seenCueIds.current.has(cueId), []);
 
+  const markCueSeen = useCallback((cueId: string) => {
     seenCueIds.current.add(cueId);
-    cueCount.current += 1;
-    lastCueAt.current = now;
-    setActiveCueId(cueId);
-
-    if (consent === "granted") {
+    if (consentRef.current === "granted") {
       const memory = readMemory();
       if (memory) writeMemory({ ...memory, seenCueIds: [...new Set([...memory.seenCueIds, cueId])] });
     }
-
-    cueTimer.current = window.setTimeout(() => setActiveCueId(null), 4_400);
-    return true;
-  }, [activeCueId, consent, introComplete, reducedMotion]);
+  }, []);
 
   const value = useMemo<NarrativeContextValue>(() => ({
-    activeCueId,
     consent,
     introComplete,
     reducedMotion,
@@ -309,10 +266,10 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     declineMemory,
     forgetExperience,
     replayIntro,
-    requestCue,
+    hasSeenCue,
+    markCueSeen,
     setManualReducedMotion,
   }), [
-    activeCueId,
     consent,
     introComplete,
     reducedMotion,
@@ -324,7 +281,8 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     declineMemory,
     forgetExperience,
     replayIntro,
-    requestCue,
+    hasSeenCue,
+    markCueSeen,
     setManualReducedMotion,
   ]);
 

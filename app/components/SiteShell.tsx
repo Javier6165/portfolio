@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { LiveScene } from "./live-file/LiveScene";
+import { MobileNavigation } from "./MobileNavigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function ArrowIcon() {
@@ -26,15 +28,7 @@ export function SiteHeader() {
         </nav>
         <div className="site-header__actions">
           <ThemeToggle />
-          <details className="mobile-nav">
-            <summary aria-label="Open navigation"><span /><span /></summary>
-            <nav aria-label="Mobile navigation">
-              <Link href="/#work">Work</Link>
-              <Link href="/#approach">Approach</Link>
-              <Link href="/about">About</Link>
-              <Link href="/playground">Playground</Link>
-            </nav>
-          </details>
+          <MobileNavigation />
         </div>
       </div>
     </header>
@@ -44,23 +38,32 @@ export function SiteHeader() {
 export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactNode }) {
   return (
     <footer className="site-footer" id="contact">
-      <div className="shell footer-grid">
-        <div className="footer-heading">
-          <p className="kicker">Have a hard system to untangle?</p>
-          <p>Let’s make the next move obvious.</p>
+      <LiveScene
+        id="footer-handoff"
+        verb="handoff"
+        label="Ready / Your turn"
+        targetSelector=".footer-contact"
+        durationMs={1350}
+        className="footer-live-scene"
+      >
+        <div className="shell footer-grid">
+          <div className="footer-heading">
+            <p className="kicker">Have a hard system to untangle?</p>
+            <p>Let’s make the next move obvious.</p>
+          </div>
+          <div className="footer-contact">
+            <p>Contact details arrive in the final content pass.</p>
+            <Link className="text-link" href="/about#contact-note">
+              About Javier <ArrowIcon />
+            </Link>
+          </div>
+          <div className="footer-meta">
+            <p>Marbella, Spain · Open to meaningful conversations</p>
+            <p>© {new Date().getFullYear()} Javier Ortiz</p>
+            {experienceSettings}
+          </div>
         </div>
-        <div className="footer-contact">
-          <p>Contact details arrive in the final content pass.</p>
-          <Link className="text-link" href="/about#contact-note">
-            About Javier <ArrowIcon />
-          </Link>
-        </div>
-        <div className="footer-meta">
-          <p>Marbella, Spain · Open to meaningful conversations</p>
-          <p>© {new Date().getFullYear()} Javier Ortiz</p>
-          {experienceSettings}
-        </div>
-      </div>
+      </LiveScene>
     </footer>
   );
 }

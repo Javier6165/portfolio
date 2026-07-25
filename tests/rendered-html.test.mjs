@@ -22,9 +22,9 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /Javier Ortiz/);
   assert.match(html, /5\+ years at Gaming Innovation Group/);
   assert.match(html, /Senior Product Designer/);
-  assert.match(html, /From visual worlds to product systems/);
-  assert.match(html, /AI-assisted design \+ coded prototypes/);
-  assert.match(html, /Rules · CMS · Backoffice · Design systems/);
+  assert.match(html, /Complex products\. Clear decisions\. Working proof\./);
+  assert.match(html, /AI-assisted design · coded prototypes/);
+  assert.match(html, /Rule engines · CMS · backoffice · design systems/);
   assert.match(html, /Case-study previews/);
   assert.match(html, /AI-assisted product design/);
   assert.match(html, /From ambiguity to working behaviour/);

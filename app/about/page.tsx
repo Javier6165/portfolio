@@ -1,7 +1,7 @@
 /* Theme-swapped portraits are pre-compressed local assets; native images keep both variants immediately available. */
-/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ExperienceSignal } from "../components/ExperienceSignal";
 import { ArrowIcon } from "../components/SiteShell";
 
 export const metadata: Metadata = {
@@ -32,8 +32,16 @@ export default function AboutPage() {
 
       <section className="about-story section shell" aria-labelledby="story-title">
         <div className="about-story__portrait theme-swap js-reveal" role="img" aria-label="Portrait of Javier Ortiz; the photograph changes with the Human or System theme.">
-          <img className="portrait portrait--system" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" />
-          <img className="portrait portrait--human" src="/images/portraits/about-human.jpg" alt="" aria-hidden="true" width="1314" height="1800" />
+          <picture>
+            <source type="image/avif" srcSet="/images/portraits/about-system-960.avif 960w, /images/portraits/about-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
+            <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
+            <img className="portrait portrait--system" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" />
+          </picture>
+          <picture>
+            <source type="image/avif" srcSet="/images/portraits/about-human-960.avif 960w, /images/portraits/about-human-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
+            <source type="image/webp" srcSet="/images/portraits/about-human-960.webp 960w, /images/portraits/about-human-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
+            <img className="portrait portrait--human" src="/images/portraits/about-human.jpg" alt="" aria-hidden="true" width="1314" height="1800" />
+          </picture>
         </div>
         <div className="about-story__copy">
           <p className="kicker js-reveal">The throughline</p>
@@ -44,6 +52,15 @@ export default function AboutPage() {
             <p>Before product design, I moved through visual design, e-commerce UX, games and 3D/VFX. That mixed background is useful now: it lets me switch between systems logic and visual expression without treating either as decoration.</p>
           </div>
         </div>
+      </section>
+
+      <section className="about-trajectory section shell" aria-labelledby="trajectory-title">
+        <header className="section-heading section-heading--split js-reveal">
+          <p className="kicker">Trajectory</p>
+          <h2 id="trajectory-title">The tools changed. The throughline did not.</h2>
+          <p>Visual craft, interactive systems and complex product work now meet in one hands-on practice.</p>
+        </header>
+        <ExperienceSignal />
       </section>
 
       <section className="capabilities section shell" aria-labelledby="capabilities-title">

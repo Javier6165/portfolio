@@ -2,9 +2,9 @@
 
 Fecha: 25 de julio de 2026.
 
-Estado: **guion aprobado para prototipar; todavía no implementado**.
+Estado: **implementado y validado**. El contrato técnico, métricas y deltas finales están en `IMPLEMENTATION-08-LIVE-FILE-SCORE.md`.
 
-Este documento completa el hueco detectado en `AUDIT-06-POST-LIVE-FILE.md`: el hero tiene una escena, pero el resto de Home solo tiene overlays ocasionales. La nueva dirección trata la landing como una pieza completa, con una acción breve y específica en cada sección.
+Este documento cerró el hueco detectado en `AUDIT-06-POST-LIVE-FILE.md`: el hero tenía una escena, pero el resto de Home solo overlays ocasionales. La implementación vigente trata la landing como una pieza completa, con una acción breve y específica en cada sección.
 
 ## 1. Tesis creativa
 

@@ -20,6 +20,16 @@ test("the intro never hides identity and can be skipped", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(page.getByLabel("Portfolio memory preference")).toBeVisible();
+
+  const overlap = await page.evaluate(() => {
+    const hero = document.querySelector("main section");
+    const consent = document.querySelector('[aria-label="Portfolio memory preference"]');
+    if (!hero || !consent) return true;
+    const heroBounds = hero.getBoundingClientRect();
+    const consentBounds = consent.getBoundingClientRect();
+    return consentBounds.top < heroBounds.bottom && consentBounds.bottom > heroBounds.top;
+  });
+  expect(overlap).toBe(false);
 });
 
 test("reduced motion resolves directly to the finished portfolio", async ({ page }) => {
@@ -46,6 +56,9 @@ test("AI practice and case evidence expose roving keyboard tabs", async ({ page,
 
   await page.goto("/work/northstar");
   const coreTab = page.getByRole("tab", { name: /Core/ });
+  // A real click is the readiness gate after the RSC navigation hydrates the
+  // client tab controller under parallel browser load.
+  await coreTab.click();
   await coreTab.focus();
   await coreTab.press("End");
   await expect(page.getByRole("tab", { name: /Expressive/ })).toBeFocused();
@@ -85,7 +98,7 @@ test("consented memory produces deterministic return tiers", async ({ page, cont
 
 test("a failed portrait request falls back to the finished semantic hero", async ({ page, isMobile }) => {
   test.skip(isMobile, "The asset failure path is shared by both compositions.");
-  await page.route("**/hero-system.jpg", (route) => route.abort());
+  await page.route("**/hero-system*", (route) => route.abort());
   await page.goto("/?narrative=first");
 
   await expect(page.locator("[data-phase]")).toHaveAttribute("data-phase", "failed", { timeout: 2_500 });
@@ -103,4 +116,109 @@ test("the portfolio remains useful without JavaScript", async ({ browser, isMobi
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Atlas/ })).toBeVisible();
   await context.close();
+});
+
+test("theme, mobile navigation and semantic controls remain robust", async ({ page, isMobile }) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  await page.goto("/");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+
+  const heading = page.getByRole("heading", { level: 1, name: "Senior Product Designer" });
+  await expect(heading).toHaveText("Senior Product Designer");
+
+  const themeToggle = page.getByRole("button", { name: "Use Human visual mode" });
+  await expect(themeToggle).toHaveAttribute("aria-pressed", "false");
+  await themeToggle.click();
+  const humanToggle = page.getByRole("button", { name: "Use System visual mode" });
+  await expect(humanToggle).toHaveAttribute("aria-pressed", "true");
+  await expect(humanToggle).toBeVisible();
+
+  await page.evaluate(() => {
+    Object.defineProperty(Storage.prototype, "setItem", {
+      configurable: true,
+      value: () => { throw new Error("Blocked"); },
+    });
+  });
+  await humanToggle.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "system");
+  expect(pageErrors).toEqual([]);
+
+  await expect(page.getByRole("button", { name: /Review$|Open$|Continue$/ })).toHaveCount(0);
+
+  if (isMobile) {
+    const summary = page.locator(".mobile-nav summary");
+    await summary.click();
+    await expect(page.locator(".mobile-nav")).toHaveAttribute("open", "");
+    await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Work" }).click();
+    await expect(page.locator(".mobile-nav")).not.toHaveAttribute("open", "");
+  }
+});
+
+test("Live File scenes resolve into distinct finished states", async ({ page }) => {
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+
+  const profile = page.locator('[data-live-scene="profile-clarify"]');
+  await profile.scrollIntoViewIfNeeded();
+  await expect(profile).not.toHaveAttribute("data-live-state", "idle");
+
+  const work = page.locator('[data-live-scene="work-frame"]');
+  await work.scrollIntoViewIfNeeded();
+  await expect(work).not.toHaveAttribute("data-live-state", "idle");
+  await expect(work.locator(".project-card__media-label")).toBeVisible();
+
+  const scenes = page.locator("[data-live-scene]");
+  expect(await scenes.count()).toBeGreaterThanOrEqual(7);
+});
+
+test("the Live File director plays choreography during deliberate scrolling", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch choreography is covered by the shared state test; this checks the desktop cursor score.");
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+
+  const profile = page.locator('[data-live-scene="profile-clarify"]');
+  for (let step = 0; step < 12 && await profile.getAttribute("data-live-state") === "idle"; step += 1) {
+    await page.mouse.wheel(0, 80);
+    await page.waitForTimeout(110);
+  }
+
+  await expect(profile).toHaveAttribute("data-live-state", "playing");
+  await expect(profile).toHaveAttribute("data-live-state", "settled", { timeout: 2_500 });
+});
+
+test("the AI cue activates a real, repeatable prototype simulation", async ({ page }) => {
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+  await page.locator('[data-live-scene="ai-activate"]').scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: "ai-activate" } }));
+  });
+
+  await expect(page.getByRole("tab", { name: /Turn the decision into behaviour/ })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByText("Simulation complete")).toBeVisible({ timeout: 2_000 });
+  await page.getByRole("button", { name: "Run again" }).click();
+  await expect(page.getByRole("button", { name: "Running…" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Run again" })).toBeVisible({ timeout: 2_000 });
+});
+
+test("the playground study can be replayed by the visitor", async ({ page }) => {
+  await page.goto("/?narrative=first");
+  await page.getByRole("button", { name: "Skip intro" }).click();
+  const replay = page.getByRole("button", { name: "Replay study" });
+  await replay.scrollIntoViewIfNeeded();
+  await expect(replay).toBeVisible({ timeout: 2_500 });
+  await replay.click();
+  await expect(page.getByRole("button", { name: "Playing 00:02" })).toBeDisabled();
+  await expect(replay).toBeVisible({ timeout: 2_000 });
+});
+
+test("reduced motion settles all Live File scenes without choreography", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const scenes = page.locator("[data-live-scene]");
+  await expect(scenes.first()).toHaveAttribute("data-live-state", "reduced");
+  const states = await scenes.evaluateAll((items) => items.map((item) => item.getAttribute("data-live-state")));
+  expect(states.every((state) => state === "reduced")).toBe(true);
 });
