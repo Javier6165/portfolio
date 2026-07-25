@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   description:
     "Javier Ortiz is a Senior Product Designer for complex platforms, rule engines, CMS and AI-assisted product work, with recent Lead experience.",
   authors: [{ name: "Javier Ortiz" }],
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
   openGraph: {
     title: "Javier Ortiz — Senior Product Designer for complex platforms",
     description: "Senior Product Designer working across complex backoffice products, design systems and AI-assisted prototypes.",

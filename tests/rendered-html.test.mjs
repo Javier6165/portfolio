@@ -38,6 +38,7 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /Skip to content/);
   assert.match(html, /og-live-file\.jpg/);
   assert.match(html, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/og-live-file\.jpg/);
+  assert.match(html, /name="robots" content="noindex, nofollow"/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/i);
   assert.doesNotMatch(html, /I design complex platforms|complexity-engine|LivingFold|@react-three|three\.module/i);
 });
