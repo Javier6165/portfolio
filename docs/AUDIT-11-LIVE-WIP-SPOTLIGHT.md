@@ -4,6 +4,8 @@ Fecha: 25 de julio de 2026.
 
 Estado: **auditoría post-implementación completada**.
 
+Addendum 27 de julio de 2026: corregido un fallo exclusivo del navegador publicado que cerraba Spotlight al recibir el `resize` generado por su propio scroll lock. También se eliminó la supresión persistente de escenas, se añadió Replay al dock y se sustituyó la intro familiar comprimida por entrega inmediata del hero.
+
 ## Veredicto
 
 La Home ya comunica el concepto de archivo vivo después del hero y la UI base ha subido de nivel de forma material. Snapshot es escaneable, Product practice y AI explican trabajo real, References deja de parecer una cita falsa y cada capítulo tiene WIP, acción y resultado final reconocibles.

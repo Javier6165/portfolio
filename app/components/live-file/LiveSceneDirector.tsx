@@ -31,7 +31,6 @@ export type LiveSceneConfig = {
   readMs: number;
   spotlightMs: number;
   minVisibility: number;
-  autoVisitTier: 1 | 2;
   comment?: string;
 };
 
@@ -65,13 +64,12 @@ function readSeenScenes() {
 export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const {
     autoFollow,
-    hasSeenCue,
     introComplete,
     liveReplayToken,
     markCueSeen,
     reducedMotion,
+    replayLiveEdits,
     setAutoFollow,
-    visitTier,
   } = useNarrative();
   const pathname = usePathname();
   const experienceReady = introComplete || pathname !== "/";
@@ -85,6 +83,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const phaseTimersRef = useRef<number[]>([]);
   const cursorTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const firstIntentRef = useRef(0);
+  const viewportRef = useRef({ width: 0, height: 0 });
+  const resizeGuardUntilRef = useRef(0);
   const bodyStyleRef = useRef<{ position: string; top: string; width: string; paddingRight: string; overflow: string } | null>(null);
   const startSceneRef = useRef<(scene: RegisteredScene) => void>(() => undefined);
   const evaluateRef = useRef<() => void>(() => undefined);
@@ -93,6 +93,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   useEffect(() => {
     gsap.registerPlugin(MotionPathPlugin);
     seenRef.current = readSeenScenes();
+    viewportRef.current = { width: window.innerWidth, height: window.innerHeight };
     return () => cursorTimelineRef.current?.kill();
   }, []);
 
@@ -125,6 +126,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       bodyStyleRef.current = null;
     }
     delete document.documentElement.dataset.spotlight;
+    resizeGuardUntilRef.current = 0;
     window.scrollTo({ top: Math.max(0, scrollY + delta), behavior: "auto" });
   }, []);
 
@@ -139,6 +141,9 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       overflow: document.documentElement.style.overflow,
     };
     const scrollbar = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    // Some browser shells emit resize while fixed-body/overflow styles are
+    // being applied. That event belongs to the lock itself, not the visitor.
+    resizeGuardUntilRef.current = window.performance.now() + 420;
     body.style.position = "fixed";
     body.style.top = `-${scrollY}px`;
     body.style.width = "100%";
@@ -148,7 +153,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     return scrollY;
   }, []);
 
-  const endActive = useCallback((interrupted = false, navigationDelta = 0, disableFollowing = false) => {
+  const endActive = useCallback((interrupted = false, navigationDelta = 0, disableFollowing = false, recordScene = true) => {
     clearTimers();
     const active = activeRef.current;
     activeRef.current = null;
@@ -158,7 +163,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     setSpotlight(null);
     if (active) {
       active.root.dataset.liveState = interrupted ? "interrupted" : "settled";
-      persistSeen(active.config.id);
+      if (recordScene) persistSeen(active.config.id);
       window.requestAnimationFrame(() => { active.root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
       unlockPage(active.scrollY, navigationDelta);
     }
@@ -194,12 +199,14 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const sceneIsEligible = useCallback((config: LiveSceneConfig) => {
     const forced = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("live") : null;
     if (forced === "settled") return false;
-    if (reducedMotion || pathname !== "/" || !autoFollow || visitTier > config.autoVisitTier) return false;
+    if (reducedMotion || pathname !== "/" || !autoFollow) return false;
     if (liveReplayToken > 0) return true;
     const seen = seenRef.current ?? readSeenScenes();
     seenRef.current = seen;
-    return !hasSeenCue(config.id) && !seen.has(config.id);
-  }, [autoFollow, hasSeenCue, liveReplayToken, pathname, reducedMotion, visitTier]);
+    // Persistent visit memory can vary the intro, but it must never erase the
+    // core Live File story on a fresh tab. Scene suppression is session-only.
+    return !seen.has(config.id);
+  }, [autoFollow, liveReplayToken, pathname, reducedMotion]);
 
   const registerScene = useCallback((root: HTMLElement, config: LiveSceneConfig) => {
     registryRef.current.set(root, config);
@@ -316,10 +323,23 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       scheduleEvaluation(240);
     };
     const onResize = () => {
-      if (activeRef.current) endActive(true);
+      const nextViewport = { width: window.innerWidth, height: window.innerHeight };
+      const previousViewport = viewportRef.current;
+      const materiallyChanged = Math.abs(nextViewport.width - previousViewport.width) > 2
+        || Math.abs(nextViewport.height - previousViewport.height) > 2;
+      viewportRef.current = nextViewport;
+
+      // Hiding the scrollbar for Spotlight can emit a resize event even though
+      // the actual viewport did not change. Treating that event as user intent
+      // used to collapse every scene into an imperceptible cursor flash.
+      if (activeRef.current) {
+        if (window.performance.now() < resizeGuardUntilRef.current) return;
+        if (materiallyChanged) endActive(true, 0, false, false);
+        return;
+      }
       scheduleEvaluation(280);
     };
-    const onVisibility = () => { if (document.hidden && activeRef.current) endActive(true); };
+    const onVisibility = () => { if (document.hidden && activeRef.current) endActive(true, 0, false, false); };
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
@@ -372,13 +392,13 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   }, [liveReplayToken, sceneIsEligible, scheduleEvaluation]);
 
   useEffect(() => {
-    if (!autoFollow || reducedMotion || visitTier >= 3) {
+    if (!autoFollow || reducedMotion) {
       if (activeRef.current) endActive(true);
       registryRef.current.forEach((_config, root) => { root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
     } else {
       scheduleEvaluation(300);
     }
-  }, [autoFollow, endActive, reducedMotion, scheduleEvaluation, visitTier]);
+  }, [autoFollow, endActive, reducedMotion, scheduleEvaluation]);
 
   const value = useMemo<DirectorContextValue>(() => ({
     introComplete: experienceReady,
@@ -395,8 +415,9 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       {children}
       <SpotlightChrome
         active={spotlight}
-        showDock={pathname === "/" && introComplete && autoFollow && !reducedMotion && visitTier < 3}
+        showDock={pathname === "/" && introComplete && autoFollow && !reducedMotion}
         onCancel={() => endActive(true)}
+        onReplay={replayLiveEdits}
         onStop={stopFollowing}
       />
       <div ref={cursorRef} className={styles.globalCursor} aria-hidden="true"><i /><span>Javier</span></div>

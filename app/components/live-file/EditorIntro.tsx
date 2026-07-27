@@ -112,6 +112,14 @@ export function EditorIntro() {
       return () => window.cancelAnimationFrame(completionFrame);
     }
 
+    // Familiar visits should feel instant, not like a compressed version of
+    // the edit. A sub-second cursor pass reads as a visual glitch rather than
+    // intentional craft, so only the first and return scores are animated.
+    if (mode === "familiar") {
+      const completionFrame = window.requestAnimationFrame(() => finish("complete"));
+      return () => window.cancelAnimationFrame(completionFrame);
+    }
+
     activeRef.current = true;
     const readyFrame = window.requestAnimationFrame(() => {
       if (activeRef.current) setPhase("ready");
@@ -132,7 +140,7 @@ export function EditorIntro() {
     const returningCopy = mode === "familiar" ? "Still checking the spacing?" : "You’re back.";
     comment.querySelector("span")!.textContent = mode === "first" ? "Two pixels. Much better." : returningCopy;
 
-    gsap.set(cursor, { x: cursorStart.x, y: cursorStart.y, opacity: isMobile ? 0 : 1, scale: 0.92 });
+    gsap.set(cursor, { x: cursorStart.x, y: cursorStart.y, opacity: 0, scale: 0.92 });
     const fitSelection = (selection: HTMLElement, target: Element, padding: number) => {
       const targetBounds = target.getBoundingClientRect();
       gsap.set(selection, {
@@ -197,45 +205,47 @@ export function EditorIntro() {
 
     if (mode === "first") {
       timeline
+        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.22, ease: "power2.out" }, 0.12)
         .to(cursor, {
-          duration: 0.7,
+          duration: 0.82,
           motionPath: { path: [cursorStart, { x: titlePoint.x + 34, y: titlePoint.y - 30 }, titlePoint], curviness: 1.2 },
-        }, 0.28)
-        .call(() => setPhase("typing"), [], 0.72)
-        .to(titleSelection, { opacity: 1, duration: 0.22 }, 0.76)
-        .to(finalWord, { opacity: 1, duration: 0.68, ease: "power2.out" }, 0.9)
-        .to(titleSelection, { opacity: 0.28, duration: 0.25 }, 1.54)
+        }, 0.34)
+        .call(() => setPhase("typing"), [], 0.92)
+        .to(titleSelection, { opacity: 1, duration: 0.24 }, 0.98)
+        .to(finalWord, { opacity: 1, duration: 0.8, ease: "power2.out" }, 1.14)
+        .to(titleSelection, { opacity: 0.28, duration: 0.28 }, 1.88)
         .to(cursor, {
-          duration: 0.7,
+          duration: 0.85,
           motionPath: { path: [titlePoint, { x: assetPoint.x + 65, y: titlePoint.y + 30 }, assetPoint], curviness: 1.1 },
-        }, 1.62)
-        .call(() => setPhase("placing-portrait"), [], 2.08)
-        .to(asset, { scale: 0.94, duration: 0.18 }, 2.18)
+        }, 2.02)
+        .call(() => setPhase("placing-portrait"), [], 2.55)
+        .to(asset, { scale: 0.94, duration: 0.2 }, 2.63)
         .to(cursor, {
-          duration: 0.9,
+          duration: 1,
           motionPath: { path: [assetPoint, { x: portraitPoint.x - 52, y: assetPoint.y - 68 }, portraitPoint], curviness: 1.25 },
-        }, 2.36)
+        }, 2.86)
         .to(asset, {
           x: portraitPoint.x - assetPoint.x,
           y: portraitPoint.y - assetPoint.y,
-          duration: 0.9,
-        }, 2.36)
-        .to(portrait, { "--portrait-reveal": "0%", duration: 0.72, ease: "power3.out" }, 2.78)
-        .to(asset, { opacity: 0, scale: 0.82, duration: 0.32 }, 3.22)
-        .to(portraitSelection, { opacity: 1, duration: 0.24 }, 3.42)
-        .call(() => setPhase("refining"), [], 3.58)
-        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.42, ease: "power2.inOut" }, 3.7)
-        .to(comment, { opacity: 1, y: -8, duration: 0.3, ease: "power3.out" }, 4.05)
-        .add(expandFrame, 5.18);
+          duration: 1,
+        }, 2.86)
+        .to(portrait, { "--portrait-reveal": "0%", duration: 0.8, ease: "power3.out" }, 3.32)
+        .to(asset, { opacity: 0, scale: 0.82, duration: 0.34 }, 3.84)
+        .to(portraitSelection, { opacity: 1, duration: 0.26 }, 4.08)
+        .call(() => setPhase("refining"), [], 4.22)
+        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.46, ease: "power2.inOut" }, 4.38)
+        .to(comment, { opacity: 1, y: -8, duration: 0.32, ease: "power3.out" }, 4.74)
+        .add(expandFrame, 5.52);
     } else {
       gsap.set(portraitSelection, { opacity: 1 });
       timeline
+        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.18, ease: "power2.out" }, 0.12)
         .to(cursor, {
-          duration: 0.46,
+          duration: 0.68,
           motionPath: { path: [cursorStart, { x: portraitPoint.x + 42, y: portraitPoint.y - 54 }, portraitPoint], curviness: 1.2 },
-        }, 0.16)
-        .to(comment, { opacity: 1, y: -8, duration: 0.24 }, 0.42)
-        .add(expandFrame, mode === "familiar" ? 0.66 : 0.78);
+        }, 0.28)
+        .to(comment, { opacity: 1, y: -8, duration: 0.26 }, 0.55)
+        .add(expandFrame, 1.25);
     }
 
     if (mode === "first") {

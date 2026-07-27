@@ -32,7 +32,8 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Durante Spotlight se bloquea únicamente el scroll de esa captura y se restaura la posición exacta. Stop, Escape, PageDown, Space, touch, pestaña oculta o segunda rueda cancelan.
 - No existe focus trap. El cursor visitante nunca se sustituye; el cursor Javier solo aparece con pointer fino.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
-- Auto-follow se puede detener y reproducir desde Experience settings. Antes del consentimiento solo vive en sessionStorage.
+- Auto-follow se puede pausar o reproducir desde el dock y desde Experience settings. Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
+- Una visita `familiar` muestra el hero final inmediatamente; no comprime el cursor en una animación sub-segundo que pueda parecer un destello.
 
 ## Tecnología
 
@@ -50,6 +51,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Skip real, skip link, foco visible, roving tabs, reflow móvil y scroll nativo.
 - Reduced motion y no-JS resuelven directamente el resultado final sin Spotlight.
 - `sessionStorage` evita repetir la intro y puede guardar Auto-follow en la pestaña.
+- `seenCueIds` persistente conserva contexto de retorno, pero no decide la elegibilidad de las escenas; esa exclusión usa `javier-live-scenes-v2` en sessionStorage.
 - `localStorage` de narrativa solo tras `Allow`, esquema 1 y expiración lógica de 90 días.
 - Sin cookies ni identificadores personales.
 

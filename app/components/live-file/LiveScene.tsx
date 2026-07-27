@@ -17,7 +17,6 @@ type LiveSceneProps = {
   readMs?: number;
   spotlightMs?: number;
   minVisibility?: number;
-  autoVisitTier?: 1 | 2;
   comment?: string;
   className?: string;
 };
@@ -34,7 +33,6 @@ export function LiveScene({
   readMs = 1_300,
   spotlightMs = 4_000,
   minVisibility = 0.58,
-  autoVisitTier = 1,
   comment,
   className = "",
 }: LiveSceneProps) {
@@ -44,8 +42,8 @@ export function LiveScene({
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || !introComplete) return;
-    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, autoVisitTier, comment });
-  }, [action, autoVisitTier, comment, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, spotlightMs, targetSelector, tool, verb]);
+    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment });
+  }, [action, comment, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, spotlightMs, targetSelector, tool, verb]);
 
   function handOff(event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) {
     const root = rootRef.current;

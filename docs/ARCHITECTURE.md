@@ -54,14 +54,14 @@ La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No
 Elegibilidad:
 
 - intro terminada y Home activa;
-- Auto-follow on y tier permitido;
+- Auto-follow on;
 - target visible por encima de `minVisibility`;
 - centro dentro de zona segura;
 - scroll estable `220–280 ms`;
 - `readMs` cumplido;
 - escena no vista en la sesión.
 
-Spotlight fija `body`, compensa scrollbar, guarda `scrollY` y lo restaura al cerrar. Stop, Escape, PageDown, Space, touch, resize, pestaña oculta o segunda rueda interrumpen. No es modal y no atrapa foco.
+Spotlight fija `body`, compensa scrollbar, guarda `scrollY` y lo restaura al cerrar. Pause/Stop, Escape, PageDown, Space, touch, resize real, pestaña oculta o segunda rueda interrumpen. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve y solo un cambio material posterior cancela. No es modal y no atrapa foco.
 
 ## Home
 
@@ -95,7 +95,7 @@ Claves:
 - local: `javier-narrative-consent`, `javier-narrative-memory-v1`, `javier-motion`, `javier-theme`;
 - session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`.
 
-`NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. Auto-follow anterior al consentimiento es una preferencia de sesión.
+`NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Auto-follow es una preferencia de sesión.
 
 ## Temas y fotografías
 

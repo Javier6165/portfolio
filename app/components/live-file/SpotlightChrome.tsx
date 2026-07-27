@@ -11,12 +11,17 @@ export type SpotlightView = {
   hint: boolean;
 };
 
-export function SpotlightChrome({ active, showDock, onCancel, onStop }: { active: SpotlightView | null; showDock: boolean; onCancel: () => void; onStop: () => void }) {
+export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
   return (
     <>
       {showDock && !active ? (
         <div className={styles.dock} data-follow-dock>
-          <span><i /> LIVE FILE</span><p>Javier is still editing</p><button type="button" onClick={onStop}>Auto-follow on · Stop</button>
+          <span><i /> LIVE FILE</span>
+          <p>Javier is still editing</p>
+          <div className={styles.dockActions}>
+            <button type="button" onClick={onReplay}>Replay edits</button>
+            <button type="button" onClick={onStop}>Pause</button>
+          </div>
         </div>
       ) : null}
       {active ? (

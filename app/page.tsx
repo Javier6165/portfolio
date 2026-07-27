@@ -77,7 +77,6 @@ export default function Home() {
               properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
               readMs={1600}
               spotlightMs={4800}
-              autoVisitTier={2}
               comment="Show the decision, not the decoration."
               className={styles.workScene}
               key={project.slug}
@@ -128,7 +127,6 @@ export default function Home() {
             properties={["Frame → Validate", "Output linked", "Human check · On"]}
             readMs={1700}
             spotlightMs={4900}
-            autoVisitTier={2}
             comment="Tools change. The operating model matters."
             className={styles.aiScene}
           >

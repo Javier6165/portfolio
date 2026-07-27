@@ -145,6 +145,12 @@ test("Spotlight waits for the section, locks its position and leaves a readable 
   await expect(page.getByRole("button", { name: "Stop following" })).toBeVisible();
   await expect(page.locator("body")).toHaveCSS("position", "fixed");
 
+  // Scrollbar removal may emit a resize event in real browsers. It is not a
+  // visitor resize and must not collapse Spotlight into a single-frame flash.
+  await page.evaluate(() => window.dispatchEvent(new Event("resize")));
+  await expect(page.getByText("Following Javier")).toBeVisible();
+  await expect(page.locator("body")).toHaveCSS("position", "fixed");
+
   const comment = scene.getByText("Keep the signal. Lose the résumé.");
   await expect.poll(() => comment.evaluate((item) => Number.parseFloat(getComputedStyle(item.parentElement!).opacity)), { timeout: 3_000 }).toBeGreaterThan(0.2);
   await expect(scene).toHaveAttribute("data-live-state", "settled", { timeout: 5_000 });
@@ -164,7 +170,7 @@ test("Spotlight gives control back on Escape and Stop disables later auto-follow
   await expect(scene).toHaveAttribute("data-live-state", "settled");
   await expect(page.getByText("Following Javier")).toHaveCount(0);
 
-  const dockButton = page.getByRole("button", { name: "Auto-follow on · Stop" });
+  const dockButton = page.getByRole("button", { name: "Pause" });
   await expect(dockButton).toBeVisible();
   await dockButton.click();
   await expect(page.locator("[data-follow-dock]")).toHaveCount(0);
@@ -230,8 +236,31 @@ test("consented memory produces deterministic return tiers and can be forgotten"
 
   const thirdVisit = await context.newPage();
   await thirdVisit.goto("/");
-  await expect(thirdVisit.locator("html")).toHaveAttribute("data-narrative", "familiar");
   await expect(thirdVisit.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 2_500 });
+  await expect(thirdVisit.locator("[data-phase]")).toHaveAttribute("data-phase", "complete");
+  const familiarSkip = thirdVisit.locator("[data-phase] button").filter({ hasText: "Skip intro" });
+  await expect(familiarSkip).toHaveCSS("opacity", "0");
+  await expect(familiarSkip).toHaveCSS("pointer-events", "none");
+
+  // Persistent return memory may shorten the intro, but it must not remove
+  // the Live File story from a fresh tab.
+  await thirdVisit.getByRole("link", { name: "Explore" }).click();
+  const returningScene = thirdVisit.locator('[data-live-scene="snapshot-clarify"]');
+  await expect(returningScene).toHaveAttribute("data-live-state", "observing", { timeout: 1_500 });
+  await expect(returningScene).toHaveAttribute("data-live-state", /spotlight-entering|editing|commenting/, { timeout: 2_500 });
+  await thirdVisit.keyboard.press("Escape");
+});
+
+test("the Live File dock exposes replay without sending visitors to the footer", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The compact mobile dock uses the same controls.");
+  await page.goto("/?narrative=first");
+  await skipIntro(page);
+
+  const replay = page.getByRole("button", { name: "Replay edits" });
+  await expect(replay).toBeVisible();
+  await replay.click();
+  const states = await page.locator("[data-live-scene]").evaluateAll((items) => items.map((item) => item.getAttribute("data-live-state")));
+  expect(states.every((state) => state === "wip" || state === "observing")).toBe(true);
 });
 
 test("a failed portrait request falls back to the finished semantic hero", async ({ page, isMobile }) => {

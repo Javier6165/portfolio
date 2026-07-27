@@ -65,6 +65,8 @@ Durante Spotlight:
 - toolbar, selección y comentario siguen el estado lógico de la escena;
 - al terminar se restauran estilos y scroll sin salto.
 
+Corrección de activación del 27 de julio: algunos browser shells emiten un `resize` al aplicar el fixed-body lock. Ese evento cerraba Spotlight inmediatamente y dejaba solo un flash de cursor. El director conserva ahora las dimensiones reales, ignora la ventana de resize producida por su propio lock y cancela únicamente ante un cambio material posterior.
+
 Salidas: `Stop following`, `Escape`, `PageDown`, Space, cambio de tamaño, pestaña oculta, touch move o segunda rueda en `700 ms`. La primera rueda solo explica cómo salir. Detener Auto-follow fija todas las escenas futuras en final durante la sesión.
 
 Timings:
@@ -84,7 +86,7 @@ Los comentarios aparecen después del ajuste y permanecen legibles más de `1,3 
 
 ## 5. Intro, móvil y fallbacks
 
-La intro desktop dura aproximadamente `6,1 s` y la recurrente menos de dos segundos. Un skip temprano fija explícitamente opacidad del titular, reveal y posición del retrato; esto evita conservar valores incompletos de la timeline.
+La intro desktop dura aproximadamente `6,4 s` y la segunda visita menos de dos segundos. El cursor entra con fade y cada acción conserva tiempo de lectura. Una visita familiar muestra el hero final directamente: no reproduce una versión comprimida que pueda percibirse como destello. Un skip temprano fija explícitamente opacidad del titular, reveal y posición del retrato; esto evita conservar valores incompletos de la timeline.
 
 En móvil no aparece cursor de ratón. El hero conserva titular, retrato y `Explore` dentro del primer viewport y Spotlight usa una barra inferior. El menú móvil cerrado no participa en layout; al abrirse usa un panel fijo dentro del viewport.
 
@@ -104,7 +106,7 @@ Fallbacks:
 - `liveReplayToken` para `Replay live edits`;
 - reset de Auto-follow al usar `Forget this device`.
 
-La memoria persistente de visitas sigue necesitando `Allow`; Auto-follow anterior al consentimiento solo es una preferencia de sesión. `Experience settings` permite Replay intro, Replay live edits, Motion y Forget.
+La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. La exclusión de escenas y Auto-follow son session-only, de modo que una pestaña nueva conserva la narrativa completa. El dock expone `Replay edits` y `Pause`; `Experience settings` mantiene Replay intro, Replay live edits, Motion y Forget.
 
 ## 7. Motion y peso
 

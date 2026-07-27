@@ -165,10 +165,10 @@ No hay focus trap ni foco programático. Spotlight no es un modal. El control St
 Al terminar el hero aparece una preferencia no bloqueante:
 
 ```text
-LIVE FILE · Javier is still editing    Auto-follow on · Stop
+LIVE FILE · Javier is still editing    Replay edits · Pause
 ```
 
-No requiere aceptar para usar el portfolio. `Stop` fija todos los stages futuros en final durante la sesión. Tras consentimiento de memoria se puede recordar esta preferencia; antes de él solo vive en `sessionStorage`.
+No requiere aceptar para usar el portfolio. `Pause` fija todos los stages futuros en final durante la sesión y `Replay edits` reinicia la partitura desde cualquier punto de Home. La preferencia vive en `sessionStorage`; la memoria persistente nunca elimina la narrativa de una pestaña nueva.
 
 ### 3.5 Accesibilidad
 
@@ -576,16 +576,16 @@ Si el stage no cabe con el bottom sheet sin ocultar su resultado, esa escena usa
 ### Segunda visita
 
 - intro corta;
-- Work, AI y Testimonials pueden reproducirse automáticamente;
-- el resto nace final y ofrece replay manual.
+- la partitura de Home vuelve a ser elegible una vez en la pestaña;
+- `Replay edits` permanece visible en el dock.
 
 ### Tercera y posteriores
 
-- Home final casi inmediata;
-- ninguna captura automática;
-- `Replay live edit` en Experience settings reinicia WIP y Follow mode.
+- Home final inmediata, sin un cursor comprimido que parezca un destello;
+- la partitura de Home sigue siendo elegible una vez en una pestaña nueva;
+- `Replay edits` en el dock y `Replay live edits` en Experience settings reinician WIP y Follow mode.
 
-Sin consentimiento, tiers y Auto-follow solo persisten en la pestaña. Analytics no lee estos estados.
+Los tiers solo cambian la intro. Las escenas vistas y Auto-follow son preferencias de pestaña; la memoria persistente no suprime la firma Live File. Analytics no lee estos estados.
 
 ## 11. Arquitectura propuesta
 
@@ -784,7 +784,7 @@ Los documentos 07–10 se consolidaron y retiraron para evitar dos contratos act
 - colaboración real, red o cursores múltiples;
 - scroll timeline global, snap o pinning entre secciones;
 - estados WIP que oculten información esencial;
-- animación automática en tercera visita;
+- variantes narrativas adicionales por número de visita;
 - publicación pública, indexación o cambio de hosting.
 
 La medida de éxito no será el número de efectos. Será que el visitante pueda explicar, después de Home: “Entré en un archivo sin terminar, seguí a Javier mientras corregía decisiones concretas y terminé viendo un portfolio entregado.”
