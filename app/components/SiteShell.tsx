@@ -48,8 +48,9 @@ export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactN
         tool="file-status"
         action="Preparing the handoff"
         properties={["Editing → Ready for review", "Private preview", "Your turn"]}
-        readMs={1500}
-        spotlightMs={2800}
+        readMs={3000}
+        spotlightMs={5600}
+        comment="Okay. Your turn."
         className="footer-live-scene"
       >
         <div className="shell footer-grid">

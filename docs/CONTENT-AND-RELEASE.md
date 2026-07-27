@@ -76,5 +76,5 @@ Solo entonces cambia `isPreview` a `false`.
 ## Publicación
 
 - Reutilizar siempre el `project_id` de `.openai/hosting.json`.
-- Validar y desplegar una nueva versión privada sobre el proyecto existente.
+- Validar y desplegar una nueva versión sobre el proyecto existente. El preview actual es accesible por enlace para QA en incógnito, pero conserva `noindex`, `nofollow` y `robots.txt` bloqueado.
 - Netlify no está aprobado. Si se elige, definir adapter, repetir QA y no borrar Sites hasta validar la migración.

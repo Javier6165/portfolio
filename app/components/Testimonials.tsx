@@ -33,9 +33,8 @@ export function Testimonials() {
         tool="content-status"
         action="Checking provenance"
         properties={["Quote · Unverified", "Variant · Pending", "Source · Required"]}
-        readMs={2100}
-        spotlightMs={4600}
-        autoVisitTier={2}
+        readMs={4200}
+        spotlightMs={9200}
         comment="No source, no quote."
         className={styles.liveScene}
       >

@@ -4,6 +4,8 @@ Fecha: 25 de julio de 2026.
 
 Estado: **implementado y auditado**. Contrato técnico en `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md` y auditoría en `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`.
 
+Nota vigente: Plan 12 sustituye el onboarding, los timings, el fast-scroll y las reglas de cancelación descritas aquí. Este documento continúa siendo la fuente para UI final, WIP y storyboard por sección. Leer `PLAN-12-GUIDED-FIRST-PASS.md` para la experiencia actual.
+
 Alcance: Home completa, incluido el hero y las previews de proyecto. Los case studies interiores quedan fuera hasta una fase posterior y continúan usando contenido ficticio.
 
 ## 1. Veredicto revisado

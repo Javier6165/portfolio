@@ -22,7 +22,7 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Spotlight espera a que el target esté visible y el usuario haya tenido tiempo de leer, captura atención durante menos de cinco segundos y devuelve el scroll exacto. El contenido profesional nunca depende de esa capa.
+La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Plan 12 convierte la primera visita en una pasada guiada: un loading explica que el archivo sigue abierto, cada target requerido se reencuadra y lectura + edición bloquean temporalmente el scroll. Las visitas recurrentes consentidas recuperan Skip y controles opcionales. El contenido profesional nunca depende de esa capa.
 
 ## Por qué no es una template
 
@@ -37,6 +37,6 @@ La Home vigente recorre hero → Snapshot → Work → Product practice → AI-n
 
 ## Estado y límites
 
-Plan 11 está implementado y prevalece para Home. `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md` documenta arquitectura y timings; `AUDIT-11-LIVE-WIP-SPOTLIGHT.md` registra QA, fallos corregidos y riesgos restantes. Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial. El siguiente salto es contenido real mediante `CaseBlock`.
+Plan 11 sigue siendo la base de UI, copy y estados WIP; Plan 12 prevalece para onboarding, ritmo, reencuadre y controles de visita. `PLAN-12-GUIDED-FIRST-PASS.md` documenta el contrato vigente. Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial. El siguiente salto de contenido sigue siendo evidencia real mediante `CaseBlock`.
 
 Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; testimonials, contacto, LinkedIn y CV son temporales. Los siguientes inputs son un único caso real representativo y recomendaciones aprobadas con atribución y permiso.

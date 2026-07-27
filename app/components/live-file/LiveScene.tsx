@@ -30,14 +30,14 @@ export function LiveScene({
   targetSelector,
   tool,
   properties,
-  readMs = 1_300,
-  spotlightMs = 4_000,
+  readMs = 2_600,
+  spotlightMs = 8_000,
   minVisibility = 0.58,
   comment,
   className = "",
 }: LiveSceneProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const { introComplete, reducedMotion, registerScene, settleScene, replayToken } = useLiveSceneDirector();
+  const { introComplete, mandatoryFirstVisit, reducedMotion, registerScene, settleScene, replayToken } = useLiveSceneDirector();
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -47,7 +47,7 @@ export function LiveScene({
 
   function handOff(event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) {
     const root = rootRef.current;
-    if (!root || event.target === root) return;
+    if (!root || event.target === root || mandatoryFirstVisit) return;
     settleScene(root, true);
   }
 

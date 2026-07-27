@@ -40,8 +40,8 @@ export default function Home() {
           tool="layout"
           action="Clarifying the signal"
           properties={["Split into 4", "Text 10 → 18", "Gap 0 → 24"]}
-          readMs={1800}
-          spotlightMs={4400}
+          readMs={3600}
+          spotlightMs={8800}
           comment="Keep the signal. Lose the résumé."
           className={styles.snapshotScene}
         >
@@ -75,8 +75,8 @@ export default function Home() {
               tool="asset"
               action="Placing evidence"
               properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
-              readMs={2100}
-              spotlightMs={4800}
+              readMs={4200}
+              spotlightMs={9600}
               comment="Show the decision, not the decoration."
               className={styles.workScene}
               key={project.slug}
@@ -101,8 +101,8 @@ export default function Home() {
           tool="connections"
           action="Connecting decisions to outputs"
           properties={["3 triggers", "3 destinations", "On click"]}
-          readMs={2000}
-          spotlightMs={4600}
+          readMs={4000}
+          spotlightMs={9200}
           comment="Show the path, not a list of skills."
           className={styles.practiceScene}
         >
@@ -125,8 +125,8 @@ export default function Home() {
             tool="workflow"
             action="Mapping tools to outcomes"
             properties={["Frame → Validate", "Output linked", "Human check · On"]}
-            readMs={2300}
-            spotlightMs={4900}
+            readMs={4600}
+            spotlightMs={9800}
             comment="Tools change. The operating model matters."
             className={styles.aiScene}
           >
@@ -144,8 +144,9 @@ export default function Home() {
           tool="crop"
           action="Reframing the story"
           properties={["Fill", "Zoom 112%", "Y 31 → 48"]}
-          readMs={1800}
-          spotlightMs={3700}
+          readMs={3600}
+          spotlightMs={7400}
+          comment="A crop should hold the gaze, not fight it."
           className={styles.aboutScene}
         >
           <div className={styles.aboutSpread}>
@@ -176,8 +177,9 @@ export default function Home() {
           tool="timeline"
           action="Tuning the motion"
           properties={["00:02", "Cubic out", "1×"]}
-          readMs={1700}
-          spotlightMs={4100}
+          readMs={3400}
+          spotlightMs={8200}
+          comment="Linear felt like a loading bar. Awkward."
           className={styles.playgroundScene}
         >
           <div className={styles.playgroundShelf}>

@@ -8,6 +8,8 @@ Addendum 27 de julio de 2026: corregido un fallo exclusivo del navegador publica
 
 Addendum conceptual 27 de julio de 2026: una auditoría como visitante nuevo en Dark y Light demostró que la metáfora se percibía como estética pero no como contrato. El comentario del hero llegaba tarde, el dock no explicaba el siguiente evento y, a 1280×720, comment/property panel podían quedar bajo el viewport. Se implementó un prólogo integrado, read times más lentos, WIP con edición pendiente y chrome contextual fijo con colocación segura.
 
+Addendum Plan 12: el prólogo integrado y las salidas fáciles seguían comprimiendo o suprimiendo la historia. La primera visita usa ahora loading explícito, intro de ~13,5 s y ocho escenas obligatorias con lectura bloqueada, reencuadre secuencial y tiempos duplicados. Las salidas se reservan a visitas recurrentes consentidas. QA y riesgo deliberado se documentan en `PLAN-12-GUIDED-FIRST-PASS.md`.
+
 ## Veredicto
 
 La Home ya comunica el concepto de archivo vivo después del hero y la UI base ha subido de nivel de forma material. Snapshot es escaneable, Product practice y AI explican trabajo real, References deja de parecer una cita falsa y cada capítulo tiene WIP, acción y resultado final reconocibles.

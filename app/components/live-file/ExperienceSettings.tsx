@@ -45,11 +45,11 @@ export function ExperienceSettings() {
           <strong>{reducedMotion ? "Reduced" : "Full"}</strong>
         </div>
         <div>
-          <span>Auto-follow</span>
+          <span>Automatic edits</span>
           <strong>{autoFollow ? "On" : "Off"}</strong>
         </div>
-        <button type="button" onClick={replayIntro}>Replay intro</button>
-        <button type="button" onClick={replayLiveEdits}>Replay live edits</button>
+        <button type="button" onClick={replayIntro}>Replay file opening</button>
+        <button type="button" onClick={replayLiveEdits}>Replay guided edits</button>
         <button type="button" onClick={() => setManualReducedMotion(!reducedMotion)}>
           {reducedMotion ? "Use device motion setting" : "Reduce motion"}
         </button>

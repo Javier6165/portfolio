@@ -183,11 +183,113 @@
 .assetTray,
 .selection,
 .cursor,
+.loader,
 .premise,
 .comment,
 .skip {
   opacity: 0;
   pointer-events: none;
+}
+
+.skip[data-available="false"] {
+  display: none;
+}
+
+.loader {
+  position: absolute;
+  z-index: 18;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 1fr auto auto 1fr;
+  align-items: end;
+  gap: 0.8rem 1.5rem;
+  padding: clamp(2rem, 6vw, 5.5rem);
+  background:
+    radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--selection) 11%, transparent), transparent 29rem),
+    var(--editor-chrome);
+  color: var(--editor-ink);
+  pointer-events: auto;
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(var(--editor-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--editor-grid) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 72%);
+}
+
+.loaderMark {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / 3;
+  align-self: end;
+  display: grid;
+  place-items: center;
+  width: 3.15rem;
+  aspect-ratio: 1;
+  margin-bottom: 1rem;
+  border: 1px solid var(--editor-line);
+  border-radius: 0.85rem;
+  background: var(--selection);
+  color: #fff;
+  font: 0.7rem var(--font-mono);
+  box-shadow: 0 1.2rem 3rem rgba(0,0,0,.2);
+}
+
+.loaderCopy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.22rem;
+}
+
+.loaderCopy span,
+.loaderCopy small,
+.loaderMeta {
+  color: var(--editor-muted);
+  font: 0.55rem var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.loaderCopy strong {
+  font-size: clamp(1.15rem, 2vw, 1.7rem);
+  font-weight: 560;
+  letter-spacing: -0.025em;
+}
+
+.loaderTrack {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / 3;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--editor-ink) 12%, transparent);
+}
+
+.loaderTrack i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--selection);
+  box-shadow: 0 0 1.2rem color-mix(in srgb, var(--selection) 65%, transparent);
+}
+
+.loaderMeta {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / 3;
+  display: flex;
+  justify-content: space-between;
+  align-self: start;
 }
 
 .editorChrome {
@@ -433,7 +535,7 @@
 .premise {
   position: absolute;
   z-index: 13;
-  top: 5.25rem;
+  top: 50%;
   left: 50%;
   width: min(31rem, calc(100vw - 8rem));
   display: grid;
@@ -448,7 +550,7 @@
   box-shadow: 0 1.4rem 4rem rgba(0,0,0,.28);
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .premise > i {
@@ -564,6 +666,7 @@
 
 :global(html[data-narrative="complete"]) .editorChrome,
 :global(html[data-narrative="complete"]) .skip,
+:global(html[data-narrative="complete"]) .loader,
 :global(html[data-narrative="complete"]) .assetTray,
 :global(html[data-narrative="complete"]) .selection,
 :global(html[data-narrative="complete"]) .cursor,
@@ -652,10 +755,16 @@
   .cursor { display: none; }
 
   .premise {
-    top: 4rem;
-    width: calc(100vw - 5.5rem);
+    top: calc(50% + 7.25rem);
+    width: calc(100vw - 2rem);
     padding: .62rem;
   }
+
+  .loader {
+    padding: 1.25rem;
+  }
+
+  .loaderCopy strong { font-size: 1.1rem; }
 
   .premise strong { font-size:.72rem; }
   .premise span { font-size:.47rem; }
@@ -684,6 +793,7 @@
 @media (prefers-reduced-motion: reduce) {
   .editorChrome,
   .skip,
+  .loader,
   .assetTray,
   .selection,
   .cursor,
@@ -696,6 +806,7 @@
 
 :global(html[data-motion="reduce"]) .editorChrome,
 :global(html[data-motion="reduce"]) .skip,
+:global(html[data-motion="reduce"]) .loader,
 :global(html[data-motion="reduce"]) .assetTray,
 :global(html[data-motion="reduce"]) .selection,
 :global(html[data-motion="reduce"]) .cursor,

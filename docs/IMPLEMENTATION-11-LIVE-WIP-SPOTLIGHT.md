@@ -2,9 +2,9 @@
 
 Fecha: 25 de julio de 2026.
 
-Addendum: 27 de julio de 2026 — onboarding conceptual, chrome viewport-safe y ritmo revisado.
+Addendum: 27 de julio de 2026 — onboarding conceptual, chrome viewport-safe y ritmo revisado. Plan 12 sustituye después el ritmo y las salidas de primera visita; leer `PLAN-12-GUIDED-FIRST-PASS.md`.
 
-Estado: **implementado y validado**. Hosting: proyecto Sites existente, siempre en acceso privado.
+Estado: **implementado y validado**. Hosting: proyecto Sites existente, accesible por enlace y bloqueado para indexación.
 
 ## 1. Resultado
 

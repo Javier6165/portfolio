@@ -27,15 +27,16 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Gramática: `Notice → Follow → Select → Adjust → Comment? → Resolve → Return`.
 - Estados: `settled → wip → observing → spotlight-entering → editing → commenting? → settling → settled`; reduced motion usa `reduced`.
 - El director elige solo el target dominante cuando está mayoritariamente visible, el centro cae en la zona segura y el scroll lleva estable `220–280 ms`.
-- Cada escena espera `1–1,7 s` de lectura y Spotlight dura `2,8–4,9 s`.
-- No hay auto-scroll ni cola. Las secciones atravesadas con fast-scroll conservan su oportunidad para una visita posterior.
-- Durante Spotlight se bloquea únicamente el scroll de esa captura y se restaura la posición exacta. Stop, Escape, PageDown, Space, touch, pestaña oculta o segunda rueda cancelan.
+- La primera visita abre con un loading de archivo y una intro total aproximada de `13,5 s`; no ofrece Skip salvo reduced motion o fallo.
+- Los tiempos por capítulo se duplican: `3–4,6 s` de lectura WIP bloqueada y `5,6–9,8 s` de edición.
+- No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
+- En primera visita, Spotlight es obligatorio: rueda, touch y teclas de scroll se contienen hasta terminar. En una visita recurrente consentida vuelven Skip/Escape y `Show finished file`.
 - No existe focus trap. El cursor visitante nunca se sustituye; el cursor Javier solo aparece con pointer fino.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
-- La primera visita explica la regla antes de actuar con un comentario transitorio dentro del hero; no existe loader separado.
+- La primera visita explica la regla mediante un loading separado: `One second — I’m still polishing this` y `I’ll finish each section as you reach it`.
 - Paneles y comentarios de Spotlight se anclan al viewport y se recolocan dentro de una zona segura. Una prueba geométrica verifica que no queden recortados.
-- El dock declara `Following Javier · Next edit when you pause`, se pliega al primer scroll y mantiene Replay/Pause bajo demanda.
-- Auto-follow se puede pausar o reproducir desde el dock y desde Experience settings. Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
+- El dock de primera visita es informativo: `Guided first pass · Scroll on — edits play automatically`. Solo una visita recurrente muestra `Replay guided edits` y `Show finished file`.
+- Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
 - Una visita `familiar` muestra el hero final inmediatamente; no comprime el cursor en una animación sub-segundo que pueda parecer un destello.
 
 ## Tecnología
@@ -44,7 +45,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - CSS nativo + CSS Modules; GSAP Timeline/MotionPath como motor de Home.
 - `MotionController` no ejecuta reveals genéricos en Home. ScrollTrigger se importa dinámicamente únicamente en rutas secundarias con `.js-reveal`.
 - Sin Three.js, R3F, WebGL, Lenis, Motion, XState, React Flow o Liveblocks.
-- `NarrativeProvider` controla consentimiento, visits, motion, Auto-follow y Replay. `LiveSceneDirector` controla registro, exclusión, timing, scroll lock y cursor.
+- `NarrativeProvider` controla consentimiento, tiers, `guidedFirstVisit`, motion y Replay. `LiveSceneDirector` controla orden requerido, reencuadre, timing, scroll lock y cursor.
 - `CaseBlock` controla evidencia; Figma y prototipos externos solo cargan tras click.
 - Sin base de datos, autenticación, analytics o persistencia remota.
 
@@ -61,7 +62,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 ## Hosting
 
-- Preview privado en el proyecto Sites existente de `.openai/hosting.json`.
+- Preview accesible para cualquiera con la URL en el proyecto Sites existente; `noindex`, `nofollow` y `robots.txt` siguen bloqueando indexación.
 - Netlify es opción de lanzamiento, no migración aprobada.
 - Nunca crear otro proyecto, habilitar indexación o conectar un dominio sin autorización explícita.
 
@@ -69,7 +70,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 - Gates: `npm run lint`, `npm test` y `npm run test:e2e` para cambios interactivos.
 - Matriz: 1440×900, 1280×800, 768×1024 y 390×844; Dark/Light; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
-- Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
+- Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `PLAN-12-GUIDED-FIRST-PASS.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
 - Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial.
 
 ## Siguiente evolución

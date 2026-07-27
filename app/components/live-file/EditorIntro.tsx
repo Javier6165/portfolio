@@ -12,6 +12,7 @@ import styles from "./EditorIntro.module.css";
 
 export type IntroPhase =
   | "boot"
+  | "loading"
   | "ready"
   | "typing"
   | "placing-portrait"
@@ -33,6 +34,7 @@ export function EditorIntro() {
   const { completeIntro, reducedMotion, replayToken } = useNarrative();
   const [phase, setPhase] = useState<IntroPhase>("boot");
   const [expanded, setExpanded] = useState(false);
+  const [canSkip, setCanSkip] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -42,11 +44,16 @@ export function EditorIntro() {
   const portraitSelectionRef = useRef<HTMLDivElement>(null);
   const assetRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const loaderRef = useRef<HTMLDivElement>(null);
+  const loaderProgressRef = useRef<HTMLDivElement>(null);
+  const loaderPercentRef = useRef<HTMLSpanElement>(null);
+  const loaderStatusRef = useRef<HTMLSpanElement>(null);
   const premiseRef = useRef<HTMLDivElement>(null);
   const commentRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const expansionRef = useRef<gsap.core.Tween | null>(null);
   const activeRef = useRef(false);
+  const introLockRef = useRef<{ overflow: string; paddingRight: string } | null>(null);
 
   const finish = useCallback((nextPhase: IntroPhase, focusHeading = false) => {
     activeRef.current = false;
@@ -58,13 +65,18 @@ export function EditorIntro() {
     setExpanded(true);
     setPhase(nextPhase);
     document.body.dataset.liveFile = "complete";
+    if (introLockRef.current) {
+      document.documentElement.style.overflow = introLockRef.current.overflow;
+      document.body.style.paddingRight = introLockRef.current.paddingRight;
+      introLockRef.current = null;
+    }
     // A skip can happen before the reveal timeline has touched either asset.
     // Resolve the semantic hero explicitly instead of leaving an early
     // timeline value (dimmed title or clipped portrait) on the final frame.
     gsap.set(finalWordRef.current, { opacity: 1, clipPath: "inset(0 0% 0 0)", clearProps: "transform" });
     gsap.set(portraitRef.current, { "--portrait-reveal": "0%", x: 0, y: 0 });
     gsap.set(
-      [cursorRef.current, assetRef.current, premiseRef.current, commentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
+      [cursorRef.current, assetRef.current, loaderRef.current, premiseRef.current, commentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
       { clearProps: "all" },
     );
     if (frame) gsap.set(frame, { clearProps: "transform,borderRadius,boxShadow,borderColor" });
@@ -93,9 +105,13 @@ export function EditorIntro() {
     const portraitSelection = portraitSelectionRef.current;
     const asset = assetRef.current;
     const cursor = cursorRef.current;
+    const loader = loaderRef.current;
+    const loaderProgress = loaderProgressRef.current;
+    const loaderPercent = loaderPercentRef.current;
+    const loaderStatus = loaderStatusRef.current;
     const premise = premiseRef.current;
     const comment = commentRef.current;
-    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !premise || !comment) {
+    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !loader || !loaderProgress || !loaderPercent || !loaderStatus || !premise || !comment) {
       finish("failed");
       return;
     }
@@ -106,6 +122,7 @@ export function EditorIntro() {
     stage.dataset.expanded = "false";
 
     const mode = reducedMotion ? "static" : runtimeMode();
+    setCanSkip(mode === "return");
     document.body.dataset.liveFile = mode === "static" ? "complete" : "active";
     if (mode === "static") {
       const completionFrame = window.requestAnimationFrame(() => {
@@ -122,9 +139,19 @@ export function EditorIntro() {
       return () => window.cancelAnimationFrame(completionFrame);
     }
 
+    if (mode === "first") {
+      const scrollbar = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+      introLockRef.current = {
+        overflow: document.documentElement.style.overflow,
+        paddingRight: document.body.style.paddingRight,
+      };
+      document.documentElement.style.overflow = "hidden";
+      if (scrollbar) document.body.style.paddingRight = `${scrollbar}px`;
+    }
+
     activeRef.current = true;
     const readyFrame = window.requestAnimationFrame(() => {
-      if (activeRef.current) setPhase("ready");
+      if (activeRef.current) setPhase(mode === "first" ? "loading" : "ready");
     });
     const isMobile = window.matchMedia("(max-width: 720px)").matches;
     const bounds = stage.getBoundingClientRect();
@@ -159,6 +186,8 @@ export function EditorIntro() {
     // emphasis instead of withholding essential positioning copy.
     gsap.set(finalWord, { clipPath: "inset(0 0% 0 0)", opacity: mode === "first" ? 0.28 : 1 });
     gsap.set([titleSelection, portraitSelection, premise, comment], { opacity: 0 });
+    gsap.set(loader, { autoAlpha: mode === "first" ? 1 : 0 });
+    gsap.set(loaderProgress, { scaleX: 0, transformOrigin: "left center" });
     gsap.set(asset, { x: 0, y: 0, opacity: mode === "first" ? 1 : 0, scale: 1 });
     gsap.set(portrait, { "--portrait-reveal": mode === "first" ? "100%" : "0%" });
 
@@ -206,40 +235,59 @@ export function EditorIntro() {
     };
 
     if (mode === "first") {
+      const loadingValue = { value: 0 };
       timeline
-        .to(premise, { opacity: 1, y: -6, duration: 0.32, ease: "power3.out" }, 0.16)
-        .to(premise, { opacity: 0, y: -12, duration: 0.26, ease: "power2.in" }, 1.28)
-        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.22, ease: "power2.out" }, 0.96)
+        .to(loaderProgress, { scaleX: .72, duration: 2.2, ease: "power1.inOut" }, 0.2)
+        .to(loadingValue, {
+          value: 72,
+          duration: 2.2,
+          ease: "power1.inOut",
+          onUpdate: () => { loaderPercent.textContent = `${Math.round(loadingValue.value)}%`; },
+        }, 0.2)
+        .call(() => { loaderStatus.textContent = "Restoring live layers"; }, [], 1.35)
+        .to(premise, { opacity: 1, y: -8, duration: 0.62, ease: "power3.out" }, 1.65)
+        .call(() => { loaderStatus.textContent = "Javier is still editing"; }, [], 2.75)
+        .to(loaderProgress, { scaleX: 1, duration: 1.15, ease: "power2.inOut" }, 3.0)
+        .to(loadingValue, {
+          value: 100,
+          duration: 1.15,
+          ease: "power2.inOut",
+          onUpdate: () => { loaderPercent.textContent = `${Math.round(loadingValue.value)}%`; },
+        }, 3.0)
+        .to(premise, { opacity: 0, y: -14, duration: 0.48, ease: "power2.in" }, 4.35)
+        .to(loader, { autoAlpha: 0, duration: 0.72, ease: "power3.inOut" }, 4.45)
+        .call(() => setPhase("ready"), [], 5.0)
+        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.42, ease: "power2.out" }, 5.05)
         .to(cursor, {
-          duration: 0.72,
+          duration: 1.25,
           motionPath: { path: [cursorStart, { x: titlePoint.x + 34, y: titlePoint.y - 30 }, titlePoint], curviness: 1.2 },
-        }, 1.08)
-        .call(() => setPhase("typing"), [], 1.62)
-        .to(titleSelection, { opacity: 1, duration: 0.24 }, 1.64)
-        .to(finalWord, { opacity: 1, duration: 0.62, ease: "power2.out" }, 1.76)
-        .to(titleSelection, { opacity: 0.28, duration: 0.26 }, 2.28)
+        }, 5.25)
+        .call(() => setPhase("typing"), [], 6.25)
+        .to(titleSelection, { opacity: 1, duration: 0.46 }, 6.28)
+        .to(finalWord, { opacity: 1, duration: 1.05, ease: "power2.out" }, 6.5)
+        .to(titleSelection, { opacity: 0.28, duration: 0.48 }, 7.42)
         .to(cursor, {
-          duration: 0.66,
+          duration: 1.1,
           motionPath: { path: [titlePoint, { x: assetPoint.x + 65, y: titlePoint.y + 30 }, assetPoint], curviness: 1.1 },
-        }, 2.38)
-        .call(() => setPhase("placing-portrait"), [], 2.86)
-        .to(asset, { scale: 0.94, duration: 0.18 }, 2.92)
+        }, 7.7)
+        .call(() => setPhase("placing-portrait"), [], 8.65)
+        .to(asset, { scale: 0.94, duration: 0.34 }, 8.72)
         .to(cursor, {
-          duration: 0.78,
+          duration: 1.25,
           motionPath: { path: [assetPoint, { x: portraitPoint.x - 52, y: assetPoint.y - 68 }, portraitPoint], curviness: 1.25 },
-        }, 3.08)
+        }, 9.05)
         .to(asset, {
           x: portraitPoint.x - assetPoint.x,
           y: portraitPoint.y - assetPoint.y,
-          duration: 0.78,
-        }, 3.08)
-        .to(portrait, { "--portrait-reveal": "0%", duration: 0.66, ease: "power3.out" }, 3.36)
-        .to(asset, { opacity: 0, scale: 0.82, duration: 0.28 }, 3.84)
-        .to(portraitSelection, { opacity: 1, duration: 0.24 }, 4.02)
-        .call(() => setPhase("refining"), [], 4.12)
-        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.42, ease: "power2.inOut" }, 4.22)
-        .to(comment, { opacity: 1, y: -8, duration: 0.3, ease: "power3.out" }, 4.58)
-        .add(expandFrame, 5.36);
+          duration: 1.25,
+        }, 9.05)
+        .to(portrait, { "--portrait-reveal": "0%", duration: 1.08, ease: "power3.out" }, 9.55)
+        .to(asset, { opacity: 0, scale: 0.82, duration: 0.5 }, 10.35)
+        .to(portraitSelection, { opacity: 1, duration: 0.42 }, 10.62)
+        .call(() => setPhase("refining"), [], 10.9)
+        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.72, ease: "power2.inOut" }, 11.02)
+        .to(comment, { opacity: 1, y: -8, duration: 0.48, ease: "power3.out" }, 11.55)
+        .add(expandFrame, 12.65);
     } else {
       gsap.set(portraitSelection, { opacity: 1 });
       timeline
@@ -267,16 +315,26 @@ export function EditorIntro() {
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" || event.key === "PageDown") skip(true);
+      if (mode === "first" && ["Escape", "PageDown", "PageUp", " ", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+        event.preventDefault();
+        return;
+      }
+      if (mode === "return" && (event.key === "Escape" || event.key === "PageDown")) skip(true);
     };
-    const onIntentToScroll = () => skip(false);
+    const onIntentToScroll = (event: WheelEvent | TouchEvent) => {
+      if (mode === "first") {
+        event.preventDefault();
+        return;
+      }
+      skip(false);
+    };
     const onVisibilityChange = () => {
       if (document.hidden) skip(false);
     };
 
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("wheel", onIntentToScroll, { passive: true, once: true });
-    window.addEventListener("touchmove", onIntentToScroll, { passive: true, once: true });
+    window.addEventListener("wheel", onIntentToScroll, { passive: false });
+    window.addEventListener("touchmove", onIntentToScroll, { passive: false });
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
@@ -289,6 +347,11 @@ export function EditorIntro() {
       window.removeEventListener("wheel", onIntentToScroll);
       window.removeEventListener("touchmove", onIntentToScroll);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      if (introLockRef.current) {
+        document.documentElement.style.overflow = introLockRef.current.overflow;
+        document.body.style.paddingRight = introLockRef.current.paddingRight;
+        introLockRef.current = null;
+      }
       delete document.body.dataset.liveFile;
     };
   }, [finish, reducedMotion, replayToken, skip]);
@@ -315,11 +378,30 @@ export function EditorIntro() {
 
         <button
           className={styles.skip}
+          data-available={canSkip ? "true" : "false"}
           type="button"
           onClick={(event) => skip(event.detail === 0)}
         >
-          Skip intro
+          Skip opening
         </button>
+
+        <div ref={loaderRef} className={styles.loader} aria-hidden="true">
+          <div className={styles.loaderMark}>JO</div>
+          <div className={styles.loaderCopy}>
+            <span>Opening working file</span>
+            <strong>Javier Ortiz / Portfolio</strong>
+            <small>Senior Product Designer</small>
+          </div>
+          <div className={styles.loaderTrack}><i ref={loaderProgressRef} /></div>
+          <div className={styles.loaderMeta}>
+            <span ref={loaderStatusRef}>Loading components</span>
+            <span ref={loaderPercentRef}>0%</span>
+          </div>
+          <div ref={premiseRef} className={styles.premise}>
+            <i>JO</i>
+            <div><strong>One second — I’m still polishing this.</strong><span>I’ll finish each section as you reach it.</span></div>
+          </div>
+        </div>
 
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
           <div className={styles.frameMeta} aria-hidden="true">
@@ -417,10 +499,6 @@ export function EditorIntro() {
 
         <div ref={cursorRef} className={styles.cursor} aria-hidden="true">
           <i /><span>Javier</span>
-        </div>
-        <div ref={premiseRef} className={styles.premise} aria-hidden="true">
-          <i>JO</i>
-          <div><strong>Hey — you caught me making the final pass.</strong><span>Follow Javier’s edits as you scroll.</span></div>
         </div>
         <div ref={commentRef} className={styles.comment} aria-hidden="true">
           <i>JO</i><span>Two pixels. Much better.</span>

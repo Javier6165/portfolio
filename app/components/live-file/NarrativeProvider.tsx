@@ -24,6 +24,7 @@ export type NarrativeMemory = {
 type NarrativeContextValue = {
   autoFollow: boolean;
   consent: NarrativeConsent;
+  guidedFirstVisit: boolean;
   introComplete: boolean;
   liveReplayToken: number;
   reducedMotion: boolean;
@@ -291,6 +292,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
   const value = useMemo<NarrativeContextValue>(() => ({
     autoFollow,
     consent,
+    guidedFirstVisit: visitTier === 1 && liveReplayToken === 0,
     introComplete,
     liveReplayToken,
     reducedMotion,

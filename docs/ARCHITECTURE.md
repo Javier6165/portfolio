@@ -34,12 +34,12 @@ El HTML cliente/servidor permanece idéntico. No leer storage durante el primer 
 
 Directorio `app/components/live-file/`:
 
-- `NarrativeProvider`: consentimiento, memoria, tiers, motion, Auto-follow, Replay intro y Replay live edits.
-- `EditorIntro`: timeline del hero, skip, fallback de imagen y entrega final explícita.
-- `LiveSceneDirector`: registro central, selección dominante, lectura, Spotlight, lock/restauración, cursor y cancelación.
+- `NarrativeProvider`: consentimiento, memoria, tiers, `guidedFirstVisit`, motion y Replay.
+- `EditorIntro`: loading de archivo, timeline del hero, bloqueo inicial, Skip recurrente, fallback de imagen y entrega final explícita.
+- `LiveSceneDirector`: registro central, orden requerido, reencuadre, lectura, Spotlight mandatory/opcional, lock/restauración y cursor.
 - `LiveScene`: declaración de id, target, tool, propiedades, timings y estado visual.
 - `EditorPrimitives`: selection frame, handles, property panel y comment thread.
-- `SpotlightChrome`: dock, foco, progreso, Stop, hint de cancelación y el panel/comment thread fijos; calcula arriba/abajo y clamp horizontal desde la geometría real del target.
+- `SpotlightChrome`: dock informativo o recurrente, número de edit, fase de observación, foco, progreso y panel/comment thread fijos; calcula arriba/abajo y clamp horizontal desde la geometría real del target.
 - `ExperienceSettings` / `MemoryConsent`: preferencias locales.
 
 El servidor entrega cada escena en `settled`. Tras hidratación, el director la lleva a `wip` solo si es elegible. La máquina de atributos es:
@@ -51,7 +51,7 @@ wip → observing → spotlight-entering → editing
 
 La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No hay ScrollTrigger por escena, auto-scroll ni queue.
 
-Elegibilidad:
+Elegibilidad recurrente:
 
 - intro terminada y Home activa;
 - Auto-follow on;
@@ -61,7 +61,9 @@ Elegibilidad:
 - `readMs` cumplido;
 - escena no vista en la sesión.
 
-Spotlight fija `body`, compensa scrollbar, guarda `scrollY` y lo restaura al cerrar. Pause/Stop, Escape, PageDown, Space, touch, resize real, pestaña oculta o segunda rueda interrumpen. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve y solo un cambio material posterior cancela. No es modal y no atrapa foco.
+En primera visita, el director busca la escena requerida más temprana que el visitante ya ha alcanzado, reencuadra su target dentro de la zona segura y bloquea desde `observing`. Lectura, selección, propiedad, comentario y resolución son obligatorios; los gestos de desplazamiento solo muestran cuándo volverá el control. En visitas recurrentes, el algoritmo dominante y las salidas Escape/Skip siguen disponibles.
+
+Spotlight fija `body`, compensa scrollbar, guarda la posición ya reencuadrada y la restaura al cerrar. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve. No existe focus trap y reduced motion elimina toda captura.
 
 El chrome co-localizado de `EditorPrimitives` sigue disponible para snapshots WIP/editing. Durante Spotlight, panel y comentario locales se ocultan y la copia viewport-owned garantiza que ambos queden dentro de `16–32 px` de margen incluso a `1280×720`. En móvil el mismo contrato se convierte en una bandeja inferior.
 
@@ -97,7 +99,7 @@ Claves:
 - local: `javier-narrative-consent`, `javier-narrative-memory-v1`, `javier-motion`, `javier-theme`;
 - session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`.
 
-`NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Auto-follow es una preferencia de sesión.
+`NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Solo un tier recurrente consentido habilita Skip y controles opcionales; sin memoria, una pestaña nueva vuelve a ser primera visita.
 
 `MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera dos momentos vistos y `900 ms` antes de ofrecerlo; la superficie es fija para no modificar geometría ni interrumpir controles.
 

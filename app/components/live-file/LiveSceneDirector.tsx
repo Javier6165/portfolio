@@ -36,10 +36,11 @@ export type LiveSceneConfig = {
 };
 
 type RegisteredScene = { root: HTMLElement; config: LiveSceneConfig };
-type ActiveScene = RegisteredScene & { scrollY: number };
+type ActiveScene = RegisteredScene & { scrollY: number; mandatory: boolean };
 
 type DirectorContextValue = {
   introComplete: boolean;
+  mandatoryFirstVisit: boolean;
   reducedMotion: boolean;
   replayToken: number;
   registerScene: (root: HTMLElement, config: LiveSceneConfig) => () => void;
@@ -65,6 +66,7 @@ function readSeenScenes() {
 export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const {
     autoFollow,
+    guidedFirstVisit,
     introComplete,
     liveReplayToken,
     markCueSeen,
@@ -86,6 +88,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const firstIntentRef = useRef(0);
   const viewportRef = useRef({ width: 0, height: 0 });
   const resizeGuardUntilRef = useRef(0);
+  const repositioningRef = useRef(false);
   const bodyStyleRef = useRef<{ position: string; top: string; width: string; paddingRight: string; overflow: string } | null>(null);
   const startSceneRef = useRef<(scene: RegisteredScene) => void>(() => undefined);
   const evaluateRef = useRef<() => void>(() => undefined);
@@ -223,19 +226,42 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     startSceneRef.current = (scene) => {
-    const { root, config } = scene;
-    if (activeRef.current || !sceneIsEligible(config) || !root.isConnected) return;
-    const target = root.querySelector<HTMLElement>(config.targetSelector) ?? root;
-    const targetRect = target.getBoundingClientRect();
-    const rootRect = root.getBoundingClientRect();
-    const scrollY = lockPage();
-    root.style.setProperty("--live-x", `${targetRect.left - rootRect.left}px`);
-    root.style.setProperty("--live-y", `${targetRect.top - rootRect.top}px`);
-    root.style.setProperty("--live-w", `${targetRect.width}px`);
-    root.style.setProperty("--live-h", `${targetRect.height}px`);
-    root.dataset.liveState = "spotlight-entering";
-    activeRef.current = { ...scene, scrollY };
-    candidateRef.current = null;
+      const { root, config } = scene;
+      if (activeRef.current || !sceneIsEligible(config) || !root.isConnected) return;
+      const mandatory = guidedFirstVisit;
+      const target = root.querySelector<HTMLElement>(config.targetSelector) ?? root;
+
+      // The guided first pass owns the framing. If a visitor races past a
+      // required chapter, bring the authored target back into the safe area
+      // before freezing the page. The captured position then becomes the exact
+      // restoration point when the edit finishes.
+      if (mandatory) {
+        const initial = target.getBoundingClientRect();
+        const safeTop = 104;
+        const safeBottom = window.innerHeight - 92;
+        const available = Math.max(240, safeBottom - safeTop);
+        const desiredTop = initial.height <= available
+          ? safeTop + (available - initial.height) / 2
+          : safeTop + 12;
+        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        const desiredScroll = clamp(window.scrollY + initial.top - desiredTop, 0, maxScroll);
+        if (Math.abs(desiredScroll - window.scrollY) > 2) {
+          repositioningRef.current = true;
+          window.scrollTo({ top: desiredScroll, behavior: "auto" });
+          window.requestAnimationFrame(() => { repositioningRef.current = false; });
+        }
+      }
+
+      const targetRect = target.getBoundingClientRect();
+      const rootRect = root.getBoundingClientRect();
+      const scrollY = lockPage();
+      root.style.setProperty("--live-x", `${targetRect.left - rootRect.left}px`);
+      root.style.setProperty("--live-y", `${targetRect.top - rootRect.top}px`);
+      root.style.setProperty("--live-w", `${targetRect.width}px`);
+      root.style.setProperty("--live-h", `${targetRect.height}px`);
+      root.dataset.liveState = mandatory ? "observing" : "spotlight-entering";
+      activeRef.current = { ...scene, scrollY, mandatory };
+      candidateRef.current = null;
 
     const safeRect = {
       top: clamp(targetRect.top - 8, 4, window.innerHeight - 80),
@@ -256,38 +282,51 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       left: clamp(safeRect.left, 16, window.innerWidth - panelWidth - 16),
       width: panelWidth,
     };
-    setSpotlight({
-      id: config.id,
-      action: config.action,
-      rect: safeRect,
-      panel,
-      durationMs: config.spotlightMs,
-      hint: false,
-      phase: "entering",
-      tool: toolNames[config.tool],
-      properties: config.properties,
-      comment: config.comment,
-    });
+      const leadIn = mandatory ? config.readMs : 0;
+      const totalDuration = leadIn + config.spotlightMs;
+      const orderedRoots = [...registryRef.current.keys()];
+      setSpotlight({
+        id: config.id,
+        action: config.action,
+        rect: safeRect,
+        panel,
+        durationMs: totalDuration,
+        hint: false,
+        mandatory,
+        position: Math.max(1, orderedRoots.indexOf(root) + 1),
+        total: orderedRoots.length,
+        phase: mandatory ? "observing" : "entering",
+        tool: toolNames[config.tool],
+        properties: config.properties,
+        comment: config.comment,
+      });
 
-    const editingTimer = window.setTimeout(() => {
-      root.dataset.liveState = "editing";
-      setSpotlight((current) => current ? { ...current, phase: "editing" } : current);
-      window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: config.id } }));
-    }, 520);
-    phaseTimersRef.current.push(editingTimer);
+      if (mandatory) {
+        phaseTimersRef.current.push(window.setTimeout(() => {
+          root.dataset.liveState = "spotlight-entering";
+          setSpotlight((current) => current ? { ...current, phase: "entering" } : current);
+        }, leadIn));
+      }
 
-    if (config.comment) {
-      const commentAt = Math.max(1_900, config.spotlightMs - 1_800);
+      const editingTimer = window.setTimeout(() => {
+        root.dataset.liveState = "editing";
+        setSpotlight((current) => current ? { ...current, phase: "editing" } : current);
+        window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: config.id } }));
+      }, leadIn + 1_040);
+      phaseTimersRef.current.push(editingTimer);
+
+      if (config.comment) {
+        const commentAt = leadIn + Math.max(3_800, config.spotlightMs - 3_600);
+        phaseTimersRef.current.push(window.setTimeout(() => {
+          root.dataset.liveState = "commenting";
+          setSpotlight((current) => current ? { ...current, phase: "commenting" } : current);
+        }, commentAt));
+      }
       phaseTimersRef.current.push(window.setTimeout(() => {
-        root.dataset.liveState = "commenting";
-        setSpotlight((current) => current ? { ...current, phase: "commenting" } : current);
-      }, commentAt));
-    }
-    phaseTimersRef.current.push(window.setTimeout(() => {
-      root.dataset.liveState = "settling";
-      setSpotlight((current) => current ? { ...current, phase: "settling" } : current);
-    }, config.spotlightMs - 420));
-    phaseTimersRef.current.push(window.setTimeout(() => endActive(false), config.spotlightMs));
+        root.dataset.liveState = "settling";
+        setSpotlight((current) => current ? { ...current, phase: "settling" } : current);
+      }, leadIn + config.spotlightMs - 840));
+      phaseTimersRef.current.push(window.setTimeout(() => endActive(false), totalDuration));
 
     const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
     if (!coarse && cursorRef.current) {
@@ -298,14 +337,14 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       const startX = clamp(endX + direction * 120, 22, window.innerWidth - 92);
       const startY = clamp(endY - 88, 72, window.innerHeight - 90);
       gsap.set(cursor, { x: startX, y: startY, opacity: 0, scale: .9 });
-      cursorTimelineRef.current = gsap.timeline()
-        .to(cursor, { opacity: 1, scale: 1, duration: .18 }, .16)
-        .to(cursor, { duration: .78, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 38, y: endY - 30 }, { x: endX, y: endY }], curviness: 1.25 } }, .22)
-        .to(cursor, { x: endX + 3, y: endY - 3, duration: .28, ease: "power2.inOut" }, 1.22)
-        .to(cursor, { opacity: 0, duration: .28 }, Math.max(1.8, config.spotlightMs / 1000 - .4));
+      cursorTimelineRef.current = gsap.timeline({ delay: leadIn / 1000 })
+        .to(cursor, { opacity: 1, scale: 1, duration: .36 }, .32)
+        .to(cursor, { duration: 1.56, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 38, y: endY - 30 }, { x: endX, y: endY }], curviness: 1.25 } }, .44)
+        .to(cursor, { x: endX + 3, y: endY - 3, duration: .56, ease: "power2.inOut" }, 2.44)
+        .to(cursor, { opacity: 0, duration: .5 }, Math.max(3.6, config.spotlightMs / 1000 - .8));
     }
     };
-  }, [endActive, lockPage, sceneIsEligible]);
+  }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible]);
 
   useEffect(() => {
     evaluateRef.current = () => {
@@ -313,6 +352,21 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     if (new URLSearchParams(window.location.search).get("live") === "wip") return;
     const safeTop = 96;
     const safeBottom = window.innerHeight - 48;
+
+    if (guidedFirstVisit) {
+      // A first visit is a directed sequence. Always resolve the earliest
+      // required chapter that the visitor has reached or passed, even if a
+      // fast wheel gesture carried its target outside the viewport.
+      const nextRequired = [...registryRef.current.entries()].find(([root, config]) => {
+        if (!["wip", "observing"].includes(root.dataset.liveState ?? "") || !sceneIsEligible(config)) return false;
+        return root.getBoundingClientRect().top < safeBottom;
+      });
+      if (!nextRequired) return;
+      const [root, config] = nextRequired;
+      startSceneRef.current({ root, config });
+      return;
+    }
+
     let best: (RegisteredScene & { ratio: number }) | null = null;
 
     registryRef.current.forEach((config, root) => {
@@ -343,11 +397,11 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       if (candidateRef.current?.root === chosen.root) startSceneRef.current(chosen);
     }, chosen.config.readMs);
     };
-  }, [autoFollow, experienceReady, pathname, reducedMotion, sceneIsEligible]);
+  }, [autoFollow, experienceReady, guidedFirstVisit, pathname, reducedMotion, sceneIsEligible]);
 
   useEffect(() => {
     const onScroll = () => {
-      if (activeRef.current) return;
+      if (activeRef.current || repositioningRef.current) return;
       if (readTimerRef.current !== null) window.clearTimeout(readTimerRef.current);
       readTimerRef.current = null;
       if (candidateRef.current) candidateRef.current.root.dataset.liveState = "wip";
@@ -386,6 +440,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     const onWheel = (event: WheelEvent) => {
       if (!activeRef.current) return;
       event.preventDefault();
+      if (activeRef.current.mandatory) {
+        setSpotlight((current) => current ? { ...current, hint: true } : current);
+        return;
+      }
       const now = Date.now();
       if (firstIntentRef.current && now - firstIntentRef.current <= 700) {
         endActive(true, Math.sign(event.deltaY || 1) * Math.min(window.innerHeight * .82, 720));
@@ -397,12 +455,21 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     const onTouchMove = (event: TouchEvent) => {
       if (!activeRef.current) return;
       event.preventDefault();
+      if (activeRef.current.mandatory) {
+        setSpotlight((current) => current ? { ...current, hint: true } : current);
+        return;
+      }
       endActive(true, Math.min(window.innerHeight * .72, 620));
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (!activeRef.current) return;
-      if (!["Escape", "PageDown", " "].includes(event.key)) return;
+      const scrollKeys = ["Escape", "PageDown", "PageUp", " ", "ArrowDown", "ArrowUp", "Home", "End"];
+      if (!scrollKeys.includes(event.key)) return;
       event.preventDefault();
+      if (activeRef.current.mandatory) {
+        setSpotlight((current) => current ? { ...current, hint: true } : current);
+        return;
+      }
       endActive(true, event.key === "Escape" ? 0 : Math.min(window.innerHeight * .82, 720));
     };
     window.addEventListener("wheel", onWheel, { passive: false, capture: true });
@@ -434,11 +501,12 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
 
   const value = useMemo<DirectorContextValue>(() => ({
     introComplete: experienceReady,
+    mandatoryFirstVisit: guidedFirstVisit,
     reducedMotion,
     replayToken: liveReplayToken,
     registerScene,
     settleScene,
-  }), [experienceReady, liveReplayToken, reducedMotion, registerScene, settleScene]);
+  }), [experienceReady, guidedFirstVisit, liveReplayToken, reducedMotion, registerScene, settleScene]);
 
   const stopFollowing = useCallback(() => endActive(true, 0, true), [endActive]);
 
@@ -448,6 +516,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       <SpotlightChrome
         active={spotlight}
         showDock={pathname === "/" && introComplete && autoFollow && !reducedMotion}
+        guidedFirstVisit={guidedFirstVisit}
         onCancel={() => endActive(true)}
         onReplay={replayLiveEdits}
         onStop={stopFollowing}

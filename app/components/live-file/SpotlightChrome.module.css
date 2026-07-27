@@ -1,5 +1,7 @@
 .dock { position: fixed; z-index: 88; top: 5.35rem; left: var(--page-pad); display: flex; align-items: center; gap: .8rem; max-width: calc(100vw - var(--page-pad) * 2); padding: .5rem .58rem; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb,var(--canvas) 91%,transparent); box-shadow: 0 1rem 3rem var(--shadow); backdrop-filter: blur(18px); font-size: .72rem; opacity: 0; animation: dock-in 500ms 650ms cubic-bezier(.16,1,.3,1) forwards; transition: gap 300ms ease,background 300ms ease; }
 .dockToggle { display: flex; align-items: center; gap: .4rem; min-height: 2rem; padding: .35rem .5rem; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; font: .62rem var(--font-mono); }
+.guidedMark { display:flex; align-items:center; gap:.4rem; min-height:2rem; padding:.35rem .5rem; color:var(--muted); font:.62rem var(--font-mono); }
+.guidedMark i { width:.45rem; aspect-ratio:1; border-radius:50%; background:var(--signal); box-shadow:0 0 .8rem color-mix(in srgb,var(--signal) 56%,transparent); }
 .dockToggle i { width: .45rem; aspect-ratio: 1; border-radius: 50%; background: var(--signal); box-shadow: 0 0 .8rem color-mix(in srgb,var(--signal) 56%,transparent); }
 .dock p { display:grid; padding-left: .8rem; border-left: 1px solid var(--line); line-height:1.15; }
 .dock p strong { font-size:.7rem; font-weight:570; }
@@ -21,6 +23,7 @@
 .progress { height: 2px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.18); }
 .progress::after { content: ""; display: block; width: 100%; height: 100%; background: #c7ff47; transform-origin: left; animation: progress var(--spotlight-duration) linear both; }
 .bar button, .hint { min-height: 2.35rem; padding: .5rem .7rem; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: transparent; color: #f3f1eb; cursor: pointer; font: .58rem var(--font-mono); text-transform: uppercase; }
+.locked { padding:.48rem .66rem; border:1px solid rgba(255,255,255,.14); border-radius:999px; color:#aeb3b8; font:.55rem var(--font-mono); text-transform:uppercase; }
 .hint { position: fixed; z-index: 3; left: 50%; bottom: 1.2rem; background: #15181d; pointer-events: auto; transform: translateX(-50%); animation: bar-in 250ms ease both; }
 .contextPanel { position:fixed; z-index:3; pointer-events:none; animation:context-in 420ms cubic-bezier(.16,1,.3,1) both; }
 .viewportProperties,.viewportComment { border:1px solid rgba(255,255,255,.16); border-radius:.85rem; background:#15181d; color:#f3f1eb; box-shadow:0 1.4rem 4rem rgba(0,0,0,.38); }
@@ -46,6 +49,7 @@
 :global(html[data-theme="human"]) .progress::after { background:var(--signal); }
 :global(html[data-theme="human"]) .viewportComment > b { color:var(--signal); }
 :global(html[data-theme="human"]) .bar button { border-color:rgba(24,45,81,.22); color:#182d51; }
+:global(html[data-theme="human"]) .locked { border-color:rgba(24,45,81,.18); color:#6f6a64; }
 :global(html[data-theme="human"]) .viewportProperties > div { border-color:rgba(24,45,81,.14); }
 :global(html[data-theme="human"]) .viewportProperties li { border-color:rgba(24,45,81,.12); background:rgba(24,45,81,.05); }
 @keyframes dock-in { from { opacity:0; transform:translateY(.7rem); } to { opacity:1; transform:none; } }

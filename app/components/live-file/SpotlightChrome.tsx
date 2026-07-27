@@ -10,13 +10,16 @@ export type SpotlightView = {
   panel: { top: number; left: number; width: number };
   durationMs: number;
   hint: boolean;
-  phase: "entering" | "editing" | "commenting" | "settling";
+  mandatory: boolean;
+  position: number;
+  total: number;
+  phase: "observing" | "entering" | "editing" | "commenting" | "settling";
   tool: string;
   properties: string[];
   comment?: string;
 };
 
-export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
+export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
   const [dockExpanded, setDockExpanded] = useState(true);
   const dockIntroducedRef = useRef(false);
   const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
@@ -41,21 +44,30 @@ export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }
   return (
     <>
       {showDock && !active ? (
-        <div className={styles.dock} data-follow-dock data-expanded={dockExpanded ? "true" : "false"}>
-          <button
-            className={styles.dockToggle}
-            type="button"
-            aria-expanded={dockExpanded}
-            aria-label={dockExpanded ? "Collapse Live File controls" : "Expand Live File controls"}
-            onClick={() => setDockExpanded((expanded) => !expanded)}
-          >
-            <i /> <span>LIVE FILE</span>
-          </button>
-          <p><strong>Following Javier</strong><span>Next edit when you pause</span></p>
-          <div className={styles.dockActions} aria-hidden={dockExpanded ? undefined : "true"}>
-            <button type="button" onClick={onReplay}>Replay edits</button>
-            <button type="button" onClick={onStop}>Pause</button>
-          </div>
+        <div className={styles.dock} data-follow-dock data-guided={guidedFirstVisit ? "true" : "false"} data-expanded={dockExpanded ? "true" : "false"}>
+          {guidedFirstVisit ? (
+            <>
+              <div className={styles.guidedMark}><i /> LIVE FILE</div>
+              <p><strong>Guided first pass</strong><span>Scroll on — edits play automatically</span></p>
+            </>
+          ) : (
+            <>
+              <button
+                className={styles.dockToggle}
+                type="button"
+                aria-expanded={dockExpanded}
+                aria-label={dockExpanded ? "Collapse Live File controls" : "Expand Live File controls"}
+                onClick={() => setDockExpanded((expanded) => !expanded)}
+              >
+                <i /> <span>LIVE FILE</span>
+              </button>
+              <p><strong>Optional live edits</strong><span>Replay or continue with the finished file</span></p>
+              <div className={styles.dockActions} aria-hidden={dockExpanded ? undefined : "true"}>
+                <button type="button" onClick={onReplay}>Replay guided edits</button>
+                <button type="button" onClick={onStop}>Show finished file</button>
+              </div>
+            </>
+          )}
         </div>
       ) : null}
       {active ? (
@@ -73,11 +85,14 @@ export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }
           />
           <div className={styles.bar} aria-hidden="false">
             <span className={styles.avatar}>JO</span>
-            <div><small>Following Javier</small><strong>{active.action}</strong></div>
+            <div>
+              <small>LIVE FILE · EDIT {String(active.position).padStart(2, "0")} / {String(active.total).padStart(2, "0")}</small>
+              <strong>{active.phase === "observing" ? "Spot the draft — Javier is about to fix it" : active.action}</strong>
+            </div>
             <i className={styles.progress} style={{ "--spotlight-duration": `${active.durationMs}ms` } as CSSProperties} aria-hidden="true" />
-            <button type="button" onClick={onStop}>Stop following</button>
+            {active.mandatory ? <span className={styles.locked}>Guided edit</span> : <button type="button" onClick={onStop}>Skip this edit</button>}
           </div>
-          {active.phase !== "entering" ? (
+          {active.phase !== "observing" && active.phase !== "entering" ? (
             <div
               className={styles.contextPanel}
               data-spotlight-context
@@ -99,7 +114,10 @@ export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }
               )}
             </div>
           ) : null}
-          {active.hint ? <button className={styles.hint} type="button" onClick={onCancel}>Scroll again to stop following</button> : null}
+          {active.hint ? active.mandatory
+            ? <div className={styles.hint}>Scroll resumes when this edit is complete</div>
+            : <button className={styles.hint} type="button" onClick={onCancel}>Skip this edit and continue</button>
+          : null}
         </div>
       ) : null}
     </>
