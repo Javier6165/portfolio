@@ -22,7 +22,7 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Plan 12 convierte la primera visita en una pasada guiada: un loading explica que el archivo sigue abierto, cada target requerido se reencuadra y lectura + edición bloquean temporalmente el scroll. Las visitas recurrentes consentidas recuperan Skip y controles opcionales. El contenido profesional nunca depende de esa capa.
+La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Plan 13 prueba una apertura causal —comentario, control `Present`, hero— y un guion `comentario sobre WIP → edición → resolución` en Snapshot, Work y Product practice. Plan 12 continúa rigiendo la pasada obligatoria y los capítulos restantes. Las visitas recurrentes consentidas recuperan Skip y controles opcionales. El contenido profesional nunca depende de esa capa.
 
 ## Por qué no es una template
 
@@ -37,6 +37,6 @@ La Home vigente recorre hero → Snapshot → Work → Product practice → AI-n
 
 ## Estado y límites
 
-Plan 11 sigue siendo la base de UI, copy y estados WIP; Plan 12 prevalece para onboarding, ritmo, reencuadre y controles de visita. `PLAN-12-GUIDED-FIRST-PASS.md` documenta el contrato vigente. Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial. El siguiente salto de contenido sigue siendo evidencia real mediante `CaseBlock`.
+Plan 11 sigue siendo la base de UI, copy y estados WIP; Plan 12 prevalece para reencuadre y controles de visita; Plan 13 prevalece para la apertura y la vertical piloto de los tres primeros capítulos. Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial. El siguiente salto de contenido sigue siendo evidencia real mediante `CaseBlock`.
 
 Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; testimonials, contacto, LinkedIn y CV son temporales. Los siguientes inputs son un único caso real representativo y recomendaciones aprobadas con atribución y permiso.

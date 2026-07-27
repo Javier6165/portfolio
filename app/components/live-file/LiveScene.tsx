@@ -18,6 +18,8 @@ type LiveSceneProps = {
   spotlightMs?: number;
   minVisibility?: number;
   comment?: string;
+  commentFirst?: boolean;
+  draftLabel?: string;
   className?: string;
 };
 
@@ -34,6 +36,8 @@ export function LiveScene({
   spotlightMs = 8_000,
   minVisibility = 0.58,
   comment,
+  commentFirst = false,
+  draftLabel,
   className = "",
 }: LiveSceneProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -42,8 +46,8 @@ export function LiveScene({
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || !introComplete) return;
-    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment });
-  }, [action, comment, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, spotlightMs, targetSelector, tool, verb]);
+    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment, commentFirst });
+  }, [action, comment, commentFirst, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, spotlightMs, targetSelector, tool, verb]);
 
   function handOff(event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) {
     const root = rootRef.current;
@@ -62,7 +66,7 @@ export function LiveScene({
       onFocusCapture={handOff}
     >
       {children}
-      <span className={styles.draftStatus} aria-hidden="true"><i /> WIP · {verb} pending</span>
+      <span className={styles.draftStatus} aria-hidden="true"><i /> {draftLabel ?? `WIP · ${verb} pending`}</span>
       <span className={styles.finalStatus} aria-hidden="true"><i /> {label}</span>
       <EditorPrimitives tool={tool} properties={properties} comment={comment} />
     </div>

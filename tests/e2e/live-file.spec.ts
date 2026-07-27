@@ -21,7 +21,7 @@ async function skipIntro(page: Page) {
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
 }
 
-test("the first visit opens a working file slowly and cannot be skipped", async ({ page, isMobile }) => {
+test("the first visit explains the working file, enters Present and cannot be skipped", async ({ page, isMobile }) => {
   test.setTimeout(25_000);
   await page.goto("/?narrative=first");
 
@@ -33,7 +33,9 @@ test("the first visit opens a working file slowly and cannot be skipped", async 
   await page.mouse.wheel(0, 900);
   await page.keyboard.press("PageDown");
   await expect(page.locator("html")).not.toHaveAttribute("data-narrative", "complete");
-  await expect(page.getByText("One second — I’m still polishing this.")).toBeVisible({ timeout: 4_500 });
+  await expect(page.getByText("Oh. Hi. You caught me at “one last tweak”.")).toBeVisible({ timeout: 3_000 });
+  await expect(page.getByText("Right. Let’s make this less awkward — full screen.")).toBeVisible({ timeout: 4_500 });
+  await expect(page.getByText("Present", { exact: true })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 16_000 });
 
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
@@ -119,7 +121,7 @@ test("forced WIP and final states expose visibly different section designs", asy
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(scene).toHaveAttribute("data-live-state", "wip");
   const wipColumns = await scene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => getComputedStyle(element).gridTemplateColumns);
-  await expect(scene.getByText("WIP · clarify pending")).toBeAttached();
+  await expect(scene.getByText("Draft · too much résumé")).toBeAttached();
 
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
@@ -140,7 +142,10 @@ test("the guided first pass reframes, locks and completes a readable edit", asyn
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(scene).toHaveAttribute("data-live-state", /observing|spotlight-entering|editing|commenting/, { timeout: 2_500 });
   await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 08/)).toBeVisible();
-  await expect(page.getByText("Spot the draft — Javier is about to fix it")).toBeVisible();
+  await expect(page.getByText("Following Javier")).toBeVisible();
+  const comment = page.locator('[data-spotlight-context][data-context-kind="comment"]');
+  await expect(comment.getByText("This is becoming a résumé. Nobody asked.")).toBeVisible();
+  await expect(comment.getByText("Javier · now")).toBeVisible();
   await expect(page.getByRole("button", { name: /Skip this edit|Stop following/ })).toHaveCount(0);
   await expect(page.locator("body")).toHaveCSS("position", "fixed");
   const anchoredScroll = await page.locator("body").evaluate((element) => Math.abs(Number.parseFloat(getComputedStyle(element).top)));
@@ -156,8 +161,7 @@ test("the guided first pass reframes, locks and completes a readable edit", asyn
   await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 08/)).toBeVisible();
   await expect(page.locator("body")).toHaveCSS("position", "fixed");
 
-  const comment = page.locator('[data-spotlight-context][data-context-kind="comment"]');
-  await expect(comment.getByText("Keep the signal. Lose the résumé.")).toBeAttached({ timeout: 13_000 });
+  await expect(comment.getByText("This is becoming a résumé. Nobody asked.")).toBeAttached({ timeout: 5_000 });
   const contextGeometry = await comment.evaluate((element) => {
     const bounds = element.getBoundingClientRect();
     return { top: bounds.top, right: bounds.right, bottom: bounds.bottom, left: bounds.left, width: innerWidth, height: innerHeight };

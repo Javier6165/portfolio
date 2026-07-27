@@ -35,7 +35,8 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /href="\/work\/atlas"/);
   assert.doesNotMatch(html, /javier-theme|hero-human|about-human|theme-toggle|Use Light mode|data-theme/i);
   assert.match(html, /Working file/);
-  assert.match(html, /Javier is editing/);
+  assert.match(html, /Present/);
+  assert.match(html, /You caught me at “one last tweak”/);
   assert.match(html, /javier-narrative-memory-v1/);
   assert.match(html, /hero-system\.jpg/);
   assert.match(html, /Skip to content/);

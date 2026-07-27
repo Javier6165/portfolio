@@ -12,8 +12,9 @@ Lee, en este orden:
 6. `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`
 7. `docs/AUDIT-11-LIVE-WIP-SPOTLIGHT.md`
 8. `docs/PLAN-12-GUIDED-FIRST-PASS.md`
-9. `docs/CONTENT-AND-RELEASE.md`
-10. `docs/ASSETS.md` si vas a tocar imágenes.
+9. `docs/PLAN-13-NARRATIVE-VERTICAL.md`
+10. `docs/CONTENT-AND-RELEASE.md`
+11. `docs/ASSETS.md` si vas a tocar imágenes.
 
 Los documentos 07–10 fueron consolidados y retirados; Git conserva su historial.
 
@@ -23,7 +24,7 @@ Los documentos 07–10 fueron consolidados y retirados; Git conserva su historia
 - Dark es la única dirección visual. No existe selector, `data-theme`, persistencia de apariencia ni set fotográfico Light; los nombres `*-system.*` que quedan son nombres históricos de los assets canónicos.
 - `Live File` es la firma vigente. Sus estados visuales se resuelven con `data-narrative`, `data-motion`, `data-live-file` e `IntroPhase`; no conviertas GSAP en la fuente de verdad lógica.
 - El hero semántico contiene nombre, rol, retrato y `Explore`. El editor es decorativo y no puede ocultar ese contenido a lectores de pantalla ni dejarlo inaccesible sin JavaScript.
-- `NarrativeProvider` es el único propietario de consentimiento, tiers, `guidedFirstVisit`, Replay y motion manual. `LiveSceneDirector` posee registro, orden requerido, reencuadre, Spotlight, cursor singleton, exclusión y restauración de scroll. El contrato vigente está en `PLAN-12-GUIDED-FIRST-PASS.md`.
+- `NarrativeProvider` es el único propietario de consentimiento, tiers, `guidedFirstVisit`, Replay y motion manual. `LiveSceneDirector` posee registro, orden requerido, reencuadre, Spotlight, cursor singleton, exclusión y restauración de scroll. Plan 13 prevalece para la apertura y los tres capítulos piloto; Plan 12 continúa rigiendo el resto.
 - La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
 - `.js-hero-reveal` y `.js-reveal` solo se ejecutan en rutas secundarias; Home pertenece exclusivamente al director Live File. Reduced motion resuelve final.
 - Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Preserva `wip → observing → spotlight-entering → editing → commenting? → settling → settled`.

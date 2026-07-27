@@ -36,11 +36,13 @@ export default function Home() {
           label="Profile / Refined"
           targetSelector={`.${styles.snapshotFacts}`}
           tool="layout"
-          action="Clarifying the signal"
+          action="Reframing the snapshot"
           properties={["Split into 4", "Text 10 → 18", "Gap 0 → 24"]}
-          readMs={3600}
-          spotlightMs={8800}
-          comment="Keep the signal. Lose the résumé."
+          readMs={1400}
+          spotlightMs={3400}
+          comment="This is becoming a résumé. Nobody asked."
+          commentFirst
+          draftLabel="Draft · too much résumé"
           className={styles.snapshotScene}
         >
           <div className={styles.snapshotLead}>
@@ -71,11 +73,13 @@ export default function Home() {
               label="Case 01 / Live"
               targetSelector=".project-card__media"
               tool="asset"
-              action="Placing evidence"
+              action="Placing the missing evidence"
               properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
-              readMs={4200}
-              spotlightMs={9600}
-              comment="Show the decision, not the decoration."
+              readMs={1600}
+              spotlightMs={3800}
+              comment="A case study without evidence. Brave."
+              commentFirst
+              draftLabel="Draft · evidence missing"
               className={styles.workScene}
               key={project.slug}
             >
@@ -97,11 +101,13 @@ export default function Home() {
           label="Practice / Connected"
           targetSelector={`.${styles.practiceStage}`}
           tool="connections"
-          action="Connecting decisions to outputs"
+          action="Turning skills into a workflow"
           properties={["3 triggers", "3 destinations", "On click"]}
-          readMs={4000}
-          spotlightMs={9200}
-          comment="Show the path, not a list of skills."
+          readMs={1500}
+          spotlightMs={4000}
+          comment="A list of skills. Groundbreaking."
+          commentFirst
+          draftLabel="Draft · skills unconnected"
           className={styles.practiceScene}
         >
           <div className={styles.practiceStage}><ProductPractice /></div>

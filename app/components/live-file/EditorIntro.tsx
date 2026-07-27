@@ -49,7 +49,7 @@ export function EditorIntro() {
   const loaderPercentRef = useRef<HTMLSpanElement>(null);
   const loaderStatusRef = useRef<HTMLSpanElement>(null);
   const premiseRef = useRef<HTMLDivElement>(null);
-  const commentRef = useRef<HTMLDivElement>(null);
+  const presentRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const expansionRef = useRef<gsap.core.Tween | null>(null);
   const activeRef = useRef(false);
@@ -76,7 +76,7 @@ export function EditorIntro() {
     gsap.set(finalWordRef.current, { opacity: 1, clipPath: "inset(0 0% 0 0)", clearProps: "transform" });
     gsap.set(portraitRef.current, { "--portrait-reveal": "0%", x: 0, y: 0 });
     gsap.set(
-      [cursorRef.current, assetRef.current, loaderRef.current, premiseRef.current, commentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
+      [cursorRef.current, assetRef.current, loaderRef.current, premiseRef.current, presentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
       { clearProps: "all" },
     );
     if (frame) gsap.set(frame, { clearProps: "transform,borderRadius,boxShadow,borderColor" });
@@ -110,8 +110,8 @@ export function EditorIntro() {
     const loaderPercent = loaderPercentRef.current;
     const loaderStatus = loaderStatusRef.current;
     const premise = premiseRef.current;
-    const comment = commentRef.current;
-    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !loader || !loaderProgress || !loaderPercent || !loaderStatus || !premise || !comment) {
+    const present = presentRef.current;
+    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !loader || !loaderProgress || !loaderPercent || !loaderStatus || !premise || !present) {
       finish("failed");
       return;
     }
@@ -162,12 +162,11 @@ export function EditorIntro() {
         y: target.top - bounds.top + target.height * yRatio,
       };
     };
-    const titlePoint = pointFor(title, 0.72, 0.7);
-    const assetPoint = pointFor(asset, 0.65, 0.45);
-    const portraitPoint = pointFor(portrait, 0.58, 0.52);
+    const premisePoint = pointFor(premise, 0.08, 0.5);
+    const presentPoint = pointFor(present, 0.5, 0.5);
     const cursorStart = { x: bounds.width * 0.86, y: isMobile ? 42 : 78 };
-    const returningCopy = mode === "familiar" ? "Still checking the spacing?" : "You’re back.";
-    comment.querySelector("span")!.textContent = mode === "first" ? "Two pixels. Much better." : returningCopy;
+    const premiseLead = premise.querySelector<HTMLElement>("strong");
+    const premiseReply = premise.querySelector<HTMLElement>("span");
 
     gsap.set(cursor, { x: cursorStart.x, y: cursorStart.y, opacity: 0, scale: 0.92 });
     const fitSelection = (selection: HTMLElement, target: Element, padding: number) => {
@@ -184,12 +183,13 @@ export function EditorIntro() {
 
     // The complete role is legible from frame one. The timeline refines its
     // emphasis instead of withholding essential positioning copy.
-    gsap.set(finalWord, { clipPath: "inset(0 0% 0 0)", opacity: mode === "first" ? 0.28 : 1 });
-    gsap.set([titleSelection, portraitSelection, premise, comment], { opacity: 0 });
+    gsap.set(finalWord, { clipPath: "inset(0 0% 0 0)", opacity: 1 });
+    gsap.set([titleSelection, portraitSelection, premise], { opacity: 0 });
+    gsap.set([premiseLead, premiseReply], { opacity: 0, y: 4 });
     gsap.set(loader, { autoAlpha: mode === "first" ? 1 : 0 });
     gsap.set(loaderProgress, { scaleX: 0, transformOrigin: "left center" });
     gsap.set(asset, { x: 0, y: 0, opacity: mode === "first" ? 1 : 0, scale: 1 });
-    gsap.set(portrait, { "--portrait-reveal": mode === "first" ? "100%" : "0%" });
+    gsap.set(portrait, { "--portrait-reveal": "0%" });
 
     const expandFrame = () => {
       setPhase("expanding");
@@ -209,7 +209,7 @@ export function EditorIntro() {
         ease: "power4.inOut",
         onComplete: () => finish("complete"),
       });
-      gsap.to([cursor, premise, comment, titleSelection, portraitSelection], {
+      gsap.to([cursor, premise, titleSelection, portraitSelection], {
         opacity: 0,
         duration: 0.36,
         ease: "power2.out",
@@ -237,67 +237,42 @@ export function EditorIntro() {
     if (mode === "first") {
       const loadingValue = { value: 0 };
       timeline
-        .to(loaderProgress, { scaleX: .72, duration: 2.2, ease: "power1.inOut" }, 0.2)
-        .to(loadingValue, {
-          value: 72,
-          duration: 2.2,
-          ease: "power1.inOut",
-          onUpdate: () => { loaderPercent.textContent = `${Math.round(loadingValue.value)}%`; },
-        }, 0.2)
-        .call(() => { loaderStatus.textContent = "Restoring live layers"; }, [], 1.35)
-        .to(premise, { opacity: 1, y: -8, duration: 0.62, ease: "power3.out" }, 1.65)
-        .call(() => { loaderStatus.textContent = "Javier is still editing"; }, [], 2.75)
-        .to(loaderProgress, { scaleX: 1, duration: 1.15, ease: "power2.inOut" }, 3.0)
+        .to(loaderProgress, { scaleX: 1, duration: .72, ease: "power2.inOut" }, 0.08)
         .to(loadingValue, {
           value: 100,
-          duration: 1.15,
+          duration: .72,
           ease: "power2.inOut",
           onUpdate: () => { loaderPercent.textContent = `${Math.round(loadingValue.value)}%`; },
-        }, 3.0)
-        .to(premise, { opacity: 0, y: -14, duration: 0.48, ease: "power2.in" }, 4.35)
-        .to(loader, { autoAlpha: 0, duration: 0.72, ease: "power3.inOut" }, 4.45)
-        .call(() => setPhase("ready"), [], 5.0)
-        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.42, ease: "power2.out" }, 5.05)
+        }, 0.08)
+        .call(() => { loaderStatus.textContent = "Live file ready"; }, [], .55)
+        .to(loader, { autoAlpha: 0, duration: .34, ease: "power3.inOut" }, .78)
+        .call(() => setPhase("ready"), [], 1.0)
+        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: .24, ease: "power2.out" }, 1.02)
         .to(cursor, {
-          duration: 1.25,
-          motionPath: { path: [cursorStart, { x: titlePoint.x + 34, y: titlePoint.y - 30 }, titlePoint], curviness: 1.2 },
-        }, 5.25)
-        .call(() => setPhase("typing"), [], 6.25)
-        .to(titleSelection, { opacity: 1, duration: 0.46 }, 6.28)
-        .to(finalWord, { opacity: 1, duration: 1.05, ease: "power2.out" }, 6.5)
-        .to(titleSelection, { opacity: 0.28, duration: 0.48 }, 7.42)
+          duration: .58,
+          ease: "power3.inOut",
+          motionPath: { path: [cursorStart, premisePoint], curviness: .35 },
+        }, 1.12)
+        .to(premise, { opacity: 1, duration: .28, ease: "power3.out" }, 1.42)
+        .to(premiseLead, { opacity: 1, y: 0, duration: .3, ease: "power3.out" }, 1.5)
+        .to(premiseReply, { opacity: 1, y: 0, duration: .3, ease: "power3.out" }, 2.65)
         .to(cursor, {
-          duration: 1.1,
-          motionPath: { path: [titlePoint, { x: assetPoint.x + 65, y: titlePoint.y + 30 }, assetPoint], curviness: 1.1 },
-        }, 7.7)
-        .call(() => setPhase("placing-portrait"), [], 8.65)
-        .to(asset, { scale: 0.94, duration: 0.34 }, 8.72)
-        .to(cursor, {
-          duration: 1.25,
-          motionPath: { path: [assetPoint, { x: portraitPoint.x - 52, y: assetPoint.y - 68 }, portraitPoint], curviness: 1.25 },
-        }, 9.05)
-        .to(asset, {
-          x: portraitPoint.x - assetPoint.x,
-          y: portraitPoint.y - assetPoint.y,
-          duration: 1.25,
-        }, 9.05)
-        .to(portrait, { "--portrait-reveal": "0%", duration: 1.08, ease: "power3.out" }, 9.55)
-        .to(asset, { opacity: 0, scale: 0.82, duration: 0.5 }, 10.35)
-        .to(portraitSelection, { opacity: 1, duration: 0.42 }, 10.62)
-        .call(() => setPhase("refining"), [], 10.9)
-        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.72, ease: "power2.inOut" }, 11.02)
-        .to(comment, { opacity: 1, y: -8, duration: 0.48, ease: "power3.out" }, 11.55)
-        .add(expandFrame, 12.65);
+          duration: .64,
+          ease: "power3.inOut",
+          motionPath: { path: [premisePoint, presentPoint], curviness: .3 },
+        }, 3.18)
+        .to(present, { scale: .94, duration: .12, yoyo: true, repeat: 1, ease: "power2.inOut" }, 3.78)
+        .call(() => setPhase("expanding"), [], 3.96)
+        .add(expandFrame, 4.02);
     } else {
-      gsap.set(portraitSelection, { opacity: 1 });
       timeline
         .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.18, ease: "power2.out" }, 0.12)
         .to(cursor, {
-          duration: 0.68,
-          motionPath: { path: [cursorStart, { x: portraitPoint.x + 42, y: portraitPoint.y - 54 }, portraitPoint], curviness: 1.2 },
+          duration: .48,
+          motionPath: { path: [cursorStart, presentPoint], curviness: .3 },
         }, 0.28)
-        .to(comment, { opacity: 1, y: -8, duration: 0.26 }, 0.55)
-        .add(expandFrame, 1.25);
+        .to(present, { scale: .94, duration: .1, yoyo: true, repeat: 1 }, .72)
+        .add(expandFrame, .96);
     }
 
     if (mode === "first") {
@@ -376,8 +351,12 @@ export function EditorIntro() {
             <span>Javier Ortiz / Portfolio</span>
             <b>Working file</b>
           </div>
-          <div className={styles.editingState}><i /> Javier is editing</div>
-          <div className={styles.zoom}>82%</div>
+          <div className={styles.editorTools}><b>M</b><span>F</span><span>T</span><span>C</span></div>
+          <div className={styles.editorActions}>
+            <div className={styles.editingState}><i /> Javier</div>
+            <div ref={presentRef} className={styles.presentAction}><i /> Present</div>
+            <div className={styles.zoom}>82%</div>
+          </div>
         </div>
 
         <button
@@ -401,10 +380,11 @@ export function EditorIntro() {
             <span ref={loaderStatusRef}>Loading components</span>
             <span ref={loaderPercentRef}>0%</span>
           </div>
-          <div ref={premiseRef} className={styles.premise}>
-            <i>JO</i>
-            <div><strong>One second — I’m still polishing this.</strong><span>I’ll finish each section as you reach it.</span></div>
-          </div>
+        </div>
+
+        <div ref={premiseRef} className={styles.premise} aria-hidden="true">
+          <i>JO</i>
+          <div><strong>Oh. Hi. You caught me at “one last tweak”.</strong><span>Right. Let’s make this less awkward — full screen.</span></div>
         </div>
 
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
@@ -481,9 +461,6 @@ export function EditorIntro() {
 
         <div ref={cursorRef} className={styles.cursor} aria-hidden="true">
           <i /><span>Javier</span>
-        </div>
-        <div ref={commentRef} className={styles.comment} aria-hidden="true">
-          <i>JO</i><span>Two pixels. Much better.</span>
         </div>
       </div>
     </section>

@@ -17,12 +17,19 @@ export type SpotlightView = {
   tool: string;
   properties: string[];
   comment?: string;
+  commentFirst?: boolean;
 };
 
 export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
   const [dockExpanded, setDockExpanded] = useState(true);
   const dockIntroducedRef = useRef(false);
   const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
+  const commentResolved = active?.phase === "settling";
+  const phaseAction = !active ? "" : active.phase === "commenting" && active.commentFirst
+    ? "Reading Javier’s note"
+    : active.phase === "observing"
+      ? "Reviewing the unfinished version"
+      : active.action;
 
   useEffect(() => {
     if (!showDock) return;
@@ -48,7 +55,7 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, 
           {guidedFirstVisit ? (
             <>
               <div className={styles.guidedMark}><i /> LIVE FILE</div>
-              <p><strong>Guided first pass</strong><span>Scroll on — edits play automatically</span></p>
+              <p><strong>Guided live file</strong><span>Scroll on — Javier will finish each section</span></p>
             </>
           ) : (
             <>
@@ -87,8 +94,9 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, 
             <span className={styles.avatar}>JO</span>
             <div>
               <small>LIVE FILE · EDIT {String(active.position).padStart(2, "0")} / {String(active.total).padStart(2, "0")}</small>
-              <strong>{active.phase === "observing" ? "Spot the draft — Javier is about to fix it" : active.action}</strong>
+              <strong>Following Javier</strong>
             </div>
+            <span className={styles.action}>{phaseAction}</span>
             <i className={styles.progress} style={{ "--spotlight-duration": `${active.durationMs}ms` } as CSSProperties} aria-hidden="true" />
             {active.mandatory ? <span className={styles.locked}>Guided edit</span> : <button type="button" onClick={onStop}>Skip this edit</button>}
           </div>
@@ -103,8 +111,8 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, 
               {showComment ? (
                 <div className={styles.viewportComment}>
                   <span className={styles.avatar}>JO</span>
-                  <div><small>Javier · resolved</small><strong>{active.comment}</strong></div>
-                  <b>✓</b>
+                  <div><small>Javier · {commentResolved ? "resolved" : "now"}</small><strong>{active.comment}</strong></div>
+                  <b>{commentResolved ? "✓" : ""}</b>
                 </div>
               ) : (
                 <div className={styles.viewportProperties}>

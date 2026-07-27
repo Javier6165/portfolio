@@ -33,6 +33,7 @@ export type LiveSceneConfig = {
   spotlightMs: number;
   minVisibility: number;
   comment?: string;
+  commentFirst?: boolean;
 };
 
 type RegisteredScene = { root: HTMLElement; config: LiveSceneConfig };
@@ -269,30 +270,38 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       root.style.setProperty("--live-y", `${targetRect.top - rootRect.top}px`);
       root.style.setProperty("--live-w", `${targetRect.width}px`);
       root.style.setProperty("--live-h", `${targetRect.height}px`);
-      root.dataset.liveState = mandatory ? "observing" : "spotlight-entering";
+      const commentFirst = Boolean(config.comment && config.commentFirst);
+      // The viewport comment can lead the score while the section itself stays
+      // visibly unfinished. The authored WIP selectors depend on `observing`;
+      // switching the scene to `commenting` here would reveal the final design
+      // before Javier has made the edit.
+      root.dataset.liveState = mandatory || commentFirst ? "observing" : "spotlight-entering";
       activeRef.current = { ...scene, scrollY, mandatory };
       candidateRef.current = null;
 
-    const safeRect = {
-      top: clamp(targetRect.top - 8, 4, window.innerHeight - 80),
-      left: clamp(targetRect.left - 8, 4, window.innerWidth - 80),
-      width: Math.min(targetRect.width + 16, window.innerWidth - clamp(targetRect.left - 8, 4, window.innerWidth - 80) - 4),
-      height: Math.min(targetRect.height + 16, window.innerHeight - clamp(targetRect.top - 8, 4, window.innerHeight - 80) - 4),
-    };
-    const panelWidth = Math.min(360, window.innerWidth - 32);
-    const panelHeight = config.comment ? 108 : 102;
-    const spaceBelow = window.innerHeight - safeRect.top - safeRect.height;
-    const panelTop = spaceBelow >= panelHeight + 16
-      ? safeRect.top + safeRect.height + 12
-      : safeRect.top >= panelHeight + 88
-        ? safeRect.top - panelHeight - 12
-        : clamp(safeRect.top + 16, 76, window.innerHeight - panelHeight - 16);
-    const panel = {
-      top: panelTop,
-      left: clamp(safeRect.left, 16, window.innerWidth - panelWidth - 16),
-      width: panelWidth,
-    };
-      const leadIn = mandatory ? config.readMs : 0;
+      const safeRect = {
+        top: clamp(targetRect.top - 8, 4, window.innerHeight - 80),
+        left: clamp(targetRect.left - 8, 4, window.innerWidth - 80),
+        width: Math.min(targetRect.width + 16, window.innerWidth - clamp(targetRect.left - 8, 4, window.innerWidth - 80) - 4),
+        height: Math.min(targetRect.height + 16, window.innerHeight - clamp(targetRect.top - 8, 4, window.innerHeight - 80) - 4),
+      };
+      const panelWidth = Math.min(360, window.innerWidth - 32);
+      const panelHeight = config.comment ? 108 : 102;
+      const spaceBelow = window.innerHeight - safeRect.top - safeRect.height;
+      const panelTop = spaceBelow >= panelHeight + 16
+        ? safeRect.top + safeRect.height + 12
+        : safeRect.top >= panelHeight + 88
+          ? safeRect.top - panelHeight - 12
+          : clamp(safeRect.top + 16, 76, window.innerHeight - panelHeight - 16);
+      const panel = {
+        top: panelTop,
+        left: clamp(safeRect.left, 16, window.innerWidth - panelWidth - 16),
+        width: panelWidth,
+      };
+      // Comment-first pilots reserve a short reading beat even on optional
+      // return visits. Otherwise the overlay would enter directly in edit mode
+      // and the editorial reason for the correction would disappear.
+      const leadIn = mandatory || commentFirst ? config.readMs : 0;
       const totalDuration = leadIn + config.spotlightMs;
       const orderedRoots = [...registryRef.current.keys()];
       setSpotlight({
@@ -305,13 +314,14 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         mandatory,
         position: Math.max(1, orderedRoots.indexOf(root) + 1),
         total: orderedRoots.length,
-        phase: mandatory ? "observing" : "entering",
+        phase: commentFirst ? "commenting" : mandatory ? "observing" : "entering",
         tool: toolNames[config.tool],
         properties: config.properties,
         comment: config.comment,
+        commentFirst,
       });
 
-      if (mandatory) {
+      if (mandatory || commentFirst) {
         phaseTimersRef.current.push(window.setTimeout(() => {
           root.dataset.liveState = "spotlight-entering";
           setSpotlight((current) => current ? { ...current, phase: "entering" } : current);
@@ -322,10 +332,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         root.dataset.liveState = "editing";
         setSpotlight((current) => current ? { ...current, phase: "editing" } : current);
         window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: config.id } }));
-      }, leadIn + 1_040);
+      }, leadIn + (commentFirst ? 460 : 1_040));
       phaseTimersRef.current.push(editingTimer);
 
-      if (config.comment) {
+      if (config.comment && !commentFirst) {
         const commentAt = leadIn + Math.max(3_800, config.spotlightMs - 3_600);
         phaseTimersRef.current.push(window.setTimeout(() => {
           root.dataset.liveState = "commenting";
@@ -338,21 +348,21 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       }, leadIn + config.spotlightMs - 840));
       phaseTimersRef.current.push(window.setTimeout(() => endActive(false), totalDuration));
 
-    const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
-    if (!coarse && cursorRef.current) {
-      const cursor = cursorRef.current;
-      const endX = clamp(targetRect.left + targetRect.width * .58, 24, window.innerWidth - 96);
-      const endY = clamp(targetRect.top + targetRect.height * .42, 70, window.innerHeight - 80);
-      const direction = endX > window.innerWidth / 2 ? 1 : -1;
-      const startX = clamp(endX + direction * 120, 22, window.innerWidth - 92);
-      const startY = clamp(endY - 88, 72, window.innerHeight - 90);
-      gsap.set(cursor, { x: startX, y: startY, opacity: 0, scale: .9 });
-      cursorTimelineRef.current = gsap.timeline({ delay: leadIn / 1000 })
-        .to(cursor, { opacity: 1, scale: 1, duration: .36 }, .32)
-        .to(cursor, { duration: 1.56, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 38, y: endY - 30 }, { x: endX, y: endY }], curviness: 1.25 } }, .44)
-        .to(cursor, { x: endX + 3, y: endY - 3, duration: .56, ease: "power2.inOut" }, 2.44)
-        .to(cursor, { opacity: 0, duration: .5 }, Math.max(3.6, config.spotlightMs / 1000 - .8));
-    }
+      const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
+      if (!coarse && cursorRef.current) {
+        const cursor = cursorRef.current;
+        const endX = clamp(targetRect.left + targetRect.width * .58, 24, window.innerWidth - 96);
+        const endY = clamp(targetRect.top + targetRect.height * .42, 70, window.innerHeight - 80);
+        const direction = endX > window.innerWidth / 2 ? 1 : -1;
+        const startX = clamp(endX + direction * 120, 22, window.innerWidth - 92);
+        const startY = clamp(endY - 88, 72, window.innerHeight - 90);
+        gsap.set(cursor, { x: startX, y: startY, opacity: 0, scale: .9 });
+        cursorTimelineRef.current = gsap.timeline({ delay: leadIn / 1000 })
+          .to(cursor, { opacity: 1, scale: 1, duration: .2 }, .06)
+          .to(cursor, { duration: .66, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 28, y: endY - 22 }, { x: endX, y: endY }], curviness: 1.05 } }, .14)
+          .to(cursor, { x: endX + 3, y: endY - 3, duration: .22, ease: "power2.inOut" }, .88)
+          .to(cursor, { opacity: 0, duration: .24 }, Math.max(1.6, config.spotlightMs / 1000 - .5));
+      }
     };
   }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible]);
 

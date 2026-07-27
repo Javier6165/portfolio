@@ -2,7 +2,7 @@
 
 Fecha: 27 de julio de 2026.
 
-Estado: **implementado, auditado y validado**. Este documento sustituye únicamente el contrato de ritmo, onboarding y salida de Plan 11. La UI final, los WIP y el guion sección a sección de Plan 11 continúan vigentes.
+Estado: **implementado y parcialmente refinado por Plan 13**. Sigue siendo el contrato de obligatoriedad, reencuadre, memoria, salida y capítulos 04–08. `PLAN-13-NARRATIVE-VERTICAL.md` prevalece para la apertura, timings y guion de Snapshot, Work y Product practice. El resto de este documento se conserva para describir la implementación que aún no ha migrado.
 
 ## 1. Problema observado
 

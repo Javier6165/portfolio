@@ -37,6 +37,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/ARCHITECTURE.md`: routes, visual system, narrative, storage and evidence contracts.
 - `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`: approved Home redesign and score.
 - `docs/PLAN-12-GUIDED-FIRST-PASS.md`: current onboarding, mandatory first-pass rhythm and returning-visitor controls.
+- `docs/PLAN-13-NARRATIVE-VERTICAL.md`: current causal opening and comment-first pilot for Snapshot, Work and Product practice.
 - `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`: current components, states, timings, memory and QA.
 - `docs/AUDIT-11-LIVE-WIP-SPOTLIGHT.md`: post-implementation audit and next plan.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.

@@ -27,14 +27,14 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Gramática: `Notice → Follow → Select → Adjust → Comment? → Resolve → Return`.
 - Estados: `settled → wip → observing → spotlight-entering → editing → commenting? → settling → settled`; reduced motion usa `reduced`.
 - El director elige solo el target dominante cuando está mayoritariamente visible, el centro cae en la zona segura y el scroll lleva estable `220–280 ms`.
-- La primera visita abre con un loading de archivo y una intro total aproximada de `13,5 s`; no ofrece Skip salvo reduced motion o fallo.
-- Los tiempos por capítulo se duplican: `3–4,6 s` de lectura WIP bloqueada y `5,6–9,8 s` de edición.
+- La primera visita abre con un loading breve, un comentario de Javier y una acción `Present` que causa la expansión al hero; no ofrece Skip salvo reduced motion o fallo.
+- Snapshot, Work y Product practice usan el patrón piloto `comentario sobre WIP → edición breve → comentario resuelto`, con tiempos totales de `4,8–5,5 s`. Los capítulos posteriores conservan temporalmente los tiempos y el guion de Plan 12.
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
 - En primera visita, Spotlight es obligatorio: rueda, touch y teclas de scroll se contienen hasta terminar. En una visita recurrente consentida vuelven Skip/Escape y `Show finished file`.
 - No existe focus trap. El cursor visitante nunca se sustituye; el cursor Javier solo aparece con pointer fino.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
-- La primera visita explica la regla mediante un loading separado: `One second — I’m still polishing this` y `I’ll finish each section as you reach it`.
+- La primera visita explica la regla dentro del editor: `You caught me at “one last tweak”`; Javier pulsa `Present` antes de ceder el hero.
 - Paneles y comentarios de Spotlight se anclan al viewport y se recolocan dentro de una zona segura. Una prueba geométrica verifica que no queden recortados.
 - El dock de primera visita es informativo: `Guided first pass · Scroll on — edits play automatically`. Solo una visita recurrente muestra `Replay guided edits` y `Show finished file`.
 - Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
@@ -71,7 +71,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 - Gates: `npm run lint`, `npm test` y `npm run test:e2e` para cambios interactivos.
 - Matriz Dark: 1440×900, 1280×800, 768×1024 y 390×844; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
-- Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `PLAN-12-GUIDED-FIRST-PASS.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
+- Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `PLAN-12-GUIDED-FIRST-PASS.md`, `PLAN-13-NARRATIVE-VERTICAL.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
 - Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial.
 
 ## Siguiente evolución
