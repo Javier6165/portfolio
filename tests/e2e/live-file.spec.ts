@@ -21,7 +21,7 @@ async function skipIntro(page: Page) {
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
 }
 
-test("the first visit opens a working file slowly and cannot be skipped", async ({ page }) => {
+test("the first visit opens a working file slowly and cannot be skipped", async ({ page, isMobile }) => {
   test.setTimeout(25_000);
   await page.goto("/?narrative=first");
 
@@ -40,6 +40,23 @@ test("the first visit opens a working file slowly and cannot be skipped", async 
   await expect(hero.getByRole("img", { name: /Portrait of Javier Ortiz/ })).toBeVisible();
   await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
   await expect(hero.locator(".portrait--system")).toHaveCSS("opacity", "1");
+
+  // The opening may own scroll only while its timeline is active. Its global
+  // gesture listeners remain mounted with the hero, so verify that the handoff
+  // really gives the document back to the visitor.
+  await expect(page.locator("html")).not.toHaveCSS("overflow", "hidden");
+  const initialScroll = await page.evaluate(() => scrollY);
+  if (isMobile) {
+    const touchStillBlocked = await page.evaluate(() => {
+      const event = new TouchEvent("touchmove", { bubbles: true, cancelable: true });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    });
+    expect(touchStillBlocked).toBe(false);
+  } else {
+    await page.mouse.wheel(0, 180);
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(initialScroll + 40);
+  }
 });
 
 test("the mobile hero keeps the title, portrait and cue in the first viewport", async ({ page, isMobile }) => {
@@ -184,6 +201,16 @@ test("the guided first pass reframes, locks and completes a readable edit", asyn
   await expect(scene).toHaveAttribute("data-live-state", "settled", { timeout: 15_000 });
   await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
   expect(Math.abs((await page.evaluate(() => scrollY)) - anchoredScroll)).toBeLessThan(3);
+
+  // Restoring the captured position is an internal operation, not evidence
+  // that the visitor reached the next chapter. Control must remain released
+  // until a fresh gesture actually advances the document.
+  await page.waitForTimeout(650);
+  await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
+  await expect(page.locator("html")).not.toHaveCSS("overflow", "hidden");
+  const releasedScroll = await page.evaluate(() => scrollY);
+  await page.mouse.wheel(0, 180);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(releasedScroll + 40);
 });
 
 test("returning visitors can skip an edit and disable later automatic edits", async ({ page, isMobile }) => {

@@ -30,6 +30,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - La primera visita abre con un loading de archivo y una intro total aproximada de `13,5 s`; no ofrece Skip salvo reduced motion o fallo.
 - Los tiempos por capítulo se duplican: `3–4,6 s` de lectura WIP bloqueada y `5,6–9,8 s` de edición.
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
+- La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
 - En primera visita, Spotlight es obligatorio: rueda, touch y teclas de scroll se contienen hasta terminar. En una visita recurrente consentida vuelven Skip/Escape y `Show finished file`.
 - No existe focus trap. El cursor visitante nunca se sustituye; el cursor Javier solo aparece con pointer fino.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.

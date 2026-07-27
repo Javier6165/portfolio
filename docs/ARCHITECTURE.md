@@ -63,6 +63,8 @@ Elegibilidad recurrente:
 
 En primera visita, el director busca la escena requerida más temprana que el visitante ya ha alcanzado, reencuadra su target dentro de la zona segura y bloquea desde `observing`. Lectura, selección, propiedad, comentario y resolución son obligatorios; los gestos de desplazamiento solo muestran cuándo volverá el control. En visitas recurrentes, el algoritmo dominante y las salidas Escape/Skip siguen disponibles.
 
+La primera escena no se arma al restaurar `overflow` ni por un `resize` del handoff. Después del hero y después de cada Spotlight obligatorio, el director espera un gesto de desplazamiento nuevo que mueva el documento. El `scrollTo` interno de reencuadre/restauración se marca como reposicionamiento y no puede iniciar el siguiente capítulo.
+
 Spotlight fija `body`, compensa scrollbar, guarda la posición ya reencuadrada y la restaura al cerrar. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve. No existe focus trap y reduced motion elimina toda captura.
 
 El chrome co-localizado de `EditorPrimitives` sigue disponible para snapshots WIP/editing. Durante Spotlight, panel y comentario locales se ocultan y la copia viewport-owned garantiza que ambos queden dentro de `16–32 px` de margen incluso a `1280×720`. En móvil el mismo contrato se convierte en una bandeja inferior.

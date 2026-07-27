@@ -315,6 +315,10 @@ export function EditorIntro() {
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
+      // The effect stays mounted after the visual timeline hands off the hero.
+      // Once finish() clears activeRef, these listeners must become inert or
+      // they would keep swallowing every later scroll gesture on a first visit.
+      if (!activeRef.current) return;
       if (mode === "first" && ["Escape", "PageDown", "PageUp", " ", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
         event.preventDefault();
         return;
@@ -322,6 +326,7 @@ export function EditorIntro() {
       if (mode === "return" && (event.key === "Escape" || event.key === "PageDown")) skip(true);
     };
     const onIntentToScroll = (event: WheelEvent | TouchEvent) => {
+      if (!activeRef.current) return;
       if (mode === "first") {
         event.preventDefault();
         return;

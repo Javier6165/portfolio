@@ -101,6 +101,8 @@ Fallbacks:
 - storage bloqueado: sesión funcional sin persistencia;
 - interacción del visitante dentro de una escena: handoff y final estable.
 
+La apertura conserva sus listeners mientras el hero sigue montado, pero todos consultan `activeRef` antes de interceptar un gesto. Al completar o fallar la intro, `finish()` limpia el lock y hace que rueda, touch y teclado vuelvan a comportarse de forma nativa en el mismo handoff.
+
 ## 6. Memoria y controles
 
 `NarrativeProvider` añade:
@@ -123,6 +125,7 @@ Cobertura automatizada:
 
 - build y HTML server-rendered;
 - intro, skip temprano y fallo de retrato;
+- scroll real inmediatamente después de la apertura y de la primera edición obligatoria;
 - WIP/final forzados con `?live=wip|settled`;
 - visibilidad, pausa de lectura, Spotlight, comentario, lock y restauración de scroll;
 - Stop/Escape y Auto-follow;

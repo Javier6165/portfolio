@@ -10,6 +10,8 @@ Addendum conceptual 27 de julio de 2026: una auditoría como visitante nuevo en 
 
 Addendum Plan 12: el prólogo integrado y las salidas fáciles seguían comprimiendo o suprimiendo la historia. La primera visita usa ahora loading explícito, intro de ~13,5 s y ocho escenas obligatorias con lectura bloqueada, reencuadre secuencial y tiempos duplicados. Las salidas se reservan a visitas recurrentes consentidas. QA y riesgo deliberado se documentan en `PLAN-12-GUIDED-FIRST-PASS.md`.
 
+Addendum de continuidad 27 de julio de 2026: se corrigió un lock residual después de la apertura. El estilo `overflow` sí se restauraba, pero los listeners de rueda, touch y teclado de la intro seguían montados e interceptaban gestos. Ahora quedan inertes al entregar el hero y la matriz prueba desplazamiento real tras la intro y tras el primer Spotlight.
+
 ## Veredicto
 
 La Home ya comunica el concepto de archivo vivo después del hero y la UI base ha subido de nivel de forma material. Snapshot es escaneable, Product practice y AI explican trabajo real, References deja de parecer una cita falsa y cada capítulo tiene WIP, acción y resultado final reconocibles.

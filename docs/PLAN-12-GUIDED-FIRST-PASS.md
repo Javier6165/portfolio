@@ -37,6 +37,7 @@ La intro completa dura aproximadamente `13,5 s`. La identidad profesional está 
 - Rueda, touch y teclas de desplazamiento se contienen hasta la entrega del hero.
 - El dock es informativo: `Guided first pass · Scroll on — edits play automatically`.
 - Cada capítulo es obligatorio y se resuelve en orden DOM.
+- La primera edición espera al primer scroll real después del hero; cada edición posterior espera otro avance real después de devolver el control.
 - Si el visitante atraviesa un capítulo, el director reencuadra el siguiente target requerido dentro de la zona segura.
 - Spotlight bloquea desde la lectura del WIP, no solo desde el movimiento del cursor.
 - La barra diferencia `Spot the draft — Javier is about to fix it` de la acción de edición.
@@ -115,8 +116,10 @@ No se añadió scroll global, snap, cola automática entre capítulos, canvas, W
 Validado:
 
 - intro completa no cancelable en desktop y móvil;
+- devolución efectiva de rueda, touch y teclado al terminar la intro, no solo restauración visual de `overflow`;
 - loading Dark/Light y corrección específica del solapamiento móvil;
 - reencuadre y restauración de la posición capturada;
+- un gesto posterior a la primera escena desplaza realmente el documento y no reactiva Spotlight por una restauración interna;
 - rueda y Escape contenidos durante una escena obligatoria;
 - visita recurrente con Skip y salida de una escena;
 - comentarios dentro del viewport;
@@ -126,6 +129,10 @@ Validado:
 - axe, teclado, tabs, References y controles funcionales.
 
 Resultado: lint y build limpios; `42` combinaciones E2E descubiertas, `24` ejecutadas y `18` skips intencionales de contratos duplicados.
+
+Corrección de continuidad del 27 de julio: los listeners globales de la apertura permanecen montados con el hero por diseño, pero ahora quedan inertes en el mismo instante en que `finish()` entrega la página. Antes restauraban el `overflow` y, aun así, podían seguir anulando rueda, touch y teclas en una primera visita.
+
+El director también mantiene un gate de avance entre capítulos. Restaurar `overflow`, reencuadrar o devolver el `scrollY` puede emitir eventos nativos; ninguno arma una escena. Solo un gesto nuevo del visitante libera el gate y permite evaluar el siguiente edit obligatorio.
 
 ## 7. Riesgo deliberado
 

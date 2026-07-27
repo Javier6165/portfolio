@@ -89,6 +89,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const viewportRef = useRef({ width: 0, height: 0 });
   const resizeGuardUntilRef = useRef(0);
   const repositioningRef = useRef(false);
+  const awaitingAdvanceRef = useRef(true);
   const bodyStyleRef = useRef<{ position: string; top: string; width: string; paddingRight: string; overflow: string } | null>(null);
   const startSceneRef = useRef<(scene: RegisteredScene) => void>(() => undefined);
   const evaluateRef = useRef<() => void>(() => undefined);
@@ -112,6 +113,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const clearTimers = useCallback(() => {
     if (readTimerRef.current !== null) window.clearTimeout(readTimerRef.current);
     readTimerRef.current = null;
+    if (stableTimerRef.current !== null) window.clearTimeout(stableTimerRef.current);
+    stableTimerRef.current = null;
     phaseTimersRef.current.forEach((timer) => window.clearTimeout(timer));
     phaseTimersRef.current = [];
     cursorTimelineRef.current?.kill();
@@ -131,7 +134,13 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     }
     delete document.documentElement.dataset.spotlight;
     resizeGuardUntilRef.current = 0;
+    // Restoring a captured position can emit a native scroll event. Keep it
+    // separate from the fresh visitor gesture required to arm the next edit.
+    repositioningRef.current = true;
     window.scrollTo({ top: Math.max(0, scrollY + delta), behavior: "auto" });
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => { repositioningRef.current = false; });
+    });
   }, []);
 
   const lockPage = useCallback(() => {
@@ -169,6 +178,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       active.root.dataset.liveState = interrupted ? "interrupted" : "settled";
       if (recordScene) persistSeen(active.config.id);
       window.requestAnimationFrame(() => { active.root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
+      if (active.mandatory) awaitingAdvanceRef.current = true;
       unlockPage(active.scrollY, navigationDelta);
     }
     if (disableFollowing) {
@@ -354,6 +364,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     const safeBottom = window.innerHeight - 48;
 
     if (guidedFirstVisit) {
+      // A resize or scroll restoration produced by the previous handoff must
+      // never launch the next mandatory edit. Each chapter is armed only by a
+      // new visitor scroll after the hero or preceding Spotlight has released.
+      if (awaitingAdvanceRef.current) return;
       // A first visit is a directed sequence. Always resolve the earliest
       // required chapter that the visitor has reached or passed, even if a
       // fast wheel gesture carried its target outside the viewport.
@@ -402,6 +416,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onScroll = () => {
       if (activeRef.current || repositioningRef.current) return;
+      if (guidedFirstVisit && !experienceReady) return;
+      if (guidedFirstVisit) awaitingAdvanceRef.current = false;
       if (readTimerRef.current !== null) window.clearTimeout(readTimerRef.current);
       readTimerRef.current = null;
       if (candidateRef.current) candidateRef.current.root.dataset.liveState = "wip";
@@ -434,7 +450,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [endActive, scheduleEvaluation]);
+  }, [endActive, experienceReady, guidedFirstVisit, scheduleEvaluation]);
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
