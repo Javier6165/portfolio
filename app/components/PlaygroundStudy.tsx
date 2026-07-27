@@ -14,7 +14,7 @@ export function PlaygroundStudy() {
     timerRef.current = window.setTimeout(() => {
       setPlaying(false);
       timerRef.current = null;
-    }, 1_450);
+    }, 2_200);
   }
 
   useEffect(() => {

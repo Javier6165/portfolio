@@ -1,12 +1,14 @@
 .consent {
-  position: relative;
-  z-index: 2;
-  max-width: 48rem;
+  position: fixed;
+  z-index: 96;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: min(34rem, calc(100vw - 2.5rem));
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1.25rem;
   align-items: center;
-  margin: clamp(1rem, 2.5vw, 2rem) auto 0;
+  margin: 0;
   padding: 1rem;
   border: 1px solid var(--line-strong);
   border-radius: 1rem;
@@ -123,6 +125,10 @@
 
 @media (max-width: 620px) {
   .consent {
+    right: .75rem;
+    bottom: 5.25rem;
+    left: .75rem;
+    width: auto;
     grid-template-columns: 1fr;
     gap: 0.8rem;
   }

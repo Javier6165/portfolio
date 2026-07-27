@@ -183,6 +183,7 @@
 .assetTray,
 .selection,
 .cursor,
+.premise,
 .comment,
 .skip {
   opacity: 0;
@@ -429,6 +430,43 @@
   font-size: 0.68rem;
 }
 
+.premise {
+  position: absolute;
+  z-index: 13;
+  top: 5.25rem;
+  left: 50%;
+  width: min(31rem, calc(100vw - 8rem));
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem;
+  align-items: center;
+  padding: .72rem .82rem;
+  border: 1px solid var(--editor-line);
+  border-radius: .9rem;
+  background: color-mix(in srgb, var(--editor-chrome) 96%, transparent);
+  color: var(--editor-ink);
+  box-shadow: 0 1.4rem 4rem rgba(0,0,0,.28);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.premise > i {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--selection);
+  color: #fff;
+  font: .5rem var(--font-mono);
+  font-style: normal;
+}
+
+.premise > div { display:grid; gap:.14rem; }
+.premise strong { font-size:.82rem; font-weight:570; line-height:1.2; }
+.premise span { color:var(--editor-muted); font:.54rem var(--font-mono); text-transform:uppercase; }
+
 .comment i {
   display: grid;
   place-items: center;
@@ -499,6 +537,9 @@
 :global(html[data-narrative="first"]) .stage[data-expanded="false"] .cursor,
 :global(html[data-narrative="return"]) .stage[data-expanded="false"] .cursor,
 :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .cursor,
+:global(html[data-narrative="first"]) .stage[data-expanded="false"] .premise,
+:global(html[data-narrative="return"]) .stage[data-expanded="false"] .premise,
+:global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .premise,
 :global(html[data-narrative="first"]) .stage[data-expanded="false"] .comment,
 :global(html[data-narrative="return"]) .stage[data-expanded="false"] .comment,
 :global(html[data-narrative="familiar"]) .stage[data-expanded="false"] .comment {
@@ -526,6 +567,7 @@
 :global(html[data-narrative="complete"]) .assetTray,
 :global(html[data-narrative="complete"]) .selection,
 :global(html[data-narrative="complete"]) .cursor,
+:global(html[data-narrative="complete"]) .premise,
 :global(html[data-narrative="complete"]) .comment {
   opacity: 0 !important;
   pointer-events: none !important;
@@ -609,6 +651,15 @@
   .assetCard > i { width: 2.55rem; }
   .cursor { display: none; }
 
+  .premise {
+    top: 4rem;
+    width: calc(100vw - 5.5rem);
+    padding: .62rem;
+  }
+
+  .premise strong { font-size:.72rem; }
+  .premise span { font-size:.47rem; }
+
   .titleSelection {
     top: 17.5%;
     left: 8%;
@@ -636,6 +687,7 @@
   .assetTray,
   .selection,
   .cursor,
+  .premise,
   .comment,
   .canvasGrid {
     display: none !important;
@@ -647,6 +699,7 @@
 :global(html[data-motion="reduce"]) .assetTray,
 :global(html[data-motion="reduce"]) .selection,
 :global(html[data-motion="reduce"]) .cursor,
+:global(html[data-motion="reduce"]) .premise,
 :global(html[data-motion="reduce"]) .comment,
 :global(html[data-motion="reduce"]) .canvasGrid {
   display: none !important;

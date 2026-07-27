@@ -62,7 +62,7 @@ export function LiveScene({
       onFocusCapture={handOff}
     >
       {children}
-      <span className={styles.draftStatus} aria-hidden="true"><i /> WIP / {verb}</span>
+      <span className={styles.draftStatus} aria-hidden="true"><i /> WIP · {verb} pending</span>
       <span className={styles.finalStatus} aria-hidden="true"><i /> {label}</span>
       <EditorPrimitives tool={tool} properties={properties} comment={comment} />
     </div>

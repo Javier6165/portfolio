@@ -39,7 +39,7 @@ Directorio `app/components/live-file/`:
 - `LiveSceneDirector`: registro central, selección dominante, lectura, Spotlight, lock/restauración, cursor y cancelación.
 - `LiveScene`: declaración de id, target, tool, propiedades, timings y estado visual.
 - `EditorPrimitives`: selection frame, handles, property panel y comment thread.
-- `SpotlightChrome`: dock, foco, progreso, Stop y hint de cancelación.
+- `SpotlightChrome`: dock, foco, progreso, Stop, hint de cancelación y el panel/comment thread fijos; calcula arriba/abajo y clamp horizontal desde la geometría real del target.
 - `ExperienceSettings` / `MemoryConsent`: preferencias locales.
 
 El servidor entrega cada escena en `settled`. Tras hidratación, el director la lleva a `wip` solo si es elegible. La máquina de atributos es:
@@ -62,6 +62,8 @@ Elegibilidad:
 - escena no vista en la sesión.
 
 Spotlight fija `body`, compensa scrollbar, guarda `scrollY` y lo restaura al cerrar. Pause/Stop, Escape, PageDown, Space, touch, resize real, pestaña oculta o segunda rueda interrumpen. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve y solo un cambio material posterior cancela. No es modal y no atrapa foco.
+
+El chrome co-localizado de `EditorPrimitives` sigue disponible para snapshots WIP/editing. Durante Spotlight, panel y comentario locales se ocultan y la copia viewport-owned garantiza que ambos queden dentro de `16–32 px` de margen incluso a `1280×720`. En móvil el mismo contrato se convierte en una bandeja inferior.
 
 ## Home
 
@@ -96,6 +98,8 @@ Claves:
 - session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`.
 
 `NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Auto-follow es una preferencia de sesión.
+
+`MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera dos momentos vistos y `900 ms` antes de ofrecerlo; la superficie es fija para no modificar geometría ni interrumpir controles.
 
 ## Temas y fotografías
 

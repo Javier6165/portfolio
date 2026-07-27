@@ -6,6 +6,8 @@ Estado: **auditoría post-implementación completada**.
 
 Addendum 27 de julio de 2026: corregido un fallo exclusivo del navegador publicado que cerraba Spotlight al recibir el `resize` generado por su propio scroll lock. También se eliminó la supresión persistente de escenas, se añadió Replay al dock y se sustituyó la intro familiar comprimida por entrega inmediata del hero.
 
+Addendum conceptual 27 de julio de 2026: una auditoría como visitante nuevo en Dark y Light demostró que la metáfora se percibía como estética pero no como contrato. El comentario del hero llegaba tarde, el dock no explicaba el siguiente evento y, a 1280×720, comment/property panel podían quedar bajo el viewport. Se implementó un prólogo integrado, read times más lentos, WIP con edición pendiente y chrome contextual fijo con colocación segura.
+
 ## Veredicto
 
 La Home ya comunica el concepto de archivo vivo después del hero y la UI base ha subido de nivel de forma material. Snapshot es escaneable, Product practice y AI explican trabajo real, References deja de parecer una cita falsa y cada capítulo tiene WIP, acción y resultado final reconocibles.
@@ -22,6 +24,10 @@ Spotlight cumple su función: espera a que el usuario haya aterrizado, fija úni
 6. **Reveals en conflicto:** Home seguía cargando reveals genéricos de ScrollTrigger. Se han retirado de Home y se cargan dinámicamente solo en rutas secundarias.
 7. **Preferencia incompleta:** `Forget this device` no limpiaba Auto-follow. Ahora restaura la experiencia completa de primera visita.
 8. **Naming:** navegación y rail convergen en `References`; `Testimonials` queda como nombre de dominio del componente y como concepto futuro, no como etiqueta engañosa.
+9. **Premisa:** `Hey — you caught me making the final pass` aparece antes de la primera acción y explica que las ediciones continúan al hacer scroll.
+10. **Paneles recortados:** properties y comments pasan al overlay de Spotlight, con geometría comprobada dentro del viewport.
+11. **Dock:** se desplaza a la zona libre superior del hero, se pliega al primer scroll y evita tapar cards/facts durante la lectura.
+12. **Consentimiento:** deja de competir con Snapshot y no puede introducir un layout shift durante un clic.
 
 ## UI/UX por sección
 

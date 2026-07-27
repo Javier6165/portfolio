@@ -1,7 +1,7 @@
 import type { LiveSceneTool } from "./LiveSceneDirector";
 import styles from "./LiveScene.module.css";
 
-const toolNames: Record<LiveSceneTool, string> = {
+export const toolNames: Record<LiveSceneTool, string> = {
   type: "Typography",
   layout: "Auto layout",
   asset: "Asset + crop",

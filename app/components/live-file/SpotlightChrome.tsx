@@ -1,24 +1,58 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import styles from "./SpotlightChrome.module.css";
 
 export type SpotlightView = {
   id: string;
   action: string;
   rect: { top: number; left: number; width: number; height: number };
+  panel: { top: number; left: number; width: number };
   durationMs: number;
   hint: boolean;
+  phase: "entering" | "editing" | "commenting" | "settling";
+  tool: string;
+  properties: string[];
+  comment?: string;
 };
 
 export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
+  const [dockExpanded, setDockExpanded] = useState(true);
+  const dockIntroducedRef = useRef(false);
+  const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
+
+  useEffect(() => {
+    if (!showDock) return;
+    if (dockIntroducedRef.current) {
+      setDockExpanded(false);
+      return;
+    }
+    dockIntroducedRef.current = true;
+    setDockExpanded(true);
+    const timer = window.setTimeout(() => setDockExpanded(false), 8_000);
+    const collapseOnScroll = () => setDockExpanded(false);
+    window.addEventListener("scroll", collapseOnScroll, { passive: true, once: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("scroll", collapseOnScroll);
+    };
+  }, [showDock]);
+
   return (
     <>
       {showDock && !active ? (
-        <div className={styles.dock} data-follow-dock>
-          <span><i /> LIVE FILE</span>
-          <p>Javier is still editing</p>
-          <div className={styles.dockActions}>
+        <div className={styles.dock} data-follow-dock data-expanded={dockExpanded ? "true" : "false"}>
+          <button
+            className={styles.dockToggle}
+            type="button"
+            aria-expanded={dockExpanded}
+            aria-label={dockExpanded ? "Collapse Live File controls" : "Expand Live File controls"}
+            onClick={() => setDockExpanded((expanded) => !expanded)}
+          >
+            <i /> <span>LIVE FILE</span>
+          </button>
+          <p><strong>Following Javier</strong><span>Next edit when you pause</span></p>
+          <div className={styles.dockActions} aria-hidden={dockExpanded ? undefined : "true"}>
             <button type="button" onClick={onReplay}>Replay edits</button>
             <button type="button" onClick={onStop}>Pause</button>
           </div>
@@ -43,6 +77,28 @@ export function SpotlightChrome({ active, showDock, onCancel, onReplay, onStop }
             <i className={styles.progress} style={{ "--spotlight-duration": `${active.durationMs}ms` } as CSSProperties} aria-hidden="true" />
             <button type="button" onClick={onStop}>Stop following</button>
           </div>
+          {active.phase !== "entering" ? (
+            <div
+              className={styles.contextPanel}
+              data-spotlight-context
+              data-context-kind={showComment ? "comment" : "properties"}
+              style={{ top: active.panel.top, left: active.panel.left, width: active.panel.width } as CSSProperties}
+              aria-hidden="true"
+            >
+              {showComment ? (
+                <div className={styles.viewportComment}>
+                  <span className={styles.avatar}>JO</span>
+                  <div><small>Javier · resolved</small><strong>{active.comment}</strong></div>
+                  <b>✓</b>
+                </div>
+              ) : (
+                <div className={styles.viewportProperties}>
+                  <div><small>JO / EDITING</small><strong>{active.tool}</strong></div>
+                  <ul>{active.properties.slice(0, 3).map((property) => <li key={property}>{property}</li>)}</ul>
+                </div>
+              )}
+            </div>
+          ) : null}
           {active.hint ? <button className={styles.hint} type="button" onClick={onCancel}>Scroll again to stop following</button> : null}
         </div>
       ) : null}

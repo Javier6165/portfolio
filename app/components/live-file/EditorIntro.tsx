@@ -42,6 +42,7 @@ export function EditorIntro() {
   const portraitSelectionRef = useRef<HTMLDivElement>(null);
   const assetRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const premiseRef = useRef<HTMLDivElement>(null);
   const commentRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const expansionRef = useRef<gsap.core.Tween | null>(null);
@@ -63,7 +64,7 @@ export function EditorIntro() {
     gsap.set(finalWordRef.current, { opacity: 1, clipPath: "inset(0 0% 0 0)", clearProps: "transform" });
     gsap.set(portraitRef.current, { "--portrait-reveal": "0%", x: 0, y: 0 });
     gsap.set(
-      [cursorRef.current, assetRef.current, commentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
+      [cursorRef.current, assetRef.current, premiseRef.current, commentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
       { clearProps: "all" },
     );
     if (frame) gsap.set(frame, { clearProps: "transform,borderRadius,boxShadow,borderColor" });
@@ -92,8 +93,9 @@ export function EditorIntro() {
     const portraitSelection = portraitSelectionRef.current;
     const asset = assetRef.current;
     const cursor = cursorRef.current;
+    const premise = premiseRef.current;
     const comment = commentRef.current;
-    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !comment) {
+    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !premise || !comment) {
       finish("failed");
       return;
     }
@@ -156,7 +158,7 @@ export function EditorIntro() {
     // The complete role is legible from frame one. The timeline refines its
     // emphasis instead of withholding essential positioning copy.
     gsap.set(finalWord, { clipPath: "inset(0 0% 0 0)", opacity: mode === "first" ? 0.28 : 1 });
-    gsap.set([titleSelection, portraitSelection, comment], { opacity: 0 });
+    gsap.set([titleSelection, portraitSelection, premise, comment], { opacity: 0 });
     gsap.set(asset, { x: 0, y: 0, opacity: mode === "first" ? 1 : 0, scale: 1 });
     gsap.set(portrait, { "--portrait-reveal": mode === "first" ? "100%" : "0%" });
 
@@ -178,7 +180,7 @@ export function EditorIntro() {
         ease: "power4.inOut",
         onComplete: () => finish("complete"),
       });
-      gsap.to([cursor, comment, titleSelection, portraitSelection], {
+      gsap.to([cursor, premise, comment, titleSelection, portraitSelection], {
         opacity: 0,
         duration: 0.36,
         ease: "power2.out",
@@ -205,37 +207,39 @@ export function EditorIntro() {
 
     if (mode === "first") {
       timeline
-        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.22, ease: "power2.out" }, 0.12)
+        .to(premise, { opacity: 1, y: -6, duration: 0.32, ease: "power3.out" }, 0.16)
+        .to(premise, { opacity: 0, y: -12, duration: 0.26, ease: "power2.in" }, 1.28)
+        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.22, ease: "power2.out" }, 0.96)
         .to(cursor, {
-          duration: 0.82,
+          duration: 0.72,
           motionPath: { path: [cursorStart, { x: titlePoint.x + 34, y: titlePoint.y - 30 }, titlePoint], curviness: 1.2 },
-        }, 0.34)
-        .call(() => setPhase("typing"), [], 0.92)
-        .to(titleSelection, { opacity: 1, duration: 0.24 }, 0.98)
-        .to(finalWord, { opacity: 1, duration: 0.8, ease: "power2.out" }, 1.14)
-        .to(titleSelection, { opacity: 0.28, duration: 0.28 }, 1.88)
+        }, 1.08)
+        .call(() => setPhase("typing"), [], 1.62)
+        .to(titleSelection, { opacity: 1, duration: 0.24 }, 1.64)
+        .to(finalWord, { opacity: 1, duration: 0.62, ease: "power2.out" }, 1.76)
+        .to(titleSelection, { opacity: 0.28, duration: 0.26 }, 2.28)
         .to(cursor, {
-          duration: 0.85,
+          duration: 0.66,
           motionPath: { path: [titlePoint, { x: assetPoint.x + 65, y: titlePoint.y + 30 }, assetPoint], curviness: 1.1 },
-        }, 2.02)
-        .call(() => setPhase("placing-portrait"), [], 2.55)
-        .to(asset, { scale: 0.94, duration: 0.2 }, 2.63)
+        }, 2.38)
+        .call(() => setPhase("placing-portrait"), [], 2.86)
+        .to(asset, { scale: 0.94, duration: 0.18 }, 2.92)
         .to(cursor, {
-          duration: 1,
+          duration: 0.78,
           motionPath: { path: [assetPoint, { x: portraitPoint.x - 52, y: assetPoint.y - 68 }, portraitPoint], curviness: 1.25 },
-        }, 2.86)
+        }, 3.08)
         .to(asset, {
           x: portraitPoint.x - assetPoint.x,
           y: portraitPoint.y - assetPoint.y,
-          duration: 1,
-        }, 2.86)
-        .to(portrait, { "--portrait-reveal": "0%", duration: 0.8, ease: "power3.out" }, 3.32)
-        .to(asset, { opacity: 0, scale: 0.82, duration: 0.34 }, 3.84)
-        .to(portraitSelection, { opacity: 1, duration: 0.26 }, 4.08)
-        .call(() => setPhase("refining"), [], 4.22)
-        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.46, ease: "power2.inOut" }, 4.38)
-        .to(comment, { opacity: 1, y: -8, duration: 0.32, ease: "power3.out" }, 4.74)
-        .add(expandFrame, 5.52);
+          duration: 0.78,
+        }, 3.08)
+        .to(portrait, { "--portrait-reveal": "0%", duration: 0.66, ease: "power3.out" }, 3.36)
+        .to(asset, { opacity: 0, scale: 0.82, duration: 0.28 }, 3.84)
+        .to(portraitSelection, { opacity: 1, duration: 0.24 }, 4.02)
+        .call(() => setPhase("refining"), [], 4.12)
+        .to(portrait, { x: isMobile ? 0 : -2, y: -2, duration: 0.42, ease: "power2.inOut" }, 4.22)
+        .to(comment, { opacity: 1, y: -8, duration: 0.3, ease: "power3.out" }, 4.58)
+        .add(expandFrame, 5.36);
     } else {
       gsap.set(portraitSelection, { opacity: 1 });
       timeline
@@ -413,6 +417,10 @@ export function EditorIntro() {
 
         <div ref={cursorRef} className={styles.cursor} aria-hidden="true">
           <i /><span>Javier</span>
+        </div>
+        <div ref={premiseRef} className={styles.premise} aria-hidden="true">
+          <i>JO</i>
+          <div><strong>Hey — you caught me making the final pass.</strong><span>Follow Javier’s edits as you scroll.</span></div>
         </div>
         <div ref={commentRef} className={styles.comment} aria-hidden="true">
           <i>JO</i><span>Two pixels. Much better.</span>

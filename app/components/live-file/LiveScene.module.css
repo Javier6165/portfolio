@@ -27,6 +27,8 @@
 .scene[data-live-state="commenting"] .commentThread { opacity:1; transform:none; }
 .scene[data-live-state="settling"] .commentThread { opacity:.4; transform:translateY(-.25rem); }
 .scene[data-live-state="settling"] .commentThread > b { opacity:1; }
+:global(html[data-spotlight="active"]) .propertyPanel,
+:global(html[data-spotlight="active"]) .commentThread { opacity:0!important; }
 .globalCursor { position:fixed; z-index:210; top:0; left:0; width:1px; height:1px; color:var(--narrative-blue); opacity:0; pointer-events:none; will-change:transform,opacity; }
 .globalCursor > i { position:absolute; top:-.1rem; left:-.1rem; width:0; height:0; border-top:.9rem solid currentColor; border-right:.58rem solid transparent; filter:drop-shadow(0 .25rem .35rem rgba(0,0,0,.3)); transform:rotate(-18deg); }
 .globalCursor > span { position:absolute; top:.85rem; left:.75rem; padding:.3rem .45rem; border-radius:0 .38rem .38rem .38rem; background:var(--narrative-blue); color:#fff; font:.54rem var(--font-mono); }

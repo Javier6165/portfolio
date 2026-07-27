@@ -25,7 +25,7 @@ test("the intro keeps identity visible and resolves cleanly when skipped", async
 
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(hero.getByRole("img", { name: /Portrait of Javier Ortiz/ })).toBeVisible();
-  await expect(page.getByLabel("Portfolio memory preference")).toBeVisible();
+  await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
   await expect(hero.locator(".portrait--system")).toHaveCSS("opacity", "1");
 });
 
@@ -70,7 +70,8 @@ test("Light changes colour and photography without changing layout or type", asy
   test.skip(isMobile, "The shared theme geometry is verified once on desktop.");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.getByLabel("Portfolio memory preference")).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
+  await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
 
   const selectors = [
     "h1",
@@ -120,7 +121,7 @@ test("forced WIP and final states expose visibly different section designs", asy
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(scene).toHaveAttribute("data-live-state", "wip");
   const wipColumns = await scene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => getComputedStyle(element).gridTemplateColumns);
-  await expect(scene.getByText("WIP / clarify")).toBeAttached();
+  await expect(scene.getByText("WIP · clarify pending")).toBeAttached();
 
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
@@ -151,8 +152,16 @@ test("Spotlight waits for the section, locks its position and leaves a readable 
   await expect(page.getByText("Following Javier")).toBeVisible();
   await expect(page.locator("body")).toHaveCSS("position", "fixed");
 
-  const comment = scene.getByText("Keep the signal. Lose the résumé.");
-  await expect.poll(() => comment.evaluate((item) => Number.parseFloat(getComputedStyle(item.parentElement!).opacity)), { timeout: 3_000 }).toBeGreaterThan(0.2);
+  const comment = page.locator('[data-spotlight-context][data-context-kind="comment"]');
+  await expect(comment.getByText("Keep the signal. Lose the résumé.")).toBeAttached({ timeout: 3_500 });
+  const contextGeometry = await comment.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    return { top: bounds.top, right: bounds.right, bottom: bounds.bottom, left: bounds.left, width: innerWidth, height: innerHeight };
+  });
+  expect(contextGeometry.top).toBeGreaterThanOrEqual(0);
+  expect(contextGeometry.left).toBeGreaterThanOrEqual(0);
+  expect(contextGeometry.right).toBeLessThanOrEqual(contextGeometry.width);
+  expect(contextGeometry.bottom).toBeLessThanOrEqual(contextGeometry.height);
   await expect(scene).toHaveAttribute("data-live-state", "settled", { timeout: 5_000 });
   await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
   expect(Math.abs((await page.evaluate(() => scrollY)) - anchoredScroll)).toBeLessThan(3);
@@ -168,8 +177,10 @@ test("Spotlight gives control back on Escape and Stop disables later auto-follow
   await expect(scene).toHaveAttribute("data-live-state", /spotlight-entering|editing|commenting/, { timeout: 3_000 });
   await page.keyboard.press("Escape");
   await expect(scene).toHaveAttribute("data-live-state", "settled");
-  await expect(page.getByText("Following Javier")).toHaveCount(0);
+  await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
 
+  const expandDock = page.getByRole("button", { name: "Expand Live File controls" });
+  if (await expandDock.isVisible()) await expandDock.click();
   const dockButton = page.getByRole("button", { name: "Pause" });
   await expect(dockButton).toBeVisible();
   await dockButton.click();
@@ -226,6 +237,12 @@ test("consented memory produces deterministic return tiers and can be forgotten"
   test.skip(isMobile, "Storage tiers are viewport-independent and run once.");
   await page.goto("/?narrative=first");
   await skipIntro(page);
+  await page.getByRole("link", { name: "Explore" }).click();
+  await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", "settled", { timeout: 8_000 });
+  const workMedia = page.locator(".project-card__media").first();
+  await workMedia.evaluate((element) => element.scrollIntoView({ block: "center" }));
+  await expect(page.locator('[data-live-scene="work-frame"]')).toHaveAttribute("data-live-state", "settled", { timeout: 9_000 });
+  await expect(page.getByLabel("Portfolio memory preference")).toBeVisible();
   await page.getByRole("button", { name: "Allow" }).click();
 
   const secondVisit = await context.newPage();
@@ -340,5 +357,5 @@ test("project depth and playground replay remain available to visitors", async (
   await replay.scrollIntoViewIfNeeded();
   await replay.click();
   await expect(page.getByRole("button", { name: "Playing 00:02" })).toBeDisabled();
-  await expect(replay).toBeVisible({ timeout: 2_000 });
+  await expect(replay).toBeVisible({ timeout: 3_000 });
 });

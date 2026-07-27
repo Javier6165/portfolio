@@ -40,7 +40,7 @@ export default function Home() {
           tool="layout"
           action="Clarifying the signal"
           properties={["Split into 4", "Text 10 → 18", "Gap 0 → 24"]}
-          readMs={1400}
+          readMs={1800}
           spotlightMs={4400}
           comment="Keep the signal. Lose the résumé."
           className={styles.snapshotScene}
@@ -75,7 +75,7 @@ export default function Home() {
               tool="asset"
               action="Placing evidence"
               properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
-              readMs={1600}
+              readMs={2100}
               spotlightMs={4800}
               comment="Show the decision, not the decoration."
               className={styles.workScene}
@@ -101,7 +101,7 @@ export default function Home() {
           tool="connections"
           action="Connecting decisions to outputs"
           properties={["3 triggers", "3 destinations", "On click"]}
-          readMs={1500}
+          readMs={2000}
           spotlightMs={4600}
           comment="Show the path, not a list of skills."
           className={styles.practiceScene}
@@ -125,7 +125,7 @@ export default function Home() {
             tool="workflow"
             action="Mapping tools to outcomes"
             properties={["Frame → Validate", "Output linked", "Human check · On"]}
-            readMs={1700}
+            readMs={2300}
             spotlightMs={4900}
             comment="Tools change. The operating model matters."
             className={styles.aiScene}
@@ -144,7 +144,7 @@ export default function Home() {
           tool="crop"
           action="Reframing the story"
           properties={["Fill", "Zoom 112%", "Y 31 → 48"]}
-          readMs={1300}
+          readMs={1800}
           spotlightMs={3700}
           className={styles.aboutScene}
         >
@@ -176,7 +176,7 @@ export default function Home() {
           tool="timeline"
           action="Tuning the motion"
           properties={["00:02", "Cubic out", "1×"]}
-          readMs={1200}
+          readMs={1700}
           spotlightMs={4100}
           className={styles.playgroundScene}
         >

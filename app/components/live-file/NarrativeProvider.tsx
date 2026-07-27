@@ -95,6 +95,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
   const [liveReplayToken, setLiveReplayToken] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const consentRef = useRef<NarrativeConsent>(consent);
+  const consentOfferTimerRef = useRef<number | null>(null);
   const seenCueIds = useRef(new Set<string>());
 
   useEffect(() => {
@@ -154,7 +155,6 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
         const bootMode = document.documentElement.dataset.narrative;
         if (sessionComplete || bootMode === "static") {
           setIntroComplete(true);
-          if (nextConsent === "unknown" && sessionComplete) setShowConsent(true);
         }
       } catch {
         // Storage can be blocked. No content or navigation depends on it.
@@ -163,6 +163,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
 
     return () => {
       window.cancelAnimationFrame(hydrationFrame);
+      if (consentOfferTimerRef.current !== null) window.clearTimeout(consentOfferTimerRef.current);
       systemReduced.removeEventListener("change", syncMotion);
     };
   }, []);
@@ -175,7 +176,6 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     } catch {
       // The final hero is still the default state without session storage.
     }
-    if (consentRef.current === "unknown") setShowConsent(true);
   }, []);
 
   const acceptMemory = useCallback(() => {
@@ -274,6 +274,14 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
 
   const markCueSeen = useCallback((cueId: string) => {
     seenCueIds.current.add(cueId);
+    // Consent is offered only after the visitor has experienced the concept,
+    // so it never competes with the hero or the first Live File correction.
+    if (consentRef.current === "unknown" && seenCueIds.current.size >= 2 && consentOfferTimerRef.current === null) {
+      consentOfferTimerRef.current = window.setTimeout(() => {
+        consentOfferTimerRef.current = null;
+        if (consentRef.current === "unknown") setShowConsent(true);
+      }, 900);
+    }
     if (consentRef.current === "granted") {
       const memory = readMemory();
       if (memory) writeMemory({ ...memory, seenCueIds: [...new Set([...memory.seenCueIds, cueId])] });

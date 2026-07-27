@@ -2,6 +2,8 @@
 
 Fecha: 25 de julio de 2026.
 
+Addendum: 27 de julio de 2026 — onboarding conceptual, chrome viewport-safe y ritmo revisado.
+
 Estado: **implementado y validado**. Hosting: proyecto Sites existente, siempre en acceso privado.
 
 ## 1. Resultado
@@ -63,6 +65,7 @@ Durante Spotlight:
 - una máscara deja visible el target y una barra anuncia `Following Javier`;
 - el cursor global usa MotionPath solo en dispositivos finos;
 - toolbar, selección y comentario siguen el estado lógico de la escena;
+- toolbar y comentario visibles se renderizan en el overlay fijo y se recolocan arriba o abajo del target con clamp de viewport;
 - al terminar se restauran estilos y scroll sin salto.
 
 Corrección de activación del 27 de julio: algunos browser shells emiten un `resize` al aplicar el fixed-body lock. Ese evento cerraba Spotlight inmediatamente y dejaba solo un flash de cursor. El director conserva ahora las dimensiones reales, ignora la ventana de resize producida por su propio lock y cancela únicamente ante un cambio material posterior.
@@ -73,20 +76,20 @@ Timings:
 
 | Escena | Lectura | Spotlight |
 | --- | ---: | ---: |
-| Snapshot | 1,4 s | 4,4 s |
-| Work | 1,6 s | 4,8 s |
-| Product practice | 1,5 s | 4,6 s |
-| AI | 1,7 s | 4,9 s |
-| About | 1,3 s | 3,7 s |
-| References | 1,5 s | 4,6 s |
-| Playground | 1,2 s | 4,1 s |
-| Contact | 1,0 s | 2,8 s |
+| Snapshot | 1,8 s | 4,4 s |
+| Work | 2,1 s | 4,8 s |
+| Product practice | 2,0 s | 4,6 s |
+| AI | 2,3 s | 4,9 s |
+| About | 1,8 s | 3,7 s |
+| References | 2,1 s | 4,6 s |
+| Playground | 1,7 s | 4,1 s |
+| Contact | 1,5 s | 2,8 s |
 
 Los comentarios aparecen después del ajuste y permanecen legibles más de `1,3 s`. No contienen información necesaria.
 
 ## 5. Intro, móvil y fallbacks
 
-La intro desktop dura aproximadamente `6,4 s` y la segunda visita menos de dos segundos. El cursor entra con fade y cada acción conserva tiempo de lectura. Una visita familiar muestra el hero final directamente: no reproduce una versión comprimida que pueda percibirse como destello. Un skip temprano fija explícitamente opacidad del titular, reveal y posición del retrato; esto evita conservar valores incompletos de la timeline.
+La intro desktop dura aproximadamente `6,3 s` y la segunda visita menos de dos segundos. En primera visita, un comentario inicial explica `You caught me making the final pass` y `Follow Javier’s edits as you scroll` antes de mover el cursor. No es un loader: identidad, rol y retrato mantienen espacio desde el primer frame. Una visita familiar muestra el hero final directamente. Un skip temprano fija explícitamente opacidad del titular, reveal y posición del retrato.
 
 En móvil no aparece cursor de ratón. El hero conserva titular, retrato y `Explore` dentro del primer viewport y Spotlight usa una barra inferior. El menú móvil cerrado no participa en layout; al abrirse usa un panel fijo dentro del viewport.
 
@@ -106,7 +109,7 @@ Fallbacks:
 - `liveReplayToken` para `Replay live edits`;
 - reset de Auto-follow al usar `Forget this device`.
 
-La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. La exclusión de escenas y Auto-follow son session-only, de modo que una pestaña nueva conserva la narrativa completa. El dock expone `Replay edits` y `Pause`; `Experience settings` mantiene Replay intro, Replay live edits, Motion y Forget.
+La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. La preferencia se ofrece tras dos escenas vistas, con `900 ms` de separación, y usa una superficie fija para no desplazar contenido. La exclusión de escenas y Auto-follow son session-only. El dock expone `Following Javier · Next edit when you pause`, se pliega al primer scroll y ofrece `Replay edits` y `Pause` tras expansión.
 
 ## 7. Motion y peso
 
@@ -138,7 +141,7 @@ npm test
 npm run test:e2e
 ```
 
-Resultado final: lint, build y smoke verdes; 40 combinaciones E2E descubiertas, 23 ejecutadas y 17 skips intencionales de cobertura duplicada. Axe queda limpio y la matriz visual completa se genera sin overflow.
+Resultado del addendum: lint, build y smoke verdes; 42 combinaciones E2E descubiertas, 24 ejecutadas y 18 skips intencionales de cobertura duplicada. Axe queda limpio, la matriz Dark/Light completa no tiene overflow y Spotlight comprueba que el comentario esté completamente dentro del viewport.
 
 ## 9. Límites conocidos
 

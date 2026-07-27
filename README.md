@@ -5,12 +5,13 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 ## Experience concept
 
 - `Live File`: the portfolio opens as a working design file and resolves into the finished product.
+- A first-visit premise beat explains that the visitor is following Javier’s final edits before the cursor acts.
 - A semantic hero with Javier Ortiz, Senior Product Designer, theme-linked portrait and `Explore`.
 - Coordinated Dark and Light modes: identical typography, geometry and motion, with palette and portraits as the only visual changes.
 - Three clearly labelled fictitious case studies.
 - A complete nine-act Home score with explicit WIP → edit → final states.
 - A provisional Reference Ledger: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
-- A cancellable Spotlight mode that starts only after the target is visible and readable, plus one global Javier cursor on desktop.
+- A cancellable Spotlight mode that starts only after the target is visible and readable, with viewport-safe tool/comment chrome and one global Javier cursor on desktop.
 - A consented returning-visitor memory with replay, forget and motion controls.
 - An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.
 - Progressive motion, reduced-motion and no-JavaScript fallbacks.

@@ -14,6 +14,7 @@ import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { usePathname } from "next/navigation";
 import { useNarrative } from "./NarrativeProvider";
+import { toolNames } from "./EditorPrimitives";
 import { SpotlightChrome, type SpotlightView } from "./SpotlightChrome";
 import styles from "./LiveScene.module.css";
 
@@ -242,19 +243,50 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       width: Math.min(targetRect.width + 16, window.innerWidth - clamp(targetRect.left - 8, 4, window.innerWidth - 80) - 4),
       height: Math.min(targetRect.height + 16, window.innerHeight - clamp(targetRect.top - 8, 4, window.innerHeight - 80) - 4),
     };
-    setSpotlight({ id: config.id, action: config.action, rect: safeRect, durationMs: config.spotlightMs, hint: false });
+    const panelWidth = Math.min(360, window.innerWidth - 32);
+    const panelHeight = config.comment ? 108 : 102;
+    const spaceBelow = window.innerHeight - safeRect.top - safeRect.height;
+    const panelTop = spaceBelow >= panelHeight + 16
+      ? safeRect.top + safeRect.height + 12
+      : safeRect.top >= panelHeight + 88
+        ? safeRect.top - panelHeight - 12
+        : clamp(safeRect.top + 16, 76, window.innerHeight - panelHeight - 16);
+    const panel = {
+      top: panelTop,
+      left: clamp(safeRect.left, 16, window.innerWidth - panelWidth - 16),
+      width: panelWidth,
+    };
+    setSpotlight({
+      id: config.id,
+      action: config.action,
+      rect: safeRect,
+      panel,
+      durationMs: config.spotlightMs,
+      hint: false,
+      phase: "entering",
+      tool: toolNames[config.tool],
+      properties: config.properties,
+      comment: config.comment,
+    });
 
     const editingTimer = window.setTimeout(() => {
       root.dataset.liveState = "editing";
+      setSpotlight((current) => current ? { ...current, phase: "editing" } : current);
       window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: config.id } }));
-    }, 360);
+    }, 520);
     phaseTimersRef.current.push(editingTimer);
 
     if (config.comment) {
-      const commentAt = Math.max(1_650, config.spotlightMs - 2_350);
-      phaseTimersRef.current.push(window.setTimeout(() => { root.dataset.liveState = "commenting"; }, commentAt));
+      const commentAt = Math.max(1_900, config.spotlightMs - 1_800);
+      phaseTimersRef.current.push(window.setTimeout(() => {
+        root.dataset.liveState = "commenting";
+        setSpotlight((current) => current ? { ...current, phase: "commenting" } : current);
+      }, commentAt));
     }
-    phaseTimersRef.current.push(window.setTimeout(() => { root.dataset.liveState = "settling"; }, config.spotlightMs - 520));
+    phaseTimersRef.current.push(window.setTimeout(() => {
+      root.dataset.liveState = "settling";
+      setSpotlight((current) => current ? { ...current, phase: "settling" } : current);
+    }, config.spotlightMs - 420));
     phaseTimersRef.current.push(window.setTimeout(() => endActive(false), config.spotlightMs));
 
     const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
