@@ -141,7 +141,7 @@ test("the guided first pass reframes, locks and completes a readable edit", asyn
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(scene).toHaveAttribute("data-live-state", /observing|spotlight-entering|editing|commenting/, { timeout: 2_500 });
-  await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 03/)).toBeVisible();
+  await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 01/)).toBeVisible();
   await expect(page.getByText("Following Javier")).toBeVisible();
   const snapshotTitleTop = await page.getByRole("heading", { level: 2, name: /I turn complex product logic/ }).evaluate((element) => element.getBoundingClientRect().top);
   expect(snapshotTitleTop).toBeGreaterThan(72);
@@ -160,7 +160,7 @@ test("the guided first pass reframes, locks and completes a readable edit", asyn
   // Scrollbar removal may emit a resize event in real browsers. It is not a
   // visitor resize and must not collapse Spotlight into a single-frame flash.
   await page.evaluate(() => window.dispatchEvent(new Event("resize")));
-  await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 03/)).toBeVisible();
+  await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 01/)).toBeVisible();
   await expect(page.locator("body")).toHaveCSS("position", "fixed");
 
   await expect(comment.getByText("This is becoming a résumé. Nobody asked.")).toBeAttached({ timeout: 5_000 });
@@ -185,10 +185,17 @@ test("the guided first pass reframes, locks and completes a readable edit", asyn
   const releasedScroll = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 180);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(releasedScroll + 40);
+
+  // After the one required chapter, following becomes an explicit visitor
+  // choice and continues with Work in document order.
+  await page.getByRole("button", { name: "Follow Javier" }).first().click();
+  await expect(page.getByText(/LIVE FILE · EDIT 02 \/ 08/)).toBeVisible({ timeout: 5_000 });
+  await page.getByRole("button", { name: /Stop following/ }).first().click();
+  await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
 });
 
-test("returning visitors can skip an edit and disable later automatic edits", async ({ page, isMobile }) => {
-  test.skip(isMobile, "The keyboard interruption contract runs once on desktop.");
+test("free navigation never launches lower scenes and Follow Javier remains cancellable", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The desktop pointer contract runs once; mobile keeps free navigation.");
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
@@ -198,17 +205,15 @@ test("returning visitors can skip an edit and disable later automatic edits", as
   await page.getByRole("link", { name: "Explore" }).click();
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
-  await expect(scene).toHaveAttribute("data-live-state", /spotlight-entering|editing|commenting/, { timeout: 6_000 });
-  await page.keyboard.press("Escape");
+  await page.waitForTimeout(1_200);
   await expect(scene).toHaveAttribute("data-live-state", "settled");
   await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
 
-  const expandDock = page.getByRole("button", { name: "Expand Live File controls" });
-  if (await expandDock.isVisible()) await expandDock.click();
-  const dockButton = page.getByRole("button", { name: "Show finished file" });
-  await expect(dockButton).toBeVisible();
-  await dockButton.click();
-  await expect(page.locator("[data-follow-dock]")).toHaveCount(0);
+  await page.getByRole("button", { name: "Follow Javier" }).click();
+  await expect(scene).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 3_000 });
+  await expect(page.getByRole("button", { name: /Stop following/ })).toBeVisible({ timeout: 5_000 });
+  await page.getByRole("button", { name: /Stop following/ }).click();
+  await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
   const states = await page.locator("[data-live-scene]").evaluateAll((items) => items.map((item) => item.getAttribute("data-live-state")));
   expect(states.every((state) => state === "settled")).toBe(true);
 });
@@ -227,6 +232,7 @@ test("Javier remains present through non-blocking ambient micro-adjustments", as
   await expect(dock.locator("span").filter({ hasText: "JAVIER" })).toBeAttached();
   await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 6_000 });
   await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
+  await expect(page.locator("[data-ambient-note]")).toContainText(/Two pixels right|No\. One pixel left|Perfect\. Probably/);
   await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
   const before = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 180);
@@ -284,17 +290,6 @@ test("consented memory produces deterministic return tiers and can be forgotten"
   await skipIntro(page);
   await page.getByRole("link", { name: "Explore" }).click();
   await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", "settled", { timeout: 16_000 });
-  const workMedia = page.locator(".project-card__media").first();
-  await workMedia.evaluate((element) => element.scrollIntoView({ block: "center" }));
-  await expect(page.locator('[data-live-scene="work-frame"]')).toHaveAttribute("data-live-state", "settled", { timeout: 18_000 });
-  await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
-  const practiceStage = page.locator('[data-live-scene="practice-connect"]');
-  await practiceStage.evaluate((element) => element.scrollIntoView({ block: "center" }));
-  await expect(page.getByText(/LIVE FILE · EDIT 03 \/ 03/)).toBeVisible({ timeout: 4_000 });
-  const practiceTitleTop = await page.getByRole("heading", { level: 2, name: /I make the system visible/ }).evaluate((element) => element.getBoundingClientRect().top);
-  expect(practiceTitleTop).toBeGreaterThan(72);
-  await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
-  await expect(practiceStage).toHaveAttribute("data-live-state", "settled", { timeout: 18_000 });
   await expect(page.getByLabel("Portfolio memory preference")).toBeVisible({ timeout: 6_000 });
   await page.getByRole("button", { name: "Allow" }).click();
 
@@ -312,16 +307,17 @@ test("consented memory produces deterministic return tiers and can be forgotten"
   await expect(familiarSkip).toHaveCSS("opacity", "0");
   await expect(familiarSkip).toHaveCSS("pointer-events", "none");
 
-  // Persistent return memory may shorten the intro, but it must not remove
-  // the Live File story from a fresh tab.
+  // Persistent return memory may shorten the intro, but lower edits remain
+  // opt-in until the visitor asks to follow Javier.
   await thirdVisit.getByRole("link", { name: "Explore" }).click();
   const returningScene = thirdVisit.locator('[data-live-scene="snapshot-clarify"]');
-  await expect(returningScene).toHaveAttribute("data-live-state", "observing", { timeout: 2_000 });
-  await expect(returningScene).toHaveAttribute("data-live-state", /spotlight-entering|editing|commenting/, { timeout: 6_000 });
-  await thirdVisit.keyboard.press("Escape");
+  await expect(returningScene).toHaveAttribute("data-live-state", "settled");
+  await thirdVisit.getByRole("button", { name: "Follow Javier" }).click();
+  await expect(returningScene).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 3_000 });
+  await thirdVisit.getByRole("button", { name: /Stop following/ }).click();
 });
 
-test("returning visitors get clearly labelled replay controls", async ({ page, isMobile }) => {
+test("returning visitors get clearly labelled Follow controls", async ({ page, isMobile }) => {
   test.skip(isMobile, "The compact mobile dock uses the same controls.");
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
@@ -330,11 +326,10 @@ test("returning visitors get clearly labelled replay controls", async ({ page, i
   await page.goto("/?narrative=return");
   await skipIntro(page);
 
-  const replay = page.getByRole("button", { name: "Replay guided edits" });
+  const replay = page.getByRole("button", { name: "Follow Javier" }).first();
   await expect(replay).toBeVisible();
   await replay.click();
-  const states = await page.locator("[data-live-scene]").evaluateAll((items) => items.map((item) => item.getAttribute("data-live-state")));
-  expect(states.every((state) => state === "wip" || state === "observing")).toBe(true);
+  await expect(page.getByRole("button", { name: /Stop following/ }).first()).toBeVisible({ timeout: 4_000 });
 });
 
 test("a failed portrait request falls back to the finished semantic hero", async ({ page, isMobile }) => {

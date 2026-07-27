@@ -13,9 +13,13 @@ export function MemoryConsent() {
     const hide = () => setSpotlightActive(false);
     window.addEventListener("portfolio-spotlight-start", show);
     window.addEventListener("portfolio-spotlight-end", hide);
+    window.addEventListener("portfolio-follow-start", show);
+    window.addEventListener("portfolio-follow-end", hide);
     return () => {
       window.removeEventListener("portfolio-spotlight-start", show);
       window.removeEventListener("portfolio-spotlight-end", hide);
+      window.removeEventListener("portfolio-follow-start", show);
+      window.removeEventListener("portfolio-follow-end", hide);
     };
   }, []);
 
@@ -59,11 +63,11 @@ export function ExperienceSettings() {
           <strong>{reducedMotion ? "Reduced" : "Full"}</strong>
         </div>
         <div>
-          <span>Automatic edits</span>
+          <span>Live presence</span>
           <strong>{autoFollow ? "On" : "Off"}</strong>
         </div>
         <button type="button" onClick={replayIntro}>Replay file opening</button>
-        <button type="button" onClick={replayLiveEdits}>Replay guided edits</button>
+        <button type="button" onClick={replayLiveEdits}>Follow Javier from top</button>
         <button type="button" onClick={() => setManualReducedMotion(!reducedMotion)}>
           {reducedMotion ? "Use device motion setting" : "Reduce motion"}
         </button>

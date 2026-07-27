@@ -29,9 +29,9 @@ Los documentos 07–10 fueron consolidados y retirados; Git conserva su historia
 - La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
 - `.js-hero-reveal` y `.js-reveal` solo se ejecutan en rutas secundarias; Home pertenece exclusivamente al director Live File. Reduced motion resuelve final.
 - Los estados viven en `data-live-state`; GSAP no es fuente de verdad. Preserva `wip → observing → spotlight-entering → editing → commenting? → settling → settled`.
-- Primera visita: solo Snapshot, Work y Product practice son obligatorias; la escena requerida más temprana ya alcanzada se reencuadra y bloquea desde la lectura WIP. Los capítulos 04–08 son opcionales y saltable incluso en esa visita.
-- Spotlight es la única captura temporal de scroll autorizada. Debe conservar reduced motion, no focus trap y restauración exacta de la posición capturada. No añadas snap, cola entre capítulos o scroll global.
-- La presencia ambiental puede mover el cursor y hacer microajustes de dos píxeles, pero nunca captura scroll, elige contenido esencial ni se reproduce en touch/reduced motion.
+- Primera visita: solo Snapshot es obligatorio. Después, ninguna sección puede abrir Spotlight por scroll; el visitante activa `Follow Javier` desde el avatar si quiere seguir la secuencia Work → Contact.
+- Spotlight es la única captura temporal de scroll autorizada. Debe conservar reduced motion, no focus trap y restauración exacta. Follow puede mover la cámara entre capítulos porque es explícito y se cancela en cualquier momento; fuera de Follow no existe auto-scroll.
+- La presencia ambiental puede ejecutar microgags de copy, assets, crop, easing o píxeles, pero nunca captura scroll, elige contenido esencial ni se reproduce en touch/reduced motion.
 - Cada sección debe tener UI final fuerte y WIP inequívocamente peor. No uses un presenter genérico para fingir una edición.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.

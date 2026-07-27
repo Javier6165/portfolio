@@ -22,7 +22,7 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 `Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
 
-La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Plan 13 define una apertura causal —comentario, control `Present`, hero— y Plan 14 limita la pasada obligatoria a Snapshot, Work y Product practice. El resto usa escenas breves opcionales. Un avatar y una partitura finita de microajustes mantienen a Javier presente sin capturar scroll. El contenido profesional nunca depende de esa capa.
+La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Plan 13 define una apertura causal —comentario, control `Present`, hero— y Plan 14 limita la pasada obligatoria únicamente a Snapshot. Después hay navegación libre; `Follow Javier` activa voluntariamente una secuencia Spotlight de arriba abajo y `Stop following` la abandona. Un avatar y una partitura finita de microgags mantienen a Javier presente sin capturar scroll. El contenido profesional nunca depende de esa capa.
 
 ## Por qué no es una template
 

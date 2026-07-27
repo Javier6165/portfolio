@@ -14,6 +14,8 @@ Addendum Plan 12: el prólogo integrado y las salidas fáciles seguían comprimi
 
 Addendum Plan 14: la auditoría humana posterior demostró que ocho capturas resultaban excesivas. Solo los tres primeros capítulos continúan obligatorios; el resto es breve y opcional. Avatar, estado y microajustes no bloqueantes mantienen la sensación de colaboración sin convertir toda la Home en una secuencia cautiva. Este addendum sustituye el alcance de obligatoriedad del párrafo anterior.
 
+Addendum Follow: una auditoría posterior detectó que incluso tres capturas podían activarse de forma violenta tras fast scroll. Solo Snapshot continúa obligatorio. Work → Contact se ejecutan exclusivamente cuando el visitante pulsa `Follow Javier`; fuera de ese modo nunca hay Spotlight o movimiento de cámara automático.
+
 Addendum de continuidad 27 de julio de 2026: se corrigió un lock residual después de la apertura. El estilo `overflow` sí se restauraba, pero los listeners de rueda, touch y teclado de la intro seguían montados e interceptaban gestos. Ahora quedan inertes al entregar el hero y la matriz prueba desplazamiento real tras la intro y tras el primer Spotlight.
 
 ## Veredicto

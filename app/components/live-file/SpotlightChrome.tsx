@@ -20,7 +20,7 @@ export type SpotlightView = {
   commentFirst?: boolean;
 };
 
-export function SpotlightChrome({ active, showDock, guidedFirstVisit, presenceStatus, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
+export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJavier, presenceStatus, onCancel, onFollow, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; followingJavier: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onFollow: () => void; onReplay: () => void; onStop: () => void }) {
   const [dockExpanded, setDockExpanded] = useState(true);
   const dockIntroducedRef = useRef(false);
   const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
@@ -54,24 +54,23 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, presenceSt
         <div className={styles.dock} data-follow-dock data-guided={guidedFirstVisit ? "true" : "false"} data-presence-status={presenceStatus} data-expanded={dockExpanded ? "true" : "false"}>
           {guidedFirstVisit ? (
             <>
-              <div className={styles.guidedMark}><span className={styles.avatarPortrait} /><i /> JAVIER CONNECTED</div>
-              <p><strong>Three guided edits</strong><span>Then the finished file is yours</span></p>
+              <div className={styles.guidedMark}><span className={styles.avatarPortrait} /><i /> JAVIER {presenceStatus === "editing" ? "EDITING" : presenceStatus === "elsewhere" ? "ELSEWHERE" : "CONNECTED"}</div>
+              <p><strong>One guided edit</strong><span>Then explore or follow Javier</span></p>
             </>
           ) : (
             <>
               <button
                 className={styles.dockToggle}
                 type="button"
-                aria-expanded={dockExpanded}
-                aria-label={dockExpanded ? "Collapse Live File controls" : "Expand Live File controls"}
-                onClick={() => setDockExpanded((expanded) => !expanded)}
+                aria-label={followingJavier ? "Stop following Javier" : "Follow Javier"}
+                onClick={followingJavier ? onStop : onFollow}
               >
-                <span className={styles.avatarPortrait} /><i /> <span>JAVIER</span>
+                <span className={styles.avatarPortrait} /><i /> <span>{followingJavier ? "STOP FOLLOWING" : "FOLLOW JAVIER"}</span>
               </button>
               <p><strong>{presenceStatus === "editing" ? "Making a small adjustment" : presenceStatus === "elsewhere" ? "Editing elsewhere in the file" : presenceStatus === "done" ? "File tidy. For now." : "Javier is still in the file"}</strong><span>Optional live edits · your scroll stays yours</span></p>
               <div className={styles.dockActions} aria-hidden={dockExpanded ? undefined : "true"}>
-                <button type="button" onClick={onReplay}>Replay guided edits</button>
-                <button type="button" onClick={onStop}>Show finished file</button>
+                <button type="button" onClick={followingJavier ? onStop : onFollow}>{followingJavier ? "Stop following" : "Follow Javier"}</button>
+                <button type="button" onClick={onReplay}>Follow from the top</button>
               </div>
             </>
           )}
@@ -98,7 +97,7 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, presenceSt
             </div>
             <span className={styles.action}>{phaseAction}</span>
             <i className={styles.progress} style={{ "--spotlight-duration": `${active.durationMs}ms` } as CSSProperties} aria-hidden="true" />
-            {active.mandatory ? <span className={styles.locked}>Guided edit</span> : <button type="button" onClick={onStop}>Skip this edit</button>}
+            {active.mandatory ? <span className={styles.locked}>Guided edit</span> : <button type="button" onClick={onStop}>Stop following</button>}
           </div>
           {active.phase !== "observing" && active.phase !== "entering" ? (
             <div

@@ -50,19 +50,25 @@ wip → observing → spotlight-entering → editing
 
 La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No hay ScrollTrigger por escena, auto-scroll ni queue.
 
+Fuera de Spotlight, el mismo director ejecuta una partitura ambiental finita en desktop `pointer:fine`. Cada `AmbientBeat` declara selector, modo (`nudge`, `copy`, `wrong-image`, `crop` o `easing`), notas y, si corresponde, variantes visuales. Solo se elige un target actualmente visible; no hay búsqueda global que mueva la cámara. `data-ambient-edit` y `data-ambient-value` existen durante el gag y se eliminan tanto al completar como al cancelar. El heading real, su accesibilidad y su layout reservado permanecen en DOM.
+
+La partitura se pausa con Spotlight, consentimiento, pestaña oculta, reduced motion, touch o Auto-follow off. Una pausa inicial de `5,2 s`, un setup de `0,68 s` y descansos de `8,5 s` separan historia principal y humor ambiental. Nueve beats o cuatro minutos cierran la sesión con `File tidy. For now.`.
+
 Elegibilidad recurrente:
 
 - intro terminada y Home activa;
-- Auto-follow on;
+- capa Live File activa;
 - target visible por encima de `minVisibility`;
 - centro dentro de zona segura;
 - scroll estable `220–280 ms`;
 - `readMs` cumplido;
 - escena no vista en la sesión.
 
-En primera visita, el director busca la escena requerida más temprana que el visitante ya ha alcanzado, reencuadra su target dentro de la zona segura y bloquea desde `observing`. Lectura, selección, propiedad, comentario y resolución son obligatorios; los gestos de desplazamiento solo muestran cuándo volverá el control. En visitas recurrentes, el algoritmo dominante y las salidas Escape/Skip siguen disponibles.
+En primera visita, el director espera únicamente Snapshot, reencuadra su target dentro de la zona segura y bloquea desde `observing`. Lectura, selección, propiedad, comentario y resolución son obligatorios. Después no evalúa escenas opcionales salvo que `followingRef` esté activo.
 
-La primera escena no se arma al restaurar `overflow` ni por un `resize` del handoff. Después del hero y después de cada Spotlight obligatorio, el director espera un gesto de desplazamiento nuevo que mueva el documento. El `scrollTo` interno de reencuadre/restauración se marca como reposicionamiento y no puede iniciar el siguiente capítulo.
+`Follow Javier` es una decisión explícita del visitante. Marca los capítulos no vistos como WIP, mueve la cámara al siguiente target en orden DOM y activa su Spotlight. Al resolver, avanza al siguiente después de un descanso breve. Avatar, botón, rueda, touch o teclado pueden terminar Follow y fijan todas las secciones en final. Fuera de este estado no hay auto-scroll ni Spotlight espontáneo.
+
+Snapshot no se arma al restaurar `overflow` ni por un `resize` del handoff: exige un gesto real tras el hero. Los movimientos internos de Follow se marcan como reposicionamiento y solo la partitura explícita puede iniciar el siguiente capítulo.
 
 Spotlight fija `body`, compensa scrollbar, guarda la posición ya reencuadrada y la restaura al cerrar. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve. No existe focus trap y reduced motion elimina toda captura.
 
@@ -101,7 +107,7 @@ Claves:
 
 `NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Solo un tier recurrente consentido habilita Skip y controles opcionales; sin memoria, una pestaña nueva vuelve a ser primera visita.
 
-`MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera los tres momentos guiados y `2,4 s` antes de ofrecerlo; la superficie es fija y se desmonta durante Spotlight para no modificar geometría ni competir con la coreografía.
+`MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera Snapshot y `2,4 s` antes de ofrecerlo; la superficie es fija y se desmonta durante Spotlight y Follow para no modificar geometría ni competir con la coreografía.
 
 ## Dirección visual y fotografías
 

@@ -1,6 +1,6 @@
 # Plan 13 — vertical narrativa `Live File`
 
-Estado: implementado como primera prueba de concepto. Prevalece sobre Plan 12 para la apertura y para Snapshot, Work y Product practice. Los capítulos posteriores conservan temporalmente la partitura anterior.
+Estado: implementado para la apertura y el patrón comment-first. Plan 14 sustituye su alcance posterior: solo Snapshot es obligatorio; Work → Contact requieren `Follow Javier`.
 
 ## Problema
 

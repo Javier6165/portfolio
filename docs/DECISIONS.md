@@ -28,15 +28,19 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Estados: `settled → wip → observing → spotlight-entering → editing → commenting? → settling → settled`; reduced motion usa `reduced`.
 - El director elige solo un target legible cuando supera su umbral de visibilidad y el scroll lleva estable `220–280 ms`; los targets altos no dependen de que su centro geométrico esté dentro del viewport.
 - La primera visita abre con un loading breve, un comentario de Javier y una acción `Present` que causa la expansión al hero; no ofrece Skip salvo reduced motion o fallo.
-- Snapshot, Work y Product practice usan `comentario sobre WIP → edición breve → comentario resuelto` y son los únicos tres capítulos obligatorios. AI, About, References, Playground y Contact usan el mismo patrón abreviado, pero son opcionales y saltable.
+- Snapshot usa `comentario sobre WIP → edición breve → comentario resuelto` y es el único capítulo obligatorio. Work, Product practice, AI, About, References, Playground y Contact solo entran en Spotlight tras `Follow Javier`.
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
-- En primera visita, Spotlight es obligatorio solo para los tres primeros capítulos: rueda, touch y teclas de scroll se contienen hasta terminar. Tras el tercero aparecen controles opcionales. En una visita recurrente consentida son opcionales desde el principio.
+- En primera visita, Spotlight es obligatorio solo para Snapshot: rueda, touch y teclas de scroll se contienen hasta terminar. Desde ese momento la navegación queda libre y el avatar ofrece Follow; visitas recurrentes son libres desde el principio.
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado y una partitura finita de microajustes; se pausa durante Spotlight y nunca captura scroll.
+- La presencia ambiental usa nueve microescenas de humor observacional: setup, intento/duda, remate y restauración. Espera `5,2 s` tras una escena, descansa `8,5 s` entre gags y nunca repite uno en el mismo documento.
+- Los cambios de copy ambientales son visuales y `aria-hidden`: el heading semántico no cambia. References puede bromear con una cita obviamente falsa solo como pseudoelemento temporal; nunca crea `<blockquote>`, identidad o contenido persistente.
+- Un target sticky solo es elegible en su zona narrativa. El wordmark no puede desplazar el gag correspondiente a Work, Snapshot u otra sección.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
+- El tono de la capa Live File es seco, autocrítico y amable; se ríe de hábitos de diseño, nunca de clientes, compañeros, accesibilidad, privacidad o resultados.
 - La primera visita explica la regla dentro del editor: `You caught me at “one last tweak”`; Javier pulsa `Present` antes de ceder el hero.
 - Paneles y comentarios de Spotlight se anclan al viewport y se recolocan dentro de una zona segura. Una prueba geométrica verifica que no queden recortados.
-- El dock de primera visita muestra retrato, conexión y `Three guided edits`. Tras el tercero cambia a presencia opcional con Replay y `Show finished file`.
+- El dock de primera visita muestra retrato, conexión y `One guided edit`. Tras Snapshot, pulsar el avatar activa `Follow Javier`; el mismo avatar, rueda, teclado o `Stop following` lo cancelan.
 - Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
 - Una visita `familiar` muestra el hero final inmediatamente; no comprime el cursor en una animación sub-segundo que pueda parecer un destello.
 
@@ -58,7 +62,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - `sessionStorage` evita repetir la intro y puede guardar Auto-follow en la pestaña.
 - `seenCueIds` persistente conserva contexto de retorno, pero no decide la elegibilidad de las escenas; esa exclusión usa `javier-live-scenes-v2` en sessionStorage.
 - `localStorage` de narrativa solo tras `Allow`, esquema 1 y expiración lógica de 90 días.
-- La preferencia de memoria se ofrece después de los tres momentos guiados y `2,4 s` de calma. Se desmonta mientras Spotlight esté activo para no competir con la coreografía ni provocar layout shift.
+- La preferencia de memoria se ofrece después de Snapshot y `2,4 s` de calma. Se desmonta durante Spotlight y durante Follow para no competir con la coreografía ni provocar layout shift.
 - Sin cookies ni identificadores personales.
 
 ## Hosting

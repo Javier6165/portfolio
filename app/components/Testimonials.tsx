@@ -35,7 +35,7 @@ export function Testimonials() {
         properties={["Quote · Unverified", "Variant · Pending", "Source · Required"]}
         readMs={1000}
         spotlightMs={3600}
-        comment="No source, no quote. Convenient rule."
+        comment="No source, no quote. Apparently we have standards."
         commentFirst
         draftLabel="Draft · provenance missing"
         className={styles.liveScene}

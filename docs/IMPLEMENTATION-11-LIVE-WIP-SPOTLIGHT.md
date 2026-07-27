@@ -111,7 +111,7 @@ La apertura conserva sus listeners mientras el hero sigue montado, pero todos co
 - `liveReplayToken` para `Replay live edits`;
 - reset de Auto-follow al usar `Forget this device`.
 
-La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. Plan 14 ofrece la preferencia tras los tres capítulos guiados y `2,4 s` de calma, y la desmonta durante Spotlight. La exclusión de escenas y Auto-follow son session-only. El dock muestra retrato/estado de Javier, informa de tres edits guiados y después expone Replay y `Show finished file`.
+La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. El contrato final de Plan 14 ofrece la preferencia tras el único Snapshot guiado y `2,4 s` de calma, y la desmonta durante Spotlight o Follow. La exclusión de escenas y la capa Live son session-only. Después de Snapshot, el avatar activa `Follow Javier` y cualquier Spotlight posterior es voluntario y cancelable.
 
 ## 7. Motion y peso
 

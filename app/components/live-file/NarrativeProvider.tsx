@@ -275,9 +275,10 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
 
   const markCueSeen = useCallback((cueId: string) => {
     seenCueIds.current.add(cueId);
-    // Consent is offered only after the complete three-chapter guided pass.
+    // Consent is offered only after the one required chapter has explained
+    // Live File. Everything after Snapshot is visitor-initiated Follow mode.
     // The surface also listens for Spotlight state, so it can never cover an edit.
-    if (consentRef.current === "unknown" && seenCueIds.current.size >= 3 && consentOfferTimerRef.current === null) {
+    if (consentRef.current === "unknown" && seenCueIds.current.size >= 1 && consentOfferTimerRef.current === null) {
       consentOfferTimerRef.current = window.setTimeout(() => {
         consentOfferTimerRef.current = null;
         if (consentRef.current === "unknown") setShowConsent(true);

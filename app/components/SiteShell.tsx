@@ -48,7 +48,7 @@ export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactN
         properties={["Editing → Ready for review", "Private preview", "Your turn"]}
         readMs={900}
         spotlightMs={3000}
-        comment="Okay. Your turn."
+        comment="One last tweak. Again. Okay—your turn."
         commentFirst
         draftLabel="Draft · handoff still open"
         className="footer-live-scene"

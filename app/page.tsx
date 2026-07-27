@@ -80,9 +80,8 @@ export default function Home() {
               properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
               readMs={1600}
               spotlightMs={3800}
-              comment="A case study without evidence. Brave."
+              comment="A case study without evidence. Bold strategy."
               commentFirst
-              requiredFirstVisit
               draftLabel="Draft · evidence missing"
               className={styles.workScene}
               key={project.slug}
@@ -109,9 +108,8 @@ export default function Home() {
           properties={["3 triggers", "3 destinations", "On click"]}
           readMs={1500}
           spotlightMs={4000}
-          comment="A list of skills. Groundbreaking."
+          comment="A list of skills. Groundbreaking. Let’s add arrows."
           commentFirst
-          requiredFirstVisit
           cameraOffsetY={380}
           draftLabel="Draft · skills unconnected"
           className={styles.practiceScene}
@@ -137,7 +135,7 @@ export default function Home() {
             properties={["Frame → Validate", "Output linked", "Human check · On"]}
             readMs={1100}
             spotlightMs={4200}
-            comment="Five tools and still no workflow. Useful."
+            comment="Five AI tools and no workflow. Very 2026."
             commentFirst
             draftLabel="Draft · tools before decisions"
             className={styles.aiScene}
@@ -158,7 +156,7 @@ export default function Home() {
           properties={["Fill", "Zoom 112%", "Y 31 → 48"]}
           readMs={1000}
           spotlightMs={3600}
-          comment="The crop is doing more leading than I am."
+          comment="This crop says ‘thought leader’. Bit much."
           commentFirst
           draftLabel="Draft · crop fighting the story"
           className={styles.aboutScene}
@@ -193,7 +191,7 @@ export default function Home() {
           properties={["00:02", "Cubic out", "1×"]}
           readMs={900}
           spotlightMs={3400}
-          comment="Linear felt like a loading bar. Awkward."
+          comment="Linear easing. I was young. It was six seconds ago."
           commentFirst
           draftLabel="Draft · motion without rhythm"
           className={styles.playgroundScene}
