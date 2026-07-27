@@ -75,7 +75,8 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 - Gates: `npm run lint`, `npm test` y `npm run test:e2e` para cambios interactivos.
 - Matriz Dark: 1440×900, 1280×800, 768×1024 y 390×844; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
-- Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `PLAN-12-GUIDED-FIRST-PASS.md`, `PLAN-13-NARRATIVE-VERTICAL.md`, `PLAN-14-HUMAN-AUDIT-PASS.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
+- Contrato vigente mínimo: `PROJECT-CONTEXT.md`, este documento, `ARCHITECTURE.md` y `PLAN-14-HUMAN-AUDIT-PASS.md`. `CONTENT-AND-RELEASE.md` y `ASSETS.md` se consultan según la tarea.
+- Plan 11 y su Implementation/Audit documentan la base UI/WIP y fallos ya resueltos; Planes 12–13 conservan el razonamiento histórico que desembocó en Plan 14, pero no prevalecen sobre él.
 - Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial.
 
 ## Siguiente evolución

@@ -50,7 +50,7 @@ Superseded choreography, hero experiments and interim audits were removed after 
 ## Run and validate
 
 ```bash
-npm install
+npm ci
 npx playwright install chromium
 npm run dev
 npm run lint

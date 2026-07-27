@@ -52,4 +52,4 @@ Plan 14 y `DECISIONS.md` prevalecen ante cualquier contradicción con documentos
 
 Ejecuta `npm run lint` y `npm test`. Para cambios interactivos ejecuta también `npm run test:e2e`. La matriz Dark cubre 1440×900, 1280×800, 768×1024 y 390×844, axe, memoria, no-JS, reduced motion y fallos de imagen.
 
-Los cambios desplegables se publican como una nueva versión del mismo proyecto Sites mediante las skills de Sites. El preview actual es accesible por enlace y no indexable. El contrato vigente de QA está en Plan 12 e Implementation/Audit 11.
+Los cambios desplegables se publican como una nueva versión del mismo proyecto Sites mediante las skills de Sites. El preview actual es accesible por enlace y no indexable. El contrato vigente de producto y QA está en `DECISIONS.md` y Plan 14; Implementation/Audit 11 conserva los fallos históricos ya resueltos.
