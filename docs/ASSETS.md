@@ -13,18 +13,16 @@ No sobrescribir originales. Las versiones servidas son copias optimizadas.
 
 | Asset servido | Fuente original | Uso |
 | --- | --- | --- |
-| `public/images/portraits/hero-system.jpg` | `JaviNewPhotoDark-min.png` | Hero Live File / Dark |
-| `public/images/portraits/hero-human.jpg` | `JaviNewPhoto-min.png` | Hero Live File / Light |
-| `public/images/portraits/about-system.jpg` | `editadas/_MGL0339.jpg` | About / Dark |
-| `public/images/portraits/about-human.jpg` | `editadas/_MGL0269.jpg` | About / Light |
+| `public/images/portraits/hero-system.jpg` | `JaviNewPhotoDark-min.png` | Hero Live File |
+| `public/images/portraits/about-system.jpg` | `editadas/_MGL0339.jpg` | About |
 
-Hero y About conservan estos JPEG como fallback y añaden AVIF/WebP responsive `-960`/`-1440`. Los originales servidos no se sobrescriben. El bootstrap precarga solo el AVIF del tema activo; la primera carga de retratos medida es ~31 KB. `EditorIntro` espera el decode de la imagen activa hasta 350 ms y tiene fallback de fallo.
+Hero y About conservan estos JPEG como fallback y añaden AVIF/WebP responsive `-960`/`-1440`. Los originales servidos no se sobrescriben. El sufijo `system` es un nombre histórico; ambos son los únicos assets canónicos Dark. El bootstrap precarga el AVIF de Hero; `EditorIntro` espera el decode hasta 350 ms y tiene fallback de fallo.
 
 ## Tarjeta social vigente
 
 `public/og-live-file.jpg` mide `1200 × 630` y es la tarjeta usada por metadata Open Graph/Twitter. Se exportó a JPEG de alta calidad para reducir el peso aproximado de 758 KB a 134 KB sin perder legibilidad.
 
-Se generó con la herramienta integrada de imagen para Live File: una lectura Dark grafito/lima y una lectura Light crema/azul/coral con los mismos primitives de frame, selección, cursor y asset chip. El texto solicitado y validado visualmente es:
+Se generó con la herramienta integrada de imagen para Live File. La mitad grafito/lima representa el producto y la superficie crema/azul/coral es el artboard del editor ficticio, no un tema Light seleccionable. El texto solicitado y validado visualmente es:
 
 - `JAVIER ORTIZ`
 - `SENIOR PRODUCT DESIGNER`

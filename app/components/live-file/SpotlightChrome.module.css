@@ -37,21 +37,6 @@
 .viewportComment > div { display:grid; gap:.12rem; }
 .viewportComment strong { font-size:.86rem; font-weight:560; line-height:1.25; }
 .viewportComment > b { color:#c7ff47; font-weight:500; }
-:global(html[data-theme="human"]) .focus { box-shadow:0 0 0 200vmax rgba(44,34,24,.48),0 0 0 5px color-mix(in srgb,var(--narrative-blue) 20%,transparent); }
-:global(html[data-theme="human"]) .bar,
-:global(html[data-theme="human"]) .viewportProperties,
-:global(html[data-theme="human"]) .viewportComment,
-:global(html[data-theme="human"]) .hint { border-color:rgba(24,45,81,.18); background:#f4eadc; color:#182d51; box-shadow:0 1.4rem 4rem rgba(62,43,27,.2); }
-:global(html[data-theme="human"]) .bar small,
-:global(html[data-theme="human"]) .viewportProperties small,
-:global(html[data-theme="human"]) .viewportComment small { color:#6f6a64; }
-:global(html[data-theme="human"]) .progress { background:rgba(24,45,81,.16); }
-:global(html[data-theme="human"]) .progress::after { background:var(--signal); }
-:global(html[data-theme="human"]) .viewportComment > b { color:var(--signal); }
-:global(html[data-theme="human"]) .bar button { border-color:rgba(24,45,81,.22); color:#182d51; }
-:global(html[data-theme="human"]) .locked { border-color:rgba(24,45,81,.18); color:#6f6a64; }
-:global(html[data-theme="human"]) .viewportProperties > div { border-color:rgba(24,45,81,.14); }
-:global(html[data-theme="human"]) .viewportProperties li { border-color:rgba(24,45,81,.12); background:rgba(24,45,81,.05); }
 @keyframes dock-in { from { opacity:0; transform:translateY(.7rem); } to { opacity:1; transform:none; } }
 @keyframes focus-in { from { opacity:0; transform:scale(.985); } }
 @keyframes bar-in { from { opacity:0; transform:translate(-50%,-.8rem); } }

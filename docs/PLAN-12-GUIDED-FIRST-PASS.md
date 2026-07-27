@@ -117,14 +117,14 @@ Validado:
 
 - intro completa no cancelable en desktop y móvil;
 - devolución efectiva de rueda, touch y teclado al terminar la intro, no solo restauración visual de `overflow`;
-- loading Dark/Light y corrección específica del solapamiento móvil;
+- loading Dark y corrección específica del solapamiento móvil;
 - reencuadre y restauración de la posición capturada;
 - un gesto posterior a la primera escena desplaza realmente el documento y no reactiva Spotlight por una restauración interna;
 - rueda y Escape contenidos durante una escena obligatoria;
 - visita recurrente con Skip y salida de una escena;
 - comentarios dentro del viewport;
 - reduced motion, no-JS, fallo de retrato y storage;
-- Dark/Light con geometría compartida;
+- matriz Dark en cuatro viewports;
 - 1440×900, 1280×800, 768×1024 y 390×844;
 - axe, teclado, tabs, References y controles funcionales.
 

@@ -14,24 +14,6 @@ export function MotionController() {
     let cancelled = false;
     let context: gsap.Context | null = null;
 
-    const onThemeChange = () => {
-      gsap.fromTo(
-        ".theme-wipe",
-        { scaleX: 0, transformOrigin: "left center", opacity: 1 },
-        { scaleX: 1, duration: 0.32, ease: "power3.in", yoyo: true, repeat: 1, repeatDelay: 0.04 },
-      );
-      const themeSwaps = gsap.utils.toArray<HTMLElement>(".theme-swap");
-      if (themeSwaps.length) {
-        gsap.fromTo(
-          themeSwaps,
-          { opacity: 0.35, scale: 1.012 },
-          { opacity: 1, scale: 1, duration: 0.7, ease: "power3.out", clearProps: "transform" },
-        );
-      }
-    };
-
-    window.addEventListener("portfolio-theme-change", onThemeChange);
-
     async function setupRouteMotion() {
       // Home has a deliberate Live File score. A second set of generic reveal
       // triggers would dim content before the authored WIP → edit transition.
@@ -85,7 +67,6 @@ export function MotionController() {
 
     return () => {
       cancelled = true;
-      window.removeEventListener("portfolio-theme-change", onThemeChange);
       context?.revert();
     };
   }, [pathname]);

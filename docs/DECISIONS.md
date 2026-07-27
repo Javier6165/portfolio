@@ -17,7 +17,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 - Grid editorial asimétrico de doce columnas y recomposición específica en móvil.
 - Hero, About y Contact usan stages editoriales; Work/Practice/AI usan evidence viewers; References usa un ledger; Playground un shelf.
-- Dark (`system`) y Light (`human`) comparten Instrument Sans + Fragment Mono, geometría, composición, radios y motion. Solo cambian tokens de color y fotografías.
+- Dark es la única dirección visual: grafito, señal lima, Instrument Sans + Fragment Mono y fotografía oscura. No existe tema alternativo ni selector.
 - `Complexity Engine`, partículas, `Living Fold`, Three y R3F están retirados.
 - UI de editor propia: frames, handles, property panels, asset treatment y comments. No copia la estructura ni el branding de Figma.
 
@@ -70,7 +70,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 ## Contrato de entrega
 
 - Gates: `npm run lint`, `npm test` y `npm run test:e2e` para cambios interactivos.
-- Matriz: 1440×900, 1280×800, 768×1024 y 390×844; Dark/Light; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
+- Matriz Dark: 1440×900, 1280×800, 768×1024 y 390×844; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
 - Documentos vigentes: `PLAN-11-LIVE-WIP-SPOTLIGHT.md`, `PLAN-12-GUIDED-FIRST-PASS.md`, `IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`, `AUDIT-11-LIVE-WIP-SPOTLIGHT.md`, `ARCHITECTURE.md` y `CONTENT-AND-RELEASE.md`.
 - Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial.
 

@@ -1,7 +1,7 @@
 "use client";
 
-// Both already-optimised portraits coexist so a theme switch can swap them
-// instantly without changing the hero's geometry or requesting a loader.
+// The canonical Dark portrait is decoded before the first-visit placement beat
+// so the editor gesture never reveals an unloaded image.
 
 import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -301,8 +301,7 @@ export function EditorIntro() {
     }
 
     if (mode === "first") {
-      const theme = document.documentElement.dataset.theme === "human" ? "human" : "system";
-      const activeImage = portrait.querySelector<HTMLImageElement>(`.portrait--${theme}`);
+      const activeImage = portrait.querySelector<HTMLImageElement>("img");
       readinessTimer = window.setTimeout(startTimeline, 550);
       if (activeImage) {
         activeImage.addEventListener("error", failPortrait, { once: true });
@@ -427,9 +426,9 @@ export function EditorIntro() {
 
           <figure
             ref={portraitRef}
-            className={`${styles.portrait} theme-swap`}
+            className={styles.portrait}
             role="img"
-            aria-label="Portrait of Javier Ortiz; the photograph changes with the Human or System theme."
+            aria-label="Portrait of Javier Ortiz."
           >
             <picture>
               <source
@@ -443,7 +442,7 @@ export function EditorIntro() {
                 sizes="(max-width: 720px) 92vw, 48vw"
               />
               <img
-                className="portrait portrait--system"
+                className="portrait"
                 src="/images/portraits/hero-system.jpg"
                 alt=""
                 aria-hidden="true"
@@ -453,30 +452,8 @@ export function EditorIntro() {
                 fetchPriority="auto"
               />
             </picture>
-            <picture>
-              <source
-                type="image/avif"
-                srcSet="/images/portraits/hero-human-960.avif 960w, /images/portraits/hero-human-1440.avif 1440w"
-                sizes="(max-width: 720px) 92vw, 48vw"
-              />
-              <source
-                type="image/webp"
-                srcSet="/images/portraits/hero-human-960.webp 960w, /images/portraits/hero-human-1440.webp 1440w"
-                sizes="(max-width: 720px) 92vw, 48vw"
-              />
-              <img
-                className="portrait portrait--human"
-                src="/images/portraits/hero-human.jpg"
-                alt=""
-                aria-hidden="true"
-                width="2200"
-                height="1753"
-                loading="eager"
-                fetchPriority="auto"
-              />
-            </picture>
             <figcaption className={styles.portraitCaption} aria-hidden="true">
-              <span>PORTRAIT / THEME LINKED</span><b>01</b>
+              <span>PORTRAIT / 01</span><b>DARK</b>
             </figcaption>
           </figure>
 
@@ -488,7 +465,7 @@ export function EditorIntro() {
         <div className={styles.assetTray} aria-hidden="true">
           <span>Assets / 01</span>
           <div ref={assetRef} className={styles.assetCard}>
-            <i /><div><b>Javier_portrait</b><span>JPG · theme linked</span></div>
+            <i /><div><b>Javier_portrait</b><span>JPG · selected</span></div>
           </div>
         </div>
 

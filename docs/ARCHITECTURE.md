@@ -4,7 +4,7 @@
 
 1. **Servidor y contenido:** rutas de `app/`, `app/data.ts` y HTML semántico.
 2. **Sistema visual:** tokens/layout en `app/globals.css`; CSS Modules para Home, Live File y evidencia.
-3. **Interacción cliente:** tema, narrativa, Spotlight, tabs, prototipos y settings.
+3. **Interacción cliente:** narrativa, Spotlight, tabs, prototipos y settings.
 4. **Infraestructura Sites:** vinext, worker, build y `.openai/hosting.json`.
 
 ## Rutas
@@ -20,7 +20,6 @@
 
 El script inline de `layout.tsx` resuelve atributos sin cambiar markup:
 
-- `data-theme`: `system` o `human` desde `javier-theme`.
 - `data-motion`: sistema o ajuste manual.
 - `data-narrative`: `first`, `return`, `familiar` o `static`.
 
@@ -90,7 +89,6 @@ Orden y escenas:
 
 - Home: `EditorIntro` + `LiveSceneDirector` son la partitura exclusiva.
 - Rutas secundarias: `MotionController` importa ScrollTrigger dinámicamente y activa `.js-hero-reveal` / `.js-reveal`.
-- Theme: `.theme-swap` usa GSAP para una transición breve.
 - CSS resuelve hover, focus, tabs locales y presenters de estado.
 - `data-motion="reduce"` desactiva intro, WIP, cursor, Spotlight, reveals y transiciones no esenciales.
 
@@ -98,16 +96,16 @@ Orden y escenas:
 
 Claves:
 
-- local: `javier-narrative-consent`, `javier-narrative-memory-v1`, `javier-motion`, `javier-theme`;
+- local: `javier-narrative-consent`, `javier-narrative-memory-v1`, `javier-motion`;
 - session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`.
 
 `NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Solo un tier recurrente consentido habilita Skip y controles opcionales; sin memoria, una pestaña nueva vuelve a ser primera visita.
 
 `MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera dos momentos vistos y `900 ms` antes de ofrecerlo; la superficie es fija para no modificar geometría ni interrumpir controles.
 
-## Temas y fotografías
+## Dirección visual y fotografías
 
-ThemeToggle actualiza `data-theme`, `colorScheme`, `javier-theme` y `portfolio-theme-change`. Dark/Light comparten layout y fuentes. Hero y About montan AVIF/WebP responsive con JPEG fallback; CSS cruza opacidades sin cambiar geometría.
+Dark es la única dirección visual y `:root` define `color-scheme: dark`. No existe `ThemeToggle`, `data-theme`, evento o persistencia de apariencia. Hero y About montan un único retrato oscuro mediante AVIF/WebP responsive con JPEG fallback. Los nombres `*-system.*` son históricos, no representan un modo seleccionable.
 
 ## References
 
@@ -137,4 +135,4 @@ ThemeToggle actualiza `data-theme`, `colorScheme`, `javier-theme` y `portfolio-t
 - `npm run test:e2e`
 - `node tests/performance-audit.mjs <url>`
 
-La matriz incluye Dark/Light, cuatro viewports, axe, teclado, mobile, no-JS, reduced, storage, memoria, fallo de imagen, WIP/final, Spotlight y overflow.
+La matriz incluye Dark en cuatro viewports, axe, teclado, mobile, no-JS, reduced, storage, memoria, fallo de imagen, WIP/final, Spotlight y overflow.

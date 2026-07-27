@@ -6,8 +6,8 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 
 - `Live File`: the portfolio opens as a working design file and resolves into the finished product.
 - A first-visit working-file loader explains that Javier is still polishing the file before the cursor acts.
-- A semantic hero with Javier Ortiz, Senior Product Designer, theme-linked portrait and `Explore`.
-- Coordinated Dark and Light modes: identical typography, geometry and motion, with palette and portraits as the only visual changes.
+- A semantic Dark hero with Javier Ortiz, Senior Product Designer, portrait and `Explore`.
+- One focused Dark visual system, with no theme selector or alternate appearance state.
 - Three clearly labelled fictitious case studies.
 - A complete nine-act Home score with explicit WIP → edit → final states.
 - A provisional Reference Ledger: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
@@ -34,7 +34,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `AGENTS.md`: operational rules for future Codex sessions.
 - `docs/PROJECT-CONTEXT.md`: brief, profile and current response.
 - `docs/DECISIONS.md`: current product and technical decisions.
-- `docs/ARCHITECTURE.md`: routes, theme, narrative, storage and evidence contracts.
+- `docs/ARCHITECTURE.md`: routes, visual system, narrative, storage and evidence contracts.
 - `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`: approved Home redesign and score.
 - `docs/PLAN-12-GUIDED-FIRST-PASS.md`: current onboarding, mandatory first-pass rhythm and returning-visitor controls.
 - `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`: current components, states, timings, memory and QA.
@@ -55,7 +55,7 @@ npm test
 npm run test:e2e
 ```
 
-`npm test` includes the production build and server-rendered smoke tests. `test:e2e` covers intro, WIP/final, Spotlight, scroll restoration, functional AI/Playground controls, keyboard, axe, reduced motion, no-JS, memory, image failure and the Dark/Light responsive matrix. `node tests/performance-audit.mjs <production-url>` records performance and overflow diagnostics.
+`npm test` includes the production build and server-rendered smoke tests. `test:e2e` covers intro, WIP/final, Spotlight, scroll restoration, functional AI/Playground controls, keyboard, axe, reduced motion, no-JS, memory, image failure and the Dark responsive matrix. `node tests/performance-audit.mjs <production-url>` records performance and overflow diagnostics.
 
 ## Before public launch
 

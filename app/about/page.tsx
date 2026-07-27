@@ -1,4 +1,3 @@
-/* Theme-swapped portraits are pre-compressed local assets; native images keep both variants immediately available. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ExperienceSignal } from "../components/ExperienceSignal";
@@ -31,16 +30,11 @@ export default function AboutPage() {
       </section>
 
       <section className="about-story section shell" aria-labelledby="story-title">
-        <div className="about-story__portrait theme-swap js-reveal" role="img" aria-label="Portrait of Javier Ortiz; the photograph changes with the Human or System theme.">
+        <div className="about-story__portrait js-reveal" role="img" aria-label="Portrait of Javier Ortiz.">
           <picture>
             <source type="image/avif" srcSet="/images/portraits/about-system-960.avif 960w, /images/portraits/about-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
             <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
-            <img className="portrait portrait--system" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" />
-          </picture>
-          <picture>
-            <source type="image/avif" srcSet="/images/portraits/about-human-960.avif 960w, /images/portraits/about-human-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
-            <source type="image/webp" srcSet="/images/portraits/about-human-960.webp 960w, /images/portraits/about-human-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
-            <img className="portrait portrait--human" src="/images/portraits/about-human.jpg" alt="" aria-hidden="true" width="1314" height="1800" />
+            <img className="portrait" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" />
           </picture>
         </div>
         <div className="about-story__copy">

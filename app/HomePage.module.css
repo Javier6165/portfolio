@@ -50,9 +50,7 @@
 .aboutScene { min-height: 50rem; }
 .aboutSpread { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: end; }
 .aboutPortrait { position: relative; grid-column: 1 / 8; min-height: clamp(40rem, 58vw, 59rem); overflow: hidden; border-radius: var(--radius-lg); background: var(--surface); box-shadow: 0 2rem 7rem var(--shadow); }
-.aboutPortrait :global(.portrait) { transition: opacity 650ms ease, transform 1100ms cubic-bezier(.16,1,.3,1), filter 650ms ease; }
-.aboutPortrait :global(.portrait--system) { object-position: 52% 42%; filter: contrast(1.04) saturate(.78); }
-.aboutPortrait :global(.portrait--human) { object-position: 52% 46%; }
+.aboutPortrait :global(.portrait) { object-position: 52% 42%; filter: contrast(1.04) saturate(.78); transition: transform 1100ms cubic-bezier(.16,1,.3,1), filter 650ms ease; }
 .aboutPortrait figcaption { position: absolute; z-index: 3; right: 1rem; bottom: 1rem; left: 1rem; display: flex; justify-content: space-between; color: #f2f1eb; font: .68rem var(--font-mono); mix-blend-mode: difference; }
 .aboutPortrait figcaption b { font-weight: 400; }
 .aboutCopy { grid-column: 8 / 13; padding: 0 0 2rem clamp(1rem, 4vw, 4rem); }

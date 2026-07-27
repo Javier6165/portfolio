@@ -6,7 +6,9 @@ Estado: **auditoría post-implementación completada**.
 
 Addendum 27 de julio de 2026: corregido un fallo exclusivo del navegador publicado que cerraba Spotlight al recibir el `resize` generado por su propio scroll lock. También se eliminó la supresión persistente de escenas, se añadió Replay al dock y se sustituyó la intro familiar comprimida por entrega inmediata del hero.
 
-Addendum conceptual 27 de julio de 2026: una auditoría como visitante nuevo en Dark y Light demostró que la metáfora se percibía como estética pero no como contrato. El comentario del hero llegaba tarde, el dock no explicaba el siguiente evento y, a 1280×720, comment/property panel podían quedar bajo el viewport. Se implementó un prólogo integrado, read times más lentos, WIP con edición pendiente y chrome contextual fijo con colocación segura.
+Addendum conceptual 27 de julio de 2026: una auditoría como visitante nuevo demostró que la metáfora se percibía como estética pero no como contrato. El comentario del hero llegaba tarde, el dock no explicaba el siguiente evento y, a 1280×720, comment/property panel podían quedar bajo el viewport. Se implementó un prólogo integrado, read times más lentos, WIP con edición pendiente y chrome contextual fijo con colocación segura.
+
+Addendum visual 27 de julio de 2026: Light se retiró porque duplicaba sistema, recursos y QA sin aportar una segunda dirección suficientemente valiosa. La auditoría vigente cubre exclusivamente Dark; el selector, estado, overrides y retratos Light fueron eliminados.
 
 Addendum Plan 12: el prólogo integrado y las salidas fáciles seguían comprimiendo o suprimiendo la historia. La primera visita usa ahora loading explícito, intro de ~13,5 s y ocho escenas obligatorias con lectura bloqueada, reencuadre secuencial y tiempos duplicados. Las salidas se reservan a visitas recurrentes consentidas. QA y riesgo deliberado se documentan en `PLAN-12-GUIDED-FIRST-PASS.md`.
 
@@ -47,13 +49,13 @@ Spotlight cumple su función: espera a que el usuario haya aterrizado, fija úni
 
 ## Accesibilidad y resiliencia
 
-- axe limpio en Home Dark/Light y Northstar;
+- axe limpio en Home Dark y Northstar;
 - navegación por teclado y roving focus cubiertos;
 - touch sin cursor de ratón;
 - reduced motion y no-JS muestran el producto final;
 - scroll lock solo existe durante Spotlight y se puede cancelar;
 - contenido esencial nunca vive en comments, handles o panels del editor;
-- temas comparten geometría y tipografía por prueba automatizada.
+- la apariencia Dark mantiene contraste, reflow y geometría por prueba automatizada.
 
 ## Rendimiento
 

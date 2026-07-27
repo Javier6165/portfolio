@@ -15,7 +15,7 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 - Microinteracciones y motion de alta calidad.
 - Nada de plantilla de marketplace ni caos de agencia.
 - Placeholders hasta disponer de proyectos reales.
-- Fotografía oscura preferida por Javier y cambio coordinado entre temas.
+- Fotografía oscura preferida por Javier; Light se exploró y después se retiró para concentrar la dirección de arte.
 - Netlify sigue abierto como hosting final; el preview usa Sites.
 
 ## Respuesta vigente
@@ -27,8 +27,8 @@ La Home vigente recorre hero → Snapshot → Work → Product practice → AI-n
 ## Por qué no es una template
 
 - Intro editor → producto terminada con timeline transform-only y un cursor singleton MotionPath.
-- Retrato integrado en el hero y vinculado a las variantes fotográficas Dark/Light.
-- Light conserva exactamente la tipografía, geometría, composición y motion de Dark; solo cambian paleta y fotografías.
+- Retrato oscuro integrado en el hero y servido en formatos responsive.
+- Un único sistema Dark evita UI y QA duplicadas que no añadían valor al posicionamiento.
 - Product practice y AI son workflows accesibles con outputs y comportamiento real, no ilustraciones vacías.
 - Northstar demuestra propagación de tokens en tres contextos.
 - El framework de evidencia admite capturas, comparativas, vídeo, Figma y demos click-to-load.

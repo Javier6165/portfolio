@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { LiveScene } from "./live-file/LiveScene";
 import { MobileNavigation } from "./MobileNavigation";
-import { ThemeToggle } from "./ThemeToggle";
 
 export function ArrowIcon() {
   return (
@@ -29,7 +28,6 @@ export function SiteHeader() {
           <Link href="/playground">Playground</Link>
         </nav>
         <div className="site-header__actions">
-          <ThemeToggle />
           <MobileNavigation />
         </div>
       </div>

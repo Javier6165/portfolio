@@ -31,7 +31,7 @@ Los case studies interiores no forman parte de esta implementación. Atlas, Nort
 - **Playground:** shelf experimental posterior a la prueba profesional.
 - **Contact:** handoff honesto en estado privado y sin contacto ficticio.
 
-Dark y Light comparten exactamente componentes, tipografía, geometría y timings. Solo cambian tokens cromáticos y fotografías.
+Dark concentra componentes, tipografía, geometría, timings y fotografía en una única dirección visual.
 
 ## 3. Estados WIP y editor
 
@@ -131,9 +131,9 @@ Cobertura automatizada:
 - Stop/Escape y Auto-follow;
 - tabs con roving focus, simulación AI y Replay;
 - Reference Ledger sin prueba social inventada;
-- Dark/Light con geometría y tipografía idénticas;
+- apariencia Dark sin estado alternativo;
 - reduced motion, no-JS, storage bloqueado y memoria recurrente;
-- axe en Home Dark/Light y case study;
+- axe en Home Dark y case study;
 - matriz visual 1440×900, 1280×800, 768×1024 y 390×844.
 
 Comandos obligatorios:
@@ -144,7 +144,9 @@ npm test
 npm run test:e2e
 ```
 
-Resultado del addendum: lint, build y smoke verdes; 42 combinaciones E2E descubiertas, 24 ejecutadas y 18 skips intencionales de cobertura duplicada. Axe queda limpio, la matriz Dark/Light completa no tiene overflow y Spotlight comprueba que el comentario esté completamente dentro del viewport.
+Resultado del addendum: lint, build y smoke verdes; 42 combinaciones E2E descubiertas, 24 ejecutadas y 18 skips intencionales de cobertura duplicada. Axe queda limpio, la matriz responsive Dark no tiene overflow y Spotlight comprueba que el comentario esté completamente dentro del viewport.
+
+Addendum 27 de julio de 2026: Light se retiró por decisión de producto. `ThemeToggle`, `data-theme`, persistencia, transiciones, overrides, retratos claros y pruebas duplicadas ya no forman parte de la arquitectura. Dark es el único contrato visual.
 
 ## 9. Límites conocidos
 

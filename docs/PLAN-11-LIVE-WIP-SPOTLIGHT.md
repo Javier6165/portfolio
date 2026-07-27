@@ -94,7 +94,7 @@ Cambios:
 
 ### 2.2 Sistema visual final
 
-La dirección mantiene el grid y los modos Dark/Light, pero eleva la variedad compositiva:
+La dirección mantiene el grid y una única apariencia Dark, pero eleva la variedad compositiva:
 
 - **Editorial stage:** Hero, About y Contact pueden usar imagen, tipografía y espacio como una sola composición.
 - **Evidence viewer:** Work, Product practice y AI muestran artefactos grandes y legibles, no miniaturas decorativas.
@@ -151,7 +151,7 @@ No se mantiene una cola de animaciones. Nunca se reproduce una escena atrasada p
 Durante la edición:
 
 - se conserva la posición exacta y se bloquea el desplazamiento de la página;
-- un borde cobalto/coral según tema recorre el viewport;
+- un borde azul con señal lima recorre el viewport;
 - cuatro scrims atenúan el exterior del stage sin aplicar blur al texto seleccionado;
 - una barra superior muestra avatar `JO`, `Following Javier`, el nombre de la acción y `Stop following`;
 - un progreso discreto comunica la duración restante;
@@ -198,7 +198,7 @@ Reglas:
 - entra después de seleccionar y sale antes de devolver el control;
 - nunca tapa el heading, CTA ni contenido editado;
 - cada panel tiene exactamente los valores que cambian; no contiene controles falsos irrelevantes;
-- Dark y Light usan la misma geometría, tipografía, timing y componentes; solo cambian tokens y retratos.
+- Dark usa una sola geometría, tipografía, timing y familia de componentes.
 
 ## 5. Comentarios
 
@@ -663,7 +663,7 @@ Gate: un recruiter puede explicar quién es Javier, qué tipo de producto diseñ
 
 - rediseñar Hero, Snapshot, Product practice, AI, About, Testimonials y Playground sin narrativa WIP;
 - preservar y preparar Work para screenshots reales;
-- crear snapshots finales en 1440 y 390, Dark/Light;
+- crear snapshots finales en 1440 y 390, Dark;
 - revisar escala tipográfica, silueta de página, contraste, densidad y affordances;
 - no construir Spotlight todavía.
 
@@ -755,13 +755,13 @@ Gate: Follow mode aporta narrativa sin impedir completar Home y la UI base manti
 - no-JS final completo;
 - teclado puede abandonar Follow y continuar;
 - sin focus trap, pérdida de foco o cambio programático de sección;
-- axe y contraste Dark/Light.
+- axe y contraste Dark.
 
 ### Visual y rendimiento
 
 - baselines separados `wip`, `editing` y `settled` para cada acto principal;
 - 1440×900, 1280×800, 768×1024 y 390×844;
-- Dark/Light con geometría exacta;
+- Dark con geometría exacta;
 - CLS ≤`0,03` en Home y sin overflow;
 - Spotlight responde en el siguiente frame y no añade canvas/WebGL.
 

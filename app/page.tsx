@@ -13,14 +13,12 @@ import styles from "./HomePage.module.css";
 
 function AboutPortrait() {
   return (
-    <figure className={`${styles.aboutPortrait} theme-swap`} role="img" aria-label="Portrait of Javier Ortiz; the photograph changes with the selected theme.">
-      {(["system", "human"] as const).map((theme) => (
-        <picture key={theme}>
-          <source type="image/avif" srcSet={`/images/portraits/about-${theme}-960.avif 960w, /images/portraits/about-${theme}-1440.avif 1440w`} sizes="(max-width: 720px) 100vw, 58vw" />
-          <source type="image/webp" srcSet={`/images/portraits/about-${theme}-960.webp 960w, /images/portraits/about-${theme}-1440.webp 1440w`} sizes="(max-width: 720px) 100vw, 58vw" />
-          <img className={`portrait portrait--${theme}`} src={`/images/portraits/about-${theme}.jpg`} alt="" aria-hidden="true" width={theme === "system" ? 1439 : 1314} height="1800" loading="lazy" />
-        </picture>
-      ))}
+    <figure className={styles.aboutPortrait} role="img" aria-label="Portrait of Javier Ortiz.">
+      <picture>
+        <source type="image/avif" srcSet="/images/portraits/about-system-960.avif 960w, /images/portraits/about-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
+        <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
+        <img className="portrait" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
+      </picture>
       <figcaption aria-hidden="true"><span>PORTRAIT / 02</span><b>Y 48%</b></figcaption>
     </figure>
   );

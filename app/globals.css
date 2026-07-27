@@ -6,7 +6,8 @@
  * 4. pages      — editorial compositions by route/section
  * 5. responsive — intentional tablet/mobile recomposition and reduced motion
  *
- * Theme changes should use semantic variables in :root, not page-level colors.
+ * Dark is the portfolio's single visual direction. Components consume semantic
+ * variables so the palette remains coherent without a runtime theme system.
  */
 @layer reset, base, components, pages, responsive;
 
@@ -49,25 +50,6 @@
     color-scheme: dark;
   }
 
-  :root[data-theme="human"] {
-    --canvas: #f6efe4;
-    --canvas-rgb: 246, 239, 228;
-    --surface: #eee2d4;
-    --surface-raised: #fff9ef;
-    --ink: #182d51;
-    --muted: #625c55;
-    --line: rgba(24, 45, 81, 0.16);
-    --line-strong: rgba(24, 45, 81, 0.36);
-    --signal: #8f2d28;
-    --signal-on-inverse: #ffab9b;
-    --cold: #2455cf;
-    --violet: #8f3f8c;
-    --blue: #176b8b;
-    --shadow: rgba(62, 43, 27, 0.16);
-    --narrative-blue: #2455cf;
-    color-scheme: light;
-  }
-
   html { background: var(--canvas); }
 
   body {
@@ -81,7 +63,6 @@
     font-size: 1rem;
     line-height: 1.5;
     text-rendering: optimizeLegibility;
-    transition: background-color 500ms cubic-bezier(.2,.7,.2,1), color 400ms ease;
   }
 
   ::selection { background: var(--signal); color: var(--canvas); }
@@ -128,13 +109,6 @@
   .desktop-nav a:hover { color: var(--ink); }
   .desktop-nav a:hover::after { right: 0; }
   .site-header__actions { display: flex; align-items: center; gap: 1rem; }
-  .theme-toggle { display: inline-flex; align-items: center; gap: .65rem; border: 0; background: transparent; cursor: pointer; padding: .5rem; font: .65rem var(--font-mono); letter-spacing: .04em; text-transform: uppercase; }
-  .theme-toggle__track { position: relative; width: 2.55rem; height: 1.35rem; padding: .18rem; display: flex; border: 1px solid var(--line-strong); border-radius: 999px; }
-  .theme-toggle__dot { width: .86rem; height: .86rem; border-radius: 50%; background: var(--ink); transition: translate 420ms cubic-bezier(.16,1,.3,1), background 300ms ease; }
-  [data-theme="human"] .theme-toggle__dot { translate: 1.12rem 0; }
-  .theme-toggle__human { display: none; }
-  [data-theme="human"] .theme-toggle__system { display: none; }
-  [data-theme="human"] .theme-toggle__human { display: inline; }
   .mobile-nav { display: none; }
   .mobile-nav summary { list-style: none; cursor: pointer; width: 2.5rem; height: 2.5rem; display: grid; place-content: center; gap: .35rem; }
   .mobile-nav summary::-webkit-details-marker { display: none; }
@@ -158,14 +132,7 @@
   .text-link--back svg { transform: rotate(180deg); }
   .text-link--back:hover svg { transform: rotate(180deg) translateX(.25rem); }
 
-  .portrait { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 650ms cubic-bezier(.2,.7,.2,1), filter 650ms ease; }
-  .portrait--human { opacity: 0; }
-  [data-theme="human"] .portrait--system { opacity: 0; }
-  [data-theme="human"] .portrait--human { opacity: 1; }
-  .mode-caption { position: absolute; right: 1rem; bottom: 1rem; padding: .42rem .6rem; border-radius: 999px; background: rgba(13,14,16,.74); color: #f2f1eb; backdrop-filter: blur(12px); font: .56rem var(--font-mono); letter-spacing: .06em; transition: opacity 400ms ease; }
-  .mode-caption--human { opacity: 0; color: #16171a; background: rgba(243,240,232,.8); }
-  [data-theme="human"] .mode-caption--system { opacity: 0; }
-  [data-theme="human"] .mode-caption--human { opacity: 1; }
+  .portrait { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: filter 650ms ease; }
 
   [data-motion="reduce"] *, [data-motion="reduce"] *::before, [data-motion="reduce"] *::after {
     animation-duration: .001ms !important;
@@ -343,7 +310,7 @@
 
 @layer responsive {
   @media (max-width: 1000px) {
-    .desktop-nav { display: none; }.mobile-nav { display: block; }.theme-toggle { gap: .4rem; }.theme-toggle__label { font-size: .54rem; }
+    .desktop-nav { display: none; }.mobile-nav { display: block; }
     .display { font-size: clamp(4rem, 11vw, 7.4rem); }
     .section-heading h2, .section-heading--split h2 { grid-column: 4 / 13; }.section-heading > p:last-child { grid-column: 7 / 13; margin-top: 1rem; }
     .project-card__copy { grid-column: 1 / 7; }.project-card .project-visual { grid-column: 7 / 13; }.project-card__cta { grid-column: 1 / 7; }
@@ -613,16 +580,6 @@
 
 /* Signature interactions and reusable case-study modules. */
 @layer components {
-  .theme-wipe {
-    position: fixed;
-    z-index: 999;
-    inset: 0;
-    pointer-events: none;
-    background: var(--signal);
-    transform: scaleX(0);
-    opacity: 0;
-  }
-
   .project-card__media { position: relative; grid-column: 7 / 13; align-self: stretch; display: grid; place-items: center; min-height: 34rem; perspective: 90rem; }
   .project-card__layer { position: absolute; width: 86%; height: 78%; border: 1px solid color-mix(in srgb, var(--card-accent) 34%, transparent); border-radius: var(--radius-md); background: color-mix(in srgb, var(--card-accent) 7%, var(--canvas)); transition: transform 750ms cubic-bezier(.16,1,.3,1), opacity 500ms ease; }
   .project-card__layer--back { transform: translate3d(3.5%, -5%, -4rem) rotate(4deg); opacity: .42; }
@@ -662,8 +619,7 @@
 
   .profile-intro { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center; padding-bottom: clamp(4rem, 8vw, 8rem); }
   .profile-intro__portrait { position: relative; grid-column: 1 / 6; min-height: clamp(34rem, 47vw, 47rem); overflow: hidden; border-radius: var(--radius-lg); background: var(--surface); box-shadow: 0 2rem 7rem var(--shadow); }
-  .profile-intro__portrait .portrait--system { object-position: 52% 38%; filter: contrast(1.05) saturate(.78); }
-  .profile-intro__portrait .portrait--human { object-position: 54% 50%; }
+  .profile-intro__portrait .portrait { object-position: 52% 38%; filter: contrast(1.05) saturate(.78); }
   .profile-intro__copy { grid-column: 7 / 13; padding-left: clamp(0rem, 3vw, 3rem); }
   .profile-intro--live-file { align-items: start; padding-top: clamp(1rem, 2vw, 2rem); }
   .profile-intro__headline { grid-column: 1 / 7; position: sticky; top: 7rem; }

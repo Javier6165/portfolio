@@ -39,7 +39,8 @@ test("the first visit opens a working file slowly and cannot be skipped", async 
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(hero.getByRole("img", { name: /Portrait of Javier Ortiz/ })).toBeVisible();
   await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
-  await expect(hero.locator(".portrait--system")).toHaveCSS("opacity", "1");
+  await expect(hero.locator("img.portrait")).toHaveCount(1);
+  await expect(hero.locator("img.portrait")).toHaveAttribute("src", /hero-system\.jpg/);
 
   // The opening may own scroll only while its timeline is active. Its global
   // gesture listeners remain mounted with the hero, so verify that the handoff
@@ -96,50 +97,17 @@ test("reduced motion resolves intro and all Live File scenes immediately", async
   await expect(page.locator("[data-follow-dock]")).toHaveCount(0);
 });
 
-test("Light changes colour and photography without changing layout or type", async ({ page, isMobile }) => {
-  test.skip(isMobile, "The shared theme geometry is verified once on desktop.");
+test("the portfolio exposes one intentional Dark appearance", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The appearance contract is verified once on desktop.");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
   await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
-
-  const selectors = [
-    "h1",
-    "#snapshot-title",
-    "#work-title",
-    "#practice-title",
-    "#ai-title",
-    "#about-title",
-    "#testimonials-title",
-    ".project-card",
-  ];
-  const readDesign = () => page.evaluate((targets) => targets.map((selector) => {
-    const element = document.querySelector(selector)!;
-    const style = getComputedStyle(element);
-    const bounds = element.getBoundingClientRect();
-    return {
-      selector,
-      top: Math.round((bounds.top + scrollY) * 10) / 10,
-      width: Math.round(bounds.width * 10) / 10,
-      height: Math.round(bounds.height * 10) / 10,
-      fontFamily: style.fontFamily,
-      fontSize: style.fontSize,
-      fontWeight: style.fontWeight,
-      lineHeight: style.lineHeight,
-      letterSpacing: style.letterSpacing,
-      borderRadius: style.borderRadius,
-    };
-  }), selectors);
-
-  const darkDesign = await readDesign();
-  const darkCanvas = await page.locator("html").evaluate((element) => getComputedStyle(element).backgroundColor);
-  await page.getByRole("button", { name: "Use Light mode" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "human");
-
-  expect(await readDesign()).toEqual(darkDesign);
-  expect(await page.locator("html").evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(darkCanvas);
-  await expect(page.locator(".portrait--system").first()).toHaveCSS("opacity", "0");
-  await expect(page.locator(".portrait--human").first()).toHaveCSS("opacity", "1");
+  await expect(page.getByRole("button", { name: /mode/i })).toHaveCount(0);
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", /.+/);
+  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
+  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(13, 14, 16)");
+  expect(await page.locator("html").evaluate((element) => element.outerHTML)).not.toMatch(/hero-human|about-human|javier-theme|theme-toggle/);
 });
 
 test("forced WIP and final states expose visibly different section designs", async ({ page, isMobile }) => {
@@ -358,19 +326,12 @@ test("the portfolio remains useful without JavaScript", async ({ browser, isMobi
   await context.close();
 });
 
-test("theme storage failures, mobile navigation and orientation chrome remain robust", async ({ page, isMobile }) => {
+test("mobile navigation and orientation chrome remain robust", async ({ page, isMobile }) => {
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
 
-  await page.getByRole("button", { name: "Use Light mode" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "human");
-  await page.evaluate(() => {
-    Object.defineProperty(Storage.prototype, "setItem", { configurable: true, value: () => { throw new Error("Blocked"); } });
-  });
-  await page.getByRole("button", { name: "Use Dark mode" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "system");
   expect(pageErrors).toEqual([]);
 
   if (isMobile) {
@@ -385,13 +346,10 @@ test("theme storage failures, mobile navigation and orientation chrome remain ro
   }
 });
 
-test("core routes and both themes have no automatic accessibility violations", async ({ page, isMobile }) => {
+test("core routes have no automatic accessibility violations", async ({ page, isMobile }) => {
   test.skip(isMobile, "Axe is run once; mobile reflow has dedicated coverage.");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-
-  await page.getByRole("button", { name: "Use Light mode" }).click();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 
   await page.goto("/work/northstar");

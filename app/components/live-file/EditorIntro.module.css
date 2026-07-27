@@ -121,13 +121,9 @@
   clip-path: inset(0 var(--portrait-reveal) 0 0 round clamp(1rem, 2vw, 2rem));
 }
 
-.portrait :global(.portrait--system) {
+.portrait :global(.portrait) {
   object-position: 52% 36%;
   filter: contrast(1.06) saturate(0.76);
-}
-
-.portrait :global(.portrait--human) {
-  object-position: 54% 47%;
 }
 
 .portraitCaption {
@@ -408,12 +404,6 @@
     url("/images/portraits/hero-system-thumb.avif") 50% 32% / cover;
 }
 
-:global(html[data-theme="human"]) .assetCard > i {
-  background:
-    linear-gradient(180deg, transparent 40%, rgba(25, 35, 60, 0.2)),
-    url("/images/portraits/hero-human-thumb.avif") 50% 42% / cover;
-}
-
 .assetCard div {
   min-width: 0;
   display: grid;
@@ -591,19 +581,6 @@
   --editor-grid: rgba(255, 255, 255, 0.035);
   --selection: #6a7dff;
   background: #111317;
-}
-
-:global(html[data-theme="human"][data-narrative="first"]) .stage[data-expanded="false"],
-:global(html[data-theme="human"][data-narrative="return"]) .stage[data-expanded="false"],
-:global(html[data-theme="human"][data-narrative="familiar"]) .stage[data-expanded="false"] {
-  --editor-chrome: #e8dfd2;
-  --editor-surface: #f6efe4;
-  --editor-ink: #182d51;
-  --editor-muted: #6f6d6a;
-  --editor-line: rgba(24, 45, 81, 0.18);
-  --editor-grid: rgba(24, 45, 81, 0.055);
-  --selection: #1d55d5;
-  background: #ded6ca;
 }
 
 :global(html[data-narrative="first"]) .stage[data-expanded="false"] .canvasGrid,
