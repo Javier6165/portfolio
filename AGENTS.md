@@ -1,6 +1,6 @@
 # Instrucciones del repositorio de la web
 
-## Antes de editar
+## Lectura mínima antes de editar
 
 Lee, en este orden:
 
@@ -8,16 +8,17 @@ Lee, en este orden:
 2. `docs/PROJECT-CONTEXT.md`
 3. `docs/DECISIONS.md`
 4. `docs/ARCHITECTURE.md`
-5. `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`
-6. `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`
-7. `docs/AUDIT-11-LIVE-WIP-SPOTLIGHT.md`
-8. `docs/PLAN-12-GUIDED-FIRST-PASS.md`
-9. `docs/PLAN-13-NARRATIVE-VERTICAL.md`
-10. `docs/PLAN-14-HUMAN-AUDIT-PASS.md`
-11. `docs/CONTENT-AND-RELEASE.md`
-12. `docs/ASSETS.md` si vas a tocar imágenes.
+5. `docs/PLAN-14-HUMAN-AUDIT-PASS.md`
 
-Los documentos 07–10 fueron consolidados y retirados; Git conserva su historial.
+Después, según la tarea:
+
+- `docs/CONTENT-AND-RELEASE.md` para casos reales, contacto o lanzamiento;
+- `docs/ASSETS.md` si vas a tocar imágenes;
+- Plan 11 + Implementation/Audit 11 para UI/WIP y fallos ya resueltos;
+- Plan 12 solo para el razonamiento histórico de captura/reencuadre;
+- Plan 13 para la apertura causal y el origen del patrón comment-first.
+
+Plan 14 y `DECISIONS.md` prevalecen ante cualquier contradicción con documentos históricos. Los documentos 07–10 anteriores fueron consolidados y retirados; Git conserva su historial.
 
 ## Contratos que debes preservar
 

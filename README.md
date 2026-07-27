@@ -9,10 +9,9 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - A semantic Dark hero with Javier Ortiz, Senior Product Designer, portrait and `Explore`.
 - One focused Dark visual system, with no theme selector or alternate appearance state.
 - Three clearly labelled fictitious case studies.
-- Three guided WIP → edit → final chapters, followed by five optional live edits.
-- A persistent Javier presence with portrait, status and a finite non-blocking micro-adjustment score.
+- One required Snapshot WIP → edit → final chapter; later live edits only run after the visitor chooses `Follow Javier`.
+- A persistent Javier presence with portrait, status and a finite, humorous, non-blocking micro-edit score.
 - A provisional Reference Ledger: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
-- One required Snapshot edit that teaches the Live File rule; every later Spotlight is opt-in through `Follow Javier`, cancellable at any time.
 - A consented returning-visitor memory with replay, forget and motion controls.
 - An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.
 - Progressive motion, reduced-motion and no-JavaScript fallbacks.
@@ -30,22 +29,23 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - Automated QA: `tests/rendered-html.test.mjs` and `tests/e2e/`
 - Local assets: `public/`
 
-## Documentation
+## Current handoff documentation
 
 - `AGENTS.md`: operational rules for future Codex sessions.
 - `docs/PROJECT-CONTEXT.md`: brief, profile and current response.
 - `docs/DECISIONS.md`: current product and technical decisions.
 - `docs/ARCHITECTURE.md`: routes, visual system, narrative, storage and evidence contracts.
-- `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`: approved Home redesign and score.
-- `docs/PLAN-12-GUIDED-FIRST-PASS.md`: current onboarding, mandatory first-pass rhythm and returning-visitor controls.
-- `docs/PLAN-13-NARRATIVE-VERTICAL.md`: current causal opening and comment-first pilot for Snapshot, Work and Product practice.
 - `docs/PLAN-14-HUMAN-AUDIT-PASS.md`: current one-chapter + opt-in Follow contract, ambient humour, timing and consent refinements.
-- `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`: current components, states, timings, memory and QA.
-- `docs/AUDIT-11-LIVE-WIP-SPOTLIGHT.md`: post-implementation audit and next plan.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 
-Superseded choreography, hero experiments and interim audits were removed after their durable decisions were consolidated into 11 and `DECISIONS.md`. Git history remains the archive; the documentation above is the current handoff set.
+Historical but useful on demand:
+
+- Plan 11 + Implementation/Audit 11: approved Home UI/WIP and corrected failure modes.
+- Plan 12: framing and scroll-capture rationale; mandatory scope is superseded.
+- Plan 13: causal opening and comment-first rationale; later-scene scope is superseded by Plan 14.
+
+Superseded choreography, hero experiments and interim audits were removed after their durable decisions were consolidated. Git history remains the archive; a new Codex only needs the five-document route in `AGENTS.md` before acting.
 
 ## Run and validate
 
