@@ -2,7 +2,7 @@
 
 Fecha: 27 de julio de 2026.
 
-Estado: **implementado y parcialmente refinado por Plan 13**. Sigue siendo el contrato de obligatoriedad, reencuadre, memoria, salida y capítulos 04–08. `PLAN-13-NARRATIVE-VERTICAL.md` prevalece para la apertura, timings y guion de Snapshot, Work y Product practice. El resto de este documento se conserva para describir la implementación que aún no ha migrado.
+Estado: **implementado y sustituido parcialmente por Plan 14**. Conserva el razonamiento histórico sobre reencuadre y bloqueo, pero ya no rige ocho capítulos: solo Snapshot, Work y Product practice son obligatorios. `PLAN-13-NARRATIVE-VERTICAL.md` prevalece para la apertura y `PLAN-14-HUMAN-AUDIT-PASS.md` para obligatoriedad, capítulos 04–08, consentimiento y presencia continua.
 
 ## 1. Problema observado
 

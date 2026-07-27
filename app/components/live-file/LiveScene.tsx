@@ -19,6 +19,8 @@ type LiveSceneProps = {
   minVisibility?: number;
   comment?: string;
   commentFirst?: boolean;
+  requiredFirstVisit?: boolean;
+  cameraOffsetY?: number;
   draftLabel?: string;
   className?: string;
 };
@@ -37,6 +39,8 @@ export function LiveScene({
   minVisibility = 0.58,
   comment,
   commentFirst = false,
+  requiredFirstVisit = false,
+  cameraOffsetY = 0,
   draftLabel,
   className = "",
 }: LiveSceneProps) {
@@ -46,12 +50,12 @@ export function LiveScene({
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || !introComplete) return;
-    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment, commentFirst });
-  }, [action, comment, commentFirst, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, spotlightMs, targetSelector, tool, verb]);
+    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment, commentFirst, requiredFirstVisit, cameraOffsetY });
+  }, [action, cameraOffsetY, comment, commentFirst, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, requiredFirstVisit, spotlightMs, targetSelector, tool, verb]);
 
   function handOff(event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) {
     const root = rootRef.current;
-    if (!root || event.target === root || mandatoryFirstVisit) return;
+    if (!root || event.target === root || (mandatoryFirstVisit && requiredFirstVisit)) return;
     settleScene(root, true);
   }
 

@@ -275,13 +275,13 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
 
   const markCueSeen = useCallback((cueId: string) => {
     seenCueIds.current.add(cueId);
-    // Consent is offered only after the visitor has experienced the concept,
-    // so it never competes with the hero or the first Live File correction.
-    if (consentRef.current === "unknown" && seenCueIds.current.size >= 2 && consentOfferTimerRef.current === null) {
+    // Consent is offered only after the complete three-chapter guided pass.
+    // The surface also listens for Spotlight state, so it can never cover an edit.
+    if (consentRef.current === "unknown" && seenCueIds.current.size >= 3 && consentOfferTimerRef.current === null) {
       consentOfferTimerRef.current = window.setTimeout(() => {
         consentOfferTimerRef.current = null;
         if (consentRef.current === "unknown") setShowConsent(true);
-      }, 900);
+      }, 2400);
     }
     if (consentRef.current === "granted") {
       const memory = readMemory();

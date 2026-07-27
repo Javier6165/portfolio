@@ -111,7 +111,7 @@ La apertura conserva sus listeners mientras el hero sigue montado, pero todos co
 - `liveReplayToken` para `Replay live edits`;
 - reset de Auto-follow al usar `Forget this device`.
 
-La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. La preferencia se ofrece tras dos escenas vistas, con `900 ms` de separación, y usa una superficie fija para no desplazar contenido. La exclusión de escenas y Auto-follow son session-only. El dock expone `Following Javier · Next edit when you pause`, se pliega al primer scroll y ofrece `Replay edits` y `Pause` tras expansión.
+La memoria persistente de visitas sigue necesitando `Allow`; solo modifica el tratamiento de la intro. Plan 14 ofrece la preferencia tras los tres capítulos guiados y `2,4 s` de calma, y la desmonta durante Spotlight. La exclusión de escenas y Auto-follow son session-only. El dock muestra retrato/estado de Javier, informa de tres edits guiados y después expone Replay y `Show finished file`.
 
 ## 7. Motion y peso
 

@@ -9,9 +9,10 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - A semantic Dark hero with Javier Ortiz, Senior Product Designer, portrait and `Explore`.
 - One focused Dark visual system, with no theme selector or alternate appearance state.
 - Three clearly labelled fictitious case studies.
-- A complete nine-act Home score with explicit WIP → edit → final states.
+- Three guided WIP → edit → final chapters, followed by five optional live edits.
+- A persistent Javier presence with portrait, status and a finite non-blocking micro-adjustment score.
 - A provisional Reference Ledger: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
-- A guided first pass that re-centres and locks each required edit long enough to compare WIP → correction; returning visitors regain skip/replay controls.
+- A guided first pass that re-centres and locks three required edits long enough to compare WIP → correction; later scenes and returning visits retain skip/replay controls.
 - A consented returning-visitor memory with replay, forget and motion controls.
 - An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.
 - Progressive motion, reduced-motion and no-JavaScript fallbacks.
@@ -38,6 +39,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/PLAN-11-LIVE-WIP-SPOTLIGHT.md`: approved Home redesign and score.
 - `docs/PLAN-12-GUIDED-FIRST-PASS.md`: current onboarding, mandatory first-pass rhythm and returning-visitor controls.
 - `docs/PLAN-13-NARRATIVE-VERTICAL.md`: current causal opening and comment-first pilot for Snapshot, Work and Product practice.
+- `docs/PLAN-14-HUMAN-AUDIT-PASS.md`: current three-chapter contract, ambient presence, timing and consent refinements.
 - `docs/IMPLEMENTATION-11-LIVE-WIP-SPOTLIGHT.md`: current components, states, timings, memory and QA.
 - `docs/AUDIT-11-LIVE-WIP-SPOTLIGHT.md`: post-implementation audit and next plan.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.

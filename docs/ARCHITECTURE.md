@@ -101,7 +101,7 @@ Claves:
 
 `NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Solo un tier recurrente consentido habilita Skip y controles opcionales; sin memoria, una pestaña nueva vuelve a ser primera visita.
 
-`MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera dos momentos vistos y `900 ms` antes de ofrecerlo; la superficie es fija para no modificar geometría ni interrumpir controles.
+`MemoryConsent` no aparece al terminar la intro. `NarrativeProvider` espera los tres momentos guiados y `2,4 s` antes de ofrecerlo; la superficie es fija y se desmonta durante Spotlight para no modificar geometría ni competir con la coreografía.
 
 ## Dirección visual y fotografías
 

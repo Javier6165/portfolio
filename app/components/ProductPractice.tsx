@@ -101,6 +101,7 @@ export function ProductPractice() {
   return (
     <div className={styles.root}>
       <div className={styles.ungrouped} aria-hidden="true">
+        <b>Loose skills / no workflow</b>
         <span>Systems thinking</span><span>Facilitation</span><span>Interaction design</span>
         <span>Design systems</span><span>Prototyping</span><span>Product strategy</span>
       </div>

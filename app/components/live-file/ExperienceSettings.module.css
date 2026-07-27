@@ -16,6 +16,13 @@
   color: var(--ink);
   box-shadow: 0 1.5rem 5rem var(--shadow);
   backdrop-filter: blur(20px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+:global(html[data-spotlight="active"]) .consent {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(.5rem);
 }
 
 .consent p {

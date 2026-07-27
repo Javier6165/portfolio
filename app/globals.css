@@ -52,6 +52,16 @@
 
   html { background: var(--canvas); }
 
+  /* The pre-paint bootstrap owns the opening before React can mount gesture
+     listeners. This closes the small hydration window where an eager wheel or
+     PageDown could move the document underneath the working-file intro. */
+  html[data-narrative="first"],
+  html[data-narrative="return"],
+  html[data-narrative="familiar"] {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   body {
     min-height: 100vh;
     overflow-x: hidden;

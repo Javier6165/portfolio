@@ -148,6 +148,14 @@
   pointer-events: none;
 }
 .ungrouped span { padding: 0.6rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 0.4rem; background: var(--surface-raised); font-size: 0.85rem; }
+.ungrouped b {
+  flex-basis: 100%;
+  margin-bottom: .25rem;
+  color: var(--muted);
+  font: 400 .65rem var(--font-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
 
 :global([data-live-state="wip"]) .ungrouped,
 :global([data-live-state="observing"]) .ungrouped { opacity: 1; }

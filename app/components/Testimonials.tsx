@@ -31,11 +31,13 @@ export function Testimonials() {
         label="References / Source pending"
         targetSelector={`.${styles.stage}`}
         tool="content-status"
-        action="Checking provenance"
+        action="Checking the source before the quote"
         properties={["Quote · Unverified", "Variant · Pending", "Source · Required"]}
-        readMs={4200}
-        spotlightMs={9200}
-        comment="No source, no quote."
+        readMs={1000}
+        spotlightMs={3600}
+        comment="No source, no quote. Convenient rule."
+        commentFirst
+        draftLabel="Draft · provenance missing"
         className={styles.liveScene}
       >
         <div className={styles.stage}>

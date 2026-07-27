@@ -605,7 +605,7 @@
 
 .premise > div { display:grid; gap:.14rem; }
 .premise strong { font-size:.82rem; font-weight:570; line-height:1.2; }
-.premise span { color:var(--editor-muted); font:.54rem var(--font-mono); text-transform:uppercase; }
+.premise span { color:color-mix(in srgb,var(--editor-ink) 72%,transparent); font:.66rem/1.35 var(--font-mono); }
 
 :global(html[data-narrative="first"]) .stage[data-expanded="false"],
 :global(html[data-narrative="return"]) .stage[data-expanded="false"],
@@ -784,7 +784,7 @@
   .loaderCopy strong { font-size: 1.1rem; }
 
   .premise strong { font-size:.72rem; }
-  .premise span { font-size:.47rem; }
+  .premise span { font-size:.57rem; }
 
   .titleSelection {
     top: 17.5%;

@@ -20,7 +20,7 @@ export type SpotlightView = {
   commentFirst?: boolean;
 };
 
-export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
+export function SpotlightChrome({ active, showDock, guidedFirstVisit, presenceStatus, onCancel, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onReplay: () => void; onStop: () => void }) {
   const [dockExpanded, setDockExpanded] = useState(true);
   const dockIntroducedRef = useRef(false);
   const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
@@ -51,11 +51,11 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, 
   return (
     <>
       {showDock && !active ? (
-        <div className={styles.dock} data-follow-dock data-guided={guidedFirstVisit ? "true" : "false"} data-expanded={dockExpanded ? "true" : "false"}>
+        <div className={styles.dock} data-follow-dock data-guided={guidedFirstVisit ? "true" : "false"} data-presence-status={presenceStatus} data-expanded={dockExpanded ? "true" : "false"}>
           {guidedFirstVisit ? (
             <>
-              <div className={styles.guidedMark}><i /> LIVE FILE</div>
-              <p><strong>Guided live file</strong><span>Scroll on — Javier will finish each section</span></p>
+              <div className={styles.guidedMark}><span className={styles.avatarPortrait} /><i /> JAVIER CONNECTED</div>
+              <p><strong>Three guided edits</strong><span>Then the finished file is yours</span></p>
             </>
           ) : (
             <>
@@ -66,9 +66,9 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, onCancel, 
                 aria-label={dockExpanded ? "Collapse Live File controls" : "Expand Live File controls"}
                 onClick={() => setDockExpanded((expanded) => !expanded)}
               >
-                <i /> <span>LIVE FILE</span>
+                <span className={styles.avatarPortrait} /><i /> <span>JAVIER</span>
               </button>
-              <p><strong>Optional live edits</strong><span>Replay or continue with the finished file</span></p>
+              <p><strong>{presenceStatus === "editing" ? "Making a small adjustment" : presenceStatus === "elsewhere" ? "Editing elsewhere in the file" : presenceStatus === "done" ? "File tidy. For now." : "Javier is still in the file"}</strong><span>Optional live edits · your scroll stays yours</span></p>
               <div className={styles.dockActions} aria-hidden={dockExpanded ? undefined : "true"}>
                 <button type="button" onClick={onReplay}>Replay guided edits</button>
                 <button type="button" onClick={onStop}>Show finished file</button>

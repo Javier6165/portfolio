@@ -44,11 +44,13 @@ export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactN
         label="Preview ready / Your turn"
         targetSelector=".footer-contact"
         tool="file-status"
-        action="Preparing the handoff"
+        action="Closing the working file"
         properties={["Editing → Ready for review", "Private preview", "Your turn"]}
-        readMs={3000}
-        spotlightMs={5600}
+        readMs={900}
+        spotlightMs={3000}
         comment="Okay. Your turn."
+        commentFirst
+        draftLabel="Draft · handoff still open"
         className="footer-live-scene"
       >
         <div className="shell footer-grid">

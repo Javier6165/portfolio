@@ -15,8 +15,19 @@
 .snapshotFacts span { color: var(--muted); font: 0.76rem var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
 .snapshotFacts strong { max-width: 14ch; margin-top: auto; font-size: clamp(1.25rem, 1.75vw, 1.75rem); font-weight: 540; line-height: 1.05; }
 .snapshotFacts small { margin-top: .45rem; color: var(--muted); font-size: .85rem; }
+.snapshotFacts::before { content: ""; display: none; }
 :global([data-live-state="wip"]).snapshotScene .snapshotFacts,
 :global([data-live-state="observing"]).snapshotScene .snapshotFacts { grid-template-columns: 1fr; margin-top: 6rem; border-block-color: var(--line); }
+:global([data-live-state="wip"]).snapshotScene .snapshotFacts::before,
+:global([data-live-state="observing"]).snapshotScene .snapshotFacts::before {
+  content: "Senior Product Designer with 5+ years of experience across complex backoffice systems, rule engines, CMS platforms and AI-assisted prototyping, recently trusted with Lead responsibility.";
+  display: block;
+  max-width: 48ch;
+  padding: 1.25rem 0 1.8rem;
+  color: var(--muted);
+  font-size: clamp(1.1rem, 1.75vw, 1.55rem);
+  line-height: 1.28;
+}
 :global([data-live-state="wip"]).snapshotScene .snapshotFacts li,
 :global([data-live-state="observing"]).snapshotScene .snapshotFacts li { min-height: 0; display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; padding: .45rem 0; border-right: 0; opacity: .54; }
 :global([data-live-state="wip"]).snapshotScene .snapshotFacts span,
@@ -106,6 +117,8 @@
   .snapshotFacts strong { font-size: 1.15rem; }
   :global([data-live-state="wip"]).snapshotScene .snapshotFacts li,
   :global([data-live-state="observing"]).snapshotScene .snapshotFacts li { grid-template-columns: 5rem 1fr; }
+  :global([data-live-state="wip"]).snapshotScene .snapshotFacts::before,
+  :global([data-live-state="observing"]).snapshotScene .snapshotFacts::before { font-size: 1rem; }
   :global([data-live-state="wip"]).workScene :global(.project-card__media)::after,
   :global([data-live-state="observing"]).workScene :global(.project-card__media)::after { max-width: 88%; overflow: hidden; text-overflow: ellipsis; font-size: .58rem; }
   .practiceStage { min-height: 0; }

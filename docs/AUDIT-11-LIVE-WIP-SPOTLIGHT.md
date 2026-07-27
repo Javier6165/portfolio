@@ -12,6 +12,8 @@ Addendum visual 27 de julio de 2026: Light se retiró porque duplicaba sistema, 
 
 Addendum Plan 12: el prólogo integrado y las salidas fáciles seguían comprimiendo o suprimiendo la historia. La primera visita usa ahora loading explícito, intro de ~13,5 s y ocho escenas obligatorias con lectura bloqueada, reencuadre secuencial y tiempos duplicados. Las salidas se reservan a visitas recurrentes consentidas. QA y riesgo deliberado se documentan en `PLAN-12-GUIDED-FIRST-PASS.md`.
 
+Addendum Plan 14: la auditoría humana posterior demostró que ocho capturas resultaban excesivas. Solo los tres primeros capítulos continúan obligatorios; el resto es breve y opcional. Avatar, estado y microajustes no bloqueantes mantienen la sensación de colaboración sin convertir toda la Home en una secuencia cautiva. Este addendum sustituye el alcance de obligatoriedad del párrafo anterior.
+
 Addendum de continuidad 27 de julio de 2026: se corrigió un lock residual después de la apertura. El estilo `overflow` sí se restauraba, pero los listeners de rueda, touch y teclado de la intro seguían montados e interceptaban gestos. Ahora quedan inertes al entregar el hero y la matriz prueba desplazamiento real tras la intro y tras el primer Spotlight.
 
 ## Veredicto

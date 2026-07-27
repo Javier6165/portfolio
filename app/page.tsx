@@ -40,8 +40,11 @@ export default function Home() {
           properties={["Split into 4", "Text 10 → 18", "Gap 0 → 24"]}
           readMs={1400}
           spotlightMs={3400}
+          minVisibility={0.32}
           comment="This is becoming a résumé. Nobody asked."
           commentFirst
+          requiredFirstVisit
+          cameraOffsetY={190}
           draftLabel="Draft · too much résumé"
           className={styles.snapshotScene}
         >
@@ -79,6 +82,7 @@ export default function Home() {
               spotlightMs={3800}
               comment="A case study without evidence. Brave."
               commentFirst
+              requiredFirstVisit
               draftLabel="Draft · evidence missing"
               className={styles.workScene}
               key={project.slug}
@@ -107,6 +111,8 @@ export default function Home() {
           spotlightMs={4000}
           comment="A list of skills. Groundbreaking."
           commentFirst
+          requiredFirstVisit
+          cameraOffsetY={380}
           draftLabel="Draft · skills unconnected"
           className={styles.practiceScene}
         >
@@ -127,11 +133,13 @@ export default function Home() {
             label="AI workflow / Live"
             targetSelector={`.${styles.aiStage}`}
             tool="workflow"
-            action="Mapping tools to outcomes"
+            action="Turning tools into a working model"
             properties={["Frame → Validate", "Output linked", "Human check · On"]}
-            readMs={4600}
-            spotlightMs={9800}
-            comment="Tools change. The operating model matters."
+            readMs={1100}
+            spotlightMs={4200}
+            comment="Five tools and still no workflow. Useful."
+            commentFirst
+            draftLabel="Draft · tools before decisions"
             className={styles.aiScene}
           >
             <div className={styles.aiStage}><AIPractice /></div>
@@ -146,11 +154,13 @@ export default function Home() {
           label="Portrait + story / Approved"
           targetSelector={`.${styles.aboutPortrait}`}
           tool="crop"
-          action="Reframing the story"
+          action="Giving the portrait some room"
           properties={["Fill", "Zoom 112%", "Y 31 → 48"]}
-          readMs={3600}
-          spotlightMs={7400}
-          comment="A crop should hold the gaze, not fight it."
+          readMs={1000}
+          spotlightMs={3600}
+          comment="The crop is doing more leading than I am."
+          commentFirst
+          draftLabel="Draft · crop fighting the story"
           className={styles.aboutScene}
         >
           <div className={styles.aboutSpread}>
@@ -179,11 +189,13 @@ export default function Home() {
           label="Experiment / Played"
           targetSelector=".playground-playhead"
           tool="timeline"
-          action="Tuning the motion"
+          action="Replacing linear with intentional"
           properties={["00:02", "Cubic out", "1×"]}
-          readMs={3400}
-          spotlightMs={8200}
+          readMs={900}
+          spotlightMs={3400}
           comment="Linear felt like a loading bar. Awkward."
+          commentFirst
+          draftLabel="Draft · motion without rhythm"
           className={styles.playgroundScene}
         >
           <div className={styles.playgroundShelf}>

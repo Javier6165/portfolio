@@ -34,6 +34,8 @@ export type LiveSceneConfig = {
   minVisibility: number;
   comment?: string;
   commentFirst?: boolean;
+  requiredFirstVisit: boolean;
+  cameraOffsetY: number;
 };
 
 type RegisteredScene = { root: HTMLElement; config: LiveSceneConfig };
@@ -50,6 +52,20 @@ type DirectorContextValue = {
 
 const SEEN_SCENES_KEY = "javier-live-scenes-v2";
 const DirectorContext = createContext<DirectorContextValue | null>(null);
+const ambientEditTargets = [
+  ".wordmark",
+  "#snapshot-title",
+  ".project-card__meta",
+  "#practice-title",
+  "#ai-title",
+  "#about-title",
+  "#testimonials-title",
+  "#playground-title",
+  ".footer-contact",
+  "#snapshot-title",
+  ".project-card__media",
+  "#practice-title",
+] as const;
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -86,6 +102,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const stableTimerRef = useRef<number | null>(null);
   const phaseTimersRef = useRef<number[]>([]);
   const cursorTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const ambientTimerRef = useRef<number | null>(null);
+  const ambientTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const ambientTargetRef = useRef<HTMLElement | null>(null);
+  const ambientIndexRef = useRef(0);
   const firstIntentRef = useRef(0);
   const viewportRef = useRef({ width: 0, height: 0 });
   const resizeGuardUntilRef = useRef(0);
@@ -95,12 +115,27 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const startSceneRef = useRef<(scene: RegisteredScene) => void>(() => undefined);
   const evaluateRef = useRef<() => void>(() => undefined);
   const [spotlight, setSpotlight] = useState<SpotlightView | null>(null);
+  const [guidedComplete, setGuidedComplete] = useState(false);
+  const [presenceStatus, setPresenceStatus] = useState<"connected" | "editing" | "elsewhere" | "done">("connected");
 
   useEffect(() => {
     gsap.registerPlugin(MotionPathPlugin);
     seenRef.current = readSeenScenes();
     viewportRef.current = { width: window.innerWidth, height: window.innerHeight };
     return () => cursorTimelineRef.current?.kill();
+  }, []);
+
+  const stopAmbientEdit = useCallback(() => {
+    if (ambientTimerRef.current !== null) window.clearTimeout(ambientTimerRef.current);
+    ambientTimerRef.current = null;
+    ambientTimelineRef.current?.kill();
+    ambientTimelineRef.current = null;
+    if (ambientTargetRef.current) {
+      delete ambientTargetRef.current.dataset.ambientEdit;
+      gsap.set(ambientTargetRef.current, { clearProps: "transform" });
+      ambientTargetRef.current = null;
+    }
+    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
   }, []);
 
   const persistSeen = useCallback((id: string) => {
@@ -181,6 +216,15 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       window.requestAnimationFrame(() => { active.root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
       if (active.mandatory) awaitingAdvanceRef.current = true;
       unlockPage(active.scrollY, navigationDelta);
+      window.dispatchEvent(new CustomEvent("portfolio-spotlight-end"));
+      if (active.mandatory && !interrupted) {
+        window.requestAnimationFrame(() => {
+          const required = [...registryRef.current.entries()].filter(([, config]) => config.requiredFirstVisit);
+          if (required.length > 0 && required.every(([root]) => root.dataset.liveState === "settled" || root === active.root)) {
+            setGuidedComplete(true);
+          }
+        });
+      }
     }
     if (disableFollowing) {
       setAutoFollow(false);
@@ -239,7 +283,9 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     startSceneRef.current = (scene) => {
       const { root, config } = scene;
       if (activeRef.current || !sceneIsEligible(config) || !root.isConnected) return;
-      const mandatory = guidedFirstVisit;
+      stopAmbientEdit();
+      setPresenceStatus("connected");
+      const mandatory = guidedFirstVisit && config.requiredFirstVisit;
       const target = root.querySelector<HTMLElement>(config.targetSelector) ?? root;
 
       // The guided first pass owns the framing. If a visitor races past a
@@ -251,9 +297,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         const safeTop = 104;
         const safeBottom = window.innerHeight - 92;
         const available = Math.max(240, safeBottom - safeTop);
-        const desiredTop = initial.height <= available
+        const baseTop = initial.height <= available
           ? safeTop + (available - initial.height) / 2
           : safeTop + 12;
+        const desiredTop = clamp(baseTop + config.cameraOffsetY, safeTop, safeBottom - Math.min(140, initial.height));
         const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
         const desiredScroll = clamp(window.scrollY + initial.top - desiredTop, 0, maxScroll);
         if (Math.abs(desiredScroll - window.scrollY) > 2) {
@@ -266,6 +313,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       const targetRect = target.getBoundingClientRect();
       const rootRect = root.getBoundingClientRect();
       const scrollY = lockPage();
+      window.dispatchEvent(new CustomEvent("portfolio-spotlight-start", { detail: { id: config.id, mandatory } }));
       root.style.setProperty("--live-x", `${targetRect.left - rootRect.left}px`);
       root.style.setProperty("--live-y", `${targetRect.top - rootRect.top}px`);
       root.style.setProperty("--live-w", `${targetRect.width}px`);
@@ -304,6 +352,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       const leadIn = mandatory || commentFirst ? config.readMs : 0;
       const totalDuration = leadIn + config.spotlightMs;
       const orderedRoots = [...registryRef.current.keys()];
+      const requiredRoots = [...registryRef.current.entries()]
+        .filter(([, item]) => item.requiredFirstVisit)
+        .map(([item]) => item);
+      const positionRoots = mandatory ? requiredRoots : orderedRoots;
       setSpotlight({
         id: config.id,
         action: config.action,
@@ -312,8 +364,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         durationMs: totalDuration,
         hint: false,
         mandatory,
-        position: Math.max(1, orderedRoots.indexOf(root) + 1),
-        total: orderedRoots.length,
+        position: Math.max(1, positionRoots.indexOf(root) + 1),
+        total: positionRoots.length,
         phase: commentFirst ? "commenting" : mandatory ? "observing" : "entering",
         tool: toolNames[config.tool],
         properties: config.properties,
@@ -342,10 +394,11 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
           setSpotlight((current) => current ? { ...current, phase: "commenting" } : current);
         }, commentAt));
       }
+      const settleHold = commentFirst ? 1_200 : 840;
       phaseTimersRef.current.push(window.setTimeout(() => {
         root.dataset.liveState = "settling";
         setSpotlight((current) => current ? { ...current, phase: "settling" } : current);
-      }, leadIn + config.spotlightMs - 840));
+      }, leadIn + config.spotlightMs - settleHold));
       phaseTimersRef.current.push(window.setTimeout(() => endActive(false), totalDuration));
 
       const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
@@ -356,7 +409,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         const direction = endX > window.innerWidth / 2 ? 1 : -1;
         const startX = clamp(endX + direction * 120, 22, window.innerWidth - 92);
         const startY = clamp(endY - 88, 72, window.innerHeight - 90);
-        gsap.set(cursor, { x: startX, y: startY, opacity: 0, scale: .9 });
+        gsap.set(cursor, { x: startX, y: startY, opacity: .72, scale: .9 });
         cursorTimelineRef.current = gsap.timeline({ delay: leadIn / 1000 })
           .to(cursor, { opacity: 1, scale: 1, duration: .2 }, .06)
           .to(cursor, { duration: .66, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 28, y: endY - 22 }, { x: endX, y: endY }], curviness: 1.05 } }, .14)
@@ -364,7 +417,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
           .to(cursor, { opacity: 0, duration: .24 }, Math.max(1.6, config.spotlightMs / 1000 - .5));
       }
     };
-  }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible]);
+  }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible, stopAmbientEdit]);
 
   useEffect(() => {
     evaluateRef.current = () => {
@@ -373,7 +426,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     const safeTop = 96;
     const safeBottom = window.innerHeight - 48;
 
-    if (guidedFirstVisit) {
+    if (guidedFirstVisit && !guidedComplete) {
       // A resize or scroll restoration produced by the previous handoff must
       // never launch the next mandatory edit. Each chapter is armed only by a
       // new visitor scroll after the hero or preceding Spotlight has released.
@@ -382,13 +435,15 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       // required chapter that the visitor has reached or passed, even if a
       // fast wheel gesture carried its target outside the viewport.
       const nextRequired = [...registryRef.current.entries()].find(([root, config]) => {
+        if (!config.requiredFirstVisit) return false;
         if (!["wip", "observing"].includes(root.dataset.liveState ?? "") || !sceneIsEligible(config)) return false;
         return root.getBoundingClientRect().top < safeBottom;
       });
-      if (!nextRequired) return;
-      const [root, config] = nextRequired;
-      startSceneRef.current({ root, config });
-      return;
+      if (nextRequired) {
+        const [root, config] = nextRequired;
+        startSceneRef.current({ root, config });
+        return;
+      }
     }
 
     let best: (RegisteredScene & { ratio: number }) | null = null;
@@ -400,8 +455,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       const available = Math.max(1, safeBottom - safeTop);
       const visible = Math.max(0, Math.min(rect.bottom, safeBottom) - Math.max(rect.top, safeTop));
       const ratio = visible / Math.max(1, Math.min(rect.height, available));
-      const center = rect.top + rect.height / 2;
-      if (ratio < config.minVisibility || center < safeTop || center > safeBottom) return;
+      // Tall authored targets can be meaningfully readable while their centre
+      // remains below the viewport. Visibility, not geometric centring, is the
+      // correct readiness signal for those sections.
+      if (ratio < config.minVisibility || rect.bottom <= safeTop || rect.top >= safeBottom) return;
       if (!best || ratio > best.ratio) best = { root, config, ratio };
     });
 
@@ -421,7 +478,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       if (candidateRef.current?.root === chosen.root) startSceneRef.current(chosen);
     }, chosen.config.readMs);
     };
-  }, [autoFollow, experienceReady, guidedFirstVisit, pathname, reducedMotion, sceneIsEligible]);
+  }, [autoFollow, experienceReady, guidedComplete, guidedFirstVisit, pathname, reducedMotion, sceneIsEligible]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -525,6 +582,70 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     }
   }, [autoFollow, endActive, reducedMotion, scheduleEvaluation]);
 
+  useEffect(() => {
+    if (!experienceReady || spotlight || reducedMotion || !autoFollow || pathname !== "/") {
+      stopAmbientEdit();
+      return;
+    }
+    if (window.matchMedia("(max-width: 720px), (pointer: coarse)").matches) return;
+
+    const runAmbientEdit = () => {
+      if (document.hidden || activeRef.current) {
+        ambientTimerRef.current = window.setTimeout(runAmbientEdit, 3_000);
+        return;
+      }
+      const index = ambientIndexRef.current;
+      if (index >= ambientEditTargets.length) {
+        setPresenceStatus("done");
+        if (cursorRef.current) gsap.to(cursorRef.current, { opacity: 0, duration: .35 });
+        return;
+      }
+      ambientIndexRef.current += 1;
+      const target = document.querySelector<HTMLElement>(ambientEditTargets[index]);
+      const cursor = cursorRef.current;
+      if (!target || !cursor) {
+        ambientTimerRef.current = window.setTimeout(runAmbientEdit, 6_500);
+        return;
+      }
+      const rect = target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight - 48 && rect.right > 0 && rect.left < window.innerWidth;
+      if (!visible) {
+        setPresenceStatus("elsewhere");
+        gsap.to(cursor, { opacity: 0, duration: .25 });
+        ambientTimerRef.current = window.setTimeout(runAmbientEdit, 6_500);
+        return;
+      }
+
+      setPresenceStatus("editing");
+      ambientTargetRef.current = target;
+      const endX = clamp(rect.right - Math.min(28, rect.width * .18), 24, window.innerWidth - 92);
+      const endY = clamp(rect.top + Math.min(38, rect.height * .45), 82, window.innerHeight - 78);
+      const startX = clamp(endX + 72, 24, window.innerWidth - 92);
+      const startY = clamp(endY - 52, 82, window.innerHeight - 78);
+      gsap.set(cursor, { x: startX, y: startY });
+      ambientTimelineRef.current = gsap.timeline({
+        onComplete: () => {
+          delete target.dataset.ambientEdit;
+          gsap.set(target, { clearProps: "transform" });
+          ambientTargetRef.current = null;
+          ambientTimelineRef.current = null;
+          setPresenceStatus("connected");
+          ambientTimerRef.current = window.setTimeout(runAmbientEdit, 7_500);
+        },
+      })
+        .to(cursor, { opacity: .92, duration: .2 })
+        .to(cursor, { x: endX, y: endY, duration: .72, ease: "power3.inOut" })
+        .call(() => { target.dataset.ambientEdit = "active"; })
+        .to(target, { x: index % 2 === 0 ? 2 : -2, duration: .18, ease: "power2.out" })
+        .to(target, { x: 0, duration: .28, ease: "power2.inOut" })
+        .to(cursor, { x: endX + 10, y: endY + 6, duration: .26, ease: "power2.out" })
+        .to(cursor, { opacity: .72, duration: .2 });
+    };
+
+    ambientTimerRef.current = window.setTimeout(runAmbientEdit, 3_800);
+    return stopAmbientEdit;
+  }, [autoFollow, experienceReady, pathname, reducedMotion, spotlight, stopAmbientEdit]);
+
   const value = useMemo<DirectorContextValue>(() => ({
     introComplete: experienceReady,
     mandatoryFirstVisit: guidedFirstVisit,
@@ -542,12 +663,13 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       <SpotlightChrome
         active={spotlight}
         showDock={pathname === "/" && introComplete && autoFollow && !reducedMotion}
-        guidedFirstVisit={guidedFirstVisit}
+        guidedFirstVisit={guidedFirstVisit && !guidedComplete}
+        presenceStatus={presenceStatus}
         onCancel={() => endActive(true)}
         onReplay={replayLiveEdits}
         onStop={stopFollowing}
       />
-      <div ref={cursorRef} className={styles.globalCursor} aria-hidden="true"><i /><span>Javier</span></div>
+      <div ref={cursorRef} className={styles.globalCursor} data-javier-cursor aria-hidden="true"><i /><span>Javier</span></div>
     </DirectorContext.Provider>
   );
 }

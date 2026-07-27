@@ -1,6 +1,7 @@
 .dock { position: fixed; z-index: 88; top: 5.35rem; left: var(--page-pad); display: flex; align-items: center; gap: .8rem; max-width: calc(100vw - var(--page-pad) * 2); padding: .5rem .58rem; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb,var(--canvas) 91%,transparent); box-shadow: 0 1rem 3rem var(--shadow); backdrop-filter: blur(18px); font-size: .72rem; opacity: 0; animation: dock-in 500ms 650ms cubic-bezier(.16,1,.3,1) forwards; transition: gap 300ms ease,background 300ms ease; }
 .dockToggle { display: flex; align-items: center; gap: .4rem; min-height: 2rem; padding: .35rem .5rem; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; font: .62rem var(--font-mono); }
 .guidedMark { display:flex; align-items:center; gap:.4rem; min-height:2rem; padding:.35rem .5rem; color:var(--muted); font:.62rem var(--font-mono); }
+.avatarPortrait { width:1.8rem; aspect-ratio:1; border:1px solid var(--line-strong); border-radius:50%; background:url("/images/portraits/hero-system-thumb.avif") 50% 20% / cover; filter:saturate(.75) contrast(1.05); }
 .guidedMark i { width:.45rem; aspect-ratio:1; border-radius:50%; background:var(--signal); box-shadow:0 0 .8rem color-mix(in srgb,var(--signal) 56%,transparent); }
 .dockToggle i { width: .45rem; aspect-ratio: 1; border-radius: 50%; background: var(--signal); box-shadow: 0 0 .8rem color-mix(in srgb,var(--signal) 56%,transparent); }
 .dock p { display:grid; padding-left: .8rem; border-left: 1px solid var(--line); line-height:1.15; }

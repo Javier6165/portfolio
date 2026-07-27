@@ -1,11 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useNarrative } from "./NarrativeProvider";
 import styles from "./ExperienceSettings.module.css";
 
 export function MemoryConsent() {
   const { acceptMemory, declineMemory, showConsent } = useNarrative();
-  if (!showConsent) return null;
+  const [spotlightActive, setSpotlightActive] = useState(false);
+
+  useEffect(() => {
+    const show = () => setSpotlightActive(true);
+    const hide = () => setSpotlightActive(false);
+    window.addEventListener("portfolio-spotlight-start", show);
+    window.addEventListener("portfolio-spotlight-end", hide);
+    return () => {
+      window.removeEventListener("portfolio-spotlight-start", show);
+      window.removeEventListener("portfolio-spotlight-end", hide);
+    };
+  }, []);
+
+  if (!showConsent || spotlightActive) return null;
 
   return (
     <aside className={styles.consent} aria-label="Portfolio memory preference">
