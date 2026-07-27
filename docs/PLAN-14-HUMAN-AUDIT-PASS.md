@@ -1,6 +1,6 @@
 # Plan 14 — Human audit pass y presencia continua
 
-Estado: **implementado, pendiente de validación final y publicación**.
+Estado: **implementado, validado y publicado como Sites v23**.
 
 ## Problema observado
 
