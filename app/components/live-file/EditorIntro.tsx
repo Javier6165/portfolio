@@ -1,7 +1,8 @@
 "use client";
 
-// The canonical Dark portrait is decoded before the first-visit placement beat
-// so the editor gesture never reveals an unloaded image.
+// The first visit is staged inside a deliberately recognisable Figma UI3
+// editor. All editor chrome is decorative; the selected artboard is the real,
+// semantic hero and becomes the page when Javier enters Presentation mode.
 
 import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -12,44 +13,52 @@ import styles from "./EditorIntro.module.css";
 
 export type IntroPhase =
   | "boot"
-  | "loading"
-  | "ready"
-  | "typing"
-  | "placing-portrait"
-  | "refining"
+  | "editing"
+  | "caught"
+  | "presenting"
   | "expanding"
   | "complete"
-  | "skipped"
   | "reduced"
   | "failed";
 
 type IntroRuntimeMode = "first" | "return" | "familiar" | "static";
+type ToolIconName = "select" | "frame" | "shape" | "pen" | "text" | "comment" | "actions" | "code" | "play" | "chevron";
 
 function runtimeMode(): IntroRuntimeMode {
   const value = document.documentElement.dataset.narrative;
   return value === "first" || value === "return" || value === "familiar" ? value : "static";
 }
 
+function ToolIcon({ name }: { name: ToolIconName }) {
+  if (name === "select") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.1 2.8 11.7 6.1-5.1 1.7-2.2 5.2-4.4-13Z" /></svg>;
+  if (name === "frame") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2v16M15 2v16M2 5h16M2 15h16" /></svg>;
+  if (name === "shape") return <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="4" width="12" height="12" rx="1.8" /></svg>;
+  if (name === "pen") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 3 5 5-2.4 7H7.4L5 8l5-5Z" /><path d="M10 3v7m-2 0h4" /></svg>;
+  if (name === "text") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4h12M10 4v12M7.5 16h5" /></svg>;
+  if (name === "comment") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5h12v8.2H9l-3.5 3v-3H4V4.5Z" /></svg>;
+  if (name === "actions") return <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="6" cy="6" r="2" /><circle cx="14" cy="6" r="2" /><circle cx="6" cy="14" r="2" /><path d="M14 11v6m-3-3h6" /></svg>;
+  if (name === "code") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7.5 5-4 5 4 5M12.5 5l4 5-4 5" /></svg>;
+  if (name === "play") return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 5 7 5-7 5V5Z" /></svg>;
+  return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6.5 8 3.5 3.5L13.5 8" /></svg>;
+}
+
+function FigmaMark() {
+  return <span className={styles.figmaMark} aria-hidden="true"><i /><i /><i /><i /><i /></span>;
+}
+
 export function EditorIntro() {
   const { completeIntro, reducedMotion, replayToken } = useNarrative();
-  const [phase, setPhase] = useState<IntroPhase>("boot");
+  const [phase, setPhase] = useState<IntroPhase>("editing");
   const [expanded, setExpanded] = useState(false);
-  const [canSkip, setCanSkip] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const finalWordRef = useRef<HTMLSpanElement>(null);
-  const titleSelectionRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLElement>(null);
-  const portraitSelectionRef = useRef<HTMLDivElement>(null);
-  const assetRef = useRef<HTMLDivElement>(null);
+  const selectionRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
-  const loaderRef = useRef<HTMLDivElement>(null);
-  const loaderProgressRef = useRef<HTMLDivElement>(null);
-  const loaderPercentRef = useRef<HTMLSpanElement>(null);
-  const loaderStatusRef = useRef<HTMLSpanElement>(null);
-  const premiseRef = useRef<HTMLDivElement>(null);
+  const cursorChatRef = useRef<HTMLDivElement>(null);
   const presentRef = useRef<HTMLDivElement>(null);
+  const figmaChromeRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const expansionRef = useRef<gsap.core.Tween | null>(null);
   const activeRef = useRef(false);
@@ -70,28 +79,11 @@ export function EditorIntro() {
       document.body.style.paddingRight = introLockRef.current.paddingRight;
       introLockRef.current = null;
     }
-    // A skip can happen before the reveal timeline has touched either asset.
-    // Resolve the semantic hero explicitly instead of leaving an early
-    // timeline value (dimmed title or clipped portrait) on the final frame.
-    gsap.set(finalWordRef.current, { opacity: 1, clipPath: "inset(0 0% 0 0)", clearProps: "transform" });
-    gsap.set(portraitRef.current, { "--portrait-reveal": "0%", x: 0, y: 0 });
-    gsap.set(
-      [cursorRef.current, assetRef.current, loaderRef.current, premiseRef.current, presentRef.current, titleSelectionRef.current, portraitSelectionRef.current],
-      { clearProps: "all" },
-    );
-    if (frame) gsap.set(frame, { clearProps: "transform,borderRadius,boxShadow,borderColor" });
+    if (frame) gsap.set(frame, { clearProps: "transform" });
+    gsap.set([figmaChromeRef.current, cursorRef.current, cursorChatRef.current, selectionRef.current], { clearProps: "all" });
     completeIntro();
-    if (focusHeading) {
-      window.requestAnimationFrame(() => titleRef.current?.focus({ preventScroll: true }));
-    }
+    if (focusHeading) window.requestAnimationFrame(() => titleRef.current?.focus({ preventScroll: true }));
   }, [completeIntro]);
-
-  const skip = useCallback((focusHeading = false) => {
-    // The button is server-rendered and may be clicked in the tiny window
-    // before GSAP marks the timeline active; skipping must still be reliable.
-    if (document.documentElement.dataset.narrative === "complete") return;
-    finish("skipped", focusHeading);
-  }, [finish]);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(MotionPathPlugin);
@@ -99,19 +91,13 @@ export function EditorIntro() {
     const stage = stageRef.current;
     const frame = frameRef.current;
     const title = titleRef.current;
-    const finalWord = finalWordRef.current;
-    const titleSelection = titleSelectionRef.current;
     const portrait = portraitRef.current;
-    const portraitSelection = portraitSelectionRef.current;
-    const asset = assetRef.current;
+    const selection = selectionRef.current;
     const cursor = cursorRef.current;
-    const loader = loaderRef.current;
-    const loaderProgress = loaderProgressRef.current;
-    const loaderPercent = loaderPercentRef.current;
-    const loaderStatus = loaderStatusRef.current;
-    const premise = premiseRef.current;
+    const chat = cursorChatRef.current;
     const present = presentRef.current;
-    if (!stage || !frame || !title || !finalWord || !titleSelection || !portrait || !portraitSelection || !asset || !cursor || !loader || !loaderProgress || !loaderPercent || !loaderStatus || !premise || !present) {
+    const figmaChrome = figmaChromeRef.current;
+    if (!stage || !frame || !title || !portrait || !selection || !cursor || !chat || !present || !figmaChrome) {
       finish("failed");
       return;
     }
@@ -121,195 +107,97 @@ export function EditorIntro() {
     setExpanded(false);
     stage.dataset.expanded = "false";
 
-    const mode = reducedMotion ? "static" : runtimeMode();
-    setCanSkip(mode === "return");
-    document.body.dataset.liveFile = mode === "static" ? "complete" : "active";
-    if (mode === "static") {
-      const completionFrame = window.requestAnimationFrame(() => {
-        finish(reducedMotion ? "reduced" : "complete");
-      });
+    const replaying = replayToken > 0 && !reducedMotion;
+    const mode = replaying ? "first" : reducedMotion ? "static" : runtimeMode();
+    document.body.dataset.liveFile = mode === "first" ? "active" : "complete";
+
+    // The authored opening is deliberately first-visit only. Return and
+    // familiar visits respect the visitor's time and land on the final hero.
+    if (mode !== "first") {
+      const completionFrame = window.requestAnimationFrame(() => finish(reducedMotion ? "reduced" : "complete"));
       return () => window.cancelAnimationFrame(completionFrame);
     }
 
-    // Familiar visits should feel instant, not like a compressed version of
-    // the edit. A sub-second cursor pass reads as a visual glitch rather than
-    // intentional craft, so only the first and return scores are animated.
-    if (mode === "familiar") {
-      const completionFrame = window.requestAnimationFrame(() => finish("complete"));
-      return () => window.cancelAnimationFrame(completionFrame);
-    }
-
-    if (mode === "first") {
-      const scrollbar = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
-      introLockRef.current = {
-        overflow: document.documentElement.style.overflow,
-        paddingRight: document.body.style.paddingRight,
-      };
-      document.documentElement.style.overflow = "hidden";
-      if (scrollbar) document.body.style.paddingRight = `${scrollbar}px`;
-    }
+    const scrollbar = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    introLockRef.current = {
+      overflow: document.documentElement.style.overflow,
+      paddingRight: document.body.style.paddingRight,
+    };
+    document.documentElement.style.overflow = "hidden";
+    if (scrollbar) document.body.style.paddingRight = `${scrollbar}px`;
 
     activeRef.current = true;
-    const readyFrame = window.requestAnimationFrame(() => {
-      if (activeRef.current) setPhase(mode === "first" ? "loading" : "ready");
-    });
-    const isMobile = window.matchMedia("(max-width: 720px)").matches;
-    const bounds = stage.getBoundingClientRect();
-    const pointFor = (element: Element, xRatio = 0.5, yRatio = 0.5) => {
-      const target = element.getBoundingClientRect();
-      return {
-        x: target.left - bounds.left + target.width * xRatio,
-        y: target.top - bounds.top + target.height * yRatio,
-      };
-    };
-    const premisePoint = pointFor(premise, 0.08, 0.5);
-    const presentPoint = pointFor(present, 0.5, 0.5);
-    const cursorStart = { x: bounds.width * 0.86, y: isMobile ? 42 : 78 };
-    const premiseLead = premise.querySelector<HTMLElement>("strong");
-    const premiseReply = premise.querySelector<HTMLElement>("span");
 
-    gsap.set(cursor, { x: cursorStart.x, y: cursorStart.y, opacity: 0, scale: 0.92 });
-    const fitSelection = (selection: HTMLElement, target: Element, padding: number) => {
-      const targetBounds = target.getBoundingClientRect();
-      gsap.set(selection, {
-        left: targetBounds.left - bounds.left - padding,
-        top: targetBounds.top - bounds.top - padding,
-        width: targetBounds.width + padding * 2,
-        height: targetBounds.height + padding * 2,
-      });
+    const stageBounds = stage.getBoundingClientRect();
+    const selectionBounds = selection.getBoundingClientRect();
+    const presentBounds = present.getBoundingClientRect();
+    const start = {
+      x: selectionBounds.right - stageBounds.left - 18,
+      y: selectionBounds.bottom - stageBounds.top - 12,
     };
-    fitSelection(titleSelection, title, isMobile ? 4 : 8);
-    fitSelection(portraitSelection, portrait, isMobile ? 4 : 8);
+    const presentPoint = {
+      x: presentBounds.left - stageBounds.left + presentBounds.width * .42,
+      y: presentBounds.top - stageBounds.top + presentBounds.height * .58,
+    };
 
-    // The complete role is legible from frame one. The timeline refines its
-    // emphasis instead of withholding essential positioning copy.
-    gsap.set(finalWord, { clipPath: "inset(0 0% 0 0)", opacity: 1 });
-    gsap.set([titleSelection, portraitSelection, premise], { opacity: 0 });
-    gsap.set([premiseLead, premiseReply], { opacity: 0, y: 4 });
-    gsap.set(loader, { autoAlpha: mode === "first" ? 1 : 0 });
-    gsap.set(loaderProgress, { scaleX: 0, transformOrigin: "left center" });
-    gsap.set(asset, { x: 0, y: 0, opacity: mode === "first" ? 1 : 0, scale: 1 });
-    gsap.set(portrait, { "--portrait-reveal": "0%" });
+    gsap.set(figmaChrome, { autoAlpha: 1 });
+    gsap.set(cursor, { x: start.x, y: start.y, opacity: 1, scale: 1 });
+    gsap.set(chat, { autoAlpha: 0, y: 8, scale: .98 });
+    gsap.set(selection, { x: 0 });
 
     const expandFrame = () => {
       setPhase("expanding");
-      // Freeze the transformed editor frame inline before removing the CSS
-      // preview state. Only composited properties animate, so layout geometry
-      // remains identical throughout the handoff to the semantic hero.
-      const previewTransform = window.getComputedStyle(frame).transform;
-      gsap.set(frame, { transform: previewTransform });
+      const editorTransform = window.getComputedStyle(frame).transform;
+      gsap.set(frame, { transform: editorTransform });
       stage.dataset.expanded = "true";
       setExpanded(true);
+      gsap.to([figmaChrome, chat, selection], { autoAlpha: 0, duration: .34, ease: "power2.out" });
+      gsap.to(cursor, { opacity: 0, duration: .24, ease: "power2.out" });
       expansionRef.current = gsap.to(frame, {
         transform: "none",
-        borderRadius: 0,
-        borderColor: "transparent",
-        boxShadow: "0 0 0 rgba(0,0,0,0)",
-        duration: mode === "first" ? 0.92 : 0.72,
+        duration: .92,
         ease: "power4.inOut",
         onComplete: () => finish("complete"),
       });
-      gsap.to([cursor, premise, titleSelection, portraitSelection], {
-        opacity: 0,
-        duration: 0.36,
-        ease: "power2.out",
-      });
     };
 
-    const timeline = gsap.timeline({ paused: true, defaults: { ease: "power3.inOut" } });
+    const timeline = gsap.timeline({ defaults: { ease: "power3.inOut" } });
     timelineRef.current = timeline;
-    let readinessTimer: number | null = null;
-    let introStarted = false;
+    timeline
+      .to(cursor, { x: start.x + 12, y: start.y - 7, duration: .42 }, .12)
+      .to(selection, { x: 2, duration: .22, yoyo: true, repeat: 1, ease: "power2.inOut" }, .34)
+      .call(() => setPhase("caught"), [], .72)
+      .to(chat, { autoAlpha: 1, y: 0, scale: 1, duration: .24, ease: "power2.out" }, .76)
+      .call(() => setPhase("presenting"), [], 1.72)
+      .to(chat, { autoAlpha: 0, y: -5, duration: .2, ease: "power2.in" }, 1.82)
+      .to(cursor, {
+        duration: .82,
+        ease: "power3.inOut",
+        motionPath: {
+          path: [
+            { x: start.x + 12, y: start.y - 7 },
+            { x: stageBounds.width * .72, y: stageBounds.height * .22 },
+            presentPoint,
+          ],
+          curviness: .75,
+        },
+      }, 1.86)
+      .to(present, { scale: .96, duration: .1, yoyo: true, repeat: 1, ease: "power2.inOut" }, 2.74)
+      .add(expandFrame, 2.98);
 
-    const startTimeline = () => {
-      if (introStarted || !activeRef.current) return;
-      introStarted = true;
-      if (readinessTimer) window.clearTimeout(readinessTimer);
-      timeline.play(0);
-    };
-
-    const failPortrait = () => {
-      if (!activeRef.current) return;
-      portrait.dataset.imageStatus = "failed";
-      finish("failed");
-    };
-
-    if (mode === "first") {
-      const loadingValue = { value: 0 };
-      timeline
-        .to(loaderProgress, { scaleX: 1, duration: .72, ease: "power2.inOut" }, 0.08)
-        .to(loadingValue, {
-          value: 100,
-          duration: .72,
-          ease: "power2.inOut",
-          onUpdate: () => { loaderPercent.textContent = `${Math.round(loadingValue.value)}%`; },
-        }, 0.08)
-        .call(() => { loaderStatus.textContent = "Live file ready"; }, [], .55)
-        .to(loader, { autoAlpha: 0, duration: .34, ease: "power3.inOut" }, .78)
-        .call(() => setPhase("ready"), [], 1.0)
-        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: .24, ease: "power2.out" }, 1.02)
-        .to(cursor, {
-          duration: .58,
-          ease: "power3.inOut",
-          motionPath: { path: [cursorStart, premisePoint], curviness: .35 },
-        }, 1.12)
-        .to(premise, { opacity: 1, duration: .28, ease: "power3.out" }, 1.42)
-        .to(premiseLead, { opacity: 1, y: 0, duration: .3, ease: "power3.out" }, 1.5)
-        .to(premiseReply, { opacity: 1, y: 0, duration: .3, ease: "power3.out" }, 2.65)
-        .to(cursor, {
-          duration: .64,
-          ease: "power3.inOut",
-          motionPath: { path: [premisePoint, presentPoint], curviness: .3 },
-        }, 3.18)
-        .to(present, { scale: .94, duration: .12, yoyo: true, repeat: 1, ease: "power2.inOut" }, 3.78)
-        .call(() => setPhase("expanding"), [], 3.96)
-        .add(expandFrame, 4.02);
-    } else {
-      timeline
-        .to(cursor, { opacity: isMobile ? 0 : 1, scale: 1, duration: 0.18, ease: "power2.out" }, 0.12)
-        .to(cursor, {
-          duration: .48,
-          motionPath: { path: [cursorStart, presentPoint], curviness: .3 },
-        }, 0.28)
-        .to(present, { scale: .94, duration: .1, yoyo: true, repeat: 1 }, .72)
-        .add(expandFrame, .96);
-    }
-
-    if (mode === "first") {
-      const activeImage = portrait.querySelector<HTMLImageElement>("img");
-      readinessTimer = window.setTimeout(startTimeline, 550);
-      if (activeImage) {
-        activeImage.addEventListener("error", failPortrait, { once: true });
-        activeImage.decode().then(startTimeline).catch(failPortrait);
-      } else {
-        failPortrait();
-      }
-    } else {
-      startTimeline();
-    }
+    const activeImage = portrait.querySelector<HTMLImageElement>("img");
+    const failPortrait = () => { if (activeRef.current) finish("failed"); };
+    activeImage?.addEventListener("error", failPortrait, { once: true });
 
     const onKeyDown = (event: KeyboardEvent) => {
-      // The effect stays mounted after the visual timeline hands off the hero.
-      // Once finish() clears activeRef, these listeners must become inert or
-      // they would keep swallowing every later scroll gesture on a first visit.
       if (!activeRef.current) return;
-      if (mode === "first" && ["Escape", "PageDown", "PageUp", " ", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
-        event.preventDefault();
-        return;
-      }
-      if (mode === "return" && (event.key === "Escape" || event.key === "PageDown")) skip(true);
+      if (["Escape", "PageDown", "PageUp", " ", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) event.preventDefault();
     };
     const onIntentToScroll = (event: WheelEvent | TouchEvent) => {
       if (!activeRef.current) return;
-      if (mode === "first") {
-        event.preventDefault();
-        return;
-      }
-      skip(false);
+      event.preventDefault();
     };
-    const onVisibilityChange = () => {
-      if (document.hidden) skip(false);
-    };
+    const onVisibilityChange = () => { if (document.hidden && activeRef.current) finish("complete"); };
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("wheel", onIntentToScroll, { passive: false });
@@ -317,11 +205,10 @@ export function EditorIntro() {
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
-      window.cancelAnimationFrame(readyFrame);
       activeRef.current = false;
       timeline.kill();
       expansionRef.current?.kill();
-      if (readinessTimer) window.clearTimeout(readinessTimer);
+      activeImage?.removeEventListener("error", failPortrait);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("wheel", onIntentToScroll);
       window.removeEventListener("touchmove", onIntentToScroll);
@@ -333,134 +220,92 @@ export function EditorIntro() {
       }
       delete document.body.dataset.liveFile;
     };
-  }, [finish, reducedMotion, replayToken, skip]);
+  }, [finish, reducedMotion, replayToken]);
 
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
-      <div
-        ref={stageRef}
-        className={styles.stage}
-        data-phase={phase}
-        data-expanded={expanded ? "true" : "false"}
-      >
-        <div className={styles.canvasGrid} aria-hidden="true" />
+      <div ref={stageRef} className={styles.stage} data-phase={phase} data-expanded={expanded ? "true" : "false"}>
+        <div ref={figmaChromeRef} className={styles.figmaChrome} data-figma-editor aria-hidden="true">
+          <header className={styles.figmaTopbar}>
+            <div className={styles.fileIdentity}>
+              <FigmaMark />
+              <div><strong>Javier Ortiz / Portfolio</strong><span>Drafts</span></div>
+              <ToolIcon name="chevron" />
+            </div>
+            <div className={styles.topbarTools}>
+              <div className={styles.collaborators}><i>JO</i><i>MO</i><i>KS</i></div>
+              <button className={styles.shareAction} type="button" tabIndex={-1}>Share</button>
+              <div ref={presentRef} className={styles.presentAction}><ToolIcon name="play" /><span>Present</span><ToolIcon name="chevron" /></div>
+              <span className={styles.zoom}>68%</span>
+            </div>
+          </header>
 
-        <div className={styles.editorChrome} aria-hidden="true">
-          <div className={styles.fileMeta}>
-            <i />
-            <span>Javier Ortiz / Portfolio</span>
-            <b>Working file</b>
-          </div>
-          <div className={styles.editorTools}><b>M</b><span>F</span><span>T</span><span>C</span></div>
-          <div className={styles.editorActions}>
-            <div className={styles.editingState}><i /> Javier</div>
-            <div ref={presentRef} className={styles.presentAction}><i /> Present</div>
-            <div className={styles.zoom}>82%</div>
-          </div>
-        </div>
+          <aside className={styles.layersPanel}>
+            <div className={styles.panelTabs}><b>File</b><span>Assets</span><i /></div>
+            <div className={styles.panelSection}><strong>Pages</strong><button type="button" tabIndex={-1}>+</button></div>
+            <div className={styles.pageRow} data-current="true"><span>01</span><b>Home</b></div>
+            <div className={styles.pageRow}><span>02</span><b>Work</b></div>
+            <div className={styles.pageRow}><span>03</span><b>About</b></div>
+            <div className={styles.panelSection}><strong>Layers</strong><button type="button" tabIndex={-1}>−</button></div>
+            <div className={styles.layerTree}>
+              <b><i /> Desktop / Home</b>
+              <span><i /> Header</span>
+              <span data-selected="true"><i /> Hero</span>
+              <small><i /> Portrait</small>
+              <small><i /> Javier Ortiz</small>
+              <small><i /> Senior Product Designer</small>
+              <span><i /> Selected work</span>
+            </div>
+          </aside>
 
-        <button
-          className={styles.skip}
-          data-available={canSkip ? "true" : "false"}
-          type="button"
-          onClick={(event) => skip(event.detail === 0)}
-        >
-          Skip opening
-        </button>
+          <aside className={styles.propertiesPanel}>
+            <div className={styles.propertyTabs}><b>Design</b><span>Prototype</span></div>
+            <div className={styles.alignmentRow}><i /><i /><i /><i /><i /><i /></div>
+            <div className={styles.propertyGroup}>
+              <header><strong>Frame</strong><span>•••</span></header>
+              <div className={styles.propertyGrid}><span>X&nbsp;&nbsp;254</span><span>Y&nbsp;&nbsp;118</span><span>W&nbsp;&nbsp;1440</span><span>H&nbsp;&nbsp;900</span></div>
+              <label><i /> Clip content</label>
+            </div>
+            <div className={styles.propertyGroup}>
+              <header><strong>Layout</strong><span>+</span></header>
+              <div className={styles.autoLayoutPreview}><i /><i /><i /><i /><i /></div>
+            </div>
+            <div className={styles.propertyGroup}><header><strong>Fill</strong><span>+</span></header><div className={styles.fillRow}><i /><span>#0A0B0C</span><b>100%</b></div></div>
+            <div className={styles.propertyGroup}><header><strong>Export</strong><span>+</span></header></div>
+          </aside>
 
-        <div ref={loaderRef} className={styles.loader} aria-hidden="true">
-          <div className={styles.loaderMark}>JO</div>
-          <div className={styles.loaderCopy}>
-            <span>Opening working file</span>
-            <strong>Javier Ortiz / Portfolio</strong>
-            <small>Senior Product Designer</small>
+          <div className={styles.bottomToolbar}>
+            {(["select", "frame", "shape", "pen", "text", "comment", "actions", "code"] as ToolIconName[]).map((name, index) => (
+              <span key={name} data-active={index === 0 ? "true" : undefined}><ToolIcon name={name} /></span>
+            ))}
           </div>
-          <div className={styles.loaderTrack}><i ref={loaderProgressRef} /></div>
-          <div className={styles.loaderMeta}>
-            <span ref={loaderStatusRef}>Loading components</span>
-            <span ref={loaderPercentRef}>0%</span>
-          </div>
-        </div>
-
-        <div ref={premiseRef} className={styles.premise} aria-hidden="true">
-          <i>JO</i>
-          <div><strong>Oh. Hi. You caught me at “one last tweak”.</strong><span>Right. Let’s make this less awkward — full screen.</span></div>
         </div>
 
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
-          <div className={styles.frameMeta} aria-hidden="true">
-            <span>HOME / HERO</span><span>1440 × 900</span>
-          </div>
           <div className={styles.identity}>
             <p className={styles.name}>Javier Ortiz</p>
             <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>
-              <span>Senior Product</span>
-              {" "}
-              <span ref={finalWordRef} className={styles.finalWord}>Designer</span>
+              <span>Senior Product</span><span>Designer</span>
             </h1>
           </div>
 
-          <div className={styles.frameStatus} aria-hidden="true">
-            <span>LIVE FILE / READY</span><span>36.5102° N · 4.8864° W</span>
-          </div>
-
-          <figure
-            ref={portraitRef}
-            className={styles.portrait}
-            role="img"
-            aria-label="Portrait of Javier Ortiz."
-          >
+          <figure ref={portraitRef} className={styles.portrait} role="img" aria-label="Portrait of Javier Ortiz.">
             <picture>
-              <source
-                type="image/avif"
-                srcSet="/images/portraits/hero-system-960.avif 960w, /images/portraits/hero-system-1440.avif 1440w"
-                sizes="(max-width: 720px) 92vw, 48vw"
-              />
-              <source
-                type="image/webp"
-                srcSet="/images/portraits/hero-system-960.webp 960w, /images/portraits/hero-system-1440.webp 1440w"
-                sizes="(max-width: 720px) 92vw, 48vw"
-              />
-              <img
-                className="portrait"
-                src="/images/portraits/hero-system.jpg"
-                alt=""
-                aria-hidden="true"
-                width="1800"
-                height="1799"
-                loading="eager"
-                fetchPriority="auto"
-              />
+              <source type="image/avif" srcSet="/images/portraits/hero-system-960.avif 960w, /images/portraits/hero-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
+              <source type="image/webp" srcSet="/images/portraits/hero-system-960.webp 960w, /images/portraits/hero-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
+              <img className="portrait" src="/images/portraits/hero-system.jpg" alt="" aria-hidden="true" width="1800" height="1799" loading="eager" fetchPriority="high" />
             </picture>
-            <figcaption className={styles.portraitCaption} aria-hidden="true">
-              <span>PORTRAIT / 01</span><b>DARK</b>
-            </figcaption>
           </figure>
 
-          <Link className={styles.explore} href="#experience">
-            <span>Explore</span><i aria-hidden="true" />
-          </Link>
+          <div ref={selectionRef} className={styles.portraitSelection} aria-hidden="true"><i /><i /><i /><i /><span>Portrait / cover</span></div>
+          <Link className={styles.explore} href="#experience"><span>Explore</span><i aria-hidden="true" /></Link>
         </div>
 
-        <div className={styles.assetTray} aria-hidden="true">
-          <span>Assets / 01</span>
-          <div ref={assetRef} className={styles.assetCard}>
-            <i /><div><b>Javier_portrait</b><span>JPG · selected</span></div>
-          </div>
+        <div ref={cursorRef} className={styles.multiplayerCursor} aria-hidden="true">
+          <ToolIcon name="select" /><span>Javier</span>
         </div>
-
-        <div ref={titleSelectionRef} className={`${styles.selection} ${styles.titleSelection}`} aria-hidden="true">
-          <i /><i /><i /><i /><span>H1 / DISPLAY</span>
-        </div>
-        <div ref={portraitSelectionRef} className={`${styles.selection} ${styles.portraitSelection}`} aria-hidden="true">
-          <i /><i /><i /><i /><span>IMAGE / COVER</span>
-        </div>
-        <div className={styles.propertyStrip} aria-hidden="true">
-          <span>Typography</span><b>Weight 520</b><b>Leading 84%</b><b>2 lines</b>
-        </div>
-
-        <div ref={cursorRef} className={styles.cursor} aria-hidden="true">
-          <i /><span>Javier</span>
+        <div ref={cursorChatRef} className={styles.cursorChat} aria-hidden="true">
+          <i>JO</i><p><strong>Oh—sorry.</strong><span>You caught me working.</span></p>
         </div>
       </div>
     </section>

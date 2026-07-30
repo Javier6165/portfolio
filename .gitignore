@@ -42,3 +42,8 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# local visual-review evidence
+/.impeccable/config.local.json
+/.impeccable/mocks/
+/.impeccable/screenshots/

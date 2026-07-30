@@ -9,37 +9,32 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function skipIntro(page: Page) {
-  const skip = page.getByRole("button", { name: "Skip opening" });
-  if (await skip.isVisible()) {
-    await skip.click();
-  } else {
-    const url = new URL(page.url());
-    url.searchParams.set("narrative", "return");
-    await page.goto(url.toString());
-    await page.getByRole("button", { name: "Skip opening" }).click();
-  }
+  const url = new URL(page.url());
+  url.searchParams.set("narrative", "return");
+  await page.goto(url.toString());
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
 }
 
-test("the first visit explains the working file, enters Present and cannot be skipped", async ({ page, isMobile }) => {
-  test.setTimeout(25_000);
+test("the first visit opens the real portfolio frame in Figma and hands control back after Present", async ({ page, isMobile }) => {
+  test.setTimeout(15_000);
   await page.goto("/?narrative=first");
 
   const hero = page.getByRole("region", { name: "Senior Product Designer" });
-  await expect(page.getByText("Opening working file")).toBeVisible();
+  await expect(page.locator("[data-figma-editor]")).toBeVisible();
   await expect(page.getByText("Javier Ortiz / Portfolio", { exact: true }).last()).toBeVisible();
-  await expect(page.getByText("Senior Product Designer", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Skip opening" })).toBeHidden();
+  await expect(hero.getByRole("heading", { level: 1, name: "Senior Product Designer" })).toBeVisible();
+  await expect(page.getByText("Present", { exact: true })).toBeVisible();
+  const initialScroll = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 900);
   await page.keyboard.press("PageDown");
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(initialScroll);
   await expect(page.locator("html")).not.toHaveAttribute("data-narrative", "complete");
-  await expect(page.getByText("Oh. Hi. You caught me at “one last tweak”.")).toBeVisible({ timeout: 3_000 });
-  await expect(page.getByText("Right. Let’s make this less awkward — full screen.")).toBeVisible({ timeout: 4_500 });
-  await expect(page.getByText("Present", { exact: true })).toBeVisible();
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 16_000 });
+  await expect(page.getByText("You caught me working.")).toBeVisible({ timeout: 2_500 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
 
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(hero.getByRole("img", { name: /Portrait of Javier Ortiz/ })).toBeVisible();
+  await expect(page.locator("[data-figma-editor]")).toBeHidden();
   await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
   await expect(hero.locator("img.portrait")).toHaveCount(1);
   await expect(hero.locator("img.portrait")).toHaveAttribute("src", /hero-system\.jpg/);
@@ -48,7 +43,7 @@ test("the first visit explains the working file, enters Present and cannot be sk
   // gesture listeners remain mounted with the hero, so verify that the handoff
   // really gives the document back to the visitor.
   await expect(page.locator("html")).not.toHaveCSS("overflow", "hidden");
-  const initialScroll = await page.evaluate(() => scrollY);
+  const releasedAt = await page.evaluate(() => scrollY);
   if (isMobile) {
     const touchStillBlocked = await page.evaluate(() => {
       const event = new TouchEvent("touchmove", { bubbles: true, cancelable: true });
@@ -58,7 +53,7 @@ test("the first visit explains the working file, enters Present and cannot be sk
     expect(touchStillBlocked).toBe(false);
   } else {
     await page.mouse.wheel(0, 180);
-    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(initialScroll + 40);
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(releasedAt + 40);
   }
 });
 
@@ -69,17 +64,22 @@ test("the mobile hero keeps the title, portrait and cue in the first viewport", 
 
   const geometry = await page.evaluate(() => {
     const title = document.querySelector("h1")!.getBoundingClientRect();
+    const name = document.querySelector("[data-live-file-frame] p")!.getBoundingClientRect();
     const portrait = document.querySelector('figure[aria-label^="Portrait of Javier Ortiz"]')!.getBoundingClientRect();
     const explore = [...document.querySelectorAll("a")].find((link) => link.textContent?.includes("Explore"))!.getBoundingClientRect();
     return {
+      titleTop: title.top,
       titleBottom: title.bottom,
+      nameTop: name.top,
       portraitTop: portrait.top,
       portraitVisible: Math.min(portrait.bottom, innerHeight) - Math.max(portrait.top, 0),
       exploreTop: explore.top,
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
   });
-  expect(geometry.titleBottom).toBeLessThan(geometry.portraitTop);
+  expect(geometry.nameTop).toBeGreaterThan(350);
+  expect(geometry.titleTop).toBeGreaterThan(geometry.nameTop);
+  expect(geometry.titleBottom).toBeLessThan(844);
   expect(geometry.portraitVisible).toBeGreaterThan(250);
   expect(geometry.exploreTop).toBeGreaterThan(0);
   expect(geometry.exploreTop).toBeLessThan(844);
@@ -132,64 +132,23 @@ test("forced WIP and final states expose visibly different section designs", asy
   expect(finalColumns).not.toBe(wipColumns);
 });
 
-test("the guided first pass reframes, locks and completes a readable edit", async ({ page, isMobile }) => {
-  test.skip(isMobile, "Desktop validates the full cursor and Spotlight score.");
-  test.setTimeout(35_000);
+test("the first visit keeps Snapshot native and makes every later edit optional", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Desktop verifies free scroll and the explicit Follow control.");
   await page.goto("/?narrative=first");
-  await skipIntro(page);
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
   await page.getByRole("link", { name: "Explore" }).click();
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
-  await expect(scene).toHaveAttribute("data-live-state", /observing|spotlight-entering|editing|commenting/, { timeout: 2_500 });
-  await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 01/)).toBeVisible();
-  await expect(page.getByText("Following Javier")).toBeVisible();
-  const snapshotTitleTop = await page.getByRole("heading", { level: 2, name: /I turn complex product logic/ }).evaluate((element) => element.getBoundingClientRect().top);
-  expect(snapshotTitleTop).toBeGreaterThan(72);
-  const comment = page.locator('[data-spotlight-context][data-context-kind="comment"]');
-  await expect(comment.getByText("This is becoming a résumé. Nobody asked.")).toBeVisible();
-  await expect(comment.getByText("Javier · now")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Skip this edit|Stop following/ })).toHaveCount(0);
-  await expect(page.locator("body")).toHaveCSS("position", "fixed");
-  const anchoredScroll = await page.locator("body").evaluate((element) => Math.abs(Number.parseFloat(getComputedStyle(element).top)));
-
-  await page.keyboard.press("Escape");
-  await page.mouse.wheel(0, 900);
-  await expect(page.locator("[data-spotlight-active]")).toBeVisible();
-  await expect(page.getByText("Scroll resumes when this edit is complete")).toBeVisible();
-
-  // Scrollbar removal may emit a resize event in real browsers. It is not a
-  // visitor resize and must not collapse Spotlight into a single-frame flash.
-  await page.evaluate(() => window.dispatchEvent(new Event("resize")));
-  await expect(page.getByText(/LIVE FILE · EDIT 01 \/ 01/)).toBeVisible();
-  await expect(page.locator("body")).toHaveCSS("position", "fixed");
-
-  await expect(comment.getByText("This is becoming a résumé. Nobody asked.")).toBeAttached({ timeout: 5_000 });
-  const contextGeometry = await comment.evaluate((element) => {
-    const bounds = element.getBoundingClientRect();
-    return { top: bounds.top, right: bounds.right, bottom: bounds.bottom, left: bounds.left, width: innerWidth, height: innerHeight };
-  });
-  expect(contextGeometry.top).toBeGreaterThanOrEqual(0);
-  expect(contextGeometry.left).toBeGreaterThanOrEqual(0);
-  expect(contextGeometry.right).toBeLessThanOrEqual(contextGeometry.width);
-  expect(contextGeometry.bottom).toBeLessThanOrEqual(contextGeometry.height);
-  await expect(scene).toHaveAttribute("data-live-state", "settled", { timeout: 15_000 });
-  await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
-  expect(Math.abs((await page.evaluate(() => scrollY)) - anchoredScroll)).toBeLessThan(3);
-
-  // Restoring the captured position is an internal operation, not evidence
-  // that the visitor reached the next chapter. Control must remain released
-  // until a fresh gesture actually advances the document.
-  await page.waitForTimeout(650);
+  await expect(scene).toHaveAttribute("data-live-state", "settled");
   await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
-  await expect(page.locator("html")).not.toHaveCSS("overflow", "hidden");
-  const releasedScroll = await page.evaluate(() => scrollY);
-  await page.mouse.wheel(0, 180);
-  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(releasedScroll + 40);
+  await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
 
-  // After the one required chapter, following becomes an explicit visitor
-  // choice and continues with Work in document order.
+  const before = await page.evaluate(() => scrollY);
+  await page.mouse.wheel(0, 180);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 40);
+
   await page.getByRole("button", { name: "Follow Javier" }).first().click();
-  await expect(page.getByText(/LIVE FILE · EDIT 02 \/ 08/)).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByRole("button", { name: /Stop following/ }).first()).toBeVisible({ timeout: 5_000 });
   await page.getByRole("button", { name: /Stop following/ }).first().click();
   await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
 });
@@ -226,13 +185,14 @@ test("Javier remains present through non-blocking ambient micro-adjustments", as
   });
   await page.goto("/?narrative=return");
   await skipIntro(page);
+  await page.getByRole("link", { name: "Explore" }).click();
 
   const dock = page.locator("[data-follow-dock]");
   await expect(dock).toBeVisible();
-  await expect(dock.locator("span").filter({ hasText: "JAVIER" })).toBeAttached();
+  await expect(dock.locator("span").filter({ hasText: "FOLLOW JAVIER" })).toBeAttached();
   await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 6_000 });
   await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
-  await expect(page.locator("[data-ambient-note]")).toContainText(/Two pixels right|No\. One pixel left|Perfect\. Probably/);
+  await expect(page.locator("[data-ambient-note]")).toContainText(/Trying something punchier|Too LinkedIn|Back to the useful one/);
   await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
   const before = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 180);
@@ -283,13 +243,16 @@ test("the Reference Ledger is honest, keyboard-operable and never fabricates quo
   await expect(page.locator("blockquote")).toHaveCount(0);
 });
 
-test("consented memory produces deterministic return tiers and can be forgotten", async ({ page, context, isMobile }) => {
+test("consented memory produces deterministic return tiers without replaying the opening", async ({ page, context, isMobile }) => {
   test.skip(isMobile, "Storage tiers are viewport-independent and run once.");
   test.setTimeout(75_000);
   await page.goto("/?narrative=first");
-  await skipIntro(page);
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
   await page.getByRole("link", { name: "Explore" }).click();
+  await page.getByRole("button", { name: "Follow Javier" }).first().click();
+  await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 4_000 });
   await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", "settled", { timeout: 16_000 });
+  await page.getByRole("button", { name: /Stop following/ }).first().click();
   await expect(page.getByLabel("Portfolio memory preference")).toBeVisible({ timeout: 6_000 });
   await page.getByRole("button", { name: "Allow" }).click();
 
@@ -303,9 +266,7 @@ test("consented memory produces deterministic return tiers and can be forgotten"
   await thirdVisit.goto("/");
   await expect(thirdVisit.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 2_500 });
   await expect(thirdVisit.locator("[data-phase]")).toHaveAttribute("data-phase", "complete");
-  const familiarSkip = thirdVisit.locator("[data-phase] button").filter({ hasText: "Skip opening" });
-  await expect(familiarSkip).toHaveCSS("opacity", "0");
-  await expect(familiarSkip).toHaveCSS("pointer-events", "none");
+  await expect(thirdVisit.locator("[data-figma-editor]")).toBeHidden();
 
   // Persistent return memory may shorten the intro, but lower edits remain
   // opt-in until the visitor asks to follow Javier.
@@ -336,9 +297,9 @@ test("a failed portrait request falls back to the finished semantic hero", async
   test.skip(isMobile, "The shared asset failure path runs once.");
   await page.route("**/hero-system*", (route) => route.abort());
   await page.goto("/?narrative=first");
-  await expect(page.locator("[data-phase]")).toHaveAttribute("data-phase", "failed", { timeout: 2_500 });
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
   await expect(page.getByRole("heading", { level: 1, name: "Senior Product Designer" })).toBeVisible();
+  await expect(page.locator("[data-figma-editor]")).toBeHidden();
 });
 
 test("the portfolio remains useful without JavaScript", async ({ browser, isMobile }) => {
@@ -370,8 +331,8 @@ test("mobile navigation and orientation chrome remain robust", async ({ page, is
     await expect(page.locator(".mobile-nav")).not.toHaveAttribute("open", "");
   } else {
     await page.getByRole("link", { name: "Explore" }).click();
-    await expect(page.getByRole("navigation", { name: "On this page" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "01 — Snapshot" })).toHaveAttribute("aria-current", "location");
+    await expect(page.getByRole("navigation", { name: "On this page" })).toHaveCount(0);
+    await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
   }
 });
 
@@ -390,10 +351,11 @@ test("project depth and playground replay remain available to visitors", async (
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
   const card = page.locator(".project-card").first();
+  const visual = card.locator(".project-card__media .project-visual");
   await card.scrollIntoViewIfNeeded();
   await card.focus();
   await expect(card).toBeFocused();
-  await expect.poll(() => card.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
+  await expect.poll(() => visual.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
 
   const replay = page.getByRole("button", { name: "Replay study" });
   await replay.scrollIntoViewIfNeeded();

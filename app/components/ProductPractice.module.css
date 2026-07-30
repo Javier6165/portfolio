@@ -93,17 +93,17 @@
 }
 
 .artifactBar { height: 3.6rem; padding: 0 1.1rem; border-bottom: 1px solid rgba(255,255,255,.12); color: #a6abb0; }
-.artifactBar b { color: #c7ff47; font-weight: 400; }
+.artifactBar b { color: var(--signal); font-weight: 400; }
 .artifactFooter { padding: 0.9rem 1.1rem; border-top: 1px solid rgba(255,255,255,.1); color: #7f858b; }
 
 .map { display: grid; grid-template-rows: auto 1fr auto; }
 .mapCanvas { position: relative; min-height: 19rem; }
 .mapCanvas span { position: absolute; z-index: 2; padding: 0.7rem 0.9rem; border: 1px solid rgba(255,255,255,.18); border-radius: 0.55rem; background: #1b2025; font-size: 0.78rem; }
 .actor { top: 12%; left: 7%; }
-.rule { top: 40%; left: 34%; border-color: rgba(199,255,71,.5) !important; color: #c7ff47; }
+.rule { top: 40%; left: 34%; border-color: color-mix(in srgb, var(--signal) 50%, transparent) !important; color: var(--signal); }
 .condition { top: 13%; right: 7%; }
 .consequence { right: 9%; bottom: 12%; }
-.mapCanvas i { position: absolute; z-index: 1; height: 1px; background: rgba(199,255,71,.38); transform-origin: left; }
+.mapCanvas i { position: absolute; z-index: 1; height: 1px; background: color-mix(in srgb, var(--signal) 38%, transparent); transform-origin: left; }
 .pathOne { top: 27%; left: 17%; width: 28%; rotate: 28deg; }
 .pathTwo { top: 31%; left: 52%; width: 28%; rotate: -22deg; }
 .pathThree { top: 58%; left: 53%; width: 26%; rotate: 24deg; }
@@ -111,21 +111,21 @@
 .flow { position: relative; }
 .flowCanvas { min-height: 21rem; display: grid; grid-template-columns: 1fr 3rem 1.1fr 3rem 1fr; align-items: center; padding: 2rem 1.4rem; }
 .flowCanvas > div { min-height: 11rem; display: flex; flex-direction: column; padding: 1rem; border: 1px solid rgba(255,255,255,.14); border-radius: 0.7rem; background: rgba(255,255,255,.04); }
-.flowCanvas > i { height: 1px; background: #c7ff47; }
+.flowCanvas > i { height: 1px; background: var(--signal); }
 .flowCanvas small { color: #899097; font: 0.62rem var(--font-mono); }
 .flowCanvas strong { margin-top: auto; font-size: 1.1rem; font-weight: 520; }
 .flowCanvas span { margin-top: 0.35rem; color: #9aa0a5; font-size: 0.72rem; }
-.flowCanvas .flowFocus { border-color: #c7ff47; background: rgba(199,255,71,.08); }
-.annotation { position: absolute; right: 1.2rem; bottom: 1rem; color: #c7ff47; font: 0.62rem var(--font-mono); }
+.flowCanvas .flowFocus { border-color: var(--signal); background: color-mix(in srgb, var(--signal) 08%, transparent); }
+.annotation { position: absolute; right: 1.2rem; bottom: 1rem; color: var(--signal); font: 0.62rem var(--font-mono); }
 
 .prototypeCanvas { min-height: 21rem; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) minmax(9rem, .55fr); gap: 1rem; padding: 1rem; }
 .prototypeRail { display: grid; align-content: start; gap: 0.8rem; border-right: 1px solid rgba(255,255,255,.1); }
 .prototypeRail i { width: 0.75rem; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.22); border-radius: 0.2rem; }
 .prototypeRule { align-self: center; display: grid; grid-template-columns: 3rem 1fr; gap: 0.7rem; align-items: center; }
-.prototypeRule small { color: #c7ff47; font: 0.65rem var(--font-mono); }
+.prototypeRule small { color: var(--signal); font: 0.65rem var(--font-mono); }
 .prototypeRule span { padding: 0.8rem; border: 1px solid rgba(255,255,255,.1); border-radius: 0.55rem; background: rgba(255,255,255,.05); font-size: 0.78rem; }
-.prototypeResult { display: flex; flex-direction: column; padding: 1rem; border: 1px solid rgba(199,255,71,.25); border-radius: 0.7rem; background: rgba(199,255,71,.08); }
-.prototypeResult small { color: #c7ff47; font: 0.62rem var(--font-mono); }
+.prototypeResult { display: flex; flex-direction: column; padding: 1rem; border: 1px solid color-mix(in srgb, var(--signal) 25%, transparent); border-radius: 0.7rem; background: color-mix(in srgb, var(--signal) 08%, transparent); }
+.prototypeResult small { color: var(--signal); font: 0.62rem var(--font-mono); }
 .prototypeResult strong { margin-top: auto; font-size: clamp(2.1rem, 4vw, 4.4rem); letter-spacing: -.06em; }
 .prototypeResult span { color: #9da29f; font-size: 0.75rem; }
 

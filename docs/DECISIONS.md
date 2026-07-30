@@ -2,6 +2,8 @@
 
 Este documento resume lo que necesita un colaborador si recibe solo el repositorio `site/`.
 
+> Plan 15 y ADR-028 son la dirección vigente desde el 30 de julio de 2026. Sustituyen las decisiones de intro, editor propio, Snapshot obligatorio y chrome persistente de Plan 14.
+
 ## Producto y narrativa
 
 - Concepto: `Live File`. Javier hace una última pasada de criterio sobre un portfolio abierto; la web profesional sigue siendo el producto principal.
@@ -12,6 +14,14 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Los casos actuales, escenarios, outcomes y métricas son ficticios y permanecen rotulados.
 - References es una preview honesta. No contiene citas ni identidades inventadas; una recomendación futura exige fuente, atribución, permiso y aprobación.
 - La capa de editor es decorativa. Ningún dato profesional depende de ver una animación o comentario.
+
+## Dirección Plan 15 — vigente
+
+- La primera visita abre durante `3–4 s` dentro de una recreación reconocible de Figma UI3; Javier está editando, reconoce al visitante y activa personalmente `Present`.
+- ADR-013 se sustituye en esta rama: cursor, comments, selection bounds, panels y Present adoptan deliberadamente la gramática visual de Figma para que el chiste se entienda sin explicación.
+- La intro es la única secuencia obligatoria. Snapshot ya no captura scroll; cualquier Follow posterior es voluntario, cancelable y visualmente discreto.
+- En Presentation mode desaparece el chrome de Figma. El portfolio debe sentirse editorial, fotográfico y humano, no como un dashboard ni como una herramienta persistente.
+- La comparación con la versión anterior fue aprobada. Toda evolución debe preservar el contraste entre Figma durante la edición y la dirección editorial durante Presentation mode.
 
 ## Dirección visual
 

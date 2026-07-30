@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/instrument-sans/wdth.css";
 import "@fontsource/fragment-mono/400.css";
 import "./globals.css";
 import { ExperienceSettings } from "./components/live-file/ExperienceSettings";
@@ -56,6 +56,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: appearanceScript }} /></head>
       <body>
+        <template
+          data-impeccable-contract="d3549a99"
+          dangerouslySetInnerHTML={{ __html: `<!--
+THESIS: Javier is caught refining the real portfolio inside recognisable Figma UI3; the editor disappears instead of becoming the portfolio's permanent skin.
+OWN-WORLD: Authentic white UI3 chrome and cobalt collaboration marks surround a carbon, bone-white and muted-brass editorial portfolio with integrated photography and restrained geometry.
+STORY: The visitor sees Javier working, is acknowledged, watches him activate Present, then explores freely; later guidance is optional and quiet.
+FIRST VIEWPORT: A large selected hero artboard dominates the canvas, portrait on the right, Javier Ortiz and Senior Product Designer on the left, with Present at top-right and Explore only after handoff.
+FORM: Interrupted working file to living editorial dossier; approved close-up composition; seed d3549a99.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->` }}
+        />
         <NarrativeProvider>
           <LiveSceneDirector>
             <a className="skip-link" href="#main-content">Skip to content</a>

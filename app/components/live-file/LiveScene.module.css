@@ -1,5 +1,5 @@
 .scene { position:relative; isolation:isolate; }
-.draftStatus,.finalStatus { position:absolute; z-index:14; top:var(--live-status-top,.75rem); right:var(--live-status-right,.75rem); display:flex; align-items:center; gap:.4rem; padding:.42rem .58rem; border:1px solid var(--line-strong); border-radius:999px; background:color-mix(in srgb,var(--canvas) 88%,transparent); box-shadow:0 .8rem 2rem var(--shadow); backdrop-filter:blur(14px); font:.62rem var(--font-mono); letter-spacing:.05em; text-transform:uppercase; pointer-events:none; transition:opacity 300ms ease,transform 500ms cubic-bezier(.16,1,.3,1),color 250ms ease; }
+.draftStatus,.finalStatus { display:none; }
 .draftStatus { color:var(--muted); }
 .draftStatus i,.finalStatus i { width:.45rem; aspect-ratio:1; border-radius:50%; background:currentColor; }
 .finalStatus { color:var(--signal); opacity:1; }
@@ -29,13 +29,13 @@
 .scene[data-live-state="settling"] .commentThread > b { opacity:1; }
 :global(html[data-spotlight="active"]) .propertyPanel,
 :global(html[data-spotlight="active"]) .commentThread { opacity:0!important; }
-.globalCursor { position:fixed; z-index:210; top:0; left:0; width:1px; height:1px; color:var(--narrative-blue); opacity:0; pointer-events:none; will-change:transform,opacity; }
-.globalCursor > i { position:absolute; top:-.1rem; left:-.1rem; width:0; height:0; border-top:.9rem solid currentColor; border-right:.58rem solid transparent; filter:drop-shadow(0 .25rem .35rem rgba(0,0,0,.3)); transform:rotate(-18deg); }
-.globalCursor > span { position:absolute; top:.85rem; left:.75rem; padding:.3rem .45rem; border-radius:0 .38rem .38rem .38rem; background:var(--narrative-blue); color:#fff; font:.54rem var(--font-mono); }
-.ambientNote { position:fixed; z-index:209; top:0; left:0; display:grid; gap:.28rem; padding:.72rem .82rem .78rem; border:1px solid color-mix(in srgb,var(--narrative-blue) 62%,var(--line)); border-radius:.18rem .72rem .72rem .72rem; background:color-mix(in srgb,var(--surface-raised) 96%,transparent); color:var(--ink); box-shadow:0 1rem 3rem var(--shadow); opacity:0; pointer-events:none; transform-origin:top left; backdrop-filter:blur(16px); will-change:transform,opacity; }
-.ambientNote::before { content:""; position:absolute; top:-.32rem; left:-.32rem; width:.62rem; aspect-ratio:1; border-radius:50%; background:var(--narrative-blue); box-shadow:0 0 0 .26rem color-mix(in srgb,var(--narrative-blue) 18%,transparent); }
-.ambientNote > span { color:var(--narrative-blue); font:.56rem var(--font-mono); letter-spacing:.04em; text-transform:uppercase; }
-.ambientNote > p { max-width:25ch; font-size:.8rem; line-height:1.34; }
+.globalCursor { position:fixed; z-index:210; top:0; left:0; width:1px; height:1px; color:#9747ff; opacity:0; pointer-events:none; will-change:transform,opacity; }
+.globalCursor > i { position:absolute; top:-.1rem; left:-.1rem; width:0; height:0; border-top:1rem solid currentColor; border-right:.66rem solid transparent; filter:drop-shadow(0 .12rem .12rem rgba(0,0,0,.28)); transform:rotate(-16deg); }
+.globalCursor > span { position:absolute; top:.88rem; left:.72rem; padding:.3rem .48rem; border-radius:.2rem .5rem .5rem .5rem; background:#9747ff; color:#fff; font:600 .62rem/1 Arial,sans-serif; }
+.ambientNote { position:fixed; z-index:209; top:0; left:0; display:grid; gap:.22rem; padding:.72rem .82rem .78rem; border:1px solid #dedede; border-radius:.56rem; background:#fff; color:#202020; box-shadow:0 .7rem 2rem rgba(0,0,0,.18); opacity:0; pointer-events:none; transform-origin:top left; will-change:transform,opacity; }
+.ambientNote::before { content:""; position:absolute; top:-.32rem; left:1rem; width:.62rem; aspect-ratio:1; border-top:1px solid #dedede; border-left:1px solid #dedede; background:#fff; transform:rotate(45deg); }
+.ambientNote > span { color:#777; font:500 .56rem Arial,sans-serif; }
+.ambientNote > p { max-width:25ch; font:500 .76rem/1.34 Arial,sans-serif; }
 :global([data-ambient-edit="active"]) { outline:1px solid color-mix(in srgb,var(--narrative-blue) 78%,transparent); outline-offset:.28rem; }
 :global([data-ambient-edit="copy"]) { position:relative; color:transparent!important; text-shadow:none!important; }
 :global([data-ambient-edit="copy"])::after { content:attr(data-ambient-value); position:absolute; z-index:2; inset:0; display:block; color:var(--ink); font:inherit; font-weight:inherit; line-height:inherit; letter-spacing:inherit; text-wrap:inherit; }

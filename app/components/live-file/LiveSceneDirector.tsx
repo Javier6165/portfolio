@@ -61,7 +61,6 @@ type AmbientBeat = {
 };
 
 const ambientEditBeats: AmbientBeat[] = [
-  { id: "wordmark-pixels", selector: ".wordmark", mode: "nudge", notes: ["Two pixels right.", "No. One pixel left.", "Perfect. Probably."] },
   { id: "snapshot-copy", selector: "#snapshot-title", mode: "copy", notes: ["Trying something punchier…", "Too LinkedIn.", "Back to the useful one."], values: ["I turn complexity into clarity. ✨", "I design delightful synergies.", "I turn complex product logic into decisions people can see, test and trust."] },
   { id: "work-wrong-image", selector: ".project-card__media", mode: "wrong-image", notes: ["Adding the case-study evidence…", "That is my face.", "Wrong final_FINAL. Classic."] },
   { id: "practice-arrows", selector: "#practice-title", mode: "nudge", notes: ["Maybe it needs an arrow.", "Everything needs an arrow.", "It did not need an arrow."] },
@@ -128,7 +127,9 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const startSceneRef = useRef<(scene: RegisteredScene) => void>(() => undefined);
   const evaluateRef = useRef<() => void>(() => undefined);
   const [spotlight, setSpotlight] = useState<SpotlightView | null>(null);
-  const [guidedComplete, setGuidedComplete] = useState(false);
+  // Plan 15: the Figma opening is the only mandatory sequence. Every scene
+  // after Presentation mode is final until the visitor explicitly follows.
+  const [guidedComplete, setGuidedComplete] = useState(true);
   const [followingJavier, setFollowingJavier] = useState(false);
   const [presenceStatus, setPresenceStatus] = useState<"connected" | "editing" | "elsewhere" | "done">("connected");
 
@@ -294,7 +295,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const registerScene = useCallback((root: HTMLElement, config: LiveSceneConfig) => {
     registryRef.current.set(root, config);
     const forced = new URLSearchParams(window.location.search).get("live");
-    const initialWip = sceneIsEligible(config) && ((guidedFirstVisit && config.requiredFirstVisit) || followingRef.current);
+    const initialWip = sceneIsEligible(config) && followingRef.current;
     root.dataset.liveState = forced === "wip" || initialWip ? "wip" : reducedMotion ? "reduced" : "settled";
     if (forced !== "wip") scheduleEvaluation(280);
     return () => {
@@ -302,7 +303,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       if (candidateRef.current?.root === root) candidateRef.current = null;
       if (activeRef.current?.root === root) endActive(true);
     };
-  }, [endActive, guidedFirstVisit, reducedMotion, sceneIsEligible, scheduleEvaluation]);
+  }, [endActive, reducedMotion, sceneIsEligible, scheduleEvaluation]);
 
   useEffect(() => {
     startSceneRef.current = (scene) => {
@@ -310,7 +311,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       if (activeRef.current || !sceneIsEligible(config) || !root.isConnected) return;
       stopAmbientEdit();
       setPresenceStatus("connected");
-      const mandatory = guidedFirstVisit && config.requiredFirstVisit;
+      const mandatory = false;
       const target = root.querySelector<HTMLElement>(config.targetSelector) ?? root;
 
       // The guided first pass owns the framing. If a visitor races past a
@@ -712,7 +713,6 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       const cursor = cursorRef.current;
       const available = ambientEditBeats
         .filter((beat) => !ambientSeenRef.current.has(beat.id))
-        .filter((beat) => beat.id !== "wordmark-pixels" || window.scrollY < window.innerHeight * .42)
         .map((beat) => ({ beat, target: document.querySelector<HTMLElement>(beat.selector) }))
         .filter((item): item is { beat: AmbientBeat; target: HTMLElement } => Boolean(item.target));
       const chosen = available.find(({ target }) => {
@@ -733,8 +733,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       ambientTargetRef.current = target;
       const endX = clamp(rect.right - Math.min(28, rect.width * .18), 24, window.innerWidth - 92);
       const endY = clamp(rect.top + Math.min(38, rect.height * .45), 82, window.innerHeight - 78);
-      const noteX = beat.id === "wordmark-pixels" ? endX + 64 : endX;
-      const noteY = beat.id === "wordmark-pixels" ? 132 : endY;
+      const noteX = endX;
+      const noteY = endY;
       const startX = clamp(endX + 72, 24, window.innerWidth - 92);
       const startY = clamp(endY - 52, 82, window.innerHeight - 78);
       gsap.set(cursor, { x: startX, y: startY });
@@ -815,12 +815,12 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
 
   const value = useMemo<DirectorContextValue>(() => ({
     introComplete: experienceReady,
-    mandatoryFirstVisit: guidedFirstVisit,
+    mandatoryFirstVisit: false,
     reducedMotion,
     replayToken: liveReplayToken,
     registerScene,
     settleScene,
-  }), [experienceReady, guidedFirstVisit, liveReplayToken, reducedMotion, registerScene, settleScene]);
+  }), [experienceReady, liveReplayToken, reducedMotion, registerScene, settleScene]);
 
   const stopFollowing = useCallback(() => {
     followingRef.current = false;
@@ -841,7 +841,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       <SpotlightChrome
         active={spotlight}
         showDock={pathname === "/" && introComplete && autoFollow && !reducedMotion}
-        guidedFirstVisit={guidedFirstVisit && !guidedComplete}
+        guidedFirstVisit={false}
         followingJavier={followingJavier}
         presenceStatus={presenceStatus}
         onCancel={() => endActive(true)}

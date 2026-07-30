@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import styles from "./SpotlightChrome.module.css";
 
 export type SpotlightView = {
@@ -21,8 +21,7 @@ export type SpotlightView = {
 };
 
 export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJavier, presenceStatus, onCancel, onFollow, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; followingJavier: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onFollow: () => void; onReplay: () => void; onStop: () => void }) {
-  const [dockExpanded, setDockExpanded] = useState(true);
-  const dockIntroducedRef = useRef(false);
+  const dockExpanded = false;
   const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
   const commentResolved = active?.phase === "settling";
   const phaseAction = !active ? "" : active.phase === "commenting" && active.commentFirst
@@ -30,23 +29,6 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJ
     : active.phase === "observing"
       ? "Reviewing the unfinished version"
       : active.action;
-
-  useEffect(() => {
-    if (!showDock) return;
-    if (dockIntroducedRef.current) {
-      setDockExpanded(false);
-      return;
-    }
-    dockIntroducedRef.current = true;
-    setDockExpanded(true);
-    const timer = window.setTimeout(() => setDockExpanded(false), 8_000);
-    const collapseOnScroll = () => setDockExpanded(false);
-    window.addEventListener("scroll", collapseOnScroll, { passive: true, once: true });
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("scroll", collapseOnScroll);
-    };
-  }, [showDock]);
 
   return (
     <>

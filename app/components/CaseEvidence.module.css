@@ -41,7 +41,7 @@
 }
 
 .demo[data-mode="focus"] {
-  --demo-accent: #c7ff47;
+  --demo-accent: var(--signal);
   --demo-radius: 0.28rem;
   --demo-gap: 0.35rem;
 }
