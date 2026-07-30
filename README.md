@@ -10,7 +10,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - One focused Dark visual system, with no theme selector or alternate appearance state.
 - Three clearly labelled fictitious case studies.
 - Native scroll immediately after the intro; every Spotlight chapter runs only after the visitor chooses `Follow Javier`.
-- `Director`: utility-AI presence that reads local attention signals, alternates between its own agenda and the visitor’s focus, and makes small human edits without moving the camera.
+- `Director`: utility-AI presence that reads ephemeral local attention signals, rotates broad authored comment pools across visits, and makes small human edits without moving the camera or calling remote AI.
 - Heading edits select a fragment, type character by character, make a typo and correct it while preserving semantic copy.
 - A provisional Reference Ledger: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
 - A consented returning-visitor memory with replay, forget and motion controls.

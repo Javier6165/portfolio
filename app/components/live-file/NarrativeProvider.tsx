@@ -1,17 +1,21 @@
 "use client";
 
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react";
+import {
+  NarrativeContext,
+  type NarrativeConsent,
+  type NarrativeContextValue,
+  type VisitTier,
+} from "./NarrativeContext";
 
-export type NarrativeConsent = "unknown" | "granted" | "denied";
+export type { NarrativeConsent, VisitTier } from "./NarrativeContext";
 
 export type NarrativeMemory = {
   schema: 1;
@@ -21,28 +25,6 @@ export type NarrativeMemory = {
   expiresAt: string;
 };
 
-type NarrativeContextValue = {
-  autoFollow: boolean;
-  consent: NarrativeConsent;
-  guidedFirstVisit: boolean;
-  introComplete: boolean;
-  liveReplayToken: number;
-  reducedMotion: boolean;
-  replayToken: number;
-  showConsent: boolean;
-  visitTier: 1 | 2 | 3;
-  acceptMemory: () => void;
-  completeIntro: () => void;
-  declineMemory: () => void;
-  forgetExperience: () => void;
-  replayIntro: () => void;
-  replayLiveEdits: () => void;
-  hasSeenCue: (cueId: string) => boolean;
-  markCueSeen: (cueId: string) => void;
-  setAutoFollow: (enabled: boolean) => void;
-  setManualReducedMotion: (reduced: boolean) => void;
-};
-
 const CONSENT_KEY = "javier-narrative-consent";
 const MEMORY_KEY = "javier-narrative-memory-v1";
 const SESSION_COMPLETE_KEY = "javier-narrative-session-v1";
@@ -50,7 +32,6 @@ const SESSION_COUNTED_KEY = "javier-narrative-counted-v1";
 const MOTION_KEY = "javier-motion";
 const AUTO_FOLLOW_KEY = "javier-auto-follow-v1";
 const MEMORY_LIFETIME = 90 * 24 * 60 * 60 * 1000;
-const NarrativeContext = createContext<NarrativeContextValue | null>(null);
 
 function readMemory(): NarrativeMemory | null {
   try {
@@ -91,9 +72,10 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
   const [consent, setConsent] = useState<NarrativeConsent>("unknown");
   const [introComplete, setIntroComplete] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
-  const [visitTier, setVisitTier] = useState<1 | 2 | 3>(1);
+  const [visitTier, setVisitTier] = useState<VisitTier>(1);
   const [replayToken, setReplayToken] = useState(0);
   const [liveReplayToken, setLiveReplayToken] = useState(0);
+  const [memoryDecision, setMemoryDecision] = useState<Exclude<NarrativeConsent, "unknown"> | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const consentRef = useRef<NarrativeConsent>(consent);
   const consentOfferTimerRef = useRef<number | null>(null);
@@ -143,7 +125,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
             };
             writeMemory(updated);
             window.sessionStorage.setItem(SESSION_COUNTED_KEY, "true");
-            setVisitTier(Math.min(3, nextCount) as 1 | 2 | 3);
+            setVisitTier(Math.min(5, nextCount) as VisitTier);
             updated.seenCueIds.forEach((id) => seenCueIds.current.add(id));
           } else {
             consentRef.current = "unknown";
@@ -191,7 +173,8 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     }
     setConsent("granted");
     consentRef.current = "granted";
-    setVisitTier(Math.min(3, updated.visitCount) as 1 | 2 | 3);
+    setVisitTier(Math.min(5, updated.visitCount) as VisitTier);
+    setMemoryDecision("granted");
     setShowConsent(false);
   }, []);
 
@@ -204,6 +187,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     }
     setConsent("denied");
     consentRef.current = "denied";
+    setMemoryDecision("denied");
     setShowConsent(false);
   }, []);
 
@@ -221,6 +205,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     setAutoFollowState(true);
     setConsent("unknown");
     consentRef.current = "unknown";
+    setMemoryDecision(null);
     setVisitTier(1);
     setShowConsent(false);
     setIntroComplete(false);
@@ -296,6 +281,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     guidedFirstVisit: visitTier === 1 && liveReplayToken === 0,
     introComplete,
     liveReplayToken,
+    memoryDecision,
     reducedMotion,
     replayToken,
     showConsent,
@@ -315,6 +301,7 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
     consent,
     introComplete,
     liveReplayToken,
+    memoryDecision,
     reducedMotion,
     replayToken,
     showConsent,
@@ -332,10 +319,4 @@ export function NarrativeProvider({ children }: { children: ReactNode }) {
   ]);
 
   return <NarrativeContext.Provider value={value}>{children}</NarrativeContext.Provider>;
-}
-
-export function useNarrative() {
-  const context = useContext(NarrativeContext);
-  if (!context) throw new Error("useNarrative must be used inside NarrativeProvider");
-  return context;
 }

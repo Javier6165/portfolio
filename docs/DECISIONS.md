@@ -45,6 +45,8 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado y una partitura finita de microajustes; se pausa durante Spotlight y nunca captura scroll.
 - `DirectorPresence` mantiene una utility AI local con estados `observing → considering → approaching → commenting/editing → cooldown`. Combina visibilidad, centro, puntero, dwell, velocidad de cursor y velocidad/dirección de scroll; el foco del visitante domina cuando es claro y un sesgo autoral pequeño permite que Javier conserve agenda propia.
 - Tras `1,15–2,1 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `8,5 s` de silencio y no repite beats en la pestaña.
+- Cada beat utiliza un pool de aperturas y resoluciones. Triggers adicionales responden a Allow/No thanks, visitas 1–5, tiempo de sesión, fast scroll, lectura pausada, final alcanzado, retorno arriba y revisita. Son reglas locales con copy escrito, no IA generativa.
+- Los comentarios contextuales se limitan a cuatro por pestaña y guardan `22 s` de silencio, salvo la respuesta directa a la decisión de memoria.
 - Los cambios de copy se seleccionan y escriben carácter a carácter, con typo y backspace. Un espejo `aria-hidden` preserva el heading semántico y termina exactamente en su copy original.
 - Cualquier scroll cancela cursor, comentario y edición en la misma tarea; Director nunca mueve cámara ni sigue al target mientras se desplaza.
 - Director es fail-open: el contexto de escenas tiene un modo pasivo y la presencia tiene boundary + circuit breaker. Un error apaga solo la simulación, restaura estilos y deja contenido, navegación y scroll operativos.
@@ -73,8 +75,9 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Skip real, skip link, foco visible, roving tabs, reflow móvil y scroll nativo.
 - Reduced motion y no-JS resuelven directamente el resultado final sin Spotlight.
 - `sessionStorage` evita repetir la intro y puede guardar Auto-follow en la pestaña.
-- `seenCueIds` persistente conserva contexto de retorno, pero no decide la elegibilidad de las escenas; esa exclusión usa `javier-live-scenes-v2` en sessionStorage.
+- `seenCueIds` persistente conserva contexto de retorno y, con consentimiento, ids de variantes `director-copy:*`; no decide la elegibilidad de escenas ni guarda señales de comportamiento. Esa exclusión usa `javier-live-scenes-v2` en sessionStorage.
 - `localStorage` de narrativa solo tras `Allow`, esquema 1 y expiración lógica de 90 días.
+- Los tiers de visita se limitan a cinco. Rechazar memoria provoca una respuesta session-only y elimina la memoria narrativa; no se escribe ningún dato de comportamiento.
 - La preferencia de memoria se ofrece después de Snapshot y `2,4 s` de calma. Se desmonta durante Spotlight y durante Follow para no competir con la coreografía ni provocar layout shift.
 - Sin cookies ni identificadores personales.
 

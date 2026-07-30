@@ -12,7 +12,7 @@ import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { usePathname } from "next/navigation";
 import { DirectorPresence, DirectorSafetyBoundary, type DirectorPresenceStatus } from "./DirectorPresence";
-import { useNarrative } from "./NarrativeProvider";
+import { useNarrative } from "./NarrativeContext";
 import { DirectorContext } from "./LiveSceneContext";
 import { toolNames } from "./EditorPrimitives";
 import { SpotlightChrome, type SpotlightView } from "./SpotlightChrome";
@@ -59,14 +59,18 @@ function readSeenScenes() {
 export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const {
     autoFollow,
+    consent,
     guidedFirstVisit,
+    hasSeenCue,
     introComplete,
     liveReplayToken,
     markCueSeen,
+    memoryDecision,
     reducedMotion,
     replayLiveEdits,
     setAutoFollow,
     showConsent,
+    visitTier,
   } = useNarrative();
   const pathname = usePathname();
   const experienceReady = introComplete || pathname !== "/";
@@ -667,7 +671,12 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       >
         <DirectorPresence
           active={experienceReady && !spotlight && !followingJavier && !reducedMotion && autoFollow && !showConsent && pathname === "/"}
+          consent={consent}
+          hasSeenCue={hasSeenCue}
+          markCueSeen={markCueSeen}
+          memoryDecision={memoryDecision}
           onStatusChange={setPresenceStatus}
+          visitTier={visitTier}
         />
       </DirectorSafetyBoundary>
       <div ref={cursorRef} className={styles.globalCursor} data-spotlight-cursor aria-hidden="true"><i /><span>Javier</span></div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useNarrative } from "./NarrativeProvider";
+import { useNarrative } from "./NarrativeContext";
 import styles from "./ExperienceSettings.module.css";
 
 export function MemoryConsent() {

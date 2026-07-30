@@ -2,6 +2,13 @@
 
 import { Component, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { gsap } from "gsap";
+import {
+  contextualCommentary,
+  pickDirectorComment,
+  sectionCommentary,
+  type DirectorCommentPool,
+} from "./DirectorCommentary";
+import type { NarrativeConsent, VisitTier } from "./NarrativeContext";
 import styles from "./DirectorPresence.module.css";
 
 export type DirectorPresenceStatus = "connected" | "editing" | "elsewhere" | "done";
@@ -16,7 +23,7 @@ type DirectorBeat = {
   id: string;
   selector: string;
   mode: "text" | "comment" | "nudge" | "crop" | "easing";
-  comments: [string, string?];
+  comments: DirectorCommentPool;
   segment?: string;
   actions?: TextAction[];
   priority?: number;
@@ -32,6 +39,7 @@ type TextOverlay = {
 };
 
 type Candidate = { beat: DirectorBeat; target: HTMLElement; score: number; pointerInside: boolean };
+type ContextualCueId = keyof typeof contextualCommentary;
 
 type AttentionModel = {
   pointerX: number;
@@ -45,13 +53,48 @@ type AttentionModel = {
   lastScrollSampleAt: number;
 };
 
+type BehaviorModel = {
+  fastScrollDetected: boolean;
+  focusBeatId: string | null;
+  focusSince: number;
+  lastContextAt: number;
+  maxScrollDepth: number;
+  maxScrollY: number;
+  reachedEnd: boolean;
+  revisitedSection: boolean;
+  returnedTop: boolean;
+  scrollBursts: number;
+  visitedSections: Set<string>;
+};
+
 type DirectorPresenceProps = {
   active: boolean;
+  consent: NarrativeConsent;
+  hasSeenCue: (id: string) => boolean;
+  markCueSeen: (id: string) => void;
+  memoryDecision: Exclude<NarrativeConsent, "unknown"> | null;
   onStatusChange: (status: DirectorPresenceStatus) => void;
+  visitTier: VisitTier;
 };
 
 const DIRECTOR_MEMORY_KEY = "javier-director-beats-v1";
 const HUMAN_KEY_DELAYS = [82, 116, 69, 94, 128, 76, 103, 88, 142, 72];
+
+function createBehaviorModel(startedAt = 0): BehaviorModel {
+  return {
+    fastScrollDetected: false,
+    focusBeatId: null,
+    focusSince: startedAt,
+    lastContextAt: Number.NEGATIVE_INFINITY,
+    maxScrollDepth: 0,
+    maxScrollY: 0,
+    reachedEnd: false,
+    revisitedSection: false,
+    returnedTop: false,
+    scrollBursts: 0,
+    visitedSections: new Set<string>(),
+  };
+}
 
 // Each text intervention ends on the semantic source string. Director can
 // hesitate and correct itself without making transient copy the accessible
@@ -63,7 +106,7 @@ const directorBeats: DirectorBeat[] = [
     mode: "text",
     priority: .55,
     segment: "Javier",
-    comments: ["Small correction. Very personal.", "Good catch. By me."],
+    comments: sectionCommentary["hero-name-typo"],
     actions: [
       { type: "type", value: "Javire" },
       { type: "pause", duration: 440 },
@@ -76,7 +119,7 @@ const directorBeats: DirectorBeat[] = [
     selector: "#hero-title",
     mode: "text",
     segment: "Designer",
-    comments: ["One last word.", "That typo waited for an audience."],
+    comments: sectionCommentary["hero-role-typo"],
     actions: [
       { type: "type", value: "Desginer" },
       { type: "pause", duration: 460 },
@@ -89,7 +132,7 @@ const directorBeats: DirectorBeat[] = [
     selector: "#snapshot-title",
     mode: "text",
     segment: "test and trust",
-    comments: ["The ending can work harder.", "Yes. Without the accidental anagram."],
+    comments: sectionCommentary["snapshot-trust-typo"],
     actions: [
       { type: "type", value: "test and trsut" },
       { type: "pause", duration: 420 },
@@ -101,20 +144,20 @@ const directorBeats: DirectorBeat[] = [
     id: "work-evidence-note",
     selector: ".project-card__media",
     mode: "comment",
-    comments: ["Evidence first. Decoration can wait.", "This frame earns its space."],
+    comments: sectionCommentary["work-evidence-note"],
   },
   {
     id: "practice-two-pixels",
     selector: "#practice-title",
     mode: "nudge",
-    comments: ["This line is leaning left.", "Two pixels. Emotionally significant."],
+    comments: sectionCommentary["practice-two-pixels"],
   },
   {
     id: "ai-validate-typo",
     selector: "#ai-title",
     mode: "text",
     segment: "validate",
-    comments: ["Human check, including spelling.", "Validated."],
+    comments: sectionCommentary["ai-validate-typo"],
     actions: [
       { type: "type", value: "validtae" },
       { type: "pause", duration: 390 },
@@ -126,14 +169,14 @@ const directorBeats: DirectorBeat[] = [
     id: "about-crop-breathe",
     selector: "#about-preview figure",
     mode: "crop",
-    comments: ["A touch less ‘thought leader’.", "Better. Still me."],
+    comments: sectionCommentary["about-crop-breathe"],
   },
   {
     id: "references-side-typo",
     selector: "#testimonials-title",
     mode: "text",
     segment: "other side",
-    comments: ["This needs to sound like a person.", "And be spelt like one."],
+    comments: sectionCommentary["references-side-typo"],
     actions: [
       { type: "type", value: "other sdie" },
       { type: "pause", duration: 430 },
@@ -145,13 +188,13 @@ const directorBeats: DirectorBeat[] = [
     id: "playground-easing",
     selector: ".playground-playhead",
     mode: "easing",
-    comments: ["The timing is technically correct.", "Which is not the same as feeling right."],
+    comments: sectionCommentary["playground-easing"],
   },
   {
     id: "footer-handoff",
     selector: ".footer-contact",
     mode: "comment",
-    comments: ["I’ll stop touching it now.", "Probably."],
+    comments: sectionCommentary["footer-handoff"],
   },
 ];
 
@@ -204,13 +247,24 @@ function rememberBeat(seen: Set<string>, id: string) {
   }
 }
 
-export function DirectorPresence({ active, onStatusChange }: DirectorPresenceProps) {
+export function DirectorPresence({
+  active,
+  consent,
+  hasSeenCue,
+  markCueSeen,
+  memoryDecision,
+  onStatusChange,
+  visitTier,
+}: DirectorPresenceProps) {
   const layerRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const noteRef = useRef<HTMLDivElement>(null);
   const currentTargetRef = useRef<HTMLElement | null>(null);
   const effectTargetRef = useRef<HTMLElement | null>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const behaviorRef = useRef<BehaviorModel>(createBehaviorModel());
+  const resetConsumedRef = useRef(false);
+  const sessionStartedAtRef = useRef<number | null>(null);
   const [textOverlay, setTextOverlay] = useState<TextOverlay | null>(null);
 
   useEffect(() => {
@@ -241,12 +295,19 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       return;
     }
     const fast = params.get("director") === "fast";
-    const seen = readSeenBeats(params.get("director") === "reset");
+    const resetRequested = params.get("director") === "reset" || params.get("directorReset") === "1";
+    const reset = resetRequested && !resetConsumedRef.current;
+    if (reset) resetConsumedRef.current = true;
+    const seen = readSeenBeats(reset);
     const intersections = new Map<HTMLElement, number>();
     const targets = directorBeats
       .map((beat) => ({ beat, target: document.querySelector<HTMLElement>(beat.selector) }))
       .filter((item): item is { beat: DirectorBeat; target: HTMLElement } => Boolean(item.target));
     const startedAt = window.performance.now();
+    if (sessionStartedAtRef.current === null || reset) sessionStartedAtRef.current = reset ? startedAt : 0;
+    if (reset) behaviorRef.current = createBehaviorModel(startedAt);
+    const sessionStartedAt = sessionStartedAtRef.current ?? startedAt;
+    const behavior = behaviorRef.current;
     const attention: AttentionModel = {
       pointerX: window.innerWidth * .5,
       pointerY: window.innerHeight * .5,
@@ -272,7 +333,7 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       entries.forEach((entry) => intersections.set(entry.target as HTMLElement, entry.intersectionRatio));
     }, { threshold: [0, .2, .4, .6, .8, 1] });
     targets.forEach(({ target }) => observer.observe(target));
-    setBrainState(seen.size >= directorBeats.length ? "done" : "observing", "initialising");
+    setBrainState("observing", "initialising");
 
     const hideNote = () => gsap.set(note, { opacity: 0, scale: .96 });
     const hideCursor = () => gsap.set(cursor, { opacity: 0 });
@@ -441,11 +502,24 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       return sleep(fast ? 120 : 460, runId);
     };
 
+    const chooseCopy = (beat: DirectorBeat, phase: "opening" | "resolution", pool: readonly string[]) => {
+      const persistenceEnabled = consent === "granted";
+      return pickDirectorComment({
+        pool,
+        sourceId: beat.id,
+        phase,
+        seed: `${visitTier}:${attention.scrollDirection}:${Math.round(window.scrollY / 240)}:${seen.size}`,
+        hasSeen: persistenceEnabled ? hasSeenCue : () => false,
+        remember: persistenceEnabled ? markCueSeen : () => undefined,
+      });
+    };
+
     const runBeat = async ({ beat, target }: Candidate) => {
       if (!alive || !target.isConnected || visibleRatio(target) < .2) return;
       running = true;
       const runId = ++generation;
       rememberBeat(seen, beat.id);
+      if (beat.id.startsWith("context:")) behavior.lastContextAt = window.performance.now();
       onStatusChange("editing");
       setBrainState("approaching", "moving-to-focus");
       const targetRect = target.getBoundingClientRect();
@@ -461,7 +535,8 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       gsap.set(cursor, { x: startX, y: startY, opacity: 0 });
       if (!await moveCursor(endX, endY, fast ? 130 : 760, runId)) return;
       setBrainState("commenting", "explaining-choice");
-      showNote(beat.comments[0], noteX, noteY);
+      layer.dataset.directorCue = beat.id;
+      showNote(chooseCopy(beat, "opening", beat.comments.opening), noteX, noteY);
       if (!await sleep(fast ? 100 : 720, runId)) return;
 
       setBrainState(beat.mode === "comment" ? "commenting" : "editing", beat.mode);
@@ -470,7 +545,9 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
         : await runEffectBeat(beat, target, runId);
       if (!completed || generation !== runId) return;
 
-      if (beat.comments[1]) showNote(beat.comments[1], noteX, noteY);
+      if (beat.comments.resolution?.length) {
+        showNote(chooseCopy(beat, "resolution", beat.comments.resolution), noteX, noteY);
+      }
       if (!await sleep(fast ? 180 : 1_350, runId)) return;
       clearTarget();
       setBrainState("cooldown", "giving-space");
@@ -481,14 +558,14 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       currentCandidate = null;
       candidateSince = window.performance.now();
       nextAllowedAt = window.performance.now() + (fast ? 550 : 8_500);
-      onStatusChange(seen.size >= directorBeats.length ? "done" : "connected");
-      setBrainState(seen.size >= directorBeats.length ? "done" : "cooldown", "giving-space");
+      onStatusChange("connected");
+      setBrainState("cooldown", "giving-space");
     };
 
-    const chooseCandidate = (now: number) => {
+    const rankCandidates = (now: number) => {
       const viewportCentre = { x: window.innerWidth * .5, y: window.innerHeight * .5 };
-      const candidates = targets
-        .filter(({ beat, target }) => !seen.has(beat.id) && target.isConnected)
+      return targets
+        .filter(({ target }) => target.isConnected)
         .map(({ beat, target }, index) => {
           const ratio = Math.max(intersections.get(target) ?? 0, visibleRatio(target));
           const rect = target.getBoundingClientRect();
@@ -517,7 +594,75 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
         })
         .filter(({ target }) => visibleRatio(target) >= .28 && target.getBoundingClientRect().height > 0)
         .sort((a, b) => b.score - a.score);
-      return candidates[0] ?? null;
+    };
+
+    const contextualCandidate = (now: number, anchor: Candidate): Candidate | null => {
+      const elapsed = now - sessionStartedAt;
+      const contextualCount = [...seen].filter((id) => id.startsWith("context:")).length;
+      const contextGap = fast ? 650 : 22_000;
+      let cueId: ContextualCueId | null = null;
+
+      // A direct choice gets a direct acknowledgement. Everything else is
+      // deliberately rate-limited so awareness never turns into surveillance.
+      if (memoryDecision && !seen.has(`context:memory-${memoryDecision}`)) {
+        cueId = `memory-${memoryDecision}` as ContextualCueId;
+      } else if (contextualCount >= 4 || now - behavior.lastContextAt < contextGap) {
+        return null;
+      } else if (consent === "granted" && visitTier > 1 && elapsed >= (fast ? 250 : 7_000)) {
+        const visitCue = `visit-${["one", "two", "three", "four", "five"][visitTier - 1]}` as ContextualCueId;
+        if (!seen.has(`context:${visitCue}`)) cueId = visitCue;
+      } else if (visitTier === 1 && elapsed >= (fast ? 5_500 : 12_000) && !seen.has("context:visit-one")) {
+        cueId = "visit-one";
+      } else if (behavior.returnedTop && !seen.has("context:returned-top")) {
+        cueId = "returned-top";
+      } else if (behavior.reachedEnd && !seen.has("context:reached-end")) {
+        cueId = "reached-end";
+      } else if ((behavior.fastScrollDetected || behavior.scrollBursts >= 2) && !seen.has("context:fast-scroll")) {
+        cueId = "fast-scroll";
+      } else if (behavior.revisitedSection && !seen.has("context:section-revisit")) {
+        cueId = "section-revisit";
+      } else if (behavior.focusBeatId === anchor.beat.id
+        && now - behavior.focusSince >= (fast ? 900 : 8_500)
+        && !seen.has("context:patient-reader")) {
+        cueId = "patient-reader";
+      } else if (elapsed >= (fast ? 4_500 : 240_000) && !seen.has("context:session-four-minutes")) {
+        cueId = "session-four-minutes";
+      } else if (elapsed >= (fast ? 3_000 : 120_000) && !seen.has("context:session-two-minutes")) {
+        cueId = "session-two-minutes";
+      } else if (elapsed >= (fast ? 1_500 : 45_000) && !seen.has("context:session-forty-five")) {
+        cueId = "session-forty-five";
+      }
+
+      if (!cueId) return null;
+      return {
+        beat: {
+          id: `context:${cueId}`,
+          selector: anchor.beat.selector,
+          mode: "comment",
+          comments: { opening: contextualCommentary[cueId] },
+          priority: 10,
+        },
+        target: anchor.target,
+        score: anchor.score + 10,
+        pointerInside: anchor.pointerInside,
+      };
+    };
+
+    const chooseCandidate = (now: number) => {
+      const ranked = rankCandidates(now);
+      const anchor = ranked[0];
+      if (!anchor) return null;
+
+      if (behavior.focusBeatId !== anchor.beat.id) {
+        if (behavior.focusBeatId && behavior.visitedSections.has(anchor.beat.id)) behavior.revisitedSection = true;
+        behavior.focusBeatId = anchor.beat.id;
+        behavior.focusSince = now;
+        behavior.visitedSections.add(anchor.beat.id);
+      }
+
+      const contextual = contextualCandidate(now, anchor);
+      if (contextual) return contextual;
+      return ranked.find(({ beat }) => !seen.has(beat.id)) ?? null;
     };
 
     const evaluate = () => {
@@ -525,11 +670,6 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       const now = window.performance.now();
       attention.pointerVelocity *= .72;
       attention.scrollVelocity *= .58;
-      if (seen.size >= directorBeats.length) {
-        onStatusChange("done");
-        setBrainState("done", "all-beats-seen");
-        return;
-      }
       const scrollIdle = now - lastScrollAt;
       const inputIdle = now - lastInputAt;
       const visitorBusy = attention.scrollVelocity > .18 || attention.pointerVelocity > .65;
@@ -586,10 +726,20 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       const elapsed = Math.max(8, now - attention.lastScrollSampleAt);
       const delta = window.scrollY - attention.lastScrollY;
       const instantaneous = Math.abs(delta) / elapsed;
+      const scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      const depth = clamp((window.scrollY + window.innerHeight) / Math.max(1, scrollHeight), 0, 1);
       attention.scrollVelocity = attention.scrollVelocity * .45 + instantaneous * .55;
       attention.scrollDirection = delta === 0 ? attention.scrollDirection : delta > 0 ? 1 : -1;
       attention.lastScrollY = window.scrollY;
       attention.lastScrollSampleAt = now;
+      behavior.maxScrollY = Math.max(behavior.maxScrollY, window.scrollY);
+      behavior.maxScrollDepth = Math.max(behavior.maxScrollDepth, depth);
+      if (Math.abs(delta) >= 32 && instantaneous >= .7) behavior.scrollBursts += 1;
+      if (Math.abs(delta) >= 80 || instantaneous >= 1.25) behavior.fastScrollDetected = true;
+      if (depth >= .92) behavior.reachedEnd = true;
+      if (behavior.maxScrollY >= window.innerHeight * .8 && window.scrollY <= window.innerHeight * .12 && delta < 0) {
+        behavior.returnedTop = true;
+      }
       lastScrollAt = now;
       lastInputAt = now;
       currentCandidate = null;
@@ -609,7 +759,7 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
     const onPause = () => { if (alive) cancelCurrent("connected", "paused", "another-director"); };
     const onSafetyTest = () => failSafely();
 
-    onStatusChange(seen.size >= directorBeats.length ? "done" : "connected");
+    onStatusChange("connected");
     interval = window.setInterval(() => {
       try { evaluate(); } catch { failSafely(); }
     }, fast ? 80 : 240);
@@ -640,7 +790,7 @@ export function DirectorPresence({ active, onStatusChange }: DirectorPresencePro
       window.removeEventListener("portfolio-director-safety-test", onSafetyTest);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [active, onStatusChange]);
+  }, [active, consent, hasSeenCue, markCueSeen, memoryDecision, onStatusChange, visitTier]);
 
   return (
     <div ref={layerRef} className={styles.layer} data-director-presence data-active={active ? "true" : "false"} data-director-state="observing" data-director-intent="idle" aria-hidden="true">

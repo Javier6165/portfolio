@@ -158,6 +158,7 @@ test("free navigation never launches lower scenes and Follow Javier remains canc
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
+    sessionStorage.setItem("javier-narrative-counted-v1", "true");
   });
   await page.goto("/?narrative=return");
   await skipIntro(page);
@@ -184,6 +185,7 @@ test("Director types like a person and yields immediately when the visitor scrol
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
+    sessionStorage.setItem("javier-narrative-counted-v1", "true");
   });
   await page.goto("/?narrative=return&director=fast");
   await skipIntro(page);
@@ -197,7 +199,7 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 3_000 });
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", /approaching|commenting|editing/);
   await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
-  await expect(page.locator("[data-ambient-note]")).toContainText("Small correction. Very personal.");
+  await expect(page.locator("[data-ambient-note]")).toContainText(/Small correction|least negotiable|rebranding|I know this word|name should probably survive/);
   await expect(heroName).toHaveAttribute("data-director-editing", "text");
   await expect(overlay).toBeVisible();
   await expect(overlay).toContainText("Javire", { timeout: 3_000 });
@@ -212,6 +214,7 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
   await expect(overlay).toHaveCount(0);
   await expect(heroName).not.toHaveAttribute("data-director-editing", /.+/);
+  await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", "context:fast-scroll", { timeout: 3_000 });
 
   // Director is an enhancement: its circuit breaker must remove only the
   // simulated collaborator and leave the real portfolio operational.
@@ -219,6 +222,78 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", "disabled");
   await expect(heroTitle).toBeVisible();
   expect(pageErrors).toEqual([]);
+});
+
+test("Director varies return commentary and remembers only shown variants after consent", async ({ page, context, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  await page.addInitScript(() => {
+    localStorage.setItem("javier-narrative-consent", "granted");
+    localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 4, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
+  });
+  await page.goto("/?narrative=return&director=fast");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
+  const director = page.locator("[data-director-presence]");
+  await expect(director).toHaveAttribute("data-director-cue", "context:visit-five", { timeout: 3_000 });
+  const firstCopy = (await page.locator("[data-ambient-note] p").textContent())?.trim();
+  expect(firstCopy).toMatch(/Five visits|keep coming back|Visit five|welcome back feels|Five rounds/);
+  await expect.poll(() => page.evaluate(() => {
+    const memory = JSON.parse(localStorage.getItem("javier-narrative-memory-v1") ?? "null");
+    return memory?.seenCueIds?.some((id: string) => id.startsWith("director-copy:context:visit-five:opening:"));
+  })).toBe(true);
+
+  const nextVisit = await context.newPage();
+  await nextVisit.goto("/?narrative=return&director=fast");
+  await expect(nextVisit.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", "context:visit-five", { timeout: 3_000 });
+  const secondCopy = (await nextVisit.locator("[data-ambient-note] p").textContent())?.trim();
+  expect(secondCopy).toMatch(/Five visits|keep coming back|Visit five|welcome back feels|Five rounds/);
+  expect(secondCopy).not.toBe(firstCopy);
+  await nextVisit.close();
+});
+
+test("Director turns session time into ephemeral commentary", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  await page.addInitScript(() => {
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
+      "hero-name-typo",
+      "hero-role-typo",
+      "snapshot-trust-typo",
+      "work-evidence-note",
+      "practice-two-pixels",
+      "ai-validate-typo",
+      "about-crop-breathe",
+      "references-side-typo",
+      "playground-easing",
+      "footer-handoff",
+      "context:patient-reader",
+    ]));
+  });
+  await page.goto("/?narrative=return&director=fast");
+  const director = page.locator("[data-director-presence]");
+  await expect(director).toHaveAttribute("data-director-cue", "context:session-forty-five", { timeout: 3_000 });
+  await expect(page.locator("[data-ambient-note]")).toContainText(/stayed past the opening|Still here|Forty-five seconds|reading, not merely scrolling/);
+  expect(await page.evaluate(() => localStorage.getItem("javier-narrative-memory-v1"))).toBeNull();
+});
+
+test("Director acknowledges rejected memory without storing behavior", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  test.setTimeout(75_000);
+  await page.goto("/?narrative=first&director=fast");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
+  await page.getByRole("link", { name: "Explore" }).click();
+  await page.getByRole("button", { name: "Follow Javier" }).first().click();
+  const scene = page.locator('[data-live-scene="snapshot-clarify"]');
+  await expect(scene).toHaveAttribute("data-live-state", "settled", { timeout: 16_000 });
+  await page.getByRole("button", { name: /Stop following/ }).first().click();
+  await expect(page.getByLabel("Portfolio memory preference")).toBeVisible({ timeout: 6_000 });
+  await page.getByRole("button", { name: "No thanks" }).click();
+
+  const director = page.locator("[data-director-presence]");
+  await expect(director).toHaveAttribute("data-director-cue", "context:memory-denied", { timeout: 3_000 });
+  await expect(page.locator("[data-ambient-note]")).toContainText(/No cookies|No thanks received|Memory off|works without remembering|clean browser/);
+  expect(await page.evaluate(() => ({
+    consent: localStorage.getItem("javier-narrative-consent"),
+    memory: localStorage.getItem("javier-narrative-memory-v1"),
+  }))).toEqual({ consent: "denied", memory: null });
 });
 
 test("Product practice and AI workflow expose complete roving keyboard tabs", async ({ page, isMobile }) => {

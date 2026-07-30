@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
-import { useNarrative } from "./NarrativeProvider";
+import { useNarrative } from "./NarrativeContext";
 import styles from "./EditorIntro.module.css";
 
 export type IntroPhase =

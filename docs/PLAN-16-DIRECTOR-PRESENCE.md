@@ -10,22 +10,26 @@ No añade funcionalidades de producto, analítica, personalización remota ni nu
 
 ## Señales observadas
 
-Todo ocurre en el documento y se descarta al cerrar la pestaña:
+Todo el modelo de comportamiento ocurre en el documento y se descarta al cerrar la pestaña:
 
 - visibilidad y proporción de targets mediante `IntersectionObserver`;
 - posición del viewport y tiempo desde el último scroll;
 - posición reciente del puntero y distancia al target;
 - teclado, pointer down, foco y visibilidad de la pestaña;
 - velocidad del puntero, velocidad/dirección del scroll y tiempo de estabilidad;
+- profundidad máxima, llegada al final, retorno al hero y revisita de una zona;
+- tiempo transcurrido en la pestaña y decisión inmediata sobre memoria local;
 - exclusión mutua con intro, consentimiento, Spotlight y Follow.
 
-No se registra texto introducido, historial, identidad, analytics ni datos remotos. La única memoria es un conjunto session-only de beats ya vistos para evitar repetición.
+No se registra texto introducido, historial, identidad, URLs, analytics ni datos remotos. Los beats ya ejecutados viven en `sessionStorage`. Si existe consentimiento, `NarrativeMemory` puede guardar únicamente el nivel de visita y los ids de variantes ya mostradas para rotar el copy en sesiones futuras; nunca persiste el modelo de comportamiento.
 
 ## Modelo de comportamiento
 
 Director no es una secuencia aleatoria ni una IA remota. Es una `utility AI` similar a las usadas en videojuegos: mantiene un blackboard efímero, evalúa el contexto varias veces por segundo y cambia entre `observing`, `considering`, `approaching`, `commenting/editing`, `cooldown`, `roaming`, `paused` y `done`.
 
 El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, visibilidad, centralidad, prioridad y un sesgo autoral suave permiten que Javier continúe con su propia agenda. La velocidad reciente eleva el tiempo de espera: Director no interpreta una navegación activa como atención.
+
+Sobre esa base hay disparadores contextuales finitos para decisión de memoria, visitas 1–5, `45 s`/`2 min`/`4 min`, scroll rápido, lectura pausada, final alcanzado, retorno arriba y revisita de sección. No son respuestas generadas: cada disparador elige entre un pool editorial amplio y determinista. El resultado imita percepción, no inteligencia remota.
 
 ## Decisión de atención
 
@@ -37,9 +41,20 @@ El foco del visitante tiene más peso cuando el puntero permanece sobre un targe
 
 Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
 
+Los comentarios puramente contextuales tienen un límite de cuatro por pestaña y al menos `22 s` entre ellos, salvo la respuesta directa a `Allow` o `No thanks`. La decisión inmediata tiene prioridad porque responde a una acción explícita; el resto cede siempre ante navegación activa.
+
+## Pools y memoria narrativa
+
+- Cada beat de edición dispone de `4–5` aperturas y `4` resoluciones.
+- Cada disparador contextual dispone de `4–5` variaciones.
+- Sin consentimiento, la selección es estable en la pestaña pero no se conserva al cerrarla.
+- Con consentimiento, solo se añaden ids opacos `director-copy:*` a `seenCueIds`; se elige primero una variante no vista y se reinicia el pool cuando se agota.
+- `visitTier` se limita a cinco niveles. A partir de la quinta visita conserva tier 5, pero sigue rotando comentarios disponibles.
+- La frase coloquial sobre “cookies” aclara dentro del propio comentario que la función rechazada era memoria local. El sitio no usa cookies.
+
 ## Contención de fallos
 
-Director debe fallar abierto. La identidad del contexto vive en `LiveSceneContext`, separada del componente que Fast Refresh reemplaza; además `LiveScene` recibe un valor pasivo durante cualquier desajuste transitorio y muestra la UI final sin lanzar una excepción. La presencia visual está aislada por un error boundary y su loop asíncrono por un circuit breaker. Si algo falla, se limpian cursor, comentario, overlay y transforms, se detiene el loop y la web continúa con navegación y scroll normales.
+Director debe fallar abierto. Las identidades de contexto viven en `LiveSceneContext` y `NarrativeContext`, separadas de los componentes provider que Fast Refresh reemplaza; además `LiveScene` recibe un valor pasivo durante cualquier desajuste transitorio y muestra la UI final sin lanzar una excepción. La presencia visual está aislada por un error boundary y su loop asíncrono por un circuit breaker. Si algo falla, se limpian cursor, comentario, overlay y transforms, se detiene el loop y la web continúa con navegación y scroll normales.
 
 ## Contrato de scroll
 
@@ -97,5 +112,8 @@ Se retira el gag de sustituir una imagen completa y los cambios de copy instant�
 - typo, backspace y retorno exacto al accessible name original;
 - cancelación inmediata con rueda/trackpad durante selección y typing;
 - comentario contextual dentro del viewport;
+- reacción específica a `No thanks` sin crear memoria narrativa;
+- rotación de copy entre visitas consentidas y límite de tier 5;
+- disparadores de tiempo, fast scroll, pausa, final, retorno y revisita sin persistir esas señales;
 - ausencia completa en touch, reduced motion, no-JS, Spotlight, Follow y consentimiento;
 - `npm run lint`, `npm test` y `npm run test:e2e`.
