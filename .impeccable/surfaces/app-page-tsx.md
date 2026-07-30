@@ -19,8 +19,8 @@ Design, product and engineering leaders must identify Javier's seniority and poi
 
 ## Proof and content
 
-- Real name, role and portrait lead.
-- `I design the calm inside complex products.` may support the hero.
+- Real name, positioning, role and portrait lead.
+- `I design the calm inside complex products.` is the final semantic hero headline.
 - Cases and metrics remain visibly fictitious.
 - References and contact remain provisional and must not gain invented proof.
 
@@ -55,11 +55,11 @@ Carry forward the close hero scale and clear cursor-to-Present path from B, the 
 | Javier portrait | Integrated right-side photographic field, no floating card | Existing optimized portrait raster |
 | Selection and handles | Figma-blue frame geometry | DOM + CSS |
 | Multiplayer cursor | Blue arrow, Javier name tag and cursor chat | DOM + CSS + existing GSAP timeline |
-| Presentation handoff | Javier clicks Present; editor recedes while the same artboard expands | Existing GSAP transform timeline |
+| Presentation handoff | Javier clicks Present; editor recedes and the same cursor immediately edits the hero headline | Existing GSAP transform timeline + Director handoff |
 | Post-intro chrome | Free scroll, no mandatory Snapshot, discreet Follow, no right rail | Existing behavior simplified in React/CSS |
 | Home rhythm | Fewer monumental headings, pills and micro-labels; warmer signal color | Global tokens + CSS Modules |
 
 ## Open decisions
 
-- Exact final wording and timing of the cursor acknowledgement after the first functional pass.
+- Whether later evidence changes should reduce their visual deviation further after in-browser testing.
 - Whether the published replacement should preserve or remove References once real content work resumes; outside this sprint.

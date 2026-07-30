@@ -19,10 +19,10 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
   test.setTimeout(15_000);
   await page.goto("/?narrative=first");
 
-  const hero = page.getByRole("region", { name: "Senior Product Designer" });
+  const hero = page.getByRole("region", { name: "I design the calm inside complex products." });
   await expect(page.locator("[data-figma-editor]")).toBeVisible();
   await expect(page.getByText("Javier Ortiz / Portfolio", { exact: true }).last()).toBeVisible();
-  await expect(hero.getByRole("heading", { level: 1, name: "Senior Product Designer" })).toBeVisible();
+  await expect(hero.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.getByText("Present", { exact: true })).toBeVisible();
   const initialScroll = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 900);
@@ -38,6 +38,11 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
   await expect(page.getByLabel("Portfolio memory preference")).toHaveCount(0);
   await expect(hero.locator("img.portrait")).toHaveCount(1);
   await expect(hero.locator("img.portrait")).toHaveAttribute("src", /hero-system\.jpg/);
+  if (!isMobile) {
+    await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", "hero-headline-indecision", { timeout: 1_500 });
+    await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
+    await expect(page.locator("#hero-title")).toHaveAttribute("data-director-editing", "text");
+  }
 
   // The opening may own scroll only while its timeline is active. Its global
   // gesture listeners remain mounted with the hero, so verify that the handoff
@@ -77,7 +82,7 @@ test("the mobile hero keeps the title, portrait and cue in the first viewport", 
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
   });
-  expect(geometry.nameTop).toBeGreaterThan(350);
+  expect(geometry.nameTop).toBeGreaterThan(300);
   expect(geometry.titleTop).toBeGreaterThan(geometry.nameTop);
   expect(geometry.titleBottom).toBeLessThan(844);
   expect(geometry.portraitVisible).toBeGreaterThan(250);
@@ -112,7 +117,7 @@ test("the portfolio exposes one intentional Dark appearance", async ({ page, isM
   expect(await page.locator("html").evaluate((element) => element.outerHTML)).not.toMatch(/hero-human|about-human|javier-theme|theme-toggle/);
 });
 
-test("forced WIP and final states expose visibly different section designs", async ({ page, isMobile }) => {
+test("forced WIP keeps Snapshot recognisable while exposing a small rhythm correction", async ({ page, isMobile }) => {
   test.skip(isMobile, "The authored WIP contrast is measured once on desktop.");
   await page.goto("/?narrative=first&live=wip");
   await skipIntro(page);
@@ -120,16 +125,27 @@ test("forced WIP and final states expose visibly different section designs", asy
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(scene).toHaveAttribute("data-live-state", "wip");
-  const wipColumns = await scene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => getComputedStyle(element).gridTemplateColumns);
-  await expect(scene.getByText("Draft · too much résumé")).toBeAttached();
+  const wipStyle = await scene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => ({
+    columns: getComputedStyle(element).gridTemplateColumns,
+    opacity: getComputedStyle(element).opacity,
+    transform: getComputedStyle(element).transform,
+  }));
+  await expect(scene.getByText("Draft · rhythm uneven")).toBeAttached();
 
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
   await page.getByRole("link", { name: "Explore" }).click();
   const finalScene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(finalScene).toHaveAttribute("data-live-state", "settled");
-  const finalColumns = await finalScene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => getComputedStyle(element).gridTemplateColumns);
-  expect(finalColumns).not.toBe(wipColumns);
+  const finalStyle = await finalScene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => ({
+    columns: getComputedStyle(element).gridTemplateColumns,
+    opacity: getComputedStyle(element).opacity,
+    transform: getComputedStyle(element).transform,
+  }));
+  expect(finalStyle.columns.split(" ")).toHaveLength(4);
+  expect(wipStyle.columns.split(" ")).toHaveLength(4);
+  expect(finalStyle.opacity).not.toBe(wipStyle.opacity);
+  expect(finalStyle.transform).not.toBe(wipStyle.transform);
 });
 
 test("the first visit keeps Snapshot native and makes every later edit optional", async ({ page, isMobile }) => {
@@ -191,20 +207,18 @@ test("Director types like a person and yields immediately when the visitor scrol
   await skipIntro(page);
 
   const dock = page.locator("[data-follow-dock]");
-  const heroName = page.locator("#hero-name");
-  const heroTitle = page.getByRole("heading", { level: 1, name: "Senior Product Designer" });
+  const heroTitle = page.getByRole("heading", { level: 1, name: "I design the calm inside complex products." });
   const overlay = page.locator("[data-director-text-overlay]");
   await expect(dock).toBeVisible();
   await expect(dock.locator("span").filter({ hasText: "FOLLOW JAVIER" })).toBeAttached();
   await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 3_000 });
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", /approaching|commenting|editing/);
   await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
-  await expect(page.locator("[data-ambient-note]")).toContainText(/Small correction|least negotiable|rebranding|I know this word|name should probably survive/);
-  await expect(heroName).toHaveAttribute("data-director-editing", "text");
+  await expect(page.locator("[data-ambient-note]")).toContainText(/different answer|impossible choices|what I actually bring|defensible opinions|question the headline/);
+  await expect(heroTitle).toHaveAttribute("data-director-editing", "text");
   await expect(overlay).toBeVisible();
-  await expect(overlay).toContainText("Javire", { timeout: 3_000 });
-  await expect(heroName).toHaveText("Javier Ortiz");
-  await expect(heroTitle).toHaveAccessibleName("Senior Product Designer");
+  await expect(overlay).toContainText("Javier Ortiz", { timeout: 3_000 });
+  await expect(heroTitle).toHaveAccessibleName("I design the calm inside complex products.");
   await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
 
   const before = await page.evaluate(() => scrollY);
@@ -213,7 +227,7 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(page.locator("[data-javier-cursor]")).toHaveCSS("opacity", "0");
   await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
   await expect(overlay).toHaveCount(0);
-  await expect(heroName).not.toHaveAttribute("data-director-editing", /.+/);
+  await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/);
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", "context:fast-scroll", { timeout: 3_000 });
 
   // Director is an enhancement: its circuit breaker must remove only the
@@ -222,6 +236,38 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", "disabled");
   await expect(heroTitle).toBeVisible();
   expect(pageErrors).toEqual([]);
+});
+
+test("every Director beat still resolves against the redesigned page", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  test.setTimeout(45_000);
+  const beats = [
+    { id: "snapshot-trust-typo", selector: "#snapshot-title" },
+    { id: "work-evidence-note", selector: ".project-card__media" },
+    { id: "practice-two-pixels", selector: "#practice-title" },
+    { id: "ai-validate-typo", selector: "#ai-title" },
+    { id: "about-crop-breathe", selector: "#about-preview figure" },
+    { id: "references-side-typo", selector: "#testimonials-title" },
+    { id: "playground-easing", selector: ".playground-playhead" },
+    { id: "footer-handoff", selector: ".footer-contact" },
+  ];
+  await page.addInitScript((ids) => {
+    localStorage.setItem("javier-narrative-consent", "denied");
+    const requested = new URL(location.href).searchParams.get("directorOnly");
+    const contextual = ["visit-one", "visit-two", "visit-three", "visit-four", "visit-five", "session-forty-five", "session-two-minutes", "session-four-minutes", "fast-scroll", "patient-reader", "returned-top", "reached-end", "section-revisit"]
+      .map((id) => `context:${id}`);
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
+      ...ids.filter((id) => id !== requested),
+      ...contextual,
+    ]));
+  }, ["hero-headline-indecision", ...beats.map(({ id }) => id)]);
+
+  for (const beat of beats) {
+    await page.goto(`/?narrative=return&director=fast&directorOnly=${beat.id}`);
+    await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
+    await page.locator(beat.selector).first().scrollIntoViewIfNeeded();
+    await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", beat.id, { timeout: 3_000 });
+  }
 });
 
 test("Director varies return commentary and remembers only shown variants after consent", async ({ page, context, isMobile }) => {
@@ -254,8 +300,7 @@ test("Director turns session time into ephemeral commentary", async ({ page, isM
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   await page.addInitScript(() => {
     sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
-      "hero-name-typo",
-      "hero-role-typo",
+      "hero-headline-indecision",
       "snapshot-trust-typo",
       "work-evidence-note",
       "practice-two-pixels",
@@ -395,7 +440,7 @@ test("a failed portrait request falls back to the finished semantic hero", async
   await page.route("**/hero-system*", (route) => route.abort());
   await page.goto("/?narrative=first");
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
-  await expect(page.getByRole("heading", { level: 1, name: "Senior Product Designer" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.locator("[data-figma-editor]")).toBeHidden();
 });
 
@@ -405,7 +450,7 @@ test("the portfolio remains useful without JavaScript", async ({ browser, isMobi
   const page = await context.newPage();
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { level: 1, name: "Senior Product Designer" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Atlas/ })).toBeVisible();
   const states = await page.locator("[data-live-scene]").evaluateAll((items) => items.map((item) => item.getAttribute("data-live-state")));

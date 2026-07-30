@@ -7,7 +7,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 ## Producto y narrativa
 
 - Concepto: `Live File`. Javier hace una última pasada de criterio sobre un portfolio abierto; la web profesional sigue siendo el producto principal.
-- Primer viewport: Javier Ortiz, Senior Product Designer, retrato y `Explore`. La explicación empieza en Snapshot.
+- Primer viewport: Javier Ortiz, `I design the calm inside complex products.`, Senior Product Designer, retrato y `Explore`. La explicación de evidencia empieza en Snapshot.
 - Posicionamiento: diseñador senior de sistemas y productos complejos, con responsabilidad reciente de lead y práctica explícita de AI + coded prototypes.
 - Idioma principal: inglés.
 - Orden de Home: Hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact.
@@ -42,12 +42,13 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
 - Al salir de Present la navegación queda libre y el avatar ofrece Follow. No hay una segunda captura obligatoria en Snapshot.
+- Al salir de Present, el cursor se entrega sin espera a `hero-headline-indecision`: selecciona el h1 completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. Este beat es la continuación de la intro, no una acción ambiental elegible.
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado y una partitura finita de microajustes; se pausa durante Spotlight y nunca captura scroll.
 - `DirectorPresence` mantiene una utility AI local con estados `observing → considering → approaching → commenting/editing → cooldown`. Combina visibilidad, centro, puntero, dwell, velocidad de cursor y velocidad/dirección de scroll; el foco del visitante domina cuando es claro y un sesgo autoral pequeño permite que Javier conserve agenda propia.
-- Tras `1,15–2,1 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `8,5 s` de silencio y no repite beats en la pestaña.
+- Fuera del handoff inicial, tras `0,85–1,2 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `6,5 s` de silencio y no repite beats en la pestaña.
 - Cada beat utiliza un pool de aperturas y resoluciones. Triggers adicionales responden a Allow/No thanks, visitas 1–5, tiempo de sesión, fast scroll, lectura pausada, final alcanzado, retorno arriba y revisita. Son reglas locales con copy escrito, no IA generativa.
 - Los comentarios contextuales se limitan a cuatro por pestaña y guardan `22 s` de silencio, salvo la respuesta directa a la decisión de memoria.
-- Los cambios de copy se seleccionan y escriben carácter a carácter, con typo y backspace. Un espejo `aria-hidden` preserva el heading semántico y termina exactamente en su copy original.
+- Los cambios de copy se seleccionan y escriben carácter a carácter, con typo y backspace. El hero permite selecciones completas y varias alternativas; un espejo `aria-hidden` preserva el heading semántico y termina exactamente en su copy original.
 - Cualquier scroll cancela cursor, comentario y edición en la misma tarea; Director nunca mueve cámara ni sigue al target mientras se desplaza.
 - Director es fail-open: el contexto de escenas tiene un modo pasivo y la presencia tiene boundary + circuit breaker. Un error apaga solo la simulación, restaura estilos y deja contenido, navegación y scroll operativos.
 - Un target sticky solo es elegible en su zona narrativa. El wordmark no puede desplazar el gag correspondiente a Work, Snapshot u otra sección.

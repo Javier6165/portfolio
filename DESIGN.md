@@ -85,7 +85,7 @@ Display type is compact and editorial; body copy remains neutral and readable. T
 
 The finished site uses a centered shell up to 100rem, a twelve-column editorial grid and generous section spacing. Major headings begin at the first column; supporting copy occupies the far-right columns. Project rows are separated by rules and whitespace rather than container fills.
 
-Below 1000px navigation collapses; below 720px grid compositions become deliberate vertical sequences. The mobile hero keeps portrait, Javier's name, role and Explore within the first viewport. Figma's side panels disappear on small screens, but the file bar, selected frame, Present action, cursor/comment and bottom toolbar preserve the joke.
+Below 1000px navigation collapses; below 720px grid compositions become deliberate vertical sequences. The mobile hero keeps portrait, Javier's name, positioning statement, role and Explore within the first viewport. Figma's side panels disappear on small screens, but the file bar, selected frame, Present action, cursor/comment and bottom toolbar preserve the joke.
 
 ## Elevation & Depth
 
@@ -105,7 +105,7 @@ The first-visit sequence lasts about four seconds: visible editing, a short Javi
 
 ### Hero
 
-The final hero contains only Javier Ortiz, Senior Product Designer, the integrated portrait and Explore. Name dominates; role is smaller and brass. The photograph is masked into the carbon canvas rather than placed in a card.
+The final hero leads with `I design the calm inside complex products.` in the condensed signature. Javier Ortiz becomes a compact brass identity marker and Senior Product Designer a quiet supporting line; portrait and Explore complete the viewport. The photograph is masked into the carbon canvas rather than placed in a card. This hierarchy is the landing point of a visible post-Present edit, not an unexplained copy swap.
 
 ### Navigation and actions
 
@@ -113,7 +113,7 @@ The header is transparent over the hero and becomes an opaque carbon surface aft
 
 ### Follow, cursor and comments
 
-Follow Javier is avatar-first and compact; a label appears only when space and hover allow. Ambient cursor edits begin below the hero, never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
+Follow Javier is avatar-first and compact; a label appears only when space and hover allow. On first visit, the multiplayer cursor hands off directly from Present to the hero and visibly tries name, role and positioning before settling. Later ambient edits never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
 
 ## Do's and Don'ts
 

@@ -36,16 +36,16 @@ export default function Home() {
           label="Profile / Refined"
           targetSelector={`.${styles.snapshotFacts}`}
           tool="layout"
-          action="Reframing the snapshot"
-          properties={["Split into 4", "Text 10 → 18", "Gap 0 → 24"]}
+          action="Tightening the evidence rhythm"
+          properties={["Gap 18 → 24", "Baseline +2", "Labels · aligned"]}
           readMs={1400}
           spotlightMs={3400}
           minVisibility={0.32}
-          comment="This is becoming a résumé. Nobody asked."
+          comment="The content is right. The rhythm is trying too hard."
           commentFirst
           requiredFirstVisit
           cameraOffsetY={190}
-          draftLabel="Draft · too much résumé"
+          draftLabel="Draft · rhythm uneven"
           className={styles.snapshotScene}
         >
           <div className={styles.snapshotLead}>
@@ -76,13 +76,13 @@ export default function Home() {
               label="Case 01 / Live"
               targetSelector=".project-card__media"
               tool="asset"
-              action="Placing the missing evidence"
-              properties={["atlas_rule_builder_v04", "Image · Fill", "Crop · 52%"]}
+              action="Opening the evidence crop"
+              properties={["Crop 56 → 52%", "Contrast +4", "Frame · aligned"]}
               readMs={1600}
               spotlightMs={3800}
-              comment="A case study without evidence. Bold strategy."
+              comment="The evidence is here. The crop is hiding the useful part."
               commentFirst
-              draftLabel="Draft · evidence missing"
+              draftLabel="Draft · crop too tight"
               className={styles.workScene}
               key={project.slug}
             >

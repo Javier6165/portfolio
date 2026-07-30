@@ -33,11 +33,11 @@ Sobre esa base hay disparadores contextuales finitos para decisión de memoria, 
 
 ## Decisión de atención
 
-1. Director espera a que intro y cualquier overlay terminen.
+1. El handoff de Present activa inmediatamente `hero-headline-indecision`; el resto de Director espera a que intro y cualquier overlay terminen.
 2. Descarta targets con menos de aproximadamente `28%` visible.
 3. Puntúa visibilidad, centralidad, proximidad y dwell del puntero, ritmo de interacción y prioridad autoral.
-4. Mantiene un único candidato estable entre `1,15–2,1 s` según la atención observada.
-5. Ejecuta una intervención y deja aproximadamente `8,5 s` de silencio.
+4. Mantiene un único candidato estable entre `0,85–1,2 s` según la atención observada.
+5. Ejecuta una intervención y deja aproximadamente `6,5 s` de silencio.
 
 Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
 
@@ -69,11 +69,11 @@ Así el cursor nunca queda visualmente pegado a una pieza que se desplaza bajo �
 
 ## Escritura humana
 
-Los headings editables incluyen Hero, Snapshot, AI y References. Cada beat:
+Los headings editables incluyen Hero, Snapshot, AI y References. El primer beat del Hero selecciona el titular completo, prueba `Javier Ortiz`, `Senior Product Designer` y el posicionamiento final; los demás pueden trabajar sobre un fragmento. Cada beat:
 
 1. mide el fragmento real con `Range`;
-2. mueve el cursor a su extremo;
-3. arrastra la selección con el azul Figma;
+2. mueve el cursor a su extremo —o consume las coordenadas del cursor que acaba de pulsar Present—;
+3. arrastra la selección con el azul Figma y puede volver a seleccionar el bloque completo;
 4. escribe carácter a carácter con cadencia irregular;
 5. comete un error pequeño y visible;
 6. usa backspace y corrige;

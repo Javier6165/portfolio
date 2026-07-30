@@ -110,6 +110,11 @@ export function EditorIntro() {
     const replaying = replayToken > 0 && !reducedMotion;
     const mode = replaying ? "first" : reducedMotion ? "static" : runtimeMode();
     document.body.dataset.liveFile = mode === "first" ? "active" : "complete";
+    if (mode !== "first") {
+      delete document.body.dataset.directorHandoff;
+      delete document.body.dataset.directorHandoffX;
+      delete document.body.dataset.directorHandoffY;
+    }
 
     // The authored opening is deliberately first-visit only. Return and
     // familiar visits respect the visitor's time and land on the final hero.
@@ -147,6 +152,9 @@ export function EditorIntro() {
 
     const expandFrame = () => {
       setPhase("expanding");
+      document.body.dataset.directorHandoff = "hero-headline";
+      document.body.dataset.directorHandoffX = String(Math.round(stageBounds.left + presentPoint.x));
+      document.body.dataset.directorHandoffY = String(Math.round(stageBounds.top + presentPoint.y));
       const editorTransform = window.getComputedStyle(frame).transform;
       gsap.set(frame, { transform: editorTransform });
       stage.dataset.expanded = "true";
@@ -253,7 +261,7 @@ export function EditorIntro() {
               <span data-selected="true"><i /> Hero</span>
               <small><i /> Portrait</small>
               <small><i /> Javier Ortiz</small>
-              <small><i /> Senior Product Designer</small>
+              <small><i /> Hero statement</small>
               <span><i /> Selected work</span>
             </div>
           </aside>
@@ -284,9 +292,8 @@ export function EditorIntro() {
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
           <div className={styles.identity}>
             <p id="hero-name" className={styles.name}>Javier Ortiz</p>
-            <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>
-              <span>Senior Product</span><span>Designer</span>
-            </h1>
+            <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>I design the calm inside complex products.</h1>
+            <p id="hero-role" className={styles.role}>Senior Product Designer</p>
           </div>
 
           <figure ref={portraitRef} className={styles.portrait} role="img" aria-label="Portrait of Javier Ortiz.">

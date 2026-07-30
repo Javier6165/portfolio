@@ -17,6 +17,7 @@ export type DirectorBrainState = "observing" | "considering" | "approaching" | "
 type TextAction =
   | { type: "type"; value: string }
   | { type: "backspace"; count: number }
+  | { type: "select-all" }
   | { type: "pause"; duration: number };
 
 type DirectorBeat = {
@@ -38,7 +39,13 @@ type TextOverlay = {
   style: CSSProperties;
 };
 
-type Candidate = { beat: DirectorBeat; target: HTMLElement; score: number; pointerInside: boolean };
+type Candidate = {
+  beat: DirectorBeat;
+  target: HTMLElement;
+  score: number;
+  pointerInside: boolean;
+  entry?: { x: number; y: number };
+};
 type ContextualCueId = keyof typeof contextualCommentary;
 
 type AttentionModel = {
@@ -101,30 +108,23 @@ function createBehaviorModel(startedAt = 0): BehaviorModel {
 // name of a heading or asking React to reconcile a mutated content node.
 const directorBeats: DirectorBeat[] = [
   {
-    id: "hero-name-typo",
-    selector: "#hero-name",
-    mode: "text",
-    priority: .55,
-    segment: "Javier",
-    comments: sectionCommentary["hero-name-typo"],
-    actions: [
-      { type: "type", value: "Javire" },
-      { type: "pause", duration: 440 },
-      { type: "backspace", count: 2 },
-      { type: "type", value: "er" },
-    ],
-  },
-  {
-    id: "hero-role-typo",
+    id: "hero-headline-indecision",
     selector: "#hero-title",
     mode: "text",
-    segment: "Designer",
-    comments: sectionCommentary["hero-role-typo"],
+    priority: .8,
+    segment: "I design the calm inside complex products.",
+    comments: sectionCommentary["hero-headline-indecision"],
     actions: [
-      { type: "type", value: "Desginer" },
-      { type: "pause", duration: 460 },
-      { type: "backspace", count: 5 },
-      { type: "type", value: "igner" },
+      { type: "type", value: "Javier Ortiz" },
+      { type: "pause", duration: 620 },
+      { type: "select-all" },
+      { type: "type", value: "Senior Product Designer" },
+      { type: "pause", duration: 760 },
+      { type: "select-all" },
+      { type: "type", value: "I design the calm inside complex prodcuts." },
+      { type: "pause", duration: 420 },
+      { type: "backspace", count: 9 },
+      { type: "type", value: "products." },
     ],
   },
   {
@@ -327,7 +327,19 @@ export function DirectorPresence({
     let candidateSince = startedAt;
     let lastScrollAt = startedAt;
     let lastInputAt = startedAt;
-    let nextAllowedAt = startedAt + (fast ? 350 : 3_600);
+    let nextAllowedAt = startedAt + (fast ? 350 : 1_200);
+    let handoffTimer: number | null = null;
+    const handoffRequested = document.body.dataset.directorHandoff === "hero-headline";
+    const handoffEntry = handoffRequested ? {
+      x: Number(document.body.dataset.directorHandoffX) || window.innerWidth - 142,
+      y: Number(document.body.dataset.directorHandoffY) || 42,
+    } : null;
+    if (handoffRequested) {
+      delete document.body.dataset.directorHandoff;
+      delete document.body.dataset.directorHandoffX;
+      delete document.body.dataset.directorHandoffY;
+      nextAllowedAt = startedAt;
+    }
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => intersections.set(entry.target as HTMLElement, entry.intersectionRatio));
@@ -454,14 +466,22 @@ export function DirectorPresence({
 
       let value = beat.segment;
       let keyIndex = 0;
+      let selectionActive = true;
       for (const action of beat.actions) {
         if (action.type === "pause") {
           if (!await sleep(action.duration, runId)) return false;
           continue;
         }
+        if (action.type === "select-all") {
+          selectionActive = true;
+          setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
+          if (!await sleep(fast ? 110 : 360, runId)) return false;
+          continue;
+        }
         if (action.type === "type") {
           for (const character of action.value) {
-            value = keyIndex === 0 ? character : `${value}${character}`;
+            value = selectionActive ? character : `${value}${character}`;
+            selectionActive = false;
             keyIndex += 1;
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
             const delay = fast ? 38 : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
@@ -514,7 +534,7 @@ export function DirectorPresence({
       });
     };
 
-    const runBeat = async ({ beat, target }: Candidate) => {
+    const runBeat = async ({ beat, target, entry }: Candidate) => {
       if (!alive || !target.isConnected || visibleRatio(target) < .2) return;
       running = true;
       const runId = ++generation;
@@ -528,12 +548,12 @@ export function DirectorPresence({
         : targetRect;
       const endX = clamp(rect.right - Math.min(30, rect.width * .14), 24, window.innerWidth - 90);
       const endY = clamp(rect.top + Math.min(42, rect.height * .42), 82, window.innerHeight - 82);
-      const noteX = beat.mode === "text" ? targetRect.right : endX;
+      const noteX = beat.mode === "text" ? targetRect.left + Math.min(72, targetRect.width * .16) : endX;
       const noteY = beat.mode === "text" ? targetRect.top - 140 : endY;
-      const startX = clamp(attention.pointerSeen ? attention.pointerX + 46 : endX + 82, 24, window.innerWidth - 90);
-      const startY = clamp(attention.pointerSeen ? attention.pointerY - 34 : endY - 58, 82, window.innerHeight - 82);
-      gsap.set(cursor, { x: startX, y: startY, opacity: 0 });
-      if (!await moveCursor(endX, endY, fast ? 130 : 760, runId)) return;
+      const startX = clamp(entry?.x ?? (attention.pointerSeen ? attention.pointerX + 46 : endX + 82), 24, window.innerWidth - 90);
+      const startY = clamp(entry?.y ?? (attention.pointerSeen ? attention.pointerY - 34 : endY - 58), 42, window.innerHeight - 82);
+      gsap.set(cursor, { x: startX, y: startY, opacity: entry ? .96 : 0 });
+      if (!await moveCursor(endX, endY, fast ? 130 : entry ? 520 : 760, runId)) return;
       setBrainState("commenting", "explaining-choice");
       layer.dataset.directorCue = beat.id;
       showNote(chooseCopy(beat, "opening", beat.comments.opening), noteX, noteY);
@@ -557,7 +577,7 @@ export function DirectorPresence({
       running = false;
       currentCandidate = null;
       candidateSince = window.performance.now();
-      nextAllowedAt = window.performance.now() + (fast ? 550 : 8_500);
+      nextAllowedAt = window.performance.now() + (fast ? 550 : 6_500);
       onStatusChange("connected");
       setBrainState("cooldown", "giving-space");
     };
@@ -697,7 +717,7 @@ export function DirectorPresence({
         return;
       }
       const pacePenalty = clamp(attention.scrollVelocity * 900, 0, 680);
-      const dwell = fast ? 180 : candidate.pointerInside ? 1_150 + pacePenalty : 2_100 + pacePenalty;
+      const dwell = fast ? 180 : candidate.pointerInside ? 850 + pacePenalty : 1_200 + pacePenalty;
       setBrainState("considering", candidate.pointerInside ? "visitor-focus" : "autonomous-focus");
       if (now - candidateSince >= dwell) void runBeat(candidate).catch(failSafely);
     };
@@ -744,7 +764,7 @@ export function DirectorPresence({
       lastInputAt = now;
       currentCandidate = null;
       candidateSince = now;
-      nextAllowedAt = Math.max(nextAllowedAt, now + (fast ? 250 : 1_450));
+      nextAllowedAt = Math.max(nextAllowedAt, now + (fast ? 250 : 950));
       // A viewport gesture invalidates the measured anchor. Hiding in the same
       // scroll task prevents the collaborator cursor from appearing attached
       // to content that is moving underneath it.
@@ -763,6 +783,17 @@ export function DirectorPresence({
     interval = window.setInterval(() => {
       try { evaluate(); } catch { failSafely(); }
     }, fast ? 80 : 240);
+
+    if (handoffRequested) {
+      const opening = targets.find(({ beat }) => beat.id === "hero-headline-indecision");
+      if (opening && handoffEntry) {
+        setBrainState("approaching", "figma-handoff");
+        gsap.set(cursor, { x: handoffEntry.x, y: handoffEntry.y, opacity: .96 });
+        handoffTimer = window.setTimeout(() => {
+          void runBeat({ ...opening, score: 100, pointerInside: false, entry: handoffEntry }).catch(failSafely);
+        }, fast ? 20 : 80);
+      }
+    }
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onInput, { passive: true });
     window.addEventListener("keydown", onInput, true);
@@ -776,6 +807,7 @@ export function DirectorPresence({
       alive = false;
       generation += 1;
       if (interval !== null) window.clearInterval(interval);
+      if (handoffTimer !== null) window.clearTimeout(handoffTimer);
       observer.disconnect();
       tweenRef.current?.kill();
       clearTarget();

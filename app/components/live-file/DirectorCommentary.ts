@@ -4,34 +4,20 @@ export type DirectorCommentPool = {
 };
 
 export const sectionCommentary: Record<string, DirectorCommentPool> = {
-  "hero-name-typo": {
+  "hero-headline-indecision": {
     opening: [
-      "Small correction. Very personal.",
-      "The name should probably survive the final pass.",
-      "One typo away from rebranding myself.",
-      "I know this word. I use it often.",
-      "Starting with the least negotiable piece of copy.",
+      "Name, job title, positioning line. Every article has a different answer.",
+      "The headline again. Apparently I enjoy impossible choices.",
+      "Do I say who I am or what I actually bring?",
+      "One hero. Three perfectly defensible opinions.",
+      "You caught the part where I question the headline for the sixth time.",
     ],
     resolution: [
-      "Good catch. By me.",
-      "Still me. Reassuring.",
-      "Identity system restored.",
-      "The personal brand survives another sprint.",
-    ],
-  },
-  "hero-role-typo": {
-    opening: [
-      "One last word.",
-      "The role is clear. The spelling less so.",
-      "Senior enough to fix my own title.",
-      "This looked correct from three metres away.",
-      "A tiny credibility adjustment.",
-    ],
-    resolution: [
-      "That typo waited for an audience.",
-      "Designer. Confirmed.",
-      "Much more employable.",
-      "The job title can face the public again.",
+      "The useful answer is what I make clearer.",
+      "That says more than a job title. Keeping it.",
+      "Specific enough to mean something. Finally.",
+      "Less label. More point of view.",
+      "Good. Now it sounds like the work.",
     ],
   },
   "snapshot-trust-typo": {

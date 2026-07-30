@@ -26,7 +26,7 @@ Planes 15–16 y `DECISIONS.md` prevalecen ante cualquier contradicción con doc
 - `app/config.ts` es la única fuente para URL y estado preview/público.
 - Dark es la única dirección visual. No existe selector, `data-theme`, persistencia de apariencia ni set fotográfico Light; los nombres `*-system.*` que quedan son nombres históricos de los assets canónicos.
 - `Live File` es la firma vigente. Sus estados visuales se resuelven con `data-narrative`, `data-motion`, `data-live-file` e `IntroPhase`; no conviertas GSAP en la fuente de verdad lógica.
-- El hero semántico contiene nombre, rol, retrato y `Explore`. El editor es decorativo y no puede ocultar ese contenido a lectores de pantalla ni dejarlo inaccesible sin JavaScript.
+- El hero semántico contiene nombre, posicionamiento, rol, retrato y `Explore`. El editor es decorativo y no puede ocultar ese contenido a lectores de pantalla ni dejarlo inaccesible sin JavaScript.
 - `NarrativeProvider` es el único propietario de consentimiento, tiers, `guidedFirstVisit`, Replay y motion manual. `LiveSceneDirector` posee Follow/Spotlight y restauración de scroll. `DirectorPresence` posee observación local, cursor ambiental y edición humana. Planes 15–16 prevalecen para apertura y presencia.
 - La memoria persistente solo se escribe tras `Allow`; `sessionStorage` puede evitar repetir la intro en la pestaña sin consentimiento.
 - `.js-hero-reveal` y `.js-reveal` solo se ejecutan en rutas secundarias; Home pertenece exclusivamente al director Live File. Reduced motion resuelve final.
@@ -34,8 +34,9 @@ Planes 15–16 y `DECISIONS.md` prevalecen ante cualquier contradicción con doc
 - La intro Figma es la única secuencia obligatoria. Ninguna sección puede abrir Spotlight por scroll; el visitante activa `Follow Javier` desde el avatar si quiere seguir la secuencia Snapshot → Contact.
 - Spotlight es la única captura temporal de scroll autorizada. Debe conservar reduced motion, no focus trap y restauración exacta. Follow puede mover la cámara entre capítulos porque es explícito y se cancela en cualquier momento; fuera de Follow no existe auto-scroll.
 - Director puede seleccionar y escribir headings, comentar o ejecutar ajustes pequeños de crop, easing o píxeles. Su utility AI local puede combinar foco visitante y agenda propia, pero nunca captura scroll, reemplaza assets completos, altera el copy semántico ni se reproduce en touch/reduced motion; cualquier scroll cancela la intervención de inmediato y cualquier fallo apaga solo esta capa.
+- La salida de Present entrega inmediatamente el cursor al beat `hero-headline-indecision`: selecciona el titular completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. No introduzcas un cooldown entre Figma y esta primera edición.
 - Los triggers contextuales del Director son reglas y pools en `DirectorCommentary`, no IA remota. El comportamiento observado siempre es efímero; solo tras `Allow` pueden persistir `visitCount` e ids opacos de variantes ya mostradas. Nunca guardes recorrido, puntero, dwell o acciones del visitante.
-- Cada sección debe tener UI final fuerte y WIP inequívocamente peor. No uses un presenter genérico para fingir una edición.
+- Cada sección debe tener UI final fuerte y WIP inequívocamente peor, pero cercano: debe poder leerse como una corrección concreta, no como sustituir una sección por otra. No uses un presenter genérico para fingir una edición.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
 - Testimonials permanece en estado preview hasta recibir fuentes reales. No conviertas un slot a `verified` sin cita aprobada, atribución, permiso de publicación y validación de Javier.
