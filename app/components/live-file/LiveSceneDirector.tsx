@@ -13,6 +13,7 @@ import {
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { usePathname } from "next/navigation";
+import { DirectorPresence, type DirectorPresenceStatus } from "./DirectorPresence";
 import { useNarrative } from "./NarrativeProvider";
 import { toolNames } from "./EditorPrimitives";
 import { SpotlightChrome, type SpotlightView } from "./SpotlightChrome";
@@ -52,24 +53,6 @@ type DirectorContextValue = {
 
 const SEEN_SCENES_KEY = "javier-live-scenes-v2";
 const DirectorContext = createContext<DirectorContextValue | null>(null);
-type AmbientBeat = {
-  id: string;
-  selector: string;
-  mode: "nudge" | "copy" | "wrong-image" | "crop" | "easing";
-  notes: string[];
-  values?: string[];
-};
-
-const ambientEditBeats: AmbientBeat[] = [
-  { id: "snapshot-copy", selector: "#snapshot-title", mode: "copy", notes: ["Trying something punchier…", "Too LinkedIn.", "Back to the useful one."], values: ["I turn complexity into clarity. ✨", "I design delightful synergies.", "I turn complex product logic into decisions people can see, test and trust."] },
-  { id: "work-wrong-image", selector: ".project-card__media", mode: "wrong-image", notes: ["Adding the case-study evidence…", "That is my face.", "Wrong final_FINAL. Classic."] },
-  { id: "practice-arrows", selector: "#practice-title", mode: "nudge", notes: ["Maybe it needs an arrow.", "Everything needs an arrow.", "It did not need an arrow."] },
-  { id: "ai-copy", selector: "#ai-title", mode: "copy", notes: ["AI makes everything easy.", "That is simply not true.", "Judgement stays in the headline."], values: ["AI makes everything easy.", "Five tools. Zero ambiguity. Obviously.", "How I use AI to frame, prototype and validate product decisions."] },
-  { id: "about-crop", selector: "#about-preview figure", mode: "crop", notes: ["3% more leadership.", "Now it says thought leader.", "Undo."] },
-  { id: "references-copy", selector: "#testimonials-title", mode: "copy", notes: ["Could invent a glowing quote…", "Legal has entered the file.", "Sources first. Much better."], values: ["“Javier changed product design forever.”", "[Citation very much needed]", "How the work feels from the other side of the table."] },
-  { id: "playground-easing", selector: ".playground-playhead", mode: "easing", notes: ["Ease in?", "Ease out?", "Designer stares at cubic-bezier."] },
-  { id: "footer-nudge", selector: ".footer-contact", mode: "nudge", notes: ["One last tweak.", "Again.", "Okay. Your turn."] },
-];
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -107,12 +90,6 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const stableTimerRef = useRef<number | null>(null);
   const phaseTimersRef = useRef<number[]>([]);
   const cursorTimelineRef = useRef<gsap.core.Timeline | null>(null);
-  const ambientTimerRef = useRef<number | null>(null);
-  const ambientTimelineRef = useRef<gsap.core.Timeline | null>(null);
-  const ambientTargetRef = useRef<HTMLElement | null>(null);
-  const ambientNoteRef = useRef<HTMLDivElement>(null);
-  const ambientSeenRef = useRef(new Set<string>());
-  const ambientStartedAtRef = useRef(0);
   const followTimerRef = useRef<number | null>(null);
   const followingRef = useRef(false);
   const advanceFollowRef = useRef<() => void>(() => undefined);
@@ -131,30 +108,13 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   // after Presentation mode is final until the visitor explicitly follows.
   const [guidedComplete, setGuidedComplete] = useState(true);
   const [followingJavier, setFollowingJavier] = useState(false);
-  const [presenceStatus, setPresenceStatus] = useState<"connected" | "editing" | "elsewhere" | "done">("connected");
+  const [presenceStatus, setPresenceStatus] = useState<DirectorPresenceStatus>("connected");
 
   useEffect(() => {
     gsap.registerPlugin(MotionPathPlugin);
     seenRef.current = readSeenScenes();
     viewportRef.current = { width: window.innerWidth, height: window.innerHeight };
     return () => cursorTimelineRef.current?.kill();
-  }, []);
-
-  const stopAmbientEdit = useCallback(() => {
-    if (ambientTimerRef.current !== null) window.clearTimeout(ambientTimerRef.current);
-    ambientTimerRef.current = null;
-    ambientTimelineRef.current?.kill();
-    ambientTimelineRef.current = null;
-    if (ambientTargetRef.current) {
-      delete ambientTargetRef.current.dataset.ambientEdit;
-      delete ambientTargetRef.current.dataset.ambientValue;
-      gsap.set(ambientTargetRef.current, { clearProps: "transform" });
-      const image = ambientTargetRef.current.querySelector("img");
-      if (image) gsap.set(image, { clearProps: "transform,filter" });
-      ambientTargetRef.current = null;
-    }
-    if (ambientNoteRef.current) gsap.set(ambientNoteRef.current, { opacity: 0, scale: .96 });
-    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
   }, []);
 
   const persistSeen = useCallback((id: string) => {
@@ -309,7 +269,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     startSceneRef.current = (scene) => {
       const { root, config } = scene;
       if (activeRef.current || !sceneIsEligible(config) || !root.isConnected) return;
-      stopAmbientEdit();
+      window.dispatchEvent(new CustomEvent("portfolio-director-pause"));
       setPresenceStatus("connected");
       const mandatory = false;
       const target = root.querySelector<HTMLElement>(config.targetSelector) ?? root;
@@ -443,7 +403,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
           .to(cursor, { opacity: 0, duration: .24 }, Math.max(1.6, config.spotlightMs / 1000 - .5));
       }
     };
-  }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible, stopAmbientEdit]);
+  }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible]);
 
   useEffect(() => {
     evaluateRef.current = () => {
@@ -550,12 +510,12 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     setFollowingJavier(true);
     setPresenceStatus("connected");
     window.dispatchEvent(new CustomEvent("portfolio-follow-start"));
-    stopAmbientEdit();
+    window.dispatchEvent(new CustomEvent("portfolio-director-pause"));
     registryRef.current.forEach((config, root) => {
       if (sceneIsEligible(config)) root.dataset.liveState = "wip";
     });
     followTimerRef.current = window.setTimeout(() => advanceFollowRef.current(), 320);
-  }, [pathname, reducedMotion, sceneIsEligible, setAutoFollow, stopAmbientEdit]);
+  }, [pathname, reducedMotion, sceneIsEligible, setAutoFollow]);
 
   useEffect(() => { beginFollowRef.current = beginFollowing; }, [beginFollowing]);
 
@@ -676,143 +636,6 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     }
   }, [autoFollow, endActive, guidedComplete, guidedFirstVisit, reducedMotion, scheduleEvaluation]);
 
-  useEffect(() => {
-    if (!experienceReady || spotlight || followingJavier || reducedMotion || !autoFollow || showConsent || pathname !== "/") {
-      stopAmbientEdit();
-      return;
-    }
-    if (window.matchMedia("(max-width: 720px), (pointer: coarse)").matches) return;
-
-    if (ambientStartedAtRef.current === 0) ambientStartedAtRef.current = Date.now();
-
-    const showNote = (text: string, x: number, y: number) => {
-      const note = ambientNoteRef.current;
-      if (!note) return;
-      const copy = note.querySelector("p");
-      if (copy) copy.textContent = text;
-      const width = Math.min(290, window.innerWidth - 32);
-      gsap.set(note, {
-        x: clamp(x + 18, 16, window.innerWidth - width - 16),
-        y: clamp(y + 28, 86, window.innerHeight - 96),
-        width,
-        opacity: 1,
-        scale: 1,
-      });
-    };
-
-    const runAmbientEdit = () => {
-      if (document.hidden || activeRef.current) {
-        ambientTimerRef.current = window.setTimeout(runAmbientEdit, 3_000);
-        return;
-      }
-      if (Date.now() - ambientStartedAtRef.current > 4 * 60 * 1_000 || ambientSeenRef.current.size >= ambientEditBeats.length) {
-        setPresenceStatus("done");
-        if (cursorRef.current) gsap.to(cursorRef.current, { opacity: 0, duration: .35 });
-        return;
-      }
-      const cursor = cursorRef.current;
-      const available = ambientEditBeats
-        .filter((beat) => !ambientSeenRef.current.has(beat.id))
-        .map((beat) => ({ beat, target: document.querySelector<HTMLElement>(beat.selector) }))
-        .filter((item): item is { beat: AmbientBeat; target: HTMLElement } => Boolean(item.target));
-      const chosen = available.find(({ target }) => {
-        const rect = target.getBoundingClientRect();
-        return rect.bottom > 0 && rect.top < window.innerHeight - 48 && rect.right > 0 && rect.left < window.innerWidth;
-      });
-      if (!chosen || !cursor) {
-        setPresenceStatus("elsewhere");
-        if (cursor) gsap.to(cursor, { opacity: 0, duration: .25 });
-        ambientTimerRef.current = window.setTimeout(runAmbientEdit, 4_800);
-        return;
-      }
-
-      const { beat, target } = chosen;
-      ambientSeenRef.current.add(beat.id);
-      const rect = target.getBoundingClientRect();
-      setPresenceStatus("editing");
-      ambientTargetRef.current = target;
-      const endX = clamp(rect.right - Math.min(28, rect.width * .18), 24, window.innerWidth - 92);
-      const endY = clamp(rect.top + Math.min(38, rect.height * .45), 82, window.innerHeight - 78);
-      const noteX = endX;
-      const noteY = endY;
-      const startX = clamp(endX + 72, 24, window.innerWidth - 92);
-      const startY = clamp(endY - 52, 82, window.innerHeight - 78);
-      gsap.set(cursor, { x: startX, y: startY });
-      const timeline = gsap.timeline({
-        onComplete: () => {
-          delete target.dataset.ambientEdit;
-          delete target.dataset.ambientValue;
-          gsap.set(target, { clearProps: "transform" });
-          const image = target.querySelector("img");
-          if (image) gsap.set(image, { clearProps: "transform,filter" });
-          if (ambientNoteRef.current) gsap.to(ambientNoteRef.current, { opacity: 0, scale: .96, duration: .2 });
-          ambientTargetRef.current = null;
-          ambientTimelineRef.current = null;
-          setPresenceStatus("connected");
-          ambientTimerRef.current = window.setTimeout(runAmbientEdit, 8_500);
-        },
-      })
-        .to(cursor, { opacity: .92, duration: .2 })
-        .to(cursor, { x: endX, y: endY, duration: .72, ease: "power3.inOut" })
-        .call(() => showNote(beat.notes[0], noteX, noteY))
-        .to({}, { duration: .68 });
-
-      if (beat.mode === "copy") {
-        timeline
-          .call(() => { target.dataset.ambientEdit = "copy"; target.dataset.ambientValue = beat.values?.[0] ?? ""; })
-          .to({}, { duration: 1.05 })
-          .call(() => { showNote(beat.notes[1], noteX, noteY); target.dataset.ambientValue = beat.values?.[1] ?? ""; })
-          .to({}, { duration: 1.05 })
-          .call(() => { showNote(beat.notes[2], noteX, noteY); target.dataset.ambientValue = beat.values?.[2] ?? ""; })
-          .to({}, { duration: 1.15 });
-      } else if (beat.mode === "wrong-image") {
-        timeline
-          .call(() => { target.dataset.ambientEdit = "wrong-image"; })
-          .to({}, { duration: 1.1 })
-          .call(() => showNote(beat.notes[1], noteX, noteY))
-          .to({}, { duration: 1.05 })
-          .call(() => { showNote(beat.notes[2], noteX, noteY); delete target.dataset.ambientEdit; })
-          .to({}, { duration: 1.05 });
-      } else if (beat.mode === "crop") {
-        const image = target.querySelector("img") ?? target;
-        timeline
-          .call(() => { target.dataset.ambientEdit = "active"; })
-          .to(image, { xPercent: -7, scale: 1.12, duration: .65, ease: "power2.inOut" })
-          .call(() => showNote(beat.notes[1], noteX, noteY))
-          .to(image, { xPercent: 5, scale: 1.17, duration: .65, ease: "power2.inOut" })
-          .call(() => showNote(beat.notes[2], noteX, noteY))
-          .to(image, { xPercent: 0, scale: 1, duration: .7, ease: "power3.inOut" });
-      } else if (beat.mode === "easing") {
-        timeline
-          .call(() => { target.dataset.ambientEdit = "active"; })
-          .to(target, { scaleX: .28, transformOrigin: "left", duration: .7, ease: "power1.in" })
-          .call(() => showNote(beat.notes[1], noteX, noteY))
-          .to(target, { scaleX: .92, duration: .55, ease: "power4.out" })
-          .call(() => showNote(beat.notes[2], noteX, noteY))
-          .to(target, { scaleX: 1, duration: .65, ease: "elastic.out(1,.45)" });
-      } else {
-        timeline
-          .call(() => { target.dataset.ambientEdit = "active"; })
-          .to(target, { x: 3, y: -1, duration: .28, ease: "power2.out" })
-          .call(() => showNote(beat.notes[1], noteX, noteY))
-          .to(target, { x: -2, y: 1, duration: .34, ease: "power2.inOut" })
-          .call(() => showNote(beat.notes[2], noteX, noteY))
-          .to(target, { x: 0, y: 0, duration: .38, ease: "power3.out" })
-          .to({}, { duration: .55 });
-      }
-
-      timeline
-        .to(cursor, { x: endX + 10, y: endY + 6, duration: .26, ease: "power2.out" })
-        .to(cursor, { opacity: .72, duration: .2 });
-      ambientTimelineRef.current = timeline;
-    };
-
-    // A quiet beat after the intro or a Spotlight scene keeps ambient jokes
-    // from competing with the authored, mandatory part of the story.
-    ambientTimerRef.current = window.setTimeout(runAmbientEdit, 5_200);
-    return stopAmbientEdit;
-  }, [autoFollow, experienceReady, followingJavier, pathname, reducedMotion, showConsent, spotlight, stopAmbientEdit]);
-
   const value = useMemo<DirectorContextValue>(() => ({
     introComplete: experienceReady,
     mandatoryFirstVisit: false,
@@ -849,8 +672,11 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         onReplay={replayLiveEdits}
         onStop={stopFollowing}
       />
-      <div ref={cursorRef} className={styles.globalCursor} data-javier-cursor aria-hidden="true"><i /><span>Javier</span></div>
-      <div ref={ambientNoteRef} className={styles.ambientNote} data-ambient-note aria-hidden="true"><span>Javier · now</span><p /></div>
+      <DirectorPresence
+        active={experienceReady && !spotlight && !followingJavier && !reducedMotion && autoFollow && !showConsent && pathname === "/"}
+        onStatusChange={setPresenceStatus}
+      />
+      <div ref={cursorRef} className={styles.globalCursor} data-spotlight-cursor aria-hidden="true"><i /><span>Javier</span></div>
     </DirectorContext.Provider>
   );
 }

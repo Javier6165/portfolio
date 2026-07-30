@@ -27,15 +27,16 @@ El HTML cliente/servidor permanece idéntico. No leer storage durante el primer 
 
 ## Experience chrome
 
-`PageProgress` actualiza `--page-progress`, densidad de header y capítulo actual mediante listener pasivo + `requestAnimationFrame`. El rail de ocho capítulos solo existe en Home desktop; móvil conserva header y menu. Los anchors usan `scroll-margin-top`; no hay smooth scroll ni timeline global de scroll.
+`PageProgress` solo actualiza el estado scrolled del header mediante listener pasivo + `requestAnimationFrame`. El rail de capítulos fue retirado. Los anchors usan `scroll-margin-top`; no hay smooth scroll ni timeline global de scroll.
 
 ## Live File
 
 Directorio `app/components/live-file/`:
 
 - `NarrativeProvider`: consentimiento, memoria, tiers, `guidedFirstVisit`, motion y Replay.
-- `EditorIntro`: loading de archivo, timeline del hero, bloqueo inicial, Skip recurrente, fallback de imagen y entrega final explícita.
+- `EditorIntro`: recreación Figma UI3, timeline del hero, bloqueo inicial, fallback de imagen y entrega final explícita mediante `Present`.
 - `LiveSceneDirector`: registro central, orden requerido, reencuadre, lectura, Spotlight mandatory/opcional, lock/restauración y cursor.
+- `DirectorPresence`: observación local de viewport/pausa, selección contextual, cursor ambiental, comentarios y escritura humana cancelable.
 - `LiveScene`: declaración de id, target, tool, propiedades, timings y estado visual.
 - `EditorPrimitives`: selection frame, handles, property panel y comment thread.
 - `SpotlightChrome`: dock informativo o recurrente, número de edit, fase de observación, foco, progreso y panel/comment thread fijos; calcula arriba/abajo y clamp horizontal desde la geometría real del target.
@@ -50,9 +51,9 @@ wip → observing → spotlight-entering → editing
 
 La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No hay ScrollTrigger por escena, auto-scroll ni queue.
 
-Fuera de Spotlight, el mismo director ejecuta una partitura ambiental finita en desktop `pointer:fine`. Cada `AmbientBeat` declara selector, modo (`nudge`, `copy`, `wrong-image`, `crop` o `easing`), notas y, si corresponde, variantes visuales. Solo se elige un target actualmente visible; no hay búsqueda global que mueva la cámara. `data-ambient-edit` y `data-ambient-value` existen durante el gag y se eliminan tanto al completar como al cancelar. El heading real, su accesibilidad y su layout reservado permanecen en DOM.
+Fuera de Spotlight, `DirectorPresence` observa targets explícitos con `IntersectionObserver`. Puntúa visibilidad y proximidad al centro/puntero, exige una pausa estable y ejecuta como máximo un beat visible. No hay búsqueda global que mueva la cámara. Los modos son `text`, `comment`, `nudge`, `crop` y `easing`; los cambios grandes de copy o asset quedan retirados.
 
-La partitura se pausa con Spotlight, consentimiento, pestaña oculta, reduced motion, touch o Auto-follow off. Una pausa inicial de `5,2 s`, un setup de `0,68 s` y descansos de `8,5 s` separan historia principal y humor ambiental. Nueve beats o cuatro minutos cierran la sesión con `File tidy. For now.`.
+Un beat de texto mide el fragmento mediante `Range`, superpone un espejo visual `aria-hidden`, selecciona, escribe con cadencia irregular, comete un typo y lo corrige con backspace. El heading semántico permanece en DOM y conserva su accessible name. Scroll, resize, pestaña oculta, Spotlight o Follow cancelan síncronamente cursor, nota, overlay y estilos medidos. Touch, `<=720 px` y reduced motion no ejecutan Director. `javier-director-beats-v1` recuerda solo ids ya vistos durante la pestaña.
 
 Elegibilidad recurrente:
 
@@ -64,11 +65,11 @@ Elegibilidad recurrente:
 - `readMs` cumplido;
 - escena no vista en la sesión.
 
-En primera visita, el director espera únicamente Snapshot, reencuadra su target dentro de la zona segura y bloquea desde `observing`. Lectura, selección, propiedad, comentario y resolución son obligatorios. Después no evalúa escenas opcionales salvo que `followingRef` esté activo.
+Después de la apertura no hay Spotlight obligatorio. `LiveSceneDirector` no evalúa escenas opcionales salvo que `followingRef` esté activo; `DirectorPresence` nunca bloquea ni reencuadra.
 
 `Follow Javier` es una decisión explícita del visitante. Marca los capítulos no vistos como WIP, mueve la cámara al siguiente target en orden DOM y activa su Spotlight. Al resolver, avanza al siguiente después de un descanso breve. Avatar, botón, rueda, touch o teclado pueden terminar Follow y fijan todas las secciones en final. Fuera de este estado no hay auto-scroll ni Spotlight espontáneo.
 
-Snapshot no se arma al restaurar `overflow` ni por un `resize` del handoff: exige un gesto real tras el hero. Los movimientos internos de Follow se marcan como reposicionamiento y solo la partitura explícita puede iniciar el siguiente capítulo.
+Los movimientos internos de Follow se marcan como reposicionamiento y solo la partitura explícita puede iniciar el siguiente capítulo.
 
 Spotlight fija `body`, compensa scrollbar, guarda la posición ya reencuadrada y la restaura al cerrar. El resize sintético que puede emitir el propio lock se ignora durante una guarda breve. No existe focus trap y reduced motion elimina toda captura.
 
@@ -93,7 +94,7 @@ Orden y escenas:
 
 ## Motion progresivo
 
-- Home: `EditorIntro` + `LiveSceneDirector` son la partitura exclusiva.
+- Home: `EditorIntro` + `LiveSceneDirector` + `DirectorPresence` son la partitura exclusiva.
 - Rutas secundarias: `MotionController` importa ScrollTrigger dinámicamente y activa `.js-hero-reveal` / `.js-reveal`.
 - CSS resuelve hover, focus, tabs locales y presenters de estado.
 - `data-motion="reduce"` desactiva intro, WIP, cursor, Spotlight, reveals y transiciones no esenciales.
@@ -103,7 +104,7 @@ Orden y escenas:
 Claves:
 
 - local: `javier-narrative-consent`, `javier-narrative-memory-v1`, `javier-motion`;
-- session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`.
+- session: `javier-narrative-session-v1`, `javier-narrative-counted-v1`, `javier-live-scenes-v2`, `javier-auto-follow-v1`, `javier-director-beats-v1`.
 
 `NarrativeMemory` guarda schema, visitCount, seenCueIds, lastVisitAt y expiresAt. La persistencia de visita se activa solo con `Allow`. `seenCueIds` no suprime escenas: `javier-live-scenes-v2` limita cada escena una vez por pestaña y Replay limpia esa exclusión. Solo un tier recurrente consentido habilita Skip y controles opcionales; sin memoria, una pestaña nueva vuelve a ser primera visita.
 

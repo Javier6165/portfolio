@@ -20,9 +20,9 @@ Su experiencia incluye plataformas B2B, rule engines, CMS, datos, design systems
 
 ## Respuesta vigente
 
-`Live File` convierte el portfolio en un archivo que Javier está refinando dentro de una herramienta ficticia de diseño. La metáfora demuestra atención, sistemas y paso de diseño a comportamiento sin construir un editor real ni copiar una interfaz existente.
+`Live File` abre el portfolio dentro de una recreación reconocible de Figma UI3. Javier está refinando el hero, reconoce al visitante y activa personalmente `Present`; entonces desaparece la herramienta y queda un portfolio Dark editorial, fotográfico y propio.
 
-La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. Cada capítulo tiene UI final, una desviación WIP y una corrección observable. Plan 13 define una apertura causal —comentario, control `Present`, hero— y Plan 14 limita la pasada obligatoria únicamente a Snapshot. Después hay navegación libre; `Follow Javier` activa voluntariamente una secuencia Spotlight de arriba abajo y `Stop following` la abandona. Un avatar y una partitura finita de microgags mantienen a Javier presente sin capturar scroll. El contenido profesional nunca depende de esa capa.
+La Home vigente recorre hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact. La intro es la única secuencia obligatoria. Después hay navegación libre; `Follow Javier` activa voluntariamente una secuencia Spotlight de arriba abajo y `Stop following` la abandona. `Director` observa únicamente señales locales de atención y, tras una pausa, puede acercar el cursor a la zona visible, comentar y hacer una corrección pequeña. Si el visitante vuelve a hacer scroll, la intervención se cancela inmediatamente. El contenido profesional nunca depende de esa capa.
 
 ## Por qué no es una template
 
@@ -37,6 +37,6 @@ La Home vigente recorre hero → Snapshot → Work → Product practice → AI-n
 
 ## Estado y límites
 
-Plan 11 sigue siendo la base de UI, copy y estados WIP; Plan 13 prevalece para la apertura; Plan 14 prevalece para obligatoriedad, ritmo, consentimiento y presencia continua. Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial. El siguiente salto de contenido sigue siendo evidencia real mediante `CaseBlock`.
+Plan 11 sigue siendo la base histórica de UI/WIP; Plan 15 prevalece para apertura y dirección visual; Plan 16 prevalece para presencia ambiental. Plan 14 conserva el origen de Follow/Spotlight, pero ya no define una escena obligatoria. Los documentos 07–10 se consolidaron y retiraron; Git conserva el historial. El siguiente salto de contenido sigue siendo evidencia real mediante `CaseBlock`.
 
 Atlas, Northstar, Pulse, sus métricas y los experimentos siguen siendo ficticios; testimonials, contacto, LinkedIn y CV son temporales. Los siguientes inputs son un único caso real representativo y recomendaciones aprobadas con atribución y permiso.

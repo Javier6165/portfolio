@@ -27,9 +27,9 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 - Grid editorial asimétrico de doce columnas y recomposición específica en móvil.
 - Hero, About y Contact usan stages editoriales; Work/Practice/AI usan evidence viewers; References usa un ledger; Playground un shelf.
-- Dark es la única dirección visual: grafito, señal lima, Instrument Sans + Fragment Mono y fotografía oscura. No existe tema alternativo ni selector.
+- Dark es la única dirección visual: grafito, hueso, latón apagado, Instrument Sans + Fragment Mono y fotografía oscura. No existe tema alternativo ni selector.
 - `Complexity Engine`, partículas, `Living Fold`, Three y R3F están retirados.
-- UI de editor propia: frames, handles, property panels, asset treatment y comments. No copia la estructura ni el branding de Figma.
+- La capa de edición usa deliberadamente la gramática reconocible de Figma UI3; el portfolio en Presentation mode conserva identidad propia.
 
 ## Live WIP y Spotlight
 
@@ -38,19 +38,20 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Estados: `settled → wip → observing → spotlight-entering → editing → commenting? → settling → settled`; reduced motion usa `reduced`.
 - El director elige solo un target legible cuando supera su umbral de visibilidad y el scroll lleva estable `220–280 ms`; los targets altos no dependen de que su centro geométrico esté dentro del viewport.
 - La primera visita abre con un loading breve, un comentario de Javier y una acción `Present` que causa la expansión al hero; no ofrece Skip salvo reduced motion o fallo.
-- Snapshot usa `comentario sobre WIP → edición breve → comentario resuelto` y es el único capítulo obligatorio. Work, Product practice, AI, About, References, Playground y Contact solo entran en Spotlight tras `Follow Javier`.
+- Ningún capítulo posterior a la intro es obligatorio. Snapshot, Work, Product practice, AI, About, References, Playground y Contact solo entran en Spotlight tras `Follow Javier`.
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
-- En primera visita, Spotlight es obligatorio solo para Snapshot: rueda, touch y teclas de scroll se contienen hasta terminar. Desde ese momento la navegación queda libre y el avatar ofrece Follow; visitas recurrentes son libres desde el principio.
+- Al salir de Present la navegación queda libre y el avatar ofrece Follow. No hay una segunda captura obligatoria en Snapshot.
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado y una partitura finita de microajustes; se pausa durante Spotlight y nunca captura scroll.
-- La presencia ambiental usa nueve microescenas de humor observacional: setup, intento/duda, remate y restauración. Espera `5,2 s` tras una escena, descansa `8,5 s` entre gags y nunca repite uno en el mismo documento.
-- Los cambios de copy ambientales son visuales y `aria-hidden`: el heading semántico no cambia. References puede bromear con una cita obviamente falsa solo como pseudoelemento temporal; nunca crea `<blockquote>`, identidad o contenido persistente.
+- `DirectorPresence` observa de forma local la zona visible y la pausa del visitante. Tras `1,15–2,1 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `8,5 s` de silencio y no repite beats en la pestaña.
+- Los cambios de copy se seleccionan y escriben carácter a carácter, con typo y backspace. Un espejo `aria-hidden` preserva el heading semántico y termina exactamente en su copy original.
+- Cualquier scroll cancela cursor, comentario y edición en la misma tarea; Director nunca mueve cámara ni sigue al target mientras se desplaza.
 - Un target sticky solo es elegible en su zona narrativa. El wordmark no puede desplazar el gag correspondiente a Work, Snapshot u otra sección.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
 - El tono de la capa Live File es seco, autocrítico y amable; se ríe de hábitos de diseño, nunca de clientes, compañeros, accesibilidad, privacidad o resultados.
 - La primera visita explica la regla dentro del editor: `You caught me at “one last tweak”`; Javier pulsa `Present` antes de ceder el hero.
 - Paneles y comentarios de Spotlight se anclan al viewport y se recolocan dentro de una zona segura. Una prueba geométrica verifica que no queden recortados.
-- El dock de primera visita muestra retrato, conexión y `One guided edit`. Tras Snapshot, pulsar el avatar activa `Follow Javier`; el mismo avatar, rueda, teclado o `Stop following` lo cancelan.
+- Pulsar el avatar activa `Follow Javier`; el mismo avatar, rueda, teclado o `Stop following` lo cancelan.
 - Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
 - Una visita `familiar` muestra el hero final inmediatamente; no comprime el cursor en una animación sub-segundo que pueda parecer un destello.
 
@@ -60,7 +61,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - CSS nativo + CSS Modules; GSAP Timeline/MotionPath como motor de Home.
 - `MotionController` no ejecuta reveals genéricos en Home. ScrollTrigger se importa dinámicamente únicamente en rutas secundarias con `.js-reveal`.
 - Sin Three.js, R3F, WebGL, Lenis, Motion, XState, React Flow o Liveblocks.
-- `NarrativeProvider` controla consentimiento, tiers, `guidedFirstVisit`, motion y Replay. `LiveSceneDirector` controla orden requerido, reencuadre, timing, scroll lock y cursor.
+- `NarrativeProvider` controla consentimiento, tiers, `guidedFirstVisit`, motion y Replay. `LiveSceneDirector` controla Follow/Spotlight; `DirectorPresence` controla observación y presencia ambiental no bloqueante.
 - `CaseBlock` controla evidencia; Figma y prototipos externos solo cargan tras click.
 - Sin base de datos, autenticación, analytics o persistencia remota.
 
@@ -85,7 +86,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 
 - Gates: `npm run lint`, `npm test` y `npm run test:e2e` para cambios interactivos.
 - Matriz Dark: 1440×900, 1280×800, 768×1024 y 390×844; axe; teclado; mobile; reduced; no-JS; memoria; fallo de imagen.
-- Contrato vigente mínimo: `PROJECT-CONTEXT.md`, este documento, `ARCHITECTURE.md` y `PLAN-14-HUMAN-AUDIT-PASS.md`. `CONTENT-AND-RELEASE.md` y `ASSETS.md` se consultan según la tarea.
+- Contrato vigente mínimo: `PROJECT-CONTEXT.md`, este documento, `ARCHITECTURE.md`, Plan 15 y Plan 16. `CONTENT-AND-RELEASE.md` y `ASSETS.md` se consultan según la tarea.
 - Plan 11 y su Implementation/Audit documentan la base UI/WIP y fallos ya resueltos; Planes 12–13 conservan el razonamiento histórico que desembocó en Plan 14, pero no prevalecen sobre él.
 - Los documentos 07–10 se consolidaron y retiraron para evitar contratos contradictorios; Git conserva el historial.
 

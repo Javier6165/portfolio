@@ -177,26 +177,38 @@ test("free navigation never launches lower scenes and Follow Javier remains canc
   expect(states.every((state) => state === "settled")).toBe(true);
 });
 
-test("Javier remains present through non-blocking ambient micro-adjustments", async ({ page, isMobile }) => {
+test("Director types like a person and yields immediately when the visitor scrolls", async ({ page, isMobile }) => {
   test.skip(isMobile, "Touch intentionally uses presence without a synthetic cursor.");
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
   });
-  await page.goto("/?narrative=return");
+  await page.goto("/?narrative=return&director=fast");
   await skipIntro(page);
-  await page.getByRole("link", { name: "Explore" }).click();
 
   const dock = page.locator("[data-follow-dock]");
+  const heroName = page.locator("#hero-name");
+  const heroTitle = page.getByRole("heading", { level: 1, name: "Senior Product Designer" });
+  const overlay = page.locator("[data-director-text-overlay]");
   await expect(dock).toBeVisible();
   await expect(dock.locator("span").filter({ hasText: "FOLLOW JAVIER" })).toBeAttached();
-  await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 6_000 });
+  await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 3_000 });
   await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
-  await expect(page.locator("[data-ambient-note]")).toContainText(/Trying something punchier|Too LinkedIn|Back to the useful one/);
+  await expect(page.locator("[data-ambient-note]")).toContainText("Small correction. Very personal.");
+  await expect(heroName).toHaveAttribute("data-director-editing", "text");
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toContainText("Javire", { timeout: 3_000 });
+  await expect(heroName).toHaveText("Javier Ortiz");
+  await expect(heroTitle).toHaveAccessibleName("Senior Product Designer");
   await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
+
   const before = await page.evaluate(() => scrollY);
-  await page.mouse.wheel(0, 180);
+  await page.mouse.wheel(0, 420);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 40);
+  await expect(page.locator("[data-javier-cursor]")).toHaveCSS("opacity", "0");
+  await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
+  await expect(overlay).toHaveCount(0);
+  await expect(heroName).not.toHaveAttribute("data-director-editing", /.+/);
 });
 
 test("Product practice and AI workflow expose complete roving keyboard tabs", async ({ page, isMobile }) => {

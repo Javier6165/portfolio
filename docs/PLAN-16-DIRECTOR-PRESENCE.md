@@ -1,0 +1,90 @@
+# Plan 16 — Director: presencia contextual y edición humana
+
+Estado: **implementado; pendiente de QA completo, integración y publicación**.
+
+## Objetivo
+
+`Director` añade una presencia viva después de Presentation mode sin convertir el portfolio en una visita guiada automática. Javier puede trabajar de forma ambiental en la zona visible y, cuando el visitante se detiene, acercarse al punto de atención, comentar y hacer una corrección pequeña y comprensible.
+
+No añade funcionalidades de producto, analítica, personalización remota ni nuevas coreografías obligatorias.
+
+## Señales observadas
+
+Todo ocurre en el documento y se descarta al cerrar la pestaña:
+
+- visibilidad y proporción de targets mediante `IntersectionObserver`;
+- posición del viewport y tiempo desde el último scroll;
+- posición reciente del puntero y distancia al target;
+- teclado, pointer down, foco y visibilidad de la pestaña;
+- exclusión mutua con intro, consentimiento, Spotlight y Follow.
+
+No se registra texto introducido, historial, identidad, analytics ni datos remotos. La única memoria es un conjunto session-only de beats ya vistos para evitar repetición.
+
+## Decisión de atención
+
+1. Director espera a que intro y cualquier overlay terminen.
+2. Descarta targets con menos de aproximadamente `28%` visible.
+3. Puntúa visibilidad, proximidad al centro del viewport y proximidad al puntero.
+4. Mantiene un único candidato estable entre `1,15–2,1 s` según la atención observada.
+5. Ejecuta una intervención y deja aproximadamente `8,5 s` de silencio.
+
+Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
+
+## Contrato de scroll
+
+Las coordenadas de cursor, comentario y texto se miden en viewport al comenzar. Cualquier scroll, resize, cambio de pestaña o entrada en Follow invalida esas medidas y cancela de inmediato:
+
+- cursor y comentario pasan a opacidad cero en la misma tarea de scroll;
+- el overlay tipográfico se desmonta;
+- el target recupera sus estilos originales;
+- la intervención no se reanuda hasta una nueva pausa estable.
+
+Así el cursor nunca queda visualmente pegado a una pieza que se desplaza bajo él.
+
+## Escritura humana
+
+Los headings editables incluyen Hero, Snapshot, AI y References. Cada beat:
+
+1. mide el fragmento real con `Range`;
+2. mueve el cursor a su extremo;
+3. arrastra la selección con el azul Figma;
+4. escribe carácter a carácter con cadencia irregular;
+5. comete un error pequeño y visible;
+6. usa backspace y corrige;
+7. termina en el texto semántico original.
+
+El heading real permanece en DOM y conserva su accessible name. Durante la escritura solo se vuelve visualmente transparente mientras un espejo `aria-hidden` ocupa exactamente su caja. No se usa `contenteditable` ni se despachan eventos de input sintéticos.
+
+## Tipos de intervención
+
+- `text`: selección, escritura, error y corrección.
+- `comment`: observación contextual sin cambio.
+- `nudge`: ajuste de dos píxeles, siempre restaurado.
+- `crop`: respiración mínima del encuadre, nunca sustitución de asset.
+- `easing`: pequeña comparación temporal sobre el playhead.
+
+Se retira el gag de sustituir una imagen completa y los cambios de copy instantáneos: eran demasiado grandes para leerse como una edición humana.
+
+## Accesibilidad y límites
+
+- Desktop `pointer:fine` únicamente; touch y anchuras de `720 px` o menos no montan actividad.
+- Reduced motion desactiva toda la capa.
+- Ninguna información esencial vive en cursor, nota u overlay.
+- Ninguna intervención bloquea scroll, foco o navegación.
+- Spotlight y Follow siguen siendo opt-in y poseen su cursor de forma excluyente.
+
+## Base técnica investigada
+
+- [Intersection Observer](https://www.w3.org/TR/intersection-observer/) para visibilidad relativa al viewport.
+- [Selection API](https://www.w3.org/TR/selection-api/) y `Range` para medir el fragmento seleccionado.
+- [Input Events Level 2](https://www.w3.org/TR/input-events-2/) confirma que los eventos trusted pertenecen a intención real de usuario; Director representa la escritura visualmente.
+- [ContentEditable](https://www.w3.org/TR/content-editable/) no se adopta: no hace falta convertir headings en superficies editables reales.
+
+## QA requerido
+
+- selección y escritura legibles en Hero y al menos un heading inferior;
+- typo, backspace y retorno exacto al accessible name original;
+- cancelación inmediata con rueda/trackpad durante selección y typing;
+- comentario contextual dentro del viewport;
+- ausencia completa en touch, reduced motion, no-JS, Spotlight, Follow y consentimiento;
+- `npm run lint`, `npm test` y `npm run test:e2e`.

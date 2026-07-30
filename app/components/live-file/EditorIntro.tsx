@@ -283,7 +283,7 @@ export function EditorIntro() {
 
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
           <div className={styles.identity}>
-            <p className={styles.name}>Javier Ortiz</p>
+            <p id="hero-name" className={styles.name}>Javier Ortiz</p>
             <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>
               <span>Senior Product</span><span>Designer</span>
             </h1>
