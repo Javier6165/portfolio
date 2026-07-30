@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Component, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { gsap } from "gsap";
 import styles from "./DirectorPresence.module.css";
 
 export type DirectorPresenceStatus = "connected" | "editing" | "elsewhere" | "done";
+export type DirectorBrainState = "observing" | "considering" | "approaching" | "commenting" | "editing" | "cooldown" | "paused" | "roaming" | "disabled" | "done";
 
 type TextAction =
   | { type: "type"; value: string }
@@ -30,7 +31,24 @@ type TextOverlay = {
   style: CSSProperties;
 };
 
-type Candidate = { beat: DirectorBeat; target: HTMLElement; score: number };
+type Candidate = { beat: DirectorBeat; target: HTMLElement; score: number; pointerInside: boolean };
+
+type AttentionModel = {
+  pointerX: number;
+  pointerY: number;
+  pointerSeen: boolean;
+  pointerVelocity: number;
+  lastPointerAt: number;
+  scrollVelocity: number;
+  scrollDirection: -1 | 0 | 1;
+  lastScrollY: number;
+  lastScrollSampleAt: number;
+};
+
+type DirectorPresenceProps = {
+  active: boolean;
+  onStatusChange: (status: DirectorPresenceStatus) => void;
+};
 
 const DIRECTOR_MEMORY_KEY = "javier-director-beats-v1";
 const HUMAN_KEY_DELAYS = [82, 116, 69, 94, 128, 76, 103, 88, 142, 72];
@@ -186,13 +204,8 @@ function rememberBeat(seen: Set<string>, id: string) {
   }
 }
 
-export function DirectorPresence({
-  active,
-  onStatusChange,
-}: {
-  active: boolean;
-  onStatusChange: (status: DirectorPresenceStatus) => void;
-}) {
+export function DirectorPresence({ active, onStatusChange }: DirectorPresenceProps) {
+  const layerRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const noteRef = useRef<HTMLDivElement>(null);
   const currentTargetRef = useRef<HTMLElement | null>(null);
@@ -201,36 +214,65 @@ export function DirectorPresence({
   const [textOverlay, setTextOverlay] = useState<TextOverlay | null>(null);
 
   useEffect(() => {
+    const layer = layerRef.current;
     const cursor = cursorRef.current;
     const note = noteRef.current;
-    if (!active || !cursor || !note) {
+    if (!active || !layer || !cursor || !note) {
       setTextOverlay(null);
       return;
     }
 
     const params = new URLSearchParams(window.location.search);
-    if (params.get("director") === "off") return;
-    if (window.matchMedia("(max-width: 720px), (pointer: coarse)").matches) return;
+    const setBrainState = (state: DirectorBrainState, intent = "idle") => {
+      layer.dataset.directorState = state;
+      layer.dataset.directorIntent = intent;
+    };
+    if (params.get("director") === "off") {
+      setBrainState("disabled");
+      return;
+    }
+    if (window.matchMedia("(max-width: 720px), (pointer: coarse)").matches) {
+      setBrainState("paused", "touch");
+      return;
+    }
+    if (!("IntersectionObserver" in window)) {
+      setBrainState("disabled", "unsupported");
+      onStatusChange("done");
+      return;
+    }
     const fast = params.get("director") === "fast";
     const seen = readSeenBeats(params.get("director") === "reset");
     const intersections = new Map<HTMLElement, number>();
     const targets = directorBeats
       .map((beat) => ({ beat, target: document.querySelector<HTMLElement>(beat.selector) }))
       .filter((item): item is { beat: DirectorBeat; target: HTMLElement } => Boolean(item.target));
-    const pointer = { x: window.innerWidth * .5, y: window.innerHeight * .5, seen: false };
+    const startedAt = window.performance.now();
+    const attention: AttentionModel = {
+      pointerX: window.innerWidth * .5,
+      pointerY: window.innerHeight * .5,
+      pointerSeen: false,
+      pointerVelocity: 0,
+      lastPointerAt: startedAt,
+      scrollVelocity: 0,
+      scrollDirection: 0,
+      lastScrollY: window.scrollY,
+      lastScrollSampleAt: startedAt,
+    };
     let alive = true;
     let generation = 0;
     let running = false;
+    let interval: number | null = null;
     let currentCandidate: Candidate | null = null;
-    let candidateSince = window.performance.now();
-    let lastScrollAt = window.performance.now();
-    let lastInputAt = window.performance.now();
-    let nextAllowedAt = window.performance.now() + (fast ? 350 : 3_600);
+    let candidateSince = startedAt;
+    let lastScrollAt = startedAt;
+    let lastInputAt = startedAt;
+    let nextAllowedAt = startedAt + (fast ? 350 : 3_600);
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => intersections.set(entry.target as HTMLElement, entry.intersectionRatio));
     }, { threshold: [0, .2, .4, .6, .8, 1] });
     targets.forEach(({ target }) => observer.observe(target));
+    setBrainState(seen.size >= directorBeats.length ? "done" : "observing", "initialising");
 
     const hideNote = () => gsap.set(note, { opacity: 0, scale: .96 });
     const hideCursor = () => gsap.set(cursor, { opacity: 0 });
@@ -251,7 +293,11 @@ export function DirectorPresence({
       setTextOverlay(null);
     };
 
-    const cancelCurrent = (status: DirectorPresenceStatus = "connected") => {
+    const cancelCurrent = (
+      status: DirectorPresenceStatus = "connected",
+      state: DirectorBrainState = "observing",
+      intent = "waiting",
+    ) => {
       generation += 1;
       running = false;
       tweenRef.current?.kill();
@@ -260,6 +306,17 @@ export function DirectorPresence({
       hideNote();
       hideCursor();
       onStatusChange(status);
+      setBrainState(state, intent);
+    };
+
+    // Director is an optional enhancement. Any unexpected browser/animation
+    // failure opens this circuit breaker and restores the untouched portfolio.
+    const failSafely = () => {
+      if (!alive) return;
+      cancelCurrent("done", "disabled", "safety-stop");
+      alive = false;
+      observer.disconnect();
+      if (interval !== null) window.clearInterval(interval);
     };
 
     const sleep = (duration: number, runId: number) => new Promise<boolean>((resolve) => {
@@ -385,10 +442,12 @@ export function DirectorPresence({
     };
 
     const runBeat = async ({ beat, target }: Candidate) => {
+      if (!alive || !target.isConnected || visibleRatio(target) < .2) return;
       running = true;
       const runId = ++generation;
       rememberBeat(seen, beat.id);
       onStatusChange("editing");
+      setBrainState("approaching", "moving-to-focus");
       const targetRect = target.getBoundingClientRect();
       const rect = beat.mode === "text" && beat.segment
         ? findSegmentRect(target, beat.segment)
@@ -397,13 +456,15 @@ export function DirectorPresence({
       const endY = clamp(rect.top + Math.min(42, rect.height * .42), 82, window.innerHeight - 82);
       const noteX = beat.mode === "text" ? targetRect.right : endX;
       const noteY = beat.mode === "text" ? targetRect.top - 140 : endY;
-      const startX = clamp(pointer.seen ? pointer.x + 46 : endX + 82, 24, window.innerWidth - 90);
-      const startY = clamp(pointer.seen ? pointer.y - 34 : endY - 58, 82, window.innerHeight - 82);
+      const startX = clamp(attention.pointerSeen ? attention.pointerX + 46 : endX + 82, 24, window.innerWidth - 90);
+      const startY = clamp(attention.pointerSeen ? attention.pointerY - 34 : endY - 58, 82, window.innerHeight - 82);
       gsap.set(cursor, { x: startX, y: startY, opacity: 0 });
       if (!await moveCursor(endX, endY, fast ? 130 : 760, runId)) return;
+      setBrainState("commenting", "explaining-choice");
       showNote(beat.comments[0], noteX, noteY);
       if (!await sleep(fast ? 100 : 720, runId)) return;
 
+      setBrainState(beat.mode === "comment" ? "commenting" : "editing", beat.mode);
       const completed = beat.mode === "text"
         ? await runTextBeat(beat, target, runId)
         : await runEffectBeat(beat, target, runId);
@@ -412,6 +473,7 @@ export function DirectorPresence({
       if (beat.comments[1]) showNote(beat.comments[1], noteX, noteY);
       if (!await sleep(fast ? 180 : 1_350, runId)) return;
       clearTarget();
+      setBrainState("cooldown", "giving-space");
       gsap.to(note, { opacity: 0, scale: .96, duration: fast ? .08 : .2 });
       gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: 0, duration: fast ? .1 : .3, ease: "power2.in" });
       if (!await sleep(fast ? 140 : 360, runId)) return;
@@ -420,23 +482,38 @@ export function DirectorPresence({
       candidateSince = window.performance.now();
       nextAllowedAt = window.performance.now() + (fast ? 550 : 8_500);
       onStatusChange(seen.size >= directorBeats.length ? "done" : "connected");
+      setBrainState(seen.size >= directorBeats.length ? "done" : "cooldown", "giving-space");
     };
 
-    const chooseCandidate = () => {
+    const chooseCandidate = (now: number) => {
       const viewportCentre = { x: window.innerWidth * .5, y: window.innerHeight * .5 };
       const candidates = targets
-        .filter(({ beat }) => !seen.has(beat.id))
-        .map(({ beat, target }) => {
+        .filter(({ beat, target }) => !seen.has(beat.id) && target.isConnected)
+        .map(({ beat, target }, index) => {
           const ratio = Math.max(intersections.get(target) ?? 0, visibleRatio(target));
           const rect = target.getBoundingClientRect();
-          const x = clamp(pointer.seen ? pointer.x : viewportCentre.x, rect.left, rect.right);
-          const y = clamp(pointer.seen ? pointer.y : viewportCentre.y, rect.top, rect.bottom);
-          const referenceX = pointer.seen ? pointer.x : viewportCentre.x;
-          const referenceY = pointer.seen ? pointer.y : viewportCentre.y;
+          const pointerSettled = attention.pointerSeen && now - attention.lastPointerAt > (fast ? 80 : 420);
+          const referenceX = pointerSettled ? attention.pointerX : viewportCentre.x;
+          const referenceY = pointerSettled ? attention.pointerY : viewportCentre.y;
+          const x = clamp(referenceX, rect.left, rect.right);
+          const y = clamp(referenceY, rect.top, rect.bottom);
           const distance = Math.hypot(referenceX - x, referenceY - y);
           const proximity = 1 - clamp(distance / Math.max(window.innerWidth, window.innerHeight), 0, 1);
-          const pointerInside = pointer.seen && pointer.x >= rect.left && pointer.x <= rect.right && pointer.y >= rect.top && pointer.y <= rect.bottom;
-          return { beat, target, score: ratio * 2.4 + proximity + (pointerInside ? 1.4 : 0) + (beat.priority ?? 0) };
+          const pointerInside = pointerSettled
+            && attention.pointerX >= rect.left && attention.pointerX <= rect.right
+            && attention.pointerY >= rect.top && attention.pointerY <= rect.bottom;
+          const centreDistance = Math.abs(rect.top + rect.height * .5 - viewportCentre.y) / Math.max(1, window.innerHeight);
+          // Utility-AI blend: visitor focus dominates when it is clear, while
+          // a small rotating authored bias lets Javier keep working on his own.
+          const autonomousBias = ((Math.sin(now / 5_400 + index * 1.7) + 1) / 2) * .22;
+          const centreScore = 1 - clamp(centreDistance, 0, 1);
+          const score = ratio * 2.35
+            + proximity * (pointerSettled ? 1.05 : .45)
+            + centreScore * .7
+            + (pointerInside ? 1.55 : 0)
+            + autonomousBias
+            + (beat.priority ?? 0);
+          return { beat, target, score, pointerInside };
         })
         .filter(({ target }) => visibleRatio(target) >= .28 && target.getBoundingClientRect().height > 0)
         .sort((a, b) => b.score - a.score);
@@ -446,14 +523,28 @@ export function DirectorPresence({
     const evaluate = () => {
       if (!alive || running || document.hidden) return;
       const now = window.performance.now();
+      attention.pointerVelocity *= .72;
+      attention.scrollVelocity *= .58;
       if (seen.size >= directorBeats.length) {
         onStatusChange("done");
+        setBrainState("done", "all-beats-seen");
         return;
       }
-      if (now < nextAllowedAt || now - lastScrollAt < (fast ? 120 : 1_250) || now - lastInputAt < (fast ? 100 : 720)) return;
-      const candidate = chooseCandidate();
+      const scrollIdle = now - lastScrollAt;
+      const inputIdle = now - lastInputAt;
+      const visitorBusy = attention.scrollVelocity > .18 || attention.pointerVelocity > .65;
+      if (now < nextAllowedAt) {
+        setBrainState("cooldown", "giving-space");
+        return;
+      }
+      if (visitorBusy || scrollIdle < (fast ? 120 : 1_250) || inputIdle < (fast ? 100 : 720)) {
+        setBrainState("observing", attention.scrollVelocity > .18 ? "navigating" : "interacting");
+        return;
+      }
+      const candidate = chooseCandidate(now);
       if (!candidate) {
         onStatusChange("elsewhere");
+        setBrainState("roaming", "working-elsewhere");
         currentCandidate = null;
         candidateSince = now;
         return;
@@ -462,23 +553,43 @@ export function DirectorPresence({
       if (currentCandidate?.beat.id !== candidate.beat.id) {
         currentCandidate = candidate;
         candidateSince = now;
+        setBrainState("considering", candidate.pointerInside ? "visitor-focus" : "autonomous-focus");
         return;
       }
-      const rect = candidate.target.getBoundingClientRect();
-      const pointerInside = pointer.seen && pointer.x >= rect.left && pointer.x <= rect.right && pointer.y >= rect.top && pointer.y <= rect.bottom;
-      const dwell = fast ? 180 : pointerInside ? 1_150 : 2_100;
-      if (now - candidateSince >= dwell) void runBeat(candidate);
+      const pacePenalty = clamp(attention.scrollVelocity * 900, 0, 680);
+      const dwell = fast ? 180 : candidate.pointerInside ? 1_150 + pacePenalty : 2_100 + pacePenalty;
+      setBrainState("considering", candidate.pointerInside ? "visitor-focus" : "autonomous-focus");
+      if (now - candidateSince >= dwell) void runBeat(candidate).catch(failSafely);
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      pointer.seen = true;
-      lastInputAt = window.performance.now();
-    };
-    const onInput = () => { lastInputAt = window.performance.now(); };
-    const onScroll = () => {
+      if (!alive) return;
       const now = window.performance.now();
+      const elapsed = Math.max(8, now - attention.lastPointerAt);
+      const distance = Math.hypot(event.clientX - attention.pointerX, event.clientY - attention.pointerY);
+      const instantaneous = distance / elapsed;
+      attention.pointerVelocity = attention.pointerVelocity * .62 + instantaneous * .38;
+      attention.pointerX = event.clientX;
+      attention.pointerY = event.clientY;
+      attention.pointerSeen = true;
+      attention.lastPointerAt = now;
+      lastInputAt = now;
+    };
+    const onInput = () => {
+      if (!alive) return;
+      lastInputAt = window.performance.now();
+      setBrainState("observing", "interacting");
+    };
+    const onScroll = () => {
+      if (!alive) return;
+      const now = window.performance.now();
+      const elapsed = Math.max(8, now - attention.lastScrollSampleAt);
+      const delta = window.scrollY - attention.lastScrollY;
+      const instantaneous = Math.abs(delta) / elapsed;
+      attention.scrollVelocity = attention.scrollVelocity * .45 + instantaneous * .55;
+      attention.scrollDirection = delta === 0 ? attention.scrollDirection : delta > 0 ? 1 : -1;
+      attention.lastScrollY = window.scrollY;
+      attention.lastScrollSampleAt = now;
       lastScrollAt = now;
       lastInputAt = now;
       currentCandidate = null;
@@ -487,29 +598,34 @@ export function DirectorPresence({
       // A viewport gesture invalidates the measured anchor. Hiding in the same
       // scroll task prevents the collaborator cursor from appearing attached
       // to content that is moving underneath it.
-      cancelCurrent("connected");
+      cancelCurrent("connected", "observing", attention.scrollDirection > 0 ? "navigating-down" : "navigating-up");
     };
     const onResize = () => {
+      if (!alive) return;
       lastInputAt = window.performance.now();
-      cancelCurrent("connected");
+      cancelCurrent("connected", "observing", "viewport-change");
     };
-    const onVisibility = () => { if (document.hidden) cancelCurrent("elsewhere"); };
-    const onPause = () => cancelCurrent("connected");
+    const onVisibility = () => { if (alive && document.hidden) cancelCurrent("elsewhere", "paused", "tab-hidden"); };
+    const onPause = () => { if (alive) cancelCurrent("connected", "paused", "another-director"); };
+    const onSafetyTest = () => failSafely();
 
     onStatusChange(seen.size >= directorBeats.length ? "done" : "connected");
-    const interval = window.setInterval(evaluate, fast ? 80 : 240);
+    interval = window.setInterval(() => {
+      try { evaluate(); } catch { failSafely(); }
+    }, fast ? 80 : 240);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onInput, { passive: true });
     window.addEventListener("keydown", onInput, true);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
     window.addEventListener("portfolio-director-pause", onPause);
+    window.addEventListener("portfolio-director-safety-test", onSafetyTest);
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       alive = false;
       generation += 1;
-      window.clearInterval(interval);
+      if (interval !== null) window.clearInterval(interval);
       observer.disconnect();
       tweenRef.current?.kill();
       clearTarget();
@@ -521,12 +637,13 @@ export function DirectorPresence({
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("portfolio-director-pause", onPause);
+      window.removeEventListener("portfolio-director-safety-test", onSafetyTest);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [active, onStatusChange]);
 
   return (
-    <div className={styles.layer} data-director-presence data-active={active ? "true" : "false"} aria-hidden="true">
+    <div ref={layerRef} className={styles.layer} data-director-presence data-active={active ? "true" : "false"} data-director-state="observing" data-director-intent="idle" aria-hidden="true">
       {textOverlay ? (
         <div className={styles.textOverlay} data-director-text-overlay style={textOverlay.style}>
           <span>{textOverlay.before}</span>
@@ -541,4 +658,33 @@ export function DirectorPresence({
       </div>
     </div>
   );
+}
+
+type DirectorSafetyBoundaryProps = {
+  children: ReactNode;
+  onDisable: () => void;
+  resetKey: string;
+};
+
+// React boundaries cannot catch event-handler failures, so Director also has
+// an internal circuit breaker. This boundary covers render/lifecycle faults:
+// either path removes only the optional presence layer, never the portfolio.
+export class DirectorSafetyBoundary extends Component<DirectorSafetyBoundaryProps, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onDisable();
+  }
+
+  componentDidUpdate(previous: DirectorSafetyBoundaryProps) {
+    if (previous.resetKey !== this.props.resetKey && this.state.failed) this.setState({ failed: false });
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
 }

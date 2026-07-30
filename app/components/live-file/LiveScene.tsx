@@ -2,7 +2,8 @@
 
 import { useLayoutEffect, useRef, type FocusEvent, type PointerEvent, type ReactNode } from "react";
 import { EditorPrimitives } from "./EditorPrimitives";
-import { useLiveSceneDirector, type LiveSceneTool, type LiveSceneVerb } from "./LiveSceneDirector";
+import { useLiveSceneDirector } from "./LiveSceneContext";
+import type { LiveSceneTool, LiveSceneVerb } from "./LiveSceneDirector";
 import styles from "./LiveScene.module.css";
 
 type LiveSceneProps = {

@@ -36,6 +36,7 @@ Directorio `app/components/live-file/`:
 - `NarrativeProvider`: consentimiento, memoria, tiers, `guidedFirstVisit`, motion y Replay.
 - `EditorIntro`: recreación Figma UI3, timeline del hero, bloqueo inicial, fallback de imagen y entrega final explícita mediante `Present`.
 - `LiveSceneDirector`: registro central, orden requerido, reencuadre, lectura, Spotlight mandatory/opcional, lock/restauración y cursor.
+- `LiveSceneContext`: identidad estable del contexto y fallback pasivo fuera del módulo que cambia con Fast Refresh.
 - `DirectorPresence`: observación local de viewport/pausa, selección contextual, cursor ambiental, comentarios y escritura humana cancelable.
 - `LiveScene`: declaración de id, target, tool, propiedades, timings y estado visual.
 - `EditorPrimitives`: selection frame, handles, property panel y comment thread.
@@ -51,9 +52,11 @@ wip → observing → spotlight-entering → editing
 
 La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No hay ScrollTrigger por escena, auto-scroll ni queue.
 
-Fuera de Spotlight, `DirectorPresence` observa targets explícitos con `IntersectionObserver`. Puntúa visibilidad y proximidad al centro/puntero, exige una pausa estable y ejecuta como máximo un beat visible. No hay búsqueda global que mueva la cámara. Los modos son `text`, `comment`, `nudge`, `crop` y `easing`; los cambios grandes de copy o asset quedan retirados.
+Fuera de Spotlight, `DirectorPresence` observa targets explícitos con `IntersectionObserver`. Su utility AI mantiene un blackboard efímero de visibilidad, puntero, velocidad de puntero, scroll, dirección, pausa y estado de pestaña. La máquina `observing → considering → approaching → commenting/editing → cooldown` puntúa el foco probable del visitante junto a un sesgo autoral pequeño, exige una pausa estable y ejecuta como máximo un beat visible. No hay búsqueda global que mueva la cámara. Los modos son `text`, `comment`, `nudge`, `crop` y `easing`; los cambios grandes de copy o asset quedan retirados.
 
 Un beat de texto mide el fragmento mediante `Range`, superpone un espejo visual `aria-hidden`, selecciona, escribe con cadencia irregular, comete un typo y lo corrige con backspace. El heading semántico permanece en DOM y conserva su accessible name. Scroll, resize, pestaña oculta, Spotlight o Follow cancelan síncronamente cursor, nota, overlay y estilos medidos. Touch, `<=720 px` y reduced motion no ejecutan Director. `javier-director-beats-v1` recuerda solo ids ya vistos durante la pestaña.
+
+La capa es fail-open. `LiveSceneContext` vive en un módulo estable separado para que provider y consumers no cambien de identidad durante Fast Refresh; además ofrece un valor pasivo que mantiene escenas finales ante cualquier desajuste transitorio. `DirectorPresence` añade un error boundary para render/lifecycle y un circuit breaker para su loop asíncrono; ambos eliminan solamente cursor, nota y efectos, nunca el contenido o el scroll.
 
 Elegibilidad recurrente:
 

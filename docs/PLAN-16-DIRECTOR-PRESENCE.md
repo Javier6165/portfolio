@@ -1,6 +1,6 @@
 # Plan 16 — Director: presencia contextual y edición humana
 
-Estado: **implementado; pendiente de QA completo, integración y publicación**.
+Estado: **integrado en `main` local; pendiente de publicación**.
 
 ## Objetivo
 
@@ -16,19 +16,30 @@ Todo ocurre en el documento y se descarta al cerrar la pestaña:
 - posición del viewport y tiempo desde el último scroll;
 - posición reciente del puntero y distancia al target;
 - teclado, pointer down, foco y visibilidad de la pestaña;
+- velocidad del puntero, velocidad/dirección del scroll y tiempo de estabilidad;
 - exclusión mutua con intro, consentimiento, Spotlight y Follow.
 
 No se registra texto introducido, historial, identidad, analytics ni datos remotos. La única memoria es un conjunto session-only de beats ya vistos para evitar repetición.
+
+## Modelo de comportamiento
+
+Director no es una secuencia aleatoria ni una IA remota. Es una `utility AI` similar a las usadas en videojuegos: mantiene un blackboard efímero, evalúa el contexto varias veces por segundo y cambia entre `observing`, `considering`, `approaching`, `commenting/editing`, `cooldown`, `roaming`, `paused` y `done`.
+
+El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, visibilidad, centralidad, prioridad y un sesgo autoral suave permiten que Javier continúe con su propia agenda. La velocidad reciente eleva el tiempo de espera: Director no interpreta una navegación activa como atención.
 
 ## Decisión de atención
 
 1. Director espera a que intro y cualquier overlay terminen.
 2. Descarta targets con menos de aproximadamente `28%` visible.
-3. Puntúa visibilidad, proximidad al centro del viewport y proximidad al puntero.
+3. Puntúa visibilidad, centralidad, proximidad y dwell del puntero, ritmo de interacción y prioridad autoral.
 4. Mantiene un único candidato estable entre `1,15–2,1 s` según la atención observada.
 5. Ejecuta una intervención y deja aproximadamente `8,5 s` de silencio.
 
 Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
+
+## Contención de fallos
+
+Director debe fallar abierto. La identidad del contexto vive en `LiveSceneContext`, separada del componente que Fast Refresh reemplaza; además `LiveScene` recibe un valor pasivo durante cualquier desajuste transitorio y muestra la UI final sin lanzar una excepción. La presencia visual está aislada por un error boundary y su loop asíncrono por un circuit breaker. Si algo falla, se limpian cursor, comentario, overlay y transforms, se detiene el loop y la web continúa con navegación y scroll normales.
 
 ## Contrato de scroll
 

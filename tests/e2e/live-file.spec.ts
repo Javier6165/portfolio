@@ -178,7 +178,9 @@ test("free navigation never launches lower scenes and Follow Javier remains canc
 });
 
 test("Director types like a person and yields immediately when the visitor scrolls", async ({ page, isMobile }) => {
-  test.skip(isMobile, "Touch intentionally uses presence without a synthetic cursor.");
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
@@ -193,6 +195,7 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(dock).toBeVisible();
   await expect(dock.locator("span").filter({ hasText: "FOLLOW JAVIER" })).toBeAttached();
   await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 3_000 });
+  await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", /approaching|commenting|editing/);
   await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
   await expect(page.locator("[data-ambient-note]")).toContainText("Small correction. Very personal.");
   await expect(heroName).toHaveAttribute("data-director-editing", "text");
@@ -209,6 +212,13 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
   await expect(overlay).toHaveCount(0);
   await expect(heroName).not.toHaveAttribute("data-director-editing", /.+/);
+
+  // Director is an enhancement: its circuit breaker must remove only the
+  // simulated collaborator and leave the real portfolio operational.
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("portfolio-director-safety-test")));
+  await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", "disabled");
+  await expect(heroTitle).toBeVisible();
+  expect(pageErrors).toEqual([]);
 });
 
 test("Product practice and AI workflow expose complete roving keyboard tabs", async ({ page, isMobile }) => {

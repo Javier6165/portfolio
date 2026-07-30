@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -13,8 +11,9 @@ import {
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { usePathname } from "next/navigation";
-import { DirectorPresence, type DirectorPresenceStatus } from "./DirectorPresence";
+import { DirectorPresence, DirectorSafetyBoundary, type DirectorPresenceStatus } from "./DirectorPresence";
 import { useNarrative } from "./NarrativeProvider";
+import { DirectorContext } from "./LiveSceneContext";
 import { toolNames } from "./EditorPrimitives";
 import { SpotlightChrome, type SpotlightView } from "./SpotlightChrome";
 import styles from "./LiveScene.module.css";
@@ -42,17 +41,7 @@ export type LiveSceneConfig = {
 type RegisteredScene = { root: HTMLElement; config: LiveSceneConfig };
 type ActiveScene = RegisteredScene & { scrollY: number; mandatory: boolean };
 
-type DirectorContextValue = {
-  introComplete: boolean;
-  mandatoryFirstVisit: boolean;
-  reducedMotion: boolean;
-  replayToken: number;
-  registerScene: (root: HTMLElement, config: LiveSceneConfig) => () => void;
-  settleScene: (root: HTMLElement, userInitiated?: boolean) => void;
-};
-
 const SEEN_SCENES_KEY = "javier-live-scenes-v2";
-const DirectorContext = createContext<DirectorContextValue | null>(null);
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -636,7 +625,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     }
   }, [autoFollow, endActive, guidedComplete, guidedFirstVisit, reducedMotion, scheduleEvaluation]);
 
-  const value = useMemo<DirectorContextValue>(() => ({
+  const value = useMemo(() => ({
     introComplete: experienceReady,
     mandatoryFirstVisit: false,
     reducedMotion,
@@ -672,17 +661,16 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         onReplay={replayLiveEdits}
         onStop={stopFollowing}
       />
-      <DirectorPresence
-        active={experienceReady && !spotlight && !followingJavier && !reducedMotion && autoFollow && !showConsent && pathname === "/"}
-        onStatusChange={setPresenceStatus}
-      />
+      <DirectorSafetyBoundary
+        resetKey={`${pathname}:${liveReplayToken}`}
+        onDisable={() => setPresenceStatus("done")}
+      >
+        <DirectorPresence
+          active={experienceReady && !spotlight && !followingJavier && !reducedMotion && autoFollow && !showConsent && pathname === "/"}
+          onStatusChange={setPresenceStatus}
+        />
+      </DirectorSafetyBoundary>
       <div ref={cursorRef} className={styles.globalCursor} data-spotlight-cursor aria-hidden="true"><i /><span>Javier</span></div>
     </DirectorContext.Provider>
   );
-}
-
-export function useLiveSceneDirector() {
-  const context = useContext(DirectorContext);
-  if (!context) throw new Error("useLiveSceneDirector must be used inside LiveSceneDirector");
-  return context;
 }

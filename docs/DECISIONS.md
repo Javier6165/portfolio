@@ -43,9 +43,11 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
 - Al salir de Present la navegación queda libre y el avatar ofrece Follow. No hay una segunda captura obligatoria en Snapshot.
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado y una partitura finita de microajustes; se pausa durante Spotlight y nunca captura scroll.
-- `DirectorPresence` observa de forma local la zona visible y la pausa del visitante. Tras `1,15–2,1 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `8,5 s` de silencio y no repite beats en la pestaña.
+- `DirectorPresence` mantiene una utility AI local con estados `observing → considering → approaching → commenting/editing → cooldown`. Combina visibilidad, centro, puntero, dwell, velocidad de cursor y velocidad/dirección de scroll; el foco del visitante domina cuando es claro y un sesgo autoral pequeño permite que Javier conserve agenda propia.
+- Tras `1,15–2,1 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `8,5 s` de silencio y no repite beats en la pestaña.
 - Los cambios de copy se seleccionan y escriben carácter a carácter, con typo y backspace. Un espejo `aria-hidden` preserva el heading semántico y termina exactamente en su copy original.
 - Cualquier scroll cancela cursor, comentario y edición en la misma tarea; Director nunca mueve cámara ni sigue al target mientras se desplaza.
+- Director es fail-open: el contexto de escenas tiene un modo pasivo y la presencia tiene boundary + circuit breaker. Un error apaga solo la simulación, restaura estilos y deja contenido, navegación y scroll operativos.
 - Un target sticky solo es elegible en su zona narrativa. El wordmark no puede desplazar el gag correspondiente a Work, Snapshot u otra sección.
 - Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
 - El tono de la capa Live File es seco, autocrítico y amable; se ríe de hábitos de diseño, nunca de clientes, compañeros, accesibilidad, privacidad o resultados.
