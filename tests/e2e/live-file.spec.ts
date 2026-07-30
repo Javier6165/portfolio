@@ -194,7 +194,7 @@ test("free navigation never launches lower scenes and Follow Javier remains canc
   expect(states.every((state) => state === "settled")).toBe(true);
 });
 
-test("Director types like a person and yields immediately when the visitor scrolls", async ({ page, isMobile }) => {
+test("Director types like a person and stays present when the visitor scrolls", async ({ page, isMobile }) => {
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
@@ -224,11 +224,13 @@ test("Director types like a person and yields immediately when the visitor scrol
   const before = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 420);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 40);
-  await expect(page.locator("[data-javier-cursor]")).toHaveCSS("opacity", "0");
+  const cursor = page.locator("[data-javier-cursor]");
+  await expect(cursor).not.toHaveCSS("opacity", "0");
+  await expect(cursor).toHaveCSS("position", "fixed");
   await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
   await expect(overlay).toHaveCount(0);
   await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/);
-  await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", "context:fast-scroll", { timeout: 3_000 });
+  await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-last-context", "context:fast-scroll", { timeout: 3_000 });
 
   // Director is an enhancement: its circuit breaker must remove only the
   // simulated collaborator and leave the real portfolio operational.
@@ -236,6 +238,50 @@ test("Director types like a person and yields immediately when the visitor scrol
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", "disabled");
   await expect(heroTitle).toBeVisible();
   expect(pageErrors).toEqual([]);
+});
+
+test("Director keeps working autonomously and hands its cursor to Follow", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  await page.addInitScript(() => {
+    localStorage.setItem("javier-narrative-consent", "denied");
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
+      "hero-headline-indecision",
+      "snapshot-trust-typo",
+      "work-evidence-note",
+      "practice-two-pixels",
+      "ai-validate-typo",
+      "about-crop-breathe",
+      "references-side-typo",
+      "playground-easing",
+      "footer-handoff",
+      "context:visit-one",
+      "context:session-forty-five",
+      "context:patient-reader",
+    ]));
+  });
+  await page.goto("/?narrative=return&director=fast");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
+
+  const ambientCursor = page.locator("[data-javier-cursor]");
+  const followCursor = page.locator("[data-spotlight-cursor]");
+  const director = page.locator("[data-director-presence]");
+  await expect(ambientCursor).not.toHaveCSS("opacity", "0");
+  await expect(director).toHaveAttribute("data-director-cue", /ambient:/, { timeout: 3_000 });
+  await expect(director).toHaveAttribute("data-director-intent", /autonomous-work|visitor-focus/);
+
+  const heroBox = await page.locator("#hero-title").boundingBox();
+  expect(heroBox).not.toBeNull();
+  await page.mouse.move(heroBox!.x + heroBox!.width * .5, heroBox!.y + heroBox!.height * .5);
+  await expect(director).toHaveAttribute("data-director-intent", "visitor-focus", { timeout: 3_000 });
+
+  await page.getByRole("button", { name: "Follow Javier" }).first().click();
+  await expect(page.getByRole("button", { name: /Stop following/ }).first()).toBeVisible();
+  await expect(ambientCursor).toHaveCSS("opacity", "0");
+  await expect(followCursor).not.toHaveCSS("opacity", "0");
+
+  await page.getByRole("button", { name: /Stop following/ }).first().click();
+  await expect(followCursor).toHaveCSS("opacity", "0");
+  await expect(ambientCursor).not.toHaveCSS("opacity", "0");
 });
 
 test("every Director beat still resolves against the redesigned page", async ({ page, isMobile }) => {

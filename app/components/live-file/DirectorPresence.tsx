@@ -45,6 +45,8 @@ type Candidate = {
   score: number;
   pointerInside: boolean;
   entry?: { x: number; y: number };
+  quiet?: boolean;
+  intent?: "autonomous-work" | "visitor-focus" | "contextual-response" | "figma-handoff";
 };
 type ContextualCueId = keyof typeof contextualCommentary;
 
@@ -328,6 +330,9 @@ export function DirectorPresence({
     let lastScrollAt = startedAt;
     let lastInputAt = startedAt;
     let nextAllowedAt = startedAt + (fast ? 350 : 1_200);
+    let lastRoamAt = Number.NEGATIVE_INFINITY;
+    let lastVisitorRedirectAt = Number.NEGATIVE_INFINITY;
+    let lastAmbientBeatId: string | null = null;
     let handoffTimer: number | null = null;
     const handoffRequested = document.body.dataset.directorHandoff === "hero-headline";
     const handoffEntry = handoffRequested ? {
@@ -349,6 +354,15 @@ export function DirectorPresence({
 
     const hideNote = () => gsap.set(note, { opacity: 0, scale: .96 });
     const hideCursor = () => gsap.set(cursor, { opacity: 0 });
+    const keepCursorVisible = () => {
+      const x = Number(gsap.getProperty(cursor, "x")) || window.innerWidth - 142;
+      const y = Number(gsap.getProperty(cursor, "y")) || 74;
+      gsap.set(cursor, {
+        x: clamp(x, 24, window.innerWidth - 90),
+        y: clamp(y, 42, window.innerHeight - 82),
+        opacity: .96,
+      });
+    };
 
     const clearTarget = () => {
       const textTarget = currentTargetRef.current;
@@ -370,6 +384,7 @@ export function DirectorPresence({
       status: DirectorPresenceStatus = "connected",
       state: DirectorBrainState = "observing",
       intent = "waiting",
+      hardHide = false,
     ) => {
       generation += 1;
       running = false;
@@ -377,7 +392,8 @@ export function DirectorPresence({
       tweenRef.current = null;
       clearTarget();
       hideNote();
-      hideCursor();
+      if (hardHide) hideCursor();
+      else keepCursorVisible();
       onStatusChange(status);
       setBrainState(state, intent);
     };
@@ -386,7 +402,7 @@ export function DirectorPresence({
     // failure opens this circuit breaker and restores the untouched portfolio.
     const failSafely = () => {
       if (!alive) return;
-      cancelCurrent("done", "disabled", "safety-stop");
+      cancelCurrent("done", "disabled", "safety-stop", true);
       alive = false;
       observer.disconnect();
       if (interval !== null) window.clearInterval(interval);
@@ -534,14 +550,19 @@ export function DirectorPresence({
       });
     };
 
-    const runBeat = async ({ beat, target, entry }: Candidate) => {
+    const runBeat = async ({ beat, target, entry, quiet = false, intent = "autonomous-work" }: Candidate) => {
       if (!alive || !target.isConnected || visibleRatio(target) < .2) return;
       running = true;
       const runId = ++generation;
-      rememberBeat(seen, beat.id);
-      if (beat.id.startsWith("context:")) behavior.lastContextAt = window.performance.now();
+      if (!quiet) rememberBeat(seen, beat.id);
+      if (beat.id.startsWith("context:")) {
+        behavior.lastContextAt = window.performance.now();
+        layer.dataset.directorLastContext = beat.id;
+      }
+      if (intent === "visitor-focus") lastVisitorRedirectAt = window.performance.now();
+      if (quiet) lastAmbientBeatId = beat.id.replace(/^ambient:/, "");
       onStatusChange("editing");
-      setBrainState("approaching", "moving-to-focus");
+      setBrainState("approaching", intent);
       const targetRect = target.getBoundingClientRect();
       const rect = beat.mode === "text" && beat.segment
         ? findSegmentRect(target, beat.segment)
@@ -550,36 +571,37 @@ export function DirectorPresence({
       const endY = clamp(rect.top + Math.min(42, rect.height * .42), 82, window.innerHeight - 82);
       const noteX = beat.mode === "text" ? targetRect.left + Math.min(72, targetRect.width * .16) : endX;
       const noteY = beat.mode === "text" ? targetRect.top - 140 : endY;
-      const startX = clamp(entry?.x ?? (attention.pointerSeen ? attention.pointerX + 46 : endX + 82), 24, window.innerWidth - 90);
-      const startY = clamp(entry?.y ?? (attention.pointerSeen ? attention.pointerY - 34 : endY - 58), 42, window.innerHeight - 82);
-      gsap.set(cursor, { x: startX, y: startY, opacity: entry ? .96 : 0 });
+      if (entry) gsap.set(cursor, { x: entry.x, y: entry.y, opacity: .96 });
+      else keepCursorVisible();
       if (!await moveCursor(endX, endY, fast ? 130 : entry ? 520 : 760, runId)) return;
-      setBrainState("commenting", "explaining-choice");
       layer.dataset.directorCue = beat.id;
-      showNote(chooseCopy(beat, "opening", beat.comments.opening), noteX, noteY);
-      if (!await sleep(fast ? 100 : 720, runId)) return;
+      if (!quiet) {
+        setBrainState("commenting", beat.id.startsWith("context:") ? "contextual-response" : "explaining-choice");
+        showNote(chooseCopy(beat, "opening", beat.comments.opening), noteX, noteY);
+        if (!await sleep(fast ? 100 : 720, runId)) return;
+      }
 
-      setBrainState(beat.mode === "comment" ? "commenting" : "editing", beat.mode);
+      setBrainState(beat.mode === "comment" ? "commenting" : "editing", intent);
       const completed = beat.mode === "text"
         ? await runTextBeat(beat, target, runId)
         : await runEffectBeat(beat, target, runId);
       if (!completed || generation !== runId) return;
 
-      if (beat.comments.resolution?.length) {
+      if (!quiet && beat.comments.resolution?.length) {
         showNote(chooseCopy(beat, "resolution", beat.comments.resolution), noteX, noteY);
       }
-      if (!await sleep(fast ? 180 : 1_350, runId)) return;
+      if (!await sleep(fast ? 140 : quiet ? 460 : 1_350, runId)) return;
       clearTarget();
-      setBrainState("cooldown", "giving-space");
+      setBrainState("roaming", "autonomous-work");
       gsap.to(note, { opacity: 0, scale: .96, duration: fast ? .08 : .2 });
-      gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: 0, duration: fast ? .1 : .3, ease: "power2.in" });
+      gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: .96, duration: fast ? .1 : .3, ease: "power2.inOut" });
       if (!await sleep(fast ? 140 : 360, runId)) return;
       running = false;
       currentCandidate = null;
       candidateSince = window.performance.now();
-      nextAllowedAt = window.performance.now() + (fast ? 550 : 6_500);
+      nextAllowedAt = window.performance.now() + (fast ? 220 : quiet ? 760 : 1_850);
       onStatusChange("connected");
-      setBrainState("cooldown", "giving-space");
+      setBrainState("roaming", "autonomous-work");
     };
 
     const rankCandidates = (now: number) => {
@@ -681,8 +703,55 @@ export function DirectorPresence({
       }
 
       const contextual = contextualCandidate(now, anchor);
-      if (contextual) return contextual;
-      return ranked.find(({ beat }) => !seen.has(beat.id)) ?? null;
+      if (contextual) return { ...contextual, intent: "contextual-response" as const };
+      const authored = ranked.find(({ beat }) => !seen.has(beat.id));
+      if (authored) {
+        const redirecting = authored.pointerInside
+          && now - behavior.focusSince >= (fast ? 180 : 900)
+          && now - lastVisitorRedirectAt >= (fast ? 900 : 12_000);
+        return { ...authored, intent: redirecting ? "visitor-focus" as const : "autonomous-work" as const };
+      }
+
+      const redirecting = anchor.pointerInside
+        && now - behavior.focusSince >= (fast ? 180 : 900)
+        && now - lastVisitorRedirectAt >= (fast ? 900 : 12_000);
+      const autonomousAnchor = ranked.find(({ beat }) => beat.id !== lastAmbientBeatId) ?? anchor;
+      const ambientAnchor = redirecting ? anchor : autonomousAnchor;
+      const ambientMode = ambientAnchor.beat.mode === "crop" || ambientAnchor.beat.mode === "easing"
+        ? ambientAnchor.beat.mode
+        : "nudge";
+      return {
+        ...ambientAnchor,
+        beat: {
+          ...ambientAnchor.beat,
+          id: `ambient:${ambientAnchor.beat.id}`,
+          mode: ambientMode,
+          comments: { opening: [""] },
+        },
+        quiet: true,
+        intent: redirecting ? "visitor-focus" : "autonomous-work",
+      };
+    };
+
+    const roam = (now: number, anchor?: Candidate) => {
+      if (now - lastRoamAt < (fast ? 180 : 1_050)) return;
+      lastRoamAt = now;
+      const rect = anchor?.target.getBoundingClientRect();
+      const phase = Math.floor(now / (fast ? 380 : 1_900));
+      const x = rect
+        ? clamp(phase % 2 ? rect.left + rect.width * .24 : rect.right - rect.width * .18, 24, window.innerWidth - 90)
+        : clamp(window.innerWidth * (phase % 2 ? .68 : .78), 24, window.innerWidth - 90);
+      const y = rect
+        ? clamp(rect.top + Math.min(rect.height * .3, 48), 72, window.innerHeight - 82)
+        : clamp(84 + (phase % 3) * 18, 42, window.innerHeight - 82);
+      tweenRef.current?.kill();
+      tweenRef.current = gsap.to(cursor, {
+        x,
+        y,
+        opacity: .96,
+        duration: fast ? .16 : .82,
+        ease: "power2.inOut",
+      });
     };
 
     const evaluate = () => {
@@ -694,31 +763,34 @@ export function DirectorPresence({
       const inputIdle = now - lastInputAt;
       const visitorBusy = attention.scrollVelocity > .18 || attention.pointerVelocity > .65;
       if (now < nextAllowedAt) {
-        setBrainState("cooldown", "giving-space");
+        roam(now, rankCandidates(now)[0]);
+        setBrainState("roaming", "autonomous-work");
         return;
       }
       if (visitorBusy || scrollIdle < (fast ? 120 : 1_250) || inputIdle < (fast ? 100 : 720)) {
+        keepCursorVisible();
         setBrainState("observing", attention.scrollVelocity > .18 ? "navigating" : "interacting");
         return;
       }
       const candidate = chooseCandidate(now);
       if (!candidate) {
-        onStatusChange("elsewhere");
-        setBrainState("roaming", "working-elsewhere");
+        onStatusChange("connected");
+        roam(now);
+        setBrainState("roaming", "autonomous-work");
         currentCandidate = null;
         candidateSince = now;
         return;
       }
       onStatusChange("connected");
-      if (currentCandidate?.beat.id !== candidate.beat.id) {
+      if (currentCandidate?.beat.id !== candidate.beat.id || currentCandidate.intent !== candidate.intent) {
         currentCandidate = candidate;
         candidateSince = now;
-        setBrainState("considering", candidate.pointerInside ? "visitor-focus" : "autonomous-focus");
+        setBrainState("considering", candidate.intent ?? "autonomous-work");
         return;
       }
       const pacePenalty = clamp(attention.scrollVelocity * 900, 0, 680);
       const dwell = fast ? 180 : candidate.pointerInside ? 850 + pacePenalty : 1_200 + pacePenalty;
-      setBrainState("considering", candidate.pointerInside ? "visitor-focus" : "autonomous-focus");
+      setBrainState("considering", candidate.intent ?? "autonomous-work");
       if (now - candidateSince >= dwell) void runBeat(candidate).catch(failSafely);
     };
 
@@ -765,9 +837,8 @@ export function DirectorPresence({
       currentCandidate = null;
       candidateSince = now;
       nextAllowedAt = Math.max(nextAllowedAt, now + (fast ? 250 : 950));
-      // A viewport gesture invalidates the measured anchor. Hiding in the same
-      // scroll task prevents the collaborator cursor from appearing attached
-      // to content that is moving underneath it.
+      // A viewport gesture invalidates the measured anchor, but Javier stays
+      // fixed to the viewport while the document moves underneath him.
       cancelCurrent("connected", "observing", attention.scrollDirection > 0 ? "navigating-down" : "navigating-up");
     };
     const onResize = () => {
@@ -775,10 +846,23 @@ export function DirectorPresence({
       lastInputAt = window.performance.now();
       cancelCurrent("connected", "observing", "viewport-change");
     };
-    const onVisibility = () => { if (alive && document.hidden) cancelCurrent("elsewhere", "paused", "tab-hidden"); };
-    const onPause = () => { if (alive) cancelCurrent("connected", "paused", "another-director"); };
+    const onVisibility = () => {
+      if (!alive) return;
+      if (document.hidden) cancelCurrent("elsewhere", "paused", "tab-hidden", true);
+      else {
+        keepCursorVisible();
+        onStatusChange("connected");
+        setBrainState("roaming", "autonomous-work");
+      }
+    };
+    const onPause = () => { if (alive) cancelCurrent("connected", "paused", "another-director", true); };
     const onSafetyTest = () => failSafely();
 
+    gsap.set(cursor, {
+      x: clamp(handoffEntry?.x ?? window.innerWidth - 142, 24, window.innerWidth - 90),
+      y: clamp(handoffEntry?.y ?? 74, 42, window.innerHeight - 82),
+      opacity: .96,
+    });
     onStatusChange("connected");
     interval = window.setInterval(() => {
       try { evaluate(); } catch { failSafely(); }

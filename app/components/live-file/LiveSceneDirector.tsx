@@ -69,7 +69,6 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     reducedMotion,
     replayLiveEdits,
     setAutoFollow,
-    showConsent,
     visitTier,
   } = useNarrative();
   const pathname = usePathname();
@@ -182,7 +181,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     activeRef.current = null;
     candidateRef.current = null;
     firstIntentRef.current = 0;
-    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
+    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: followingRef.current && !disableFollowing ? .96 : 0 });
     setSpotlight(null);
     if (active) {
       active.root.dataset.liveState = interrupted ? "interrupted" : "settled";
@@ -393,7 +392,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
           .to(cursor, { opacity: 1, scale: 1, duration: .2 }, .06)
           .to(cursor, { duration: .66, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 28, y: endY - 22 }, { x: endX, y: endY }], curviness: 1.05 } }, .14)
           .to(cursor, { x: endX + 3, y: endY - 3, duration: .22, ease: "power2.inOut" }, .88)
-          .to(cursor, { opacity: 0, duration: .24 }, Math.max(1.6, config.spotlightMs / 1000 - .5));
+          .to(cursor, { opacity: .96, duration: .18 }, Math.max(1.6, config.spotlightMs / 1000 - .5));
       }
     };
   }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible]);
@@ -473,6 +472,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       followingRef.current = false;
       setFollowingJavier(false);
       setPresenceStatus("done");
+      if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
       window.dispatchEvent(new CustomEvent("portfolio-follow-end"));
       return;
     }
@@ -500,6 +500,14 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     if (reducedMotion || pathname !== "/") return;
     setAutoFollow(true);
     followingRef.current = true;
+    if (cursorRef.current) {
+      gsap.set(cursorRef.current, {
+        x: clamp(window.innerWidth - 142, 24, window.innerWidth - 96),
+        y: 82,
+        opacity: .96,
+        scale: 1,
+      });
+    }
     setFollowingJavier(true);
     setPresenceStatus("connected");
     window.dispatchEvent(new CustomEvent("portfolio-follow-start"));
@@ -641,6 +649,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const stopFollowing = useCallback(() => {
     followingRef.current = false;
     setFollowingJavier(false);
+    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
     window.dispatchEvent(new CustomEvent("portfolio-follow-end"));
     if (activeRef.current) endActive(true, 0, true);
     else {
@@ -670,7 +679,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         onDisable={() => setPresenceStatus("done")}
       >
         <DirectorPresence
-          active={experienceReady && !spotlight && !followingJavier && !reducedMotion && autoFollow && !showConsent && pathname === "/"}
+          active={experienceReady && !spotlight && !followingJavier && !reducedMotion && autoFollow && pathname === "/"}
           consent={consent}
           hasSeenCue={hasSeenCue}
           markCueSeen={markCueSeen}
