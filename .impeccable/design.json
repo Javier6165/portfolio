@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-04T14:22:22Z",
+  "generatedAt": "2026-08-04T14:41:09Z",
   "title": "Design System: Javier Ortiz Portfolio",
   "extensions": {
     "colorMeta": {
@@ -97,8 +97,8 @@
     "motion": [
       {
         "name": "editor-handoff",
-        "value": "power4.inOut / 0.92s",
-        "purpose": "Expand the exact selected artboard into Presentation mode."
+        "value": "power4.inOut / 1.08s inside a ~6.4s opening",
+        "purpose": "Hold the caught-working comment for reading, then expand the exact selected artboard into Presentation mode."
       },
       {
         "name": "interface-standard",
@@ -106,9 +106,9 @@
         "purpose": "Measured transforms and responsive component state changes."
       },
       {
-        "name": "director-rest-cadence",
-        "value": "3.6s minimum between silent repositions",
-        "purpose": "Keep Javier present without competing continuously with reading."
+        "name": "director-autonomous-agenda",
+        "value": "document-space / silent by default",
+        "purpose": "Let Javier work across the whole file and leave the viewport; contextual signals may redirect him temporarily."
       },
       {
         "name": "director-reading-hold",
@@ -184,7 +184,7 @@
     "keyCharacteristics": [
       "Authentic white UI3 chrome only during the opening.",
       "Carbon, bone-white and muted-brass editorial presentation after Present.",
-      "Native scrolling and optional guidance after the handoff.",
+      "Native scrolling, a document-wide autonomous collaborator and optional guided Follow after the handoff.",
       "Flat, rule-led compositions instead of generic rounded cards."
     ],
     "rules": [

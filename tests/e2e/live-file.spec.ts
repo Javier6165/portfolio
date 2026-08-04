@@ -30,7 +30,10 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(initialScroll);
   await expect(page.locator("html")).not.toHaveAttribute("data-narrative", "complete");
   await expect(page.getByText("You caught me working.")).toBeVisible({ timeout: 2_500 });
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
+  await page.waitForTimeout(1_500);
+  await expect(page.getByText("You caught me working.")).toBeVisible();
+  await expect(page.locator("[data-live-file-frame]").locator("xpath=..")).toHaveAttribute("data-phase", "presenting");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 9_000 });
 
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(hero.getByRole("img", { name: /Portrait of Javier Ortiz/ })).toBeVisible();
@@ -173,7 +176,7 @@ test("forced WIP keeps Snapshot recognisable while exposing a small rhythm corre
 test("the first visit keeps Snapshot native and makes every later edit optional", async ({ page, isMobile }) => {
   test.skip(isMobile, "Desktop verifies free scroll and the explicit Follow control.");
   await page.goto("/?narrative=first");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
   await page.getByRole("link", { name: "Explore" }).click();
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
@@ -250,7 +253,7 @@ test("Director types like a person and stays present when the visitor scrolls", 
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 40);
   const cursor = page.locator("[data-javier-cursor]");
   await expect(cursor).not.toHaveCSS("opacity", "0");
-  await expect(cursor).toHaveCSS("position", "fixed");
+  await expect(cursor).toHaveCSS("position", "absolute");
   await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
   await expect(overlay).toHaveCount(0);
   await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/);
@@ -284,15 +287,19 @@ test("Director keeps working autonomously and hands its cursor to Follow", async
       "context:patient-reader",
     ]));
   });
-  await page.goto("/?narrative=return&director=fast");
+  await page.goto("/?narrative=return&director=fast&directorAgenda=work-evidence-note");
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
 
   const ambientCursor = page.locator("[data-javier-cursor]");
   const followCursor = page.locator("[data-spotlight-cursor]");
   const director = page.locator("[data-director-presence]");
   await expect(ambientCursor).not.toHaveCSS("opacity", "0");
-  await expect(director).toHaveAttribute("data-director-cue", /ambient:/, { timeout: 3_000 });
-  await expect(director).toHaveAttribute("data-director-intent", /autonomous-work|visitor-focus/);
+  await expect(director).toHaveAttribute("data-director-cue", "ambient:work-evidence-note", { timeout: 3_000 });
+  await expect(director).toHaveAttribute("data-director-intent", "autonomous-work");
+  const autonomousPosition = await ambientCursor.boundingBox();
+  expect(autonomousPosition).not.toBeNull();
+  expect(autonomousPosition!.y).toBeGreaterThan(await page.evaluate(() => innerHeight));
+  await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
 
   const heroBox = await page.locator("#hero-title").boundingBox();
   expect(heroBox).not.toBeNull();
@@ -396,7 +403,7 @@ test("Director acknowledges rejected memory without storing behavior", async ({ 
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   test.setTimeout(75_000);
   await page.goto("/?narrative=first&director=fast");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
   await page.getByRole("link", { name: "Explore" }).click();
   await page.getByRole("button", { name: "Follow Javier" }).first().click();
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
@@ -462,7 +469,7 @@ test("consented memory produces deterministic return tiers without replaying the
   test.skip(isMobile, "Storage tiers are viewport-independent and run once.");
   test.setTimeout(75_000);
   await page.goto("/?narrative=first");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
   await page.getByRole("link", { name: "Explore" }).click();
   await page.getByRole("button", { name: "Follow Javier" }).first().click();
   await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 4_000 });
@@ -512,7 +519,7 @@ test("a failed portrait request falls back to the finished semantic hero", async
   test.skip(isMobile, "The shared asset failure path runs once.");
   await page.route("**/hero-system*", (route) => route.abort());
   await page.goto("/?narrative=first");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 6_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
   await expect(page.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.locator("[data-figma-editor]")).toBeHidden();
 });

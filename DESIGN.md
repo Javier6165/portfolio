@@ -101,7 +101,7 @@ Editorial content uses straight edges and horizontal rules. Small radii support 
 
 ### Figma opening
 
-The first-visit sequence lasts about four seconds: visible editing, a short Javier comment, a cursor path to Present and an expansion of the same artboard into the portfolio. Return visits and reduced motion resolve immediately.
+The first-visit sequence lasts about six seconds: visible editing, a Javier comment held long enough to read, a deliberate cursor path to Present and an expansion of the same artboard into the portfolio. Return visits and reduced motion resolve immediately.
 
 ### Hero
 
@@ -113,7 +113,7 @@ The header is transparent over the hero and becomes an opaque carbon surface aft
 
 ### Follow, cursor and comments
 
-Follow Javier is avatar-first and compact; a label appears only when space and hover allow. On first visit, the multiplayer cursor hands off directly from Present to the hero and visibly tries name, role and positioning before settling. Later ambient edits never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
+Follow Javier is avatar-first and compact; a label appears only when space and hover allow. On first visit, the multiplayer cursor hands off directly from Present to the hero and visibly tries name, role and positioning before settling. Later the cursor follows its own document-wide agenda, can work outside the viewport and stays silent unless Director has a contextual reason to redirect it. Ambient edits never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
 
 ## Do's and Don'ts
 

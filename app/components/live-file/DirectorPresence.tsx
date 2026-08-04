@@ -243,6 +243,17 @@ function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
 }
 
+function toDocumentRect(rect: DOMRect) {
+  return {
+    top: rect.top + window.scrollY,
+    right: rect.right + window.scrollX,
+    bottom: rect.bottom + window.scrollY,
+    left: rect.left + window.scrollX,
+    width: rect.width,
+    height: rect.height,
+  };
+}
+
 function visibleRatio(element: HTMLElement) {
   const rect = element.getBoundingClientRect();
   const visibleWidth = Math.max(0, Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0));
@@ -381,14 +392,15 @@ export function DirectorPresence({
     let lastScrollAt = startedAt;
     let lastInputAt = startedAt;
     let nextAllowedAt = startedAt + (fast ? 350 : 1_200);
-    let lastRoamAt = Number.NEGATIVE_INFINITY;
     let lastVisitorRedirectAt = Number.NEGATIVE_INFINITY;
     let lastAmbientBeatId: string | null = null;
+    let autonomousAgendaIndex = [...(sessionSeedRef.current ?? "javier")]
+      .reduce((total, character) => total + character.charCodeAt(0), 0) % Math.max(1, targets.length);
     let handoffTimer: number | null = null;
     const handoffRequested = document.body.dataset.directorHandoff === "hero-headline";
     const handoffEntry = handoffRequested ? {
-      x: Number(document.body.dataset.directorHandoffX) || window.innerWidth - 142,
-      y: Number(document.body.dataset.directorHandoffY) || 42,
+      x: (Number(document.body.dataset.directorHandoffX) || window.innerWidth - 142) + window.scrollX,
+      y: (Number(document.body.dataset.directorHandoffY) || 42) + window.scrollY,
     } : null;
     if (handoffRequested) {
       delete document.body.dataset.directorHandoff;
@@ -405,14 +417,18 @@ export function DirectorPresence({
 
     const hideNote = () => gsap.set(note, { opacity: 0, scale: .96 });
     const hideCursor = () => gsap.set(cursor, { opacity: 0 });
-    const keepCursorVisible = (opacity = .54) => {
-      const x = Number(gsap.getProperty(cursor, "x")) || window.innerWidth - 142;
-      const y = Number(gsap.getProperty(cursor, "y")) || 74;
-      gsap.set(cursor, {
-        x: clamp(x, 24, window.innerWidth - 90),
-        y: clamp(y, 42, window.innerHeight - 82),
-        opacity,
-      });
+    const cursorPoint = () => ({
+      x: Number(gsap.getProperty(cursor, "x")) || window.scrollX + window.innerWidth - 142,
+      y: Number(gsap.getProperty(cursor, "y")) || window.scrollY + 74,
+    });
+    const cursorIsInViewport = (point = cursorPoint()) => (
+      point.x >= window.scrollX - 42
+      && point.x <= window.scrollX + window.innerWidth + 42
+      && point.y >= window.scrollY - 42
+      && point.y <= window.scrollY + window.innerHeight + 42
+    );
+    const parkCursor = (opacity = .54) => {
+      gsap.set(cursor, { opacity });
     };
 
     const clearTarget = () => {
@@ -444,8 +460,8 @@ export function DirectorPresence({
       clearTarget();
       hideNote();
       if (hardHide) hideCursor();
-      else keepCursorVisible();
-      onStatusChange(status);
+      else parkCursor();
+      onStatusChange(hardHide ? status : cursorIsInViewport() ? status : "elsewhere");
       setBrainState(state, intent);
     };
 
@@ -475,8 +491,13 @@ export function DirectorPresence({
       const width = Math.min(304, window.innerWidth - 32);
       gsap.set(note, { x: 0, y: 0, width, opacity: 0, scale: 1 });
       const height = note.getBoundingClientRect().height;
-      const targetRect = target.getBoundingClientRect();
-      const safe = { top: 78, right: 16, bottom: 16, left: 16 };
+      const targetRect = toDocumentRect(target.getBoundingClientRect());
+      const safe = {
+        top: window.scrollY + 78,
+        right: window.scrollX + window.innerWidth - 16,
+        bottom: window.scrollY + window.innerHeight - 16,
+        left: window.scrollX + 16,
+      };
       const candidates = [
         { x: x + 18, y: y + 30 },
         { x: targetRect.left, y: targetRect.top - height - 18 },
@@ -492,16 +513,16 @@ export function DirectorPresence({
       );
       const fits = (candidate: { x: number; y: number }) => (
         candidate.x >= safe.left
-        && candidate.x + width <= window.innerWidth - safe.right
+        && candidate.x + width <= safe.right
         && candidate.y >= safe.top
-        && candidate.y + height <= window.innerHeight - safe.bottom
+        && candidate.y + height <= safe.bottom
       );
       const placement = candidates.find((candidate) => fits(candidate) && !overlapsTarget(candidate))
         ?? candidates.find(fits)
         ?? candidates[0];
       gsap.set(note, {
-        x: clamp(placement.x, safe.left, window.innerWidth - width - safe.right),
-        y: clamp(placement.y, safe.top, window.innerHeight - height - safe.bottom),
+        x: clamp(placement.x, safe.left, safe.right - width),
+        y: clamp(placement.y, safe.top, safe.bottom - height),
         width,
         opacity: 1,
         scale: 1,
@@ -515,8 +536,8 @@ export function DirectorPresence({
       const rect = target.getBoundingClientRect();
       const computed = window.getComputedStyle(target);
       const style: CSSProperties = {
-        top: rect.top,
-        left: rect.left,
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
         width: rect.width,
         minHeight: rect.height,
         color: computed.color,
@@ -552,10 +573,11 @@ export function DirectorPresence({
       target.dataset.directorEditing = "text";
       currentTargetRef.current = target;
 
-      const baselineY = clamp(segmentRect.bottom - 4, 82, window.innerHeight - 72);
-      if (!await moveCursor(clamp(segmentRect.right, 24, window.innerWidth - 90), baselineY, fast ? 90 : isOpeningHeadline ? 170 : 360, runId)) return false;
+      const documentSegment = toDocumentRect(segmentRect);
+      const baselineY = documentSegment.bottom - 4;
+      if (!await moveCursor(documentSegment.right, baselineY, fast ? 90 : isOpeningHeadline ? 170 : 360, runId)) return false;
       setTextOverlay((current) => current ? { ...current, selected: true } : current);
-      if (!await moveCursor(clamp(segmentRect.left, 24, window.innerWidth - 90), baselineY, fast ? 120 : isOpeningHeadline ? 220 : 540, runId)) return false;
+      if (!await moveCursor(documentSegment.left, baselineY, fast ? 120 : isOpeningHeadline ? 220 : 540, runId)) return false;
       if (!await sleep(fast ? 80 : isOpeningHeadline ? 110 : 360, runId)) return false;
 
       let value = beat.segment;
@@ -656,7 +678,12 @@ export function DirectorPresence({
     };
 
     const runBeat = async ({ beat, target, entry, quiet = false, intent = "autonomous-work" }: Candidate) => {
-      if (!alive || !target.isConnected || visibleRatio(target) < .2) return;
+      const mayWorkOffscreen = quiet && intent === "autonomous-work";
+      if (!alive || !target.isConnected || (!mayWorkOffscreen && visibleRatio(target) < .2)) {
+        currentCandidate = null;
+        candidateSince = window.performance.now();
+        return;
+      }
       const startedAt = window.performance.now();
       const line = quiet ? null : selectLine(beat, startedAt);
       if (!quiet && !line) {
@@ -678,19 +705,30 @@ export function DirectorPresence({
       }
       if (intent === "visitor-focus") lastVisitorRedirectAt = window.performance.now();
       if (quiet) lastAmbientBeatId = beat.id.replace(/^ambient:/, "");
-      onStatusChange("editing");
       setBrainState("approaching", intent);
       const targetRect = target.getBoundingClientRect();
       const rect = beat.mode === "text" && beat.segment
         ? findSegmentRect(target, beat.segment)
         : targetRect;
-      const endX = clamp(rect.right - Math.min(30, rect.width * .14), 24, window.innerWidth - 90);
-      const endY = clamp(rect.top + Math.min(42, rect.height * .42), 82, window.innerHeight - 82);
-      const noteX = beat.mode === "text" ? targetRect.left + Math.min(72, targetRect.width * .16) : endX;
-      const noteY = beat.mode === "text" ? targetRect.top - 140 : endY;
+      const documentTargetRect = toDocumentRect(targetRect);
+      const documentRect = toDocumentRect(rect);
+      const endX = documentRect.right - Math.min(30, documentRect.width * .14);
+      const endY = documentRect.top + Math.min(42, documentRect.height * .42);
+      const noteX = beat.mode === "text" ? documentTargetRect.left + Math.min(72, documentTargetRect.width * .16) : endX;
+      const noteY = beat.mode === "text" ? documentTargetRect.top - 140 : endY;
       if (entry) gsap.set(cursor, { x: entry.x, y: entry.y, opacity: .96 });
-      else keepCursorVisible();
-      if (!await moveCursor(endX, endY, fast ? 110 : isOpeningHeadline ? 300 : entry ? 520 : 760, runId)) return;
+      else parkCursor();
+      const startPoint = cursorPoint();
+      const travelDistance = Math.hypot(endX - startPoint.x, endY - startPoint.y);
+      const travelDuration = fast
+        ? 110
+        : isOpeningHeadline
+          ? 300
+          : entry
+            ? 520
+            : clamp(620 + travelDistance * .22, 720, 1_520);
+      onStatusChange(cursorIsInViewport({ x: endX, y: endY }) ? "editing" : "elsewhere");
+      if (!await moveCursor(endX, endY, travelDuration, runId)) return;
       layer.dataset.directorCue = beat.id;
       if (line) {
         layer.dataset.directorLine = line.id;
@@ -725,11 +763,11 @@ export function DirectorPresence({
       currentCandidate = null;
       candidateSince = window.performance.now();
       nextAllowedAt = window.performance.now() + (fast ? 220 : quiet ? 760 : 1_850);
-      onStatusChange("connected");
+      onStatusChange(cursorIsInViewport({ x: endX + 12, y: endY + 8 }) ? "connected" : "elsewhere");
       setBrainState("roaming", "autonomous-work");
     };
 
-    const rankCandidates = (now: number) => {
+    const rankVisibleCandidates = (now: number) => {
       const viewportCentre = { x: window.innerWidth * .5, y: window.innerHeight * .5 };
       return targets
         .filter(({ target }) => target.isConnected)
@@ -747,20 +785,41 @@ export function DirectorPresence({
             && attention.pointerX >= rect.left && attention.pointerX <= rect.right
             && attention.pointerY >= rect.top && attention.pointerY <= rect.bottom;
           const centreDistance = Math.abs(rect.top + rect.height * .5 - viewportCentre.y) / Math.max(1, window.innerHeight);
-          // Utility-AI blend: visitor focus dominates when it is clear, while
-          // a small rotating authored bias lets Javier keep working on his own.
-          const autonomousBias = ((Math.sin(now / 5_400 + index * 1.7) + 1) / 2) * .22;
           const centreScore = 1 - clamp(centreDistance, 0, 1);
           const score = ratio * 2.35
             + proximity * (pointerSettled ? 1.05 : .45)
             + centreScore * .7
             + (pointerInside ? 1.55 : 0)
-            + autonomousBias
+            + index * .001
             + (beat.priority ?? 0);
           return { beat, target, score, pointerInside };
         })
         .filter(({ target }) => visibleRatio(target) >= .28 && target.getBoundingClientRect().height > 0)
         .sort((a, b) => b.score - a.score);
+    };
+
+    const autonomousCandidate = (): Candidate | null => {
+      const connected = targets.filter(({ target }) => target.isConnected && target.getBoundingClientRect().height > 0);
+      if (!connected.length) return null;
+      const requested = fast ? params.get("directorAgenda") : null;
+      const forced = requested ? connected.find(({ beat }) => beat.id === requested) : null;
+      const startIndex = forced ? connected.indexOf(forced) : autonomousAgendaIndex % connected.length;
+      let selected = connected[startIndex] ?? connected[0];
+      if (!forced && selected.beat.id === lastAmbientBeatId && connected.length > 1) {
+        selected = connected[(startIndex + 1) % connected.length];
+      }
+      autonomousAgendaIndex = (connected.indexOf(selected) + 1) % connected.length;
+      const mode = selected.beat.mode === "crop" || selected.beat.mode === "easing"
+        ? selected.beat.mode
+        : "nudge";
+      return {
+        beat: { ...selected.beat, id: `ambient:${selected.beat.id}`, mode },
+        target: selected.target,
+        score: 0,
+        pointerInside: false,
+        quiet: true,
+        intent: "autonomous-work",
+      };
     };
 
     const contextualCandidate = (now: number, anchor: Candidate): Candidate | null => {
@@ -835,11 +894,9 @@ export function DirectorPresence({
     };
 
     const chooseCandidate = (now: number): Candidate | null => {
-      const ranked = rankCandidates(now);
+      const ranked = rankVisibleCandidates(now);
       const anchor = ranked[0];
-      if (!anchor) return null;
-
-      if (behavior.focusBeatId !== anchor.beat.id) {
+      if (anchor && behavior.focusBeatId !== anchor.beat.id) {
         if (behavior.focusBeatId && behavior.visitedSections.has(anchor.beat.id)) behavior.revisitedSection = true;
         behavior.focusBeatId = anchor.beat.id;
         behavior.focusSince = now;
@@ -851,57 +908,31 @@ export function DirectorPresence({
       const openingHeadline = ranked.find(({ beat }) => beat.id === "hero-headline-indecision" && !seen.has(beat.id));
       if (openingHeadline) return { ...openingHeadline, intent: "figma-handoff" as const };
 
-      const contextual = contextualCandidate(now, anchor);
-      if (contextual) return { ...contextual, intent: "contextual-response" as const };
-      const authored = ranked.find(({ beat }) => !seen.has(beat.id));
-      if (authored) {
-        const redirecting = authored.pointerInside
-          && now - behavior.focusSince >= (fast ? 180 : 900)
+      const requestedAuthoredBeat = fast ? params.get("directorOnly") : null;
+      const qaAuthored = requestedAuthoredBeat
+        ? ranked.find(({ beat }) => beat.id === requestedAuthoredBeat && !seen.has(beat.id))
+        : null;
+      if (qaAuthored) return { ...qaAuthored, intent: "visitor-focus" as const };
+
+      if (anchor) {
+        const contextual = contextualCandidate(now, anchor);
+        if (contextual) return { ...contextual, intent: "contextual-response" as const };
+        const focusHeld = anchor.pointerInside
+          && now - behavior.focusSince >= (fast ? 420 : 3_600)
           && now - lastVisitorRedirectAt >= (fast ? 900 : 12_000);
-        return { ...authored, intent: redirecting ? "visitor-focus" as const : "autonomous-work" as const };
+        if (focusHeld && !seen.has(anchor.beat.id)) {
+          return { ...anchor, intent: "visitor-focus" as const };
+        }
+        if (focusHeld) {
+          return {
+            ...anchor,
+            beat: { ...anchor.beat, id: `ambient:focus:${anchor.beat.id}`, mode: "nudge" },
+            quiet: true,
+            intent: "visitor-focus" as const,
+          };
+        }
       }
-
-      const redirecting = anchor.pointerInside
-        && now - behavior.focusSince >= (fast ? 180 : 900)
-        && now - lastVisitorRedirectAt >= (fast ? 900 : 12_000);
-      const autonomousAnchor = ranked.find(({ beat }) => beat.id !== lastAmbientBeatId) ?? anchor;
-      const ambientAnchor = redirecting ? anchor : autonomousAnchor;
-      const ambientMode = ambientAnchor.beat.mode === "crop" || ambientAnchor.beat.mode === "easing"
-        ? ambientAnchor.beat.mode
-        : "nudge";
-      const ambientBeat: DirectorBeat = {
-        ...ambientAnchor.beat,
-        id: `ambient:${ambientAnchor.beat.id}`,
-        mode: ambientMode,
-        comments: ambientAnchor.beat.comments,
-      };
-      return {
-        ...ambientAnchor,
-        beat: ambientBeat,
-        quiet: true,
-        intent: redirecting ? "visitor-focus" as const : "autonomous-work" as const,
-      };
-    };
-
-    const roam = (now: number, anchor?: Candidate) => {
-      if (now - lastRoamAt < (fast ? 180 : 3_600)) return;
-      lastRoamAt = now;
-      const rect = anchor?.target.getBoundingClientRect();
-      const phase = Math.floor(now / (fast ? 380 : 1_900));
-      const x = rect
-        ? clamp(phase % 2 ? rect.left + rect.width * .24 : rect.right - rect.width * .18, 24, window.innerWidth - 90)
-        : clamp(window.innerWidth * (phase % 2 ? .68 : .78), 24, window.innerWidth - 90);
-      const y = rect
-        ? clamp(rect.top + Math.min(rect.height * .3, 48), 72, window.innerHeight - 82)
-        : clamp(84 + (phase % 3) * 18, 42, window.innerHeight - 82);
-      tweenRef.current?.kill();
-      tweenRef.current = gsap.to(cursor, {
-        x,
-        y,
-        opacity: .58,
-        duration: fast ? .16 : .72,
-        ease: "power2.inOut",
-      });
+      return autonomousCandidate();
     };
 
     const evaluate = () => {
@@ -913,25 +944,25 @@ export function DirectorPresence({
       const inputIdle = now - lastInputAt;
       const visitorBusy = attention.scrollVelocity > .18 || attention.pointerVelocity > .65;
       if (now < nextAllowedAt) {
-        roam(now, rankCandidates(now)[0]);
+        parkCursor();
         setBrainState("roaming", "autonomous-work");
         return;
       }
       if (visitorBusy || scrollIdle < (fast ? 120 : 1_250) || inputIdle < (fast ? 100 : 720)) {
-        keepCursorVisible();
+        parkCursor();
         setBrainState("observing", attention.scrollVelocity > .18 ? "navigating" : "interacting");
         return;
       }
       const candidate = chooseCandidate(now);
       if (!candidate) {
-        onStatusChange("connected");
-        roam(now);
+        onStatusChange(cursorIsInViewport() ? "connected" : "elsewhere");
+        parkCursor();
         setBrainState("roaming", "autonomous-work");
         currentCandidate = null;
         candidateSince = now;
         return;
       }
-      onStatusChange("connected");
+      onStatusChange(cursorIsInViewport() ? "connected" : "elsewhere");
       if (currentCandidate?.beat.id !== candidate.beat.id || currentCandidate.intent !== candidate.intent) {
         currentCandidate = candidate;
         candidateSince = now;
@@ -939,7 +970,7 @@ export function DirectorPresence({
         return;
       }
       const pacePenalty = clamp(attention.scrollVelocity * 900, 0, 680);
-      const dwell = fast ? 180 : candidate.pointerInside ? 850 + pacePenalty : 1_200 + pacePenalty;
+      const dwell = fast ? 180 : candidate.intent === "visitor-focus" ? 520 + pacePenalty : 1_050 + pacePenalty;
       setBrainState("considering", candidate.intent ?? "autonomous-work");
       if (now - candidateSince >= dwell) void runBeat(candidate).catch(failSafely);
     };
@@ -992,8 +1023,9 @@ export function DirectorPresence({
       currentCandidate = null;
       candidateSince = now;
       nextAllowedAt = Math.max(nextAllowedAt, now + (fast ? 250 : 950));
-      // A viewport gesture invalidates the measured anchor, but Javier stays
-      // fixed to the viewport while the document moves underneath him.
+      // A viewport gesture invalidates measured overlays. Javier's document
+      // coordinate stays untouched, so the camera can naturally leave him
+      // behind instead of dragging a dead cursor through every viewport.
       cancelCurrent("connected", "observing", attention.scrollDirection > 0 ? "navigating-down" : "navigating-up");
     };
     const onResize = () => {
@@ -1006,17 +1038,18 @@ export function DirectorPresence({
       if (document.hidden) cancelCurrent("elsewhere", "paused", "tab-hidden", true);
       else {
         behavior.returnedFromTab = true;
-        keepCursorVisible();
-        onStatusChange("connected");
+        parkCursor();
+        onStatusChange(cursorIsInViewport() ? "connected" : "elsewhere");
         setBrainState("roaming", "autonomous-work");
       }
     };
     const onPause = () => { if (alive) cancelCurrent("connected", "paused", "another-director", true); };
     const onSafetyTest = () => failSafely();
 
+    const initialHeroRect = targets.find(({ beat }) => beat.id === "hero-headline-indecision")?.target.getBoundingClientRect();
     gsap.set(cursor, {
-      x: clamp(handoffEntry?.x ?? window.innerWidth - 142, 24, window.innerWidth - 90),
-      y: clamp(handoffEntry?.y ?? 74, 42, window.innerHeight - 82),
+      x: handoffEntry?.x ?? window.scrollX + (initialHeroRect?.right ?? window.innerWidth - 142),
+      y: handoffEntry?.y ?? window.scrollY + (initialHeroRect?.top ?? 74) + 28,
       opacity: handoffEntry ? .96 : .58,
     });
     onStatusChange("connected");

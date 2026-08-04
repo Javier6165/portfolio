@@ -163,7 +163,7 @@ export function EditorIntro() {
       gsap.to(cursor, { opacity: 0, duration: .24, ease: "power2.out" });
       expansionRef.current = gsap.to(frame, {
         transform: "none",
-        duration: .92,
+        duration: 1.08,
         ease: "power4.inOut",
         onComplete: () => finish("complete"),
       });
@@ -172,14 +172,14 @@ export function EditorIntro() {
     const timeline = gsap.timeline({ defaults: { ease: "power3.inOut" } });
     timelineRef.current = timeline;
     timeline
-      .to(cursor, { x: start.x + 12, y: start.y - 7, duration: .42 }, .12)
-      .to(selection, { x: 2, duration: .22, yoyo: true, repeat: 1, ease: "power2.inOut" }, .34)
-      .call(() => setPhase("caught"), [], .72)
-      .to(chat, { autoAlpha: 1, y: 0, scale: 1, duration: .24, ease: "power2.out" }, .76)
-      .call(() => setPhase("presenting"), [], 1.72)
-      .to(chat, { autoAlpha: 0, y: -5, duration: .2, ease: "power2.in" }, 1.82)
+      .to(cursor, { x: start.x + 12, y: start.y - 7, duration: .56 }, .18)
+      .to(selection, { x: 2, duration: .24, yoyo: true, repeat: 1, ease: "power2.inOut" }, .48)
+      .call(() => setPhase("caught"), [], .96)
+      .to(chat, { autoAlpha: 1, y: 0, scale: 1, duration: .3, ease: "power2.out" }, 1.02)
+      .call(() => setPhase("presenting"), [], 3.3)
+      .to(chat, { autoAlpha: 0, y: -5, duration: .28, ease: "power2.in" }, 3.38)
       .to(cursor, {
-        duration: .82,
+        duration: 1.28,
         ease: "power3.inOut",
         motionPath: {
           path: [
@@ -189,9 +189,9 @@ export function EditorIntro() {
           ],
           curviness: .75,
         },
-      }, 1.86)
-      .to(present, { scale: .96, duration: .1, yoyo: true, repeat: 1, ease: "power2.inOut" }, 2.74)
-      .add(expandFrame, 2.98);
+      }, 3.48)
+      .to(present, { scale: .96, duration: .12, yoyo: true, repeat: 1, ease: "power2.inOut" }, 4.92)
+      .add(expandFrame, 5.34);
 
     const activeImage = portrait.querySelector<HTMLImageElement>("img");
     const failPortrait = () => { if (activeRef.current) finish("failed"); };

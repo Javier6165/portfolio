@@ -9,7 +9,7 @@ Elevar la calidad visual con una apertura Figma UI3 reconocible y un portfolio e
 ## Apertura
 
 1. La primera visita entra directamente en una recreación reconocible de Figma UI3.
-2. Javier está editando el frame real de la Home durante aproximadamente `3–4 s`.
+2. Javier está editando el frame real de la Home durante aproximadamente `6 s`: el comentario conserva cerca de dos segundos de lectura plena y el viaje a `Present` tiene un beat deliberado.
 3. El cursor colaborativo reconoce al visitante con humor seco: `Oh—sorry. You caught me working.`
 4. Javier se desplaza al control `Present` y lo activa.
 5. El mismo frame se expande y se convierte en el hero semántico.

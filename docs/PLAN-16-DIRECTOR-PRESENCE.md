@@ -1,10 +1,10 @@
 # Plan 16 — Director: presencia contextual y edición humana
 
-Estado: **integrado en `main` local; pendiente de publicación**.
+Estado: **dirección vigente, integrada en la versión principal**.
 
 ## Objetivo
 
-`Director` añade una presencia viva después de Presentation mode sin convertir el portfolio en una visita guiada automática. Javier puede trabajar de forma ambiental en la zona visible y, cuando el visitante se detiene, acercarse al punto de atención, comentar y hacer una corrección pequeña y comprensible.
+`Director` añade una presencia viva después de Presentation mode sin convertir el portfolio en una visita guiada automática. Javier mantiene una agenda de trabajo sobre todo el documento, aunque quede fuera de cámara. Cuando el visitante se detiene o activa una señal relevante, Director puede interrumpir esa agenda, acercarlo al punto de atención, comentar o hacer una corrección pequeña y devolverlo después a su trabajo.
 
 No añade funcionalidades de producto, analítica, personalización remota ni nuevas coreografías obligatorias.
 
@@ -27,17 +27,17 @@ No se registra texto introducido, historial, identidad, URLs, analytics ni datos
 
 Director no es una secuencia aleatoria ni una IA remota. Es una `utility AI` similar a las usadas en videojuegos: mantiene un blackboard efímero, evalúa el contexto varias veces por segundo y cambia entre `observing`, `considering`, `approaching`, `commenting/editing`, `cooldown`, `roaming`, `paused` y `done`.
 
-El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, visibilidad, centralidad, prioridad y un sesgo autoral suave permiten que Javier continúe con su propia agenda. La velocidad reciente eleva el tiempo de espera: Director no interpreta una navegación activa como atención.
+El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, una agenda autoral recorre todos los targets del documento, visibles o no, y ejecuta microajustes silenciosos. La velocidad reciente eleva el tiempo de espera: Director no interpreta una navegación activa como atención ni arrastra el cursor con la cámara.
 
 Sobre esa base hay disparadores contextuales finitos para decisión de memoria, visitas 1–5, `45 s`/`2 min`/`4 min`, scroll rápido, lectura pausada, final alcanzado, retorno arriba y revisita de sección. No son respuestas generadas: cada disparador elige entre un pool editorial amplio y determinista. El resultado imita percepción, no inteligencia remota.
 
 ## Decisión de atención
 
 1. El handoff de Present activa inmediatamente `hero-headline-indecision`; el resto de Director espera a que intro y cualquier overlay terminen.
-2. Descarta targets con menos de aproximadamente `28%` visible.
-3. Puntúa visibilidad, centralidad, proximidad y dwell del puntero, ritmo de interacción y prioridad autoral.
-4. Mantiene un único candidato estable entre `0,85–1,2 s` según la atención observada.
-5. Ejecuta una intervención y deja aproximadamente `6,5 s` de silencio.
+2. Mantiene una agenda autónoma global que no depende de visibilidad; sus beats son silenciosos y pueden ocurrir fuera del viewport.
+3. En paralelo puntúa únicamente la zona visible mediante visibilidad, centralidad, proximidad, dwell del puntero y ritmo de interacción.
+4. Una señal contextual o una pausa clara puede redirigir temporalmente el cursor a ese target visible.
+5. Tras la intervención contextual, reanuda su agenda global. Sin Follow no hay visita guiada ni cámara automática.
 
 Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
 
@@ -58,14 +58,14 @@ Director debe fallar abierto. Las identidades de contexto viven en `LiveSceneCon
 
 ## Contrato de scroll
 
-Las coordenadas de cursor, comentario y texto se miden en viewport al comenzar. Cualquier scroll, resize, cambio de pestaña o entrada en Follow invalida esas medidas y cancela de inmediato:
+El cursor vive en coordenadas absolutas del documento, no del viewport. Por eso el visitante puede dejarlo atrás o encontrarlo trabajando más abajo sin que Javier persiga la cámara. Los comentarios y overlays también se miden contra el documento, pero cualquier scroll, resize, cambio de pestaña o entrada en Follow cancela de inmediato la intervención activa:
 
-- cursor y comentario pasan a opacidad cero en la misma tarea de scroll;
-- el overlay tipográfico se desmonta;
+- el comentario desaparece y el overlay tipográfico se desmonta;
 - el target recupera sus estilos originales;
-- la intervención no se reanuda hasta una nueva pausa estable.
+- la coordenada documental del cursor permanece intacta;
+- la agenda reanuda solo tras una nueva pausa estable.
 
-Así el cursor nunca queda visualmente pegado a una pieza que se desplaza bajo él.
+Así el cursor se comporta como otro colaborador dentro del archivo y nunca como un adorno fijo del viewport.
 
 ## Escritura humana
 
