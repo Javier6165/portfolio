@@ -10,6 +10,7 @@ Lee, en este orden:
 4. `docs/ARCHITECTURE.md`
 5. `docs/PLAN-15-FIGMA-INTRO-DESIGN-SPRINT.md`
 6. `docs/PLAN-16-DIRECTOR-PRESENCE.md`
+7. `docs/PLAN-17-DIRECTOR-COMMENTARY-ENGINE.md` si la tarea afecta a voz, variedad o selección de comentarios; es el contrato editorial vigente del Director.
 
 Después, según la tarea:
 
@@ -19,7 +20,7 @@ Después, según la tarea:
 - Plan 12 solo para el razonamiento histórico de captura/reencuadre;
 - Plan 13 para la apertura causal y el origen del patrón comment-first.
 
-Planes 15–16 y `DECISIONS.md` prevalecen ante cualquier contradicción con documentos históricos. Los documentos 07–10 anteriores fueron consolidados y retirados; Git conserva su historial.
+Planes 15–17 y `DECISIONS.md` prevalecen ante cualquier contradicción con documentos históricos. Los documentos 07–10 anteriores fueron consolidados y retirados; Git conserva su historial.
 
 ## Contratos que debes preservar
 
@@ -35,7 +36,7 @@ Planes 15–16 y `DECISIONS.md` prevalecen ante cualquier contradicción con doc
 - Spotlight es la única captura temporal de scroll autorizada. Debe conservar reduced motion, no focus trap y restauración exacta. Follow puede mover la cámara entre capítulos porque es explícito y se cancela en cualquier momento; fuera de Follow no existe auto-scroll.
 - Director puede seleccionar y escribir headings, comentar o ejecutar ajustes pequeños de crop, easing o píxeles. Su utility AI local puede combinar foco visitante y agenda propia, pero nunca captura scroll, reemplaza assets completos, altera el copy semántico ni se reproduce en touch/reduced motion; cualquier scroll cancela la intervención de inmediato y cualquier fallo apaga solo esta capa.
 - La salida de Present entrega inmediatamente el cursor al beat `hero-headline-indecision`: selecciona el titular completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. No introduzcas un cooldown entre Figma y esta primera edición.
-- Los triggers contextuales del Director son reglas y pools en `DirectorCommentary`, no IA remota. El comportamiento observado siempre es efímero; solo tras `Allow` pueden persistir `visitCount` e ids opacos de variantes ya mostradas. Nunca guardes recorrido, puntero, dwell o acciones del visitante.
+- Los triggers contextuales del Director son reglas locales, no IA remota. `director-copy/sections.ts` concentra el copy ligado al contenido; `generic.ts` contiene voz reutilizable y `context.ts` las respuestas a sesión/acciones. Cambia los textos sin cambiar sus ids estables salvo que cambie también su significado editorial. El comportamiento observado siempre es efímero; solo tras `Allow` pueden persistir `visitCount` e ids opacos de variantes ya mostradas. Nunca guardes recorrido, puntero, dwell o acciones del visitante.
 - Cada sección debe tener UI final fuerte y WIP inequívocamente peor, pero cercano: debe poder leerse como una corrección concreta, no como sustituir una sección por otra. No uses un presenter genérico para fingir una edición.
 - `CaseBlock` es la unión discriminada para evidencia. Figma y prototipos externos son click-to-load; no añadas iframes automáticos por slug.
 - Los casos conceptuales deben seguir rotulados como ficticios.
@@ -55,4 +56,4 @@ Planes 15–16 y `DECISIONS.md` prevalecen ante cualquier contradicción con doc
 
 Ejecuta `npm run lint` y `npm test`. Para cambios interactivos ejecuta también `npm run test:e2e`. La matriz Dark cubre 1440×900, 1280×800, 768×1024 y 390×844, axe, memoria, no-JS, reduced motion y fallos de imagen.
 
-Los cambios desplegables se publican como una nueva versión del mismo proyecto Sites mediante las skills de Sites. El preview actual es accesible por enlace y no indexable. El contrato vigente de producto y QA está en `DECISIONS.md` y Planes 15–16; Implementation/Audit 11 conserva los fallos históricos ya resueltos.
+Los cambios desplegables se publican como una nueva versión del mismo proyecto Sites mediante las skills de Sites. El preview actual es accesible por enlace y no indexable. El contrato vigente de producto y QA está en `DECISIONS.md` y Planes 15–17; Implementation/Audit 11 conserva los fallos históricos ya resueltos.

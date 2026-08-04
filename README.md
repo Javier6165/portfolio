@@ -38,6 +38,7 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 - `docs/ARCHITECTURE.md`: routes, visual system, narrative, storage and evidence contracts.
 - `docs/PLAN-15-FIGMA-INTRO-DESIGN-SPRINT.md`: current opening and visual direction.
 - `docs/PLAN-16-DIRECTOR-PRESENCE.md`: contextual presence, human typing and cancellation contract.
+- `docs/PLAN-17-DIRECTOR-COMMENTARY-ENGINE.md`: implemented voice, variation and contextual-selection contract.
 - `docs/CONTENT-AND-RELEASE.md`: replacing placeholders and launch checklist.
 - `docs/ASSETS.md`: portrait and social-card provenance.
 

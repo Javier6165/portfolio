@@ -12,6 +12,7 @@ import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { usePathname } from "next/navigation";
 import { DirectorPresence, DirectorSafetyBoundary, type DirectorPresenceStatus } from "./DirectorPresence";
+import { queueDirectorAction } from "./director-copy/signals";
 import { useNarrative } from "./NarrativeContext";
 import { DirectorContext } from "./LiveSceneContext";
 import { toolNames } from "./EditorPrimitives";
@@ -106,7 +107,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     gsap.registerPlugin(MotionPathPlugin);
     seenRef.current = readSeenScenes();
     viewportRef.current = { width: window.innerWidth, height: window.innerHeight };
-    return () => cursorTimelineRef.current?.kill();
+    return () => { cursorTimelineRef.current?.kill(); };
   }, []);
 
   const persistSeen = useCallback((id: string) => {
@@ -647,6 +648,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   }), [experienceReady, liveReplayToken, reducedMotion, registerScene, settleScene]);
 
   const stopFollowing = useCallback(() => {
+    queueDirectorAction("follow-stop");
     followingRef.current = false;
     setFollowingJavier(false);
     if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
