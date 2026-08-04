@@ -26,11 +26,11 @@ Design, product and engineering leaders must identify Javier's seniority and poi
 
 ## Constraints
 
-- First visit: one mandatory `3–4 s` opening only.
+- First visit: one mandatory opening of about `6 s`; the caught-working comment and movement to Present must remain legible.
 - Reduced motion, no-JS, touch and familiar visits reach the final portfolio safely.
 - Native scroll after Presentation mode; no mandatory Snapshot or later scroll capture.
 - Figma UI3 is a binding reference for the editor layer only.
-- No push, merge or Sites deployment until comparison approval.
+- Reuse the approved main direction and existing Sites project; never change its access or indexing contract without explicit approval.
 
 ## Chosen direction
 

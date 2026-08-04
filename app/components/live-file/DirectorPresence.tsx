@@ -104,7 +104,7 @@ type DirectorPresenceProps = {
 
 const DIRECTOR_MEMORY_KEY = "javier-director-beats-v1";
 const HUMAN_KEY_DELAYS = [82, 116, 69, 94, 128, 76, 103, 88, 142, 72];
-const HERO_KEY_DELAYS = [11, 15, 10, 13, 17, 11, 14, 12, 18, 10];
+const HERO_KEY_DELAYS = [38, 52, 33, 46, 61, 41, 55, 36, 68, 43];
 
 function createBehaviorModel(startedAt = 0): BehaviorModel {
   return {
@@ -391,9 +391,11 @@ export function DirectorPresence({
     let candidateSince = startedAt;
     let lastScrollAt = startedAt;
     let lastInputAt = startedAt;
-    let nextAllowedAt = startedAt + (fast ? 350 : 1_200);
+    let nextAllowedAt = startedAt + (fast ? 70 : 120);
     let lastVisitorRedirectAt = Number.NEGATIVE_INFINITY;
     let lastAmbientBeatId: string | null = null;
+    let lastWorkedBeatId: string | null = null;
+    let autonomousBeatsSinceContext = 0;
     let autonomousAgendaIndex = [...(sessionSeedRef.current ?? "javier")]
       .reduce((total, character) => total + character.charCodeAt(0), 0) % Math.max(1, targets.length);
     let handoffTimer: number | null = null;
@@ -481,6 +483,7 @@ export function DirectorPresence({
 
     const moveCursor = async (x: number, y: number, duration: number, runId: number) => {
       tweenRef.current?.kill();
+      layer.dataset.directorMotionCount = String(Number(layer.dataset.directorMotionCount ?? "0") + 1);
       tweenRef.current = gsap.to(cursor, { x, y, opacity: .96, duration: duration / 1_000, ease: "power3.inOut" });
       return sleep(duration, runId);
     };
@@ -583,6 +586,18 @@ export function DirectorPresence({
       let value = beat.segment;
       let keyIndex = 0;
       let selectionActive = true;
+      const followTypedText = () => {
+        const typed = layer.querySelector<HTMLElement>("[data-director-current-text]");
+        const rects = typed?.getClientRects();
+        const lastRect = rects?.length ? rects[rects.length - 1] : null;
+        if (lastRect) {
+          gsap.set(cursor, {
+            x: lastRect.right + window.scrollX,
+            y: lastRect.bottom + window.scrollY - 4,
+            opacity: .96,
+          });
+        }
+      };
       for (const action of beat.actions) {
         if (action.type === "pause") {
           const openingPause = action.duration >= 700 ? 500 : action.duration >= 600 ? 720 : 120;
@@ -607,12 +622,14 @@ export function DirectorPresence({
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
             const delay = fast ? 12 : isOpeningHeadline ? HERO_KEY_DELAYS[keyIndex % HERO_KEY_DELAYS.length] : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
             if (!await sleep(delay, runId)) return false;
+            followTypedText();
           }
         } else {
           for (let index = 0; index < action.count; index += 1) {
             value = value.slice(0, -1);
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
             if (!await sleep(fast ? 14 : isOpeningHeadline ? 34 + (index % 3) * 5 : 92 + (index % 3) * 17, runId)) return false;
+            followTypedText();
           }
         }
       }
@@ -622,25 +639,28 @@ export function DirectorPresence({
 
     const runEffectBeat = async (beat: DirectorBeat, target: HTMLElement, runId: number) => {
       effectTargetRef.current = target;
-      if (beat.mode === "comment") return sleep(fast && !visualQa ? 180 : 1_150, runId);
+      const gestureOrigin = cursorPoint();
+      if (beat.mode === "comment") {
+        return moveCursor(gestureOrigin.x + 5, gestureOrigin.y + 3, fast && !visualQa ? 180 : 1_150, runId);
+      }
       target.dataset.directorEditing = beat.mode;
       if (beat.mode === "crop") {
         const image = target.querySelector("img") ?? target;
         gsap.to(image, { xPercent: -1.8, scale: 1.025, duration: fast ? .12 : .72, ease: "power2.inOut" });
-        if (!await sleep(fast ? 140 : 820, runId)) return false;
+        if (!await moveCursor(gestureOrigin.x - 18, gestureOrigin.y + 4, fast ? 140 : 820, runId)) return false;
         gsap.to(image, { xPercent: 0, scale: 1, duration: fast ? .12 : .68, ease: "power3.inOut" });
-        return sleep(fast ? 140 : 760, runId);
+        return moveCursor(gestureOrigin.x + 4, gestureOrigin.y - 2, fast ? 140 : 760, runId);
       }
       if (beat.mode === "easing") {
         gsap.to(target, { scaleX: .82, transformOrigin: "left", duration: fast ? .12 : .68, ease: "power1.in" });
-        if (!await sleep(fast ? 140 : 760, runId)) return false;
+        if (!await moveCursor(gestureOrigin.x + 28, gestureOrigin.y, fast ? 140 : 760, runId)) return false;
         gsap.to(target, { scaleX: 1, duration: fast ? .12 : .72, ease: "power4.out" });
-        return sleep(fast ? 140 : 800, runId);
+        return moveCursor(gestureOrigin.x + 2, gestureOrigin.y, fast ? 140 : 800, runId);
       }
       gsap.to(target, { x: 2, y: -1, duration: fast ? .1 : .34, ease: "power2.out" });
-      if (!await sleep(fast ? 120 : 430, runId)) return false;
+      if (!await moveCursor(gestureOrigin.x + 7, gestureOrigin.y - 4, fast ? 120 : 430, runId)) return false;
       gsap.to(target, { x: 0, y: 0, duration: fast ? .1 : .38, ease: "power3.out" });
-      return sleep(fast ? 120 : 460, runId);
+      return moveCursor(gestureOrigin.x + 1, gestureOrigin.y, fast ? 120 : 460, runId);
     };
 
     const sessionStage = (now: number): DirectorSessionStage => {
@@ -695,8 +715,10 @@ export function DirectorPresence({
       running = true;
       const runId = ++generation;
       const isOpeningHeadline = beat.id === "hero-headline-indecision";
+      const workedBeatId = beat.id.replace(/^ambient:(?:focus:)?/, "");
       if (!quiet) rememberBeat(seen, beat.id);
       if (beat.id.startsWith("context:")) {
+        autonomousBeatsSinceContext = 0;
         behavior.lastContextAt = startedAt;
         layer.dataset.directorLastContext = beat.id;
         if (beat.trigger && beat.trigger !== "ambient") behavior.firedTriggers.add(beat.trigger);
@@ -753,16 +775,26 @@ export function DirectorPresence({
         showNote(line.resolution, noteX, noteY, target);
       }
       const readingHold = line ? clamp(900 + (line.resolution ?? line.opening).length * 12, 1_350, 2_450) : 460;
-      if (!await sleep(fast && !visualQa ? 100 : quiet ? 460 : readingHold, runId)) return;
+      const holdDuration = fast && !visualQa ? 100 : quiet ? 460 : readingHold;
+      const holdPoint = cursorPoint();
+      if (!await moveCursor(holdPoint.x + 4, holdPoint.y + 3, holdDuration, runId)) return;
       clearTarget();
       setBrainState("roaming", "autonomous-work");
       gsap.to(note, { opacity: 0, scale: .96, duration: fast ? .08 : .2 });
       gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: .54, duration: fast ? .1 : .3, ease: "power2.inOut" });
       if (!await sleep(fast ? 100 : isOpeningHeadline ? 200 : 360, runId)) return;
       running = false;
+      lastWorkedBeatId = workedBeatId;
+      if (quiet && intent === "autonomous-work") {
+        autonomousBeatsSinceContext += 1;
+        layer.dataset.directorAutonomousCount = String(Number(layer.dataset.directorAutonomousCount ?? "0") + 1);
+        layer.dataset.directorLastAutonomous = workedBeatId;
+      } else if (intent === "visitor-focus") {
+        autonomousBeatsSinceContext = 0;
+      }
       currentCandidate = null;
       candidateSince = window.performance.now();
-      nextAllowedAt = window.performance.now() + (fast ? 220 : quiet ? 760 : 1_850);
+      nextAllowedAt = window.performance.now() + (fast ? 70 : 120);
       onStatusChange(cursorIsInViewport({ x: endX + 12, y: endY + 8 }) ? "connected" : "elsewhere");
       setBrainState("roaming", "autonomous-work");
     };
@@ -805,7 +837,7 @@ export function DirectorPresence({
       const forced = requested ? connected.find(({ beat }) => beat.id === requested) : null;
       const startIndex = forced ? connected.indexOf(forced) : autonomousAgendaIndex % connected.length;
       let selected = connected[startIndex] ?? connected[0];
-      if (!forced && selected.beat.id === lastAmbientBeatId && connected.length > 1) {
+      if (!forced && (selected.beat.id === lastAmbientBeatId || selected.beat.id === lastWorkedBeatId) && connected.length > 1) {
         selected = connected[(startIndex + 1) % connected.length];
       }
       autonomousAgendaIndex = (connected.indexOf(selected) + 1) % connected.length;
@@ -822,7 +854,7 @@ export function DirectorPresence({
       };
     };
 
-    const contextualCandidate = (now: number, anchor: Candidate): Candidate | null => {
+    const contextualCandidate = (now: number, anchor: Candidate, allowAmbientContext: boolean): Candidate | null => {
       const elapsed = now - sessionStartedAt;
       const contextualCount = [...seen].filter((id) => id.startsWith("context:")).length;
       const effectiveElapsed = elapsed * (fast ? 60 : 1);
@@ -845,6 +877,7 @@ export function DirectorPresence({
 
       let cueId: ContextualCueId | "ambient" | null = directCue;
       if (!cueId) {
+        if (!allowAmbientContext) return null;
         if (contextualCount >= contextBudget || now - behavior.lastContextAt < contextGap) return null;
 
         const visitCue = `visit-${["one", "two", "three", "four", "five"][visitTier - 1]}` as ContextualCueId;
@@ -915,7 +948,7 @@ export function DirectorPresence({
       if (qaAuthored) return { ...qaAuthored, intent: "visitor-focus" as const };
 
       if (anchor) {
-        const contextual = contextualCandidate(now, anchor);
+        const contextual = contextualCandidate(now, anchor, autonomousBeatsSinceContext >= (fast ? 1 : 2));
         if (contextual) return { ...contextual, intent: "contextual-response" as const };
         const focusHeld = anchor.pointerInside
           && now - behavior.focusSince >= (fast ? 420 : 3_600)
@@ -963,6 +996,13 @@ export function DirectorPresence({
         return;
       }
       onStatusChange(cursorIsInViewport() ? "connected" : "elsewhere");
+      if (candidate.intent === "autonomous-work") {
+        currentCandidate = candidate;
+        candidateSince = now;
+        setBrainState("approaching", "autonomous-work");
+        void runBeat(candidate).catch(failSafely);
+        return;
+      }
       if (currentCandidate?.beat.id !== candidate.beat.id || currentCandidate.intent !== candidate.intent) {
         currentCandidate = candidate;
         candidateSince = now;
@@ -1102,7 +1142,7 @@ export function DirectorPresence({
       {textOverlay ? (
         <div className={styles.textOverlay} data-director-text-overlay style={textOverlay.style}>
           <span>{textOverlay.before}</span>
-          <span className={textOverlay.selected ? styles.selectedText : textOverlay.typing ? styles.typingText : undefined}>{textOverlay.current}</span>
+          <span data-director-current-text className={textOverlay.selected ? styles.selectedText : textOverlay.typing ? styles.typingText : undefined}>{textOverlay.current}</span>
           <span>{textOverlay.after}</span>
         </div>
       ) : null}

@@ -113,7 +113,7 @@ The header is transparent over the hero and becomes an opaque carbon surface aft
 
 ### Follow, cursor and comments
 
-Follow Javier is avatar-first and compact; a label appears only when space and hover allow. On first visit, the multiplayer cursor hands off directly from Present to the hero and visibly tries name, role and positioning before settling. Later the cursor follows its own document-wide agenda, can work outside the viewport and stays silent unless Director has a contextual reason to redirect it. Ambient edits never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
+Follow Javier is avatar-first and compact; a label appears only when space and hover allow. On first visit, the multiplayer cursor hands off directly from Present to the hero and visibly tries name, role and positioning before settling. Later the cursor chains a document-wide agenda without idle gaps, can work outside the viewport and stays silent unless Director has a contextual reason to redirect it. Contextual interventions can interrupt that agenda but never replace it: Javier must complete autonomous work between them. Ambient edits never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
 
 ## Do's and Don'ts
 

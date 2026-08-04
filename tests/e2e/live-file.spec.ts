@@ -317,6 +317,39 @@ test("Director keeps working autonomously and hands its cursor to Follow", async
   await expect(director).toHaveAttribute("data-director-cue", /^context:follow-stop:/, { timeout: 3_000 });
 });
 
+test("Director leaves the hero and chains autonomous work without an idle gap", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  await page.addInitScript(() => {
+    localStorage.setItem("javier-narrative-consent", "denied");
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
+      "context:visit-one",
+      "context:session-settled",
+      "context:session-deep",
+      "context:session-long",
+      "context:fast-scroll",
+      "context:patient-reader",
+      "context:returned-top",
+      "context:reached-end",
+      "context:section-revisit",
+      "context:direction-change",
+      "context:tab-return",
+      "context:follow-stop",
+      "context:rare-review",
+    ]));
+  });
+  await page.goto("/?narrative=return&director=fast&directorSeed=continuity");
+  const director = page.locator("[data-director-presence]");
+  const heroTitle = page.locator("#hero-title");
+
+  await expect(heroTitle).toHaveAttribute("data-director-editing", "text", { timeout: 3_000 });
+  await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/, { timeout: 5_000 });
+  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0), { timeout: 5_000 }).toBeGreaterThanOrEqual(3);
+  await expect(director).not.toHaveAttribute("data-director-last-autonomous", "hero-headline-indecision");
+
+  const motionBefore = Number(await director.getAttribute("data-director-motion-count") ?? 0);
+  await expect.poll(async () => Number(await director.getAttribute("data-director-motion-count") ?? 0), { timeout: 2_000 }).toBeGreaterThan(motionBefore);
+});
+
 test("every Director beat still resolves against the redesigned page", async ({ page, isMobile }) => {
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   test.setTimeout(45_000);

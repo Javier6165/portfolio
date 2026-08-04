@@ -27,17 +27,17 @@ No se registra texto introducido, historial, identidad, URLs, analytics ni datos
 
 Director no es una secuencia aleatoria ni una IA remota. Es una `utility AI` similar a las usadas en videojuegos: mantiene un blackboard efímero, evalúa el contexto varias veces por segundo y cambia entre `observing`, `considering`, `approaching`, `commenting/editing`, `cooldown`, `roaming`, `paused` y `done`.
 
-El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, una agenda autoral recorre todos los targets del documento, visibles o no, y ejecuta microajustes silenciosos. La velocidad reciente eleva el tiempo de espera: Director no interpreta una navegación activa como atención ni arrastra el cursor con la cámara.
+El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, una agenda autoral recorre todos los targets del documento, visibles o no, y encadena microajustes silenciosos sin un estado de reposo entre ellos. La velocidad reciente puede cancelar una medición activa, pero nunca sustituye la agenda por un cursor aparcado. Director no interpreta una navegación activa como atención ni arrastra el cursor con la cámara.
 
 Sobre esa base hay disparadores contextuales finitos para decisión de memoria, visitas 1–5, `45 s`/`2 min`/`4 min`, scroll rápido, lectura pausada, final alcanzado, retorno arriba y revisita de sección. No son respuestas generadas: cada disparador elige entre un pool editorial amplio y determinista. El resultado imita percepción, no inteligencia remota.
 
 ## Decisión de atención
 
 1. El handoff de Present activa inmediatamente `hero-headline-indecision`; el resto de Director espera a que intro y cualquier overlay terminen.
-2. Mantiene una agenda autónoma global que no depende de visibilidad; sus beats son silenciosos y pueden ocurrir fuera del viewport.
+2. Mantiene una agenda autónoma global que no depende de visibilidad; sus beats son silenciosos, pueden ocurrir fuera del viewport y se encadenan de inmediato.
 3. En paralelo puntúa únicamente la zona visible mediante visibilidad, centralidad, proximidad, dwell del puntero y ritmo de interacción.
 4. Una señal contextual o una pausa clara puede redirigir temporalmente el cursor a ese target visible.
-5. Tras la intervención contextual, reanuda su agenda global. Sin Follow no hay visita guiada ni cámara automática.
+5. Tras la intervención contextual, reanuda su agenda global sin cooldown. Dos comentarios contextuales no pueden encadenarse sin trabajo autónomo intermedio. Sin Follow no hay visita guiada ni cámara automática.
 
 Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
 

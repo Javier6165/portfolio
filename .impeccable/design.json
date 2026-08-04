@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-04T14:41:09Z",
+  "generatedAt": "2026-08-04T15:03:44Z",
   "title": "Design System: Javier Ortiz Portfolio",
   "extensions": {
     "colorMeta": {
@@ -107,8 +107,8 @@
       },
       {
         "name": "director-autonomous-agenda",
-        "value": "document-space / silent by default",
-        "purpose": "Let Javier work across the whole file and leave the viewport; contextual signals may redirect him temporarily."
+        "value": "document-space / continuous / silent by default",
+        "purpose": "Chain Javier's work across the whole file without idle gaps; contextual signals may redirect him temporarily but autonomous beats resume immediately."
       },
       {
         "name": "director-reading-hold",
