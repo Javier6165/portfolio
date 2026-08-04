@@ -23,7 +23,6 @@ export function SiteHeader() {
           <Link href="/#work">Work</Link>
           <Link href="/#approach">Practice</Link>
           <Link href="/#ai-practice">AI workflow</Link>
-          <Link href="/#testimonials">References</Link>
           <Link href="/about">About</Link>
           <Link href="/playground">Playground</Link>
         </nav>

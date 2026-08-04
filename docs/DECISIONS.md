@@ -10,7 +10,8 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Primer viewport: Javier Ortiz, `I design the calm inside complex products.`, Senior Product Designer, retrato y `Explore`. La explicación de evidencia empieza en Snapshot.
 - Posicionamiento: diseñador senior de sistemas y productos complejos, con responsabilidad reciente de lead y práctica explícita de AI + coded prototypes.
 - Idioma principal: inglés.
-- Orden de Home: Hero → Snapshot → Work → Product practice → AI-native workflow → About → References → Playground → Contact.
+- Orden de Home: Hero → Snapshot → Meet me in 60 seconds → Work → Product practice → AI-native workflow → About → References → Playground → Contact.
+- `Meet me in 60 seconds` es un atajo humano temprano, no una escena Live File. Mientras no exista media real muestra una miniatura explícitamente rotulada como placeholder; no simula reproducción ni usa autoplay.
 - Los casos actuales, escenarios, outcomes y métricas son ficticios y permanecen rotulados.
 - References es una preview honesta. No contiene citas ni identidades inventadas; una recomendación futura exige fuente, atribución, permiso y aprobación.
 - La capa de editor es decorativa. Ningún dato profesional depende de ver una animación o comentario.
@@ -26,7 +27,8 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 ## Dirección visual
 
 - Grid editorial asimétrico de doce columnas y recomposición específica en móvil.
-- Hero, About y Contact usan stages editoriales; Work/Practice/AI usan evidence viewers; References usa un ledger; Playground un shelf.
+- Hero, la introducción en vídeo y About usan stages editoriales; Atlas conserva el case dominante, Northstar/Pulse se comprimen como pruebas secundarias, Practice/AI usan artefactos planos y References un ledger de integridad compacto.
+- References deja de competir como capítulo principal: permanece visible y honesto, pero sale de la navegación primaria hasta disponer de recomendaciones verificadas.
 - Dark es la única dirección visual: grafito, hueso, latón apagado, Instrument Sans + Fragment Mono y fotografía oscura. No existe tema alternativo ni selector.
 - `Complexity Engine`, partículas, `Living Fold`, Three y R3F están retirados.
 - La capa de edición usa deliberadamente la gramática reconocible de Figma UI3; el portfolio en Presentation mode conserva identidad propia.
@@ -42,7 +44,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
 - Al salir de Present la navegación queda libre y el avatar ofrece Follow. No hay una segunda captura obligatoria en Snapshot.
-- Al salir de Present, el cursor se entrega sin espera a `hero-headline-indecision`: selecciona el h1 completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. Este beat es la continuación de la intro, no una acción ambiental elegible.
+- Al salir de Present, el cursor se entrega sin espera a `hero-headline-indecision`: selecciona el h1 completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. Este beat dura aproximadamente cuatro segundos, deja cada alternativa legible y es la continuación de la intro, no una acción ambiental elegible.
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado y una partitura finita de microajustes; se pausa durante Spotlight y nunca captura scroll.
 - `DirectorPresence` mantiene una utility AI local con estados `observing → considering → approaching → commenting/editing → cooldown`. Combina visibilidad, centro, puntero, dwell, velocidad de cursor y velocidad/dirección de scroll; el foco del visitante domina cuando es claro y un sesgo autoral pequeño permite que Javier conserve agenda propia.
 - Fuera del handoff inicial, tras `0,85–1,2 s` sobre un target estable puede acercar el cursor, comentar y hacer un cambio pequeño; deja `6,5 s` de silencio y no repite beats en la pestaña.

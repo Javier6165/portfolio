@@ -88,6 +88,7 @@ type DirectorPresenceProps = {
 
 const DIRECTOR_MEMORY_KEY = "javier-director-beats-v1";
 const HUMAN_KEY_DELAYS = [82, 116, 69, 94, 128, 76, 103, 88, 142, 72];
+const HERO_KEY_DELAYS = [11, 15, 10, 13, 17, 11, 14, 12, 18, 10];
 
 function createBehaviorModel(startedAt = 0): BehaviorModel {
   return {
@@ -466,6 +467,7 @@ export function DirectorPresence({
 
     const runTextBeat = async (beat: DirectorBeat, target: HTMLElement, runId: number) => {
       if (!beat.segment || !beat.actions) return false;
+      const isOpeningHeadline = beat.id === "hero-headline-indecision";
       const overlay = createOverlay(target, beat.segment);
       if (!overlay) return false;
       const segmentRect = findSegmentRect(target, beat.segment);
@@ -475,23 +477,28 @@ export function DirectorPresence({
       currentTargetRef.current = target;
 
       const baselineY = clamp(segmentRect.bottom - 4, 82, window.innerHeight - 72);
-      if (!await moveCursor(clamp(segmentRect.right, 24, window.innerWidth - 90), baselineY, fast ? 120 : 360, runId)) return false;
+      if (!await moveCursor(clamp(segmentRect.right, 24, window.innerWidth - 90), baselineY, fast ? 90 : isOpeningHeadline ? 170 : 360, runId)) return false;
       setTextOverlay((current) => current ? { ...current, selected: true } : current);
-      if (!await moveCursor(clamp(segmentRect.left, 24, window.innerWidth - 90), baselineY, fast ? 240 : 540, runId)) return false;
-      if (!await sleep(fast ? 170 : 360, runId)) return false;
+      if (!await moveCursor(clamp(segmentRect.left, 24, window.innerWidth - 90), baselineY, fast ? 120 : isOpeningHeadline ? 220 : 540, runId)) return false;
+      if (!await sleep(fast ? 80 : isOpeningHeadline ? 110 : 360, runId)) return false;
 
       let value = beat.segment;
       let keyIndex = 0;
       let selectionActive = true;
       for (const action of beat.actions) {
         if (action.type === "pause") {
-          if (!await sleep(action.duration, runId)) return false;
+          const openingPause = action.duration >= 700 ? 500 : action.duration >= 600 ? 720 : 120;
+          const fastOpeningPause = action.duration >= 700 ? 320 : action.duration >= 600 ? 420 : 80;
+          const pauseDuration = fast
+            ? isOpeningHeadline ? fastOpeningPause : Math.min(action.duration, 60)
+            : isOpeningHeadline ? openingPause : action.duration;
+          if (!await sleep(pauseDuration, runId)) return false;
           continue;
         }
         if (action.type === "select-all") {
           selectionActive = true;
           setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
-          if (!await sleep(fast ? 110 : 360, runId)) return false;
+          if (!await sleep(fast ? 60 : isOpeningHeadline ? 105 : 360, runId)) return false;
           continue;
         }
         if (action.type === "type") {
@@ -500,14 +507,14 @@ export function DirectorPresence({
             selectionActive = false;
             keyIndex += 1;
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
-            const delay = fast ? 38 : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
+            const delay = fast ? 12 : isOpeningHeadline ? HERO_KEY_DELAYS[keyIndex % HERO_KEY_DELAYS.length] : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
             if (!await sleep(delay, runId)) return false;
           }
         } else {
           for (let index = 0; index < action.count; index += 1) {
             value = value.slice(0, -1);
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
-            if (!await sleep(fast ? 34 : 92 + (index % 3) * 17, runId)) return false;
+            if (!await sleep(fast ? 14 : isOpeningHeadline ? 34 + (index % 3) * 5 : 92 + (index % 3) * 17, runId)) return false;
           }
         }
       }
@@ -554,6 +561,7 @@ export function DirectorPresence({
       if (!alive || !target.isConnected || visibleRatio(target) < .2) return;
       running = true;
       const runId = ++generation;
+      const isOpeningHeadline = beat.id === "hero-headline-indecision";
       if (!quiet) rememberBeat(seen, beat.id);
       if (beat.id.startsWith("context:")) {
         behavior.lastContextAt = window.performance.now();
@@ -573,12 +581,12 @@ export function DirectorPresence({
       const noteY = beat.mode === "text" ? targetRect.top - 140 : endY;
       if (entry) gsap.set(cursor, { x: entry.x, y: entry.y, opacity: .96 });
       else keepCursorVisible();
-      if (!await moveCursor(endX, endY, fast ? 130 : entry ? 520 : 760, runId)) return;
+      if (!await moveCursor(endX, endY, fast ? 110 : isOpeningHeadline ? 300 : entry ? 520 : 760, runId)) return;
       layer.dataset.directorCue = beat.id;
       if (!quiet) {
         setBrainState("commenting", beat.id.startsWith("context:") ? "contextual-response" : "explaining-choice");
         showNote(chooseCopy(beat, "opening", beat.comments.opening), noteX, noteY);
-        if (!await sleep(fast ? 100 : 720, runId)) return;
+        if (!await sleep(fast ? 70 : isOpeningHeadline ? 160 : 720, runId)) return;
       }
 
       setBrainState(beat.mode === "comment" ? "commenting" : "editing", intent);
@@ -590,12 +598,12 @@ export function DirectorPresence({
       if (!quiet && beat.comments.resolution?.length) {
         showNote(chooseCopy(beat, "resolution", beat.comments.resolution), noteX, noteY);
       }
-      if (!await sleep(fast ? 140 : quiet ? 460 : 1_350, runId)) return;
+      if (!await sleep(fast ? 100 : isOpeningHeadline ? 520 : quiet ? 460 : 1_350, runId)) return;
       clearTarget();
       setBrainState("roaming", "autonomous-work");
       gsap.to(note, { opacity: 0, scale: .96, duration: fast ? .08 : .2 });
       gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: .96, duration: fast ? .1 : .3, ease: "power2.inOut" });
-      if (!await sleep(fast ? 140 : 360, runId)) return;
+      if (!await sleep(fast ? 100 : isOpeningHeadline ? 200 : 360, runId)) return;
       running = false;
       currentCandidate = null;
       candidateSince = window.performance.now();

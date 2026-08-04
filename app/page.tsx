@@ -24,6 +24,33 @@ function AboutPortrait() {
   );
 }
 
+function VideoIntroduction() {
+  return (
+    <section className={`section shell ${styles.videoIntroduction}`} id="meet-javier" aria-labelledby="video-introduction-title">
+      <header className={styles.videoIntroductionHeading}>
+        <h2 id="video-introduction-title">Meet me in 60 seconds.</h2>
+        <p>A quick, human overview for people deciding whether to go deeper into the work.</p>
+      </header>
+      <figure className={styles.videoPlaceholder} aria-label="Placeholder for Javier Ortiz's 60-second introduction video.">
+        <div className={styles.videoStill}>
+          <picture>
+            <source type="image/avif" srcSet="/images/portraits/about-system-960.avif 960w, /images/portraits/about-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 82vw" />
+            <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 82vw" />
+            <img src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
+          </picture>
+          <span className={styles.videoStatus}>Placeholder · final video pending</span>
+          <span className={styles.videoPlay} aria-hidden="true"><i /></span>
+          <span className={styles.videoDuration}>01:00</span>
+        </div>
+        <figcaption>
+          <span>Javier Ortiz · Product designer</span>
+          <span>Captions and transcript planned</span>
+        </figcaption>
+      </figure>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <>
@@ -62,6 +89,8 @@ export default function Home() {
         <MemoryConsent />
       </section>
 
+      <VideoIntroduction />
+
       <section className={`section shell ${styles.work}`} id="work" aria-labelledby="work-title">
         <header className={styles.sectionHeading}>
           <p className="kicker">02 / Selected work</p>
@@ -88,7 +117,7 @@ export default function Home() {
             >
               <ProjectCard project={project} />
             </LiveScene>
-          ) : <ProjectCard project={project} key={project.slug} />)}
+          ) : <ProjectCard project={project} compact key={project.slug} />)}
         </div>
       </section>
 
@@ -199,7 +228,6 @@ export default function Home() {
           <div className={styles.playgroundShelf}>
             <PlaygroundStudy />
             <div className={styles.playgroundMeta}><span>LAB / 001</span><strong>Kinetic type study</strong><p>Testing rhythm, hierarchy and handoff through a restrained typographic loop.</p><Link className="text-link" href="/playground">Open playground <ArrowIcon /></Link></div>
-            <div className={styles.futureSlot}><span>LAB / 002</span><strong>Next experiment</strong><p>Reserved for a real prototype.</p></div>
           </div>
         </LiveScene>
       </section>

@@ -23,6 +23,9 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /5\+ years at GiG/);
   assert.match(html, /Senior Product Designer/);
   assert.match(html, /I turn complex product logic into decisions people can see, test and trust/);
+  assert.match(html, /Meet me in 60 seconds/);
+  assert.match(html, /Placeholder · final video pending/);
+  assert.match(html, /Captions and transcript planned/);
   assert.match(html, /AI \+ coded prototypes/);
   assert.match(html, /Rules · CMS · Backoffice/);
   assert.match(html, /Product systems made inspectable/);

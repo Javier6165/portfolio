@@ -89,6 +89,7 @@ Orden y escenas:
 | Capítulo | Scene id | Verbo | Target principal |
 | --- | --- | --- | --- |
 | Snapshot | `snapshot-clarify` | clarify | facts |
+| Meet me in 60 seconds | — | — | vídeo placeholder estático |
 | Work | `work-frame` | frame | media del primer case |
 | Product practice | `practice-connect` | connect | workflow/viewer |
 | AI | `ai-operationalise` | operationalise | pipeline/viewer |
@@ -97,7 +98,7 @@ Orden y escenas:
 | Playground | `playground-experiment` | experiment | timeline |
 | Contact | `footer-handoff` | handoff | contacto |
 
-`app/HomePage.module.css` contiene composición y desviaciones WIP de las secciones server. `ProductPractice`, `AIPractice`, `Testimonials` y `PlaygroundStudy` son islands únicamente porque tienen controles reales.
+`Meet me in 60 seconds` se renderiza en servidor entre Snapshot y Work. No pertenece al registro de `LiveScene`, no altera Follow y no expone un control falso mientras la media sea provisional. `app/HomePage.module.css` contiene composición y desviaciones WIP de las secciones server. `ProductPractice`, `AIPractice`, `Testimonials` y `PlaygroundStudy` son islands únicamente porque tienen controles reales.
 
 ## Motion progresivo
 
@@ -128,7 +129,7 @@ Dark es la única dirección visual y `:root` define `color-scheme: dark`. No ex
 - `placeholder`: perspective, title y prompt;
 - `verified`: quote, name, role, source y `approvedForPublication: true`.
 
-`Testimonials` implementa un tablist vertical con roving focus y un tabpanel. La preview no renderiza `<blockquote>` hasta que exista un slot verificado.
+`Testimonials` implementa un ledger compacto con tablist vertical, roving focus y un tabpanel. La preview no renderiza `<blockquote>` hasta que exista un slot verificado y no aparece en la navegación primaria mientras todas sus fuentes estén pendientes.
 
 ## Evidencia de casos
 

@@ -279,8 +279,8 @@
 .role {
   margin-top: 1.35rem;
   color: #b9b6ad;
-  font-size: clamp(.92rem, 1.25vw, 1.15rem);
-  font-weight: 470;
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  font-weight: 500;
   letter-spacing: -.015em;
 }
 
@@ -398,7 +398,7 @@
   .identity { left: 1.1rem; bottom: 6.9rem; width: calc(100% - 2.2rem); }
   .name { margin-bottom: .7rem; }
   .title { max-width: 9.5ch; font-size: clamp(3rem, 13vw, 4.6rem); line-height: .84; }
-  .role { margin-top: 1rem; font-size: .9rem; }
+  .role { margin-top: 1rem; font-size: 1rem; }
   .explore { right: 1.1rem; bottom: 1.45rem; }
   .portraitSelection { top: 13%; right: 6%; bottom: 34%; left: 24%; }
   .portraitSelection > span { font-size: .55rem; }

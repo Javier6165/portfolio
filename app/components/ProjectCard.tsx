@@ -6,7 +6,7 @@ import type { Project } from "../data";
 import { ProjectVisual } from "./ProjectVisual";
 import { ArrowIcon } from "./SiteShell";
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project, compact = false }: { project: Project; compact?: boolean }) {
   const frameRef = useRef<number | null>(null);
   const boundsRef = useRef<DOMRect | null>(null);
   const pointerRef = useRef({ x: 0, y: 0, target: null as HTMLAnchorElement | null });
@@ -50,7 +50,7 @@ export function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="project-card-shell js-reveal">
       <Link
-        className={`project-card project-card--${project.accent}`}
+        className={`project-card project-card--${project.accent}${compact ? " project-card--compact" : ""}`}
         href={`/work/${project.slug}`}
         onPointerEnter={startTracking}
         onPointerMove={trackPointer}
@@ -69,7 +69,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <div className="project-card__media">
           <div className="project-card__layer project-card__layer--back" />
           <div className="project-card__layer project-card__layer--mid" />
-          <ProjectVisual project={project} />
+          <ProjectVisual project={project} compact={compact} />
           <span className="project-card__media-label">{project.artifactLabel}</span>
         </div>
         <span className="project-card__cta">Open case study <ArrowIcon /></span>

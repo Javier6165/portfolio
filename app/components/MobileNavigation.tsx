@@ -7,7 +7,6 @@ const links = [
   { href: "/#work", label: "Work" },
   { href: "/#approach", label: "Practice" },
   { href: "/#ai-practice", label: "AI workflow" },
-  { href: "/#testimonials", label: "References" },
   { href: "/about", label: "About" },
   { href: "/playground", label: "Playground" },
 ] as const;

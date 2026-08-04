@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { testimonialSlots } from "../data";
 import { LiveScene } from "./live-file/LiveScene";
 import styles from "./Testimonials.module.css";
@@ -41,9 +41,7 @@ export function Testimonials() {
         className={styles.liveScene}
       >
         <div className={styles.stage}>
-          <div className={styles.wipCards} aria-hidden="true">
-            {testimonialSlots.map((slot, index) => <div key={slot.index} style={{ "--card-index": index } as CSSProperties}><span>“</span><strong>{slot.status === "placeholder" ? slot.title : slot.name}</strong><small>Source?</small></div>)}
-          </div>
+          <div className={styles.wipFlag} aria-hidden="true">PROVENANCE / NOT YET VERIFIED</div>
 
           <div className={styles.ledger}>
             <div className={styles.index} role="tablist" aria-label="Reference perspectives">

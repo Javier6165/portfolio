@@ -117,6 +117,28 @@ test("the portfolio exposes one intentional Dark appearance", async ({ page, isM
   expect(await page.locator("html").evaluate((element) => element.outerHTML)).not.toMatch(/hero-human|about-human|javier-theme|theme-toggle/);
 });
 
+test("the 60-second introduction is an honest early shortcut, not another forced scene", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const section = page.locator("#meet-javier");
+  await expect(section.getByRole("heading", { name: "Meet me in 60 seconds." })).toBeVisible();
+  await expect(section.getByText("Placeholder · final video pending")).toBeVisible();
+  await expect(section.getByText("Captions and transcript planned")).toBeVisible();
+  await expect(section.getByRole("button")).toHaveCount(0);
+  await expect(section.locator("[data-live-scene]")).toHaveCount(0);
+
+  const geometry = await page.evaluate(() => ({
+    snapshotTop: document.querySelector("#experience")!.getBoundingClientRect().top,
+    videoTop: document.querySelector("#meet-javier")!.getBoundingClientRect().top,
+    workTop: document.querySelector("#work")!.getBoundingClientRect().top,
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  }));
+  expect(geometry.videoTop).toBeGreaterThan(geometry.snapshotTop);
+  expect(geometry.workTop).toBeGreaterThan(geometry.videoTop);
+  expect(geometry.overflow).toBe(0);
+});
+
 test("forced WIP keeps Snapshot recognisable while exposing a small rhythm correction", async ({ page, isMobile }) => {
   test.skip(isMobile, "The authored WIP contrast is measured once on desktop.");
   await page.goto("/?narrative=first&live=wip");
