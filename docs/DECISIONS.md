@@ -95,6 +95,7 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 ## Hosting
 
 - Preview accesible para cualquiera con la URL en el proyecto Sites existente; `noindex`, `nofollow` y `robots.txt` siguen bloqueando indexación.
+- Sites v32 es la versión publicada y validada al cierre del 4 de agosto de 2026. Corresponde al estado de aplicación `59cbafc`: Cursor Chat anclado, edición autónoma con los mismos beats que Follow y marco violeta persistente mientras Follow está activo.
 - Netlify es opción de lanzamiento, no migración aprobada.
 - Nunca crear otro proyecto, habilitar indexación o conectar un dominio sin autorización explícita.
 
