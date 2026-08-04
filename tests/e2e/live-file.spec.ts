@@ -16,7 +16,7 @@ async function skipIntro(page: Page) {
 }
 
 test("the first visit opens the real portfolio frame in Figma and hands control back after Present", async ({ page, isMobile }) => {
-  test.setTimeout(15_000);
+  test.setTimeout(32_000);
   await page.goto("/?narrative=first");
 
   const hero = page.getByRole("region", { name: "I design the calm inside complex products." });
@@ -29,8 +29,12 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
   await page.keyboard.press("PageDown");
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(initialScroll);
   await expect(page.locator("html")).not.toHaveAttribute("data-narrative", "complete");
-  await expect(page.getByText("You caught me working.")).toBeVisible({ timeout: 2_500 });
-  await page.waitForTimeout(1_500);
+  const introChat = page.locator("[data-cursor-chat-typing]");
+  await expect(introChat).toBeVisible({ timeout: 2_000 });
+  await expect(introChat).toHaveAttribute("data-typing", "true");
+  await expect(page.getByText("You caught me working.")).toBeVisible({ timeout: 4_500 });
+  await expect(introChat).toHaveAttribute("data-typing", "false");
+  await page.waitForTimeout(900);
   await expect(page.getByText("You caught me working.")).toBeVisible();
   await expect(page.locator("[data-live-file-frame]").locator("xpath=..")).toHaveAttribute("data-phase", "presenting");
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 9_000 });
@@ -44,7 +48,7 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
   if (!isMobile) {
     await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", "hero-headline-indecision", { timeout: 1_500 });
     await expect(page.locator("[data-javier-cursor]")).not.toHaveCSS("opacity", "0");
-    await expect(page.locator("#hero-title")).toHaveAttribute("data-director-editing", "text");
+    await expect(page.locator("#hero-title")).toHaveAttribute("data-director-editing", "text", { timeout: 12_000 });
   }
 
   // The opening may own scroll only while its timeline is active. Its global
@@ -128,6 +132,8 @@ test("the 60-second introduction is an honest early shortcut, not another forced
   await expect(section.getByRole("heading", { name: "Meet me in 60 seconds." })).toBeVisible();
   await expect(section.getByText("Placeholder · final video pending")).toBeVisible();
   await expect(section.getByText("Captions and transcript planned")).toBeVisible();
+  await expect(section.locator("img")).toHaveAttribute("src", /video-intro-placeholder\.jpg/);
+  await expect(section.locator("img")).not.toHaveAttribute("src", /hero-system|about-system/);
   await expect(section.getByRole("button")).toHaveCount(0);
   await expect(section.locator("[data-live-scene]")).toHaveCount(0);
 
@@ -238,7 +244,9 @@ test("Director types like a person and stays present when the visitor scrolls", 
   await expect(heroTitle).toHaveAttribute("data-director-editing", "text", { timeout: 3_000 });
   await expect(director).toHaveAttribute("data-director-line", /^section\.hero\./);
   await expect(overlay).toBeVisible();
-  await expect(overlay).toContainText("Javier Ortiz", { timeout: 3_000 });
+  await expect(overlay).toHaveAttribute("data-director-text-typing", "true", { timeout: 3_000 });
+  const inProgressCopy = (await overlay.locator("[data-director-current-text]").textContent()) ?? "";
+  expect(inProgressCopy).not.toBe("I design the calm inside complex products.");
   await expect(page.locator("[data-ambient-note]")).toContainText(/different answer|impossible choices|what I actually bring|defensible opinions|question the headline/);
   await expect(dock).toBeVisible();
   await expect(dock.locator("span").filter({ hasText: "FOLLOW JAVIER" })).toBeAttached();
@@ -265,6 +273,61 @@ test("Director types like a person and stays present when the visitor scrolls", 
   await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-state", "disabled");
   await expect(heroTitle).toBeVisible();
   expect(pageErrors).toEqual([]);
+});
+
+test("Director and Follow comments are written live before their reading hold", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  test.setTimeout(25_000);
+  await page.addInitScript(() => {
+    localStorage.setItem("javier-narrative-consent", "denied");
+  });
+  await page.goto("/?narrative=return&director=fast&directorVisual=1&directorReset=1");
+  const director = page.locator("[data-director-presence]");
+  const directorNote = page.locator("[data-ambient-note] p");
+  await expect(director).toHaveAttribute("data-director-comment-typing", "true", { timeout: 3_000 });
+  await expect(page.locator("[data-javier-cursor]")).toHaveAttribute("data-chat", "true");
+  const directorChatGap = await page.evaluate(() => {
+    const cursor = document.querySelector("[data-javier-cursor]")!.getBoundingClientRect();
+    const note = document.querySelector("[data-ambient-note]")!.getBoundingClientRect();
+    const x = Math.max(0, Math.max(cursor.left - note.right, note.left - cursor.right));
+    const y = Math.max(0, Math.max(cursor.top - note.bottom, note.top - cursor.bottom));
+    return Math.hypot(x, y);
+  });
+  expect(directorChatGap).toBeLessThan(42);
+  await page.waitForTimeout(360);
+  const partialDirectorCopy = (await directorNote.textContent()) ?? "";
+  expect(partialDirectorCopy.length).toBeGreaterThan(0);
+  expect(partialDirectorCopy.length).toBeLessThan(95);
+  await expect(director).toHaveAttribute("data-director-comment-typing", "false", { timeout: 8_000 });
+
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("portfolio-director-safety-test")));
+  await page.goto("/?narrative=return&director=off");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
+  await page.getByRole("button", { name: "Follow Javier" }).click();
+  const followComment = page.locator('[data-comment-typing="true"]');
+  await expect(followComment).toBeVisible({ timeout: 6_000 });
+  const followChat = page.locator('[data-follow-cursor-chat="true"]');
+  await expect(followChat).toBeVisible();
+  const followChatGap = await page.evaluate(() => {
+    const cursor = document.querySelector("[data-spotlight-cursor]")!.getBoundingClientRect();
+    const note = document.querySelector('[data-follow-cursor-chat="true"]')!.getBoundingClientRect();
+    const x = Math.max(0, Math.max(cursor.left - note.right, note.left - cursor.right));
+    const y = Math.max(0, Math.max(cursor.top - note.bottom, note.top - cursor.bottom));
+    return Math.hypot(x, y);
+  });
+  expect(followChatGap).toBeLessThan(42);
+  const collaboratorColors = await page.evaluate(() => ({
+    cursor: getComputedStyle(document.querySelector("[data-spotlight-cursor]")!).color,
+    avatar: getComputedStyle(document.querySelector("[data-spotlight-active] [class*='avatar']")!).backgroundColor,
+    frame: getComputedStyle(document.querySelector("[data-follow-frame]")!).borderTopColor,
+  }));
+  expect(collaboratorColors.avatar).toBe(collaboratorColors.cursor);
+  expect(collaboratorColors.frame).toBe(collaboratorColors.cursor);
+  await page.waitForTimeout(360);
+  const partialFollowCopy = (await followComment.textContent()) ?? "";
+  expect(partialFollowCopy.length).toBeGreaterThan(0);
+  expect(partialFollowCopy.length).toBeLessThan("The content is right. The rhythm is trying too hard.".length);
+  await expect(page.locator('[data-comment-typing="false"]')).toBeVisible({ timeout: 6_000 });
 });
 
 test("Director keeps working autonomously and hands its cursor to Follow", async ({ page, isMobile }) => {
@@ -296,6 +359,7 @@ test("Director keeps working autonomously and hands its cursor to Follow", async
   await expect(ambientCursor).not.toHaveCSS("opacity", "0");
   await expect(director).toHaveAttribute("data-director-cue", "ambient:work-evidence-note", { timeout: 3_000 });
   await expect(director).toHaveAttribute("data-director-intent", "autonomous-work");
+  await expect(director).toHaveAttribute("data-director-last-shared-edit", "work-evidence-note");
   const autonomousPosition = await ambientCursor.boundingBox();
   expect(autonomousPosition).not.toBeNull();
   expect(autonomousPosition!.y).toBeGreaterThan(await page.evaluate(() => innerHeight));
@@ -348,13 +412,21 @@ test("Director leaves the hero and chains autonomous work without an idle gap", 
 
   const motionBefore = Number(await director.getAttribute("data-director-motion-count") ?? 0);
   await expect.poll(async () => Number(await director.getAttribute("data-director-motion-count") ?? 0), { timeout: 2_000 }).toBeGreaterThan(motionBefore);
+
+  const workBeforePointerActivity = Number(await director.getAttribute("data-director-autonomous-count") ?? 0);
+  for (let index = 0; index < 8; index += 1) {
+    await page.mouse.move(80 + index * 70, 120 + (index % 2) * 90);
+    await page.waitForTimeout(90);
+  }
+  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0), { timeout: 3_000 }).toBeGreaterThan(workBeforePointerActivity);
+  await expect(page.locator("[data-javier-cursor] > svg")).toHaveCount(1);
 });
 
 test("every Director beat still resolves against the redesigned page", async ({ page, isMobile }) => {
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   test.setTimeout(45_000);
   const beats = [
-    { id: "snapshot-trust-typo", selector: "#snapshot-title" },
+    { id: "snapshot-trust-typo", selector: "#snapshot-scope" },
     { id: "video-introduction-note", selector: "#video-introduction-title" },
     { id: "work-evidence-note", selector: ".project-card__media" },
     { id: "practice-two-pixels", selector: "#practice-title" },
@@ -393,6 +465,7 @@ test("Director varies return commentary and remembers only shown variants after 
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
   const director = page.locator("[data-director-presence]");
   await expect(director).toHaveAttribute("data-director-cue", /^context:visit-five:/, { timeout: 7_000 });
+  await expect(director).toHaveAttribute("data-director-comment-typing", "false", { timeout: 7_000 });
   const firstCopy = (await page.locator("[data-ambient-note] p").textContent())?.trim();
   expect(firstCopy).toMatch(/recurring collaboration|keep coming back|return is accidental|welcome back feels|know this portfolio/);
   await expect.poll(() => page.evaluate(() => {
@@ -403,6 +476,7 @@ test("Director varies return commentary and remembers only shown variants after 
   const nextVisit = await context.newPage();
   await nextVisit.goto("/?narrative=return&director=fast");
   await expect(nextVisit.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", /^context:visit-five:/, { timeout: 7_000 });
+  await expect(nextVisit.locator("[data-director-presence]")).toHaveAttribute("data-director-comment-typing", "false", { timeout: 7_000 });
   const secondCopy = (await nextVisit.locator("[data-ambient-note] p").textContent())?.trim();
   expect(secondCopy).toMatch(/recurring collaboration|keep coming back|return is accidental|welcome back feels|know this portfolio/);
   expect(secondCopy).not.toBe(firstCopy);
@@ -465,18 +539,18 @@ test("Product practice and AI workflow expose complete roving keyboard tabs", as
   await expect(page.getByRole("tab", { name: /Prove the behaviour/ })).toBeFocused();
   await expect(page.getByText("Functional prototype + test states")).toBeVisible();
 
-  const frameTab = page.getByRole("tab", { name: /Frame Structure context and risk/ });
+  const frameTab = page.getByRole("tab", { name: /Frame: Structure context and risk/ });
   await frameTab.focus();
   await frameTab.press("ArrowRight");
-  await expect(page.getByRole("tab", { name: /Explore Create constrained options/ })).toBeFocused();
-  await expect(page.getByText("Option set + explicit trade-offs")).toBeVisible();
+  await expect(page.getByRole("tab", { name: /Build: Make the behaviour testable/ })).toBeFocused();
+  await expect(page.getByText("Functional prototype", { exact: true })).toBeVisible();
 });
 
 test("the AI Build stage runs a repeatable working simulation", async ({ page, isMobile }) => {
   test.skip(isMobile, "The functional workflow contract runs once; mobile reflow is covered visually.");
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
-  await page.getByRole("tab", { name: /Build Make the behaviour testable/ }).click();
+  await page.getByRole("tab", { name: /Build: Make the behaviour testable/ }).click();
   await page.getByRole("button", { name: "Run simulation" }).click();
   await expect(page.getByRole("button", { name: "Running…" })).toBeDisabled();
   await expect(page.getByText("Simulation complete")).toBeVisible({ timeout: 2_000 });
@@ -493,7 +567,7 @@ test("the Reference Ledger is honest, keyboard-operable and never fabricates quo
   await firstReference.focus();
   await firstReference.press("End");
   await expect(page.getByRole("tab", { name: /Design leadership/ })).toBeFocused();
-  await expect(page.getByText("Placeholder · source required")).toHaveCount(1);
+  await expect(page.getByText("Layout preview · source required")).toHaveCount(1);
   await expect(page.getByText("No testimonial is published without a source.")).toBeVisible();
   await expect(page.locator("blockquote")).toHaveCount(0);
 });

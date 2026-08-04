@@ -40,9 +40,10 @@ Directorio `app/components/live-file/`:
 - `LiveSceneContext`: identidad estable del contexto y fallback pasivo fuera del módulo que cambia con Fast Refresh.
 - `DirectorPresence`: observación local de viewport/pausa, selección contextual, cursor ambiental, comentarios y escritura humana cancelable.
 - `DirectorCommentary`: índice y selector puro; `director-copy/sections.ts` concentra el copy ligado al contenido, `generic.ts` la voz reutilizable, `context.ts` las respuestas a sesión/acciones y `types.ts` el esquema editorial estable.
+- `commentTyping`: cadencia humana compartida y cálculo de duración para que Intro, Director y Follow escriban comentarios en vivo y dimensionen su pausa de lectura con la misma regla.
 - `LiveScene`: declaración de id, target, tool, propiedades, timings y estado visual.
 - `EditorPrimitives`: selection frame, handles, property panel y comment thread.
-- `SpotlightChrome`: dock informativo o recurrente, número de edit, fase de observación, foco, progreso y panel/comment thread fijos; calcula arriba/abajo y clamp horizontal desde la geometría real del target.
+- `SpotlightChrome`: dock informativo o recurrente, número de edit, fase de observación, foco, progreso y panel/comment thread fijos; el panel de propiedades usa la geometría del target, mientras Cursor Chat usa la coordenada del cursor y uno de cuatro lados seguros.
 - `ExperienceSettings` / `MemoryConsent`: preferencias locales.
 
 El servidor entrega cada escena en `settled`. Tras hidratación, el director la lleva a `wip` solo si es elegible. La máquina de atributos es:
@@ -54,11 +55,11 @@ wip → observing → spotlight-entering → editing
 
 La lógica vive en React, refs y atributos; GSAP solo interpola cursor/intro. No hay ScrollTrigger por escena, auto-scroll ni queue.
 
-Fuera de Spotlight, `DirectorPresence` separa dos sistemas. Una agenda global recorre targets explícitos de todo el documento y encadena microajustes silenciosos aunque queden fuera de cámara; no usa `considering` ni cooldown entre beats. En paralelo, `IntersectionObserver` alimenta una utility AI con un blackboard efímero de visibilidad, puntero, velocidades, dirección, profundidad, pausa, revisita, tiempo de sesión y estado de pestaña. La máquina contextual `observing → considering → approaching → commenting/editing` solo interrumpe la agenda cuando una señal o un dwell claro justifican volver a la zona visible. Después debe ocurrir trabajo autónomo antes de otra intervención contextual. La única excepción es el handoff de Present: `EditorIntro` deja coordenadas efímeras en `body.dataset` y Director consume una vez `hero-headline-indecision` sin cooldown. Ninguno de los dos sistemas mueve la cámara. Los modos son `text`, `comment`, `nudge`, `crop` y `easing`; los cambios grandes de copy o asset quedan retirados.
+Fuera de Spotlight, `DirectorPresence` separa dos sistemas. Una agenda global recorre targets explícitos de todo el documento y encadena los mismos beats completos de WIP → edición → settling que usa Follow, aunque queden fuera de cámara; no degrada acciones a nudges, no usa `considering` ni cooldown entre beats. En paralelo, `IntersectionObserver` alimenta una utility AI con un blackboard efímero de visibilidad, puntero, velocidades, dirección, profundidad, pausa, revisita, tiempo de sesión y estado de pestaña. La máquina contextual `observing → considering → approaching → commenting/editing` solo interrumpe la agenda cuando una señal o un dwell claro justifican volver a la zona visible. Después debe ocurrir trabajo autónomo antes de otra intervención contextual. La única excepción es el handoff de Present: `EditorIntro` deja coordenadas efímeras en `body.dataset` y Director consume una vez `hero-headline-indecision` sin cooldown. Ninguno de los dos sistemas mueve la cámara. Los modos son `text`, `comment`, `nudge`, `crop` y `easing`; los cambios grandes de copy o asset quedan retirados.
 
 `DirectorCommentary` separa contenido y lógica. El catálogo contiene 220 líneas atómicas organizadas en intercambios editoriales con id estable, intención, registro, humor, compatibilidad, rareza y peso. Los beats de sección seleccionan apertura/resolución como pareja; los triggers cubren memoria, visitas 1–5, etapas de sesión, fast scroll, lectura pausada, final, retorno, cambio de dirección, vuelta de pestaña, revisita y salida de Follow. El selector filtra incompatibilidades, puntúa utilidad y novedad y penaliza fatiga de id, familia y registro. Una sesión corta admite hasta dos comentarios contextuales, una asentada hasta cuatro y una larga crece gradualmente hasta siete; el silencio estándar es `18 s`, con respuestas directas fuera del presupuesto normal.
 
-Cursor, notas y espejos tipográficos viven en coordenadas absolutas del documento; el scroll mueve la cámara, no al colaborador. Un beat de texto mide el fragmento mediante `Range`, superpone un espejo visual `aria-hidden`, selecciona, escribe con cadencia irregular y hace que el cursor acompañe el extremo escrito; puede volver a seleccionar el texto completo, comete un typo y lo corrige con backspace. Nudge, crop, easing y lectura incluyen también un gesto mínimo del cursor para que una secuencia activa nunca parezca congelada. El heading semántico permanece en DOM y conserva su accessible name. Scroll, resize, pestaña oculta, Spotlight o Follow cancelan síncronamente nota, overlay y estilos medidos, pero conservan la posición documental del cursor. Touch, `<=720 px` y reduced motion no ejecutan Director. `javier-director-beats-v1` recuerda solo ids ya vistos durante la pestaña.
+Cursor, notas y espejos tipográficos viven en coordenadas absolutas del documento; el scroll mueve la cámara, no al colaborador. Intro, Director y Spotlight comparten `FigmaCursor`, una flecha violeta totalmente opaca con contorno blanco y name tag angular, por lo que su identidad no diverge entre capas. `commentTyping` suministra una cadencia irregular común: cada comentario se monta vacío junto a la posición actual del cursor, se escribe carácter a carácter con la flecha inmóvil y solo después comienza su hold de lectura. El bocadillo usa derecha/izquierda y arriba/abajo para no recortarse, pero nunca busca un hueco independiente alrededor del target. Un beat de texto mide el fragmento mediante `Range`, superpone un espejo visual `aria-hidden`, selecciona, escribe con cadencia irregular y hace que el cursor acompañe el extremo escrito; puede volver a seleccionar el texto completo, comete un typo y lo corrige con backspace. Nudge, crop, easing y lectura ejecutan ciclos completos de inspección, ajuste, comprobación y restauración; no son saltos decorativos. El heading semántico permanece en DOM y conserva su accessible name. Scroll, resize, pestaña oculta, Spotlight o Follow cancelan síncronamente nota, overlay y estilos medidos, pero conservan la posición documental del cursor. El movimiento de puntero sin scroll no pausa la agenda autónoma: únicamente aplaza la selección contextual. Touch, `<=720 px` y reduced motion no ejecutan Director. `javier-director-beats-v1` recuerda solo ids ya vistos durante la pestaña.
 
 La capa es fail-open. `LiveSceneContext` vive en un módulo estable separado para que provider y consumers no cambien de identidad durante Fast Refresh; además ofrece un valor pasivo que mantiene escenas finales ante cualquier desajuste transitorio. `DirectorPresence` añade un error boundary para render/lifecycle y un circuit breaker para su loop asíncrono; ambos eliminan solamente cursor, nota y efectos, nunca el contenido o el scroll.
 
@@ -74,7 +75,7 @@ Elegibilidad recurrente:
 
 Después de la apertura no hay Spotlight obligatorio. `LiveSceneDirector` no evalúa escenas opcionales salvo que `followingRef` esté activo; `DirectorPresence` nunca bloquea ni reencuadra.
 
-`Follow Javier` es una decisión explícita del visitante. Marca los capítulos no vistos como WIP, mueve la cámara al siguiente target en orden DOM y activa su Spotlight. Al resolver, avanza al siguiente después de un descanso breve. Avatar, botón, rueda, touch o teclado pueden terminar Follow y fijan todas las secciones en final. Fuera de este estado no hay auto-scroll ni Spotlight espontáneo.
+`Follow Javier` es una decisión explícita del visitante. No desbloquea beats distintos: toma la misma edición que la agenda autónoma, marca el capítulo WIP, mueve la cámara al siguiente target en orden DOM y activa su Spotlight. La duración de cada capítulo se calcula como aproximación del cursor + escritura completa del comentario + hold de lectura + edición visible; la flecha no se mueve mientras Cursor Chat permanece abierto. Un marco perimetral `#9747ff` persiste durante todo Follow y comparte color con cursor, avatar `JO` y selection bounds. Al terminar, avanza al siguiente después de un descanso breve. Avatar, botón, rueda, touch o teclado pueden terminar Follow y fijan todas las secciones en final. Fuera de este estado no hay auto-scroll ni Spotlight espontáneo.
 
 Los movimientos internos de Follow se marcan como reposicionamiento y solo la partitura explícita puede iniciar el siguiente capítulo.
 
@@ -103,6 +104,7 @@ Orden y escenas:
 ## Motion progresivo
 
 - Home: `EditorIntro` + `LiveSceneDirector` + `DirectorPresence` son la partitura exclusiva.
+- `MotionController` añade en Home cinco entradas editoriales acotadas mediante `IntersectionObserver` y GSAP: facts, corte del vídeo, case dominante, split de About y timeline de Playground. El contenido es visible por defecto, cada tratamiento es distinto y se limpia al terminar para no competir con Live File.
 - Rutas secundarias: `MotionController` importa ScrollTrigger dinámicamente y activa `.js-hero-reveal` / `.js-reveal`.
 - CSS resuelve hover, focus, tabs locales y presenters de estado.
 - `data-motion="reduce"` desactiva intro, WIP, cursor, Spotlight, reveals y transiciones no esenciales.
@@ -120,7 +122,7 @@ Claves:
 
 ## Dirección visual y fotografías
 
-Dark es la única dirección visual y `:root` define `color-scheme: dark`. No existe `ThemeToggle`, `data-theme`, evento o persistencia de apariencia. Hero y About montan un único retrato oscuro mediante AVIF/WebP responsive con JPEG fallback. Los nombres `*-system.*` son históricos, no representan un modo seleccionable.
+Dark es la única dirección visual y `:root` define `color-scheme: dark`. No existe `ThemeToggle`, `data-theme`, evento o persistencia de apariencia. Hero y About montan un único retrato oscuro mediante AVIF/WebP responsive con JPEG fallback. El placeholder del vídeo usa una tercera toma claramente distinta, optimizada como JPEG local. Los nombres `*-system.*` son históricos, no representan un modo seleccionable.
 
 ## References
 
@@ -129,7 +131,7 @@ Dark es la única dirección visual y `:root` define `color-scheme: dark`. No ex
 - `placeholder`: perspective, title y prompt;
 - `verified`: quote, name, role, source y `approvedForPublication: true`.
 
-`Testimonials` implementa un ledger compacto con tablist vertical, roving focus y un tabpanel. La preview no renderiza `<blockquote>` hasta que exista un slot verificado y no aparece en la navegación primaria mientras todas sus fuentes estén pendientes.
+`Testimonials` implementa un ledger compacto con tablist vertical, roving focus y un tabpanel. El estado pendiente enseña una medida editorial explícitamente rotulada como layout preview, nunca una cita simulada. No renderiza `<blockquote>` hasta que exista un slot verificado y no aparece en la navegación primaria mientras todas sus fuentes estén pendientes.
 
 ## Evidencia de casos
 

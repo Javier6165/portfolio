@@ -17,6 +17,8 @@ import {
   type DirectorVoiceHistory,
 } from "./DirectorCommentary";
 import { consumeDirectorAction, type DirectorActionCue } from "./director-copy/signals";
+import { commentKeyDelay } from "./commentTyping";
+import { FigmaCursor } from "./FigmaCursor";
 import type { NarrativeConsent, VisitTier } from "./NarrativeContext";
 import styles from "./DirectorPresence.module.css";
 
@@ -104,7 +106,7 @@ type DirectorPresenceProps = {
 
 const DIRECTOR_MEMORY_KEY = "javier-director-beats-v1";
 const HUMAN_KEY_DELAYS = [82, 116, 69, 94, 128, 76, 103, 88, 142, 72];
-const HERO_KEY_DELAYS = [38, 52, 33, 46, 61, 41, 55, 36, 68, 43];
+const HERO_KEY_DELAYS = [78, 112, 73, 96, 126, 81, 104, 88, 134, 76];
 
 function createBehaviorModel(startedAt = 0): BehaviorModel {
   return {
@@ -142,29 +144,29 @@ const directorBeats: DirectorBeat[] = [
     comments: sectionCommentary["hero-headline-indecision"],
     actions: [
       { type: "type", value: "Javier Ortiz" },
-      { type: "pause", duration: 620 },
+      { type: "pause", duration: 1_100 },
       { type: "select-all" },
       { type: "type", value: "Senior Product Designer" },
-      { type: "pause", duration: 760 },
+      { type: "pause", duration: 1_300 },
       { type: "select-all" },
       { type: "type", value: "I design the calm inside complex prodcuts." },
-      { type: "pause", duration: 420 },
+      { type: "pause", duration: 680 },
       { type: "backspace", count: 9 },
       { type: "type", value: "products." },
     ],
   },
   {
     id: "snapshot-trust-typo",
-    selector: "#snapshot-title",
+    selector: "#snapshot-scope",
     section: "snapshot",
     mode: "text",
-    segment: "test and trust",
+    segment: "B2B platforms & systems",
     comments: sectionCommentary["snapshot-trust-typo"],
     actions: [
-      { type: "type", value: "test and trsut" },
+      { type: "type", value: "B2B platfroms & systems" },
       { type: "pause", duration: 420 },
-      { type: "backspace", count: 4 },
-      { type: "type", value: "rust" },
+      { type: "backspace", count: 19 },
+      { type: "type", value: "platforms & systems" },
     ],
   },
   {
@@ -193,13 +195,13 @@ const directorBeats: DirectorBeat[] = [
     selector: "#ai-title",
     section: "ai",
     mode: "text",
-    segment: "validate",
+    segment: "evidence faster",
     comments: sectionCommentary["ai-validate-typo"],
     actions: [
-      { type: "type", value: "validtae" },
+      { type: "type", value: "evidnece faster" },
       { type: "pause", duration: 390 },
-      { type: "backspace", count: 3 },
-      { type: "type", value: "ate" },
+      { type: "backspace", count: 15 },
+      { type: "type", value: "evidence faster" },
     ],
   },
   {
@@ -214,13 +216,13 @@ const directorBeats: DirectorBeat[] = [
     selector: "#testimonials-title",
     section: "references",
     mode: "text",
-    segment: "other side",
+    segment: "once verified",
     comments: sectionCommentary["references-side-typo"],
     actions: [
-      { type: "type", value: "other sdie" },
+      { type: "type", value: "once verfied" },
       { type: "pause", duration: 430 },
-      { type: "backspace", count: 4 },
-      { type: "type", value: "side" },
+      { type: "backspace", count: 7 },
+      { type: "type", value: "verified" },
     ],
   },
   {
@@ -313,6 +315,7 @@ export function DirectorPresence({
   const noteRef = useRef<HTMLDivElement>(null);
   const currentTargetRef = useRef<HTMLElement | null>(null);
   const effectTargetRef = useRef<HTMLElement | null>(null);
+  const sharedSceneRef = useRef<HTMLElement | null>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const behaviorRef = useRef<BehaviorModel>(createBehaviorModel());
   const voiceHistoryRef = useRef<DirectorVoiceHistory>({ ids: [], families: [], registers: [], humor: [] });
@@ -350,6 +353,7 @@ export function DirectorPresence({
     }
     const fast = params.get("director") === "fast";
     const visualQa = fast && params.get("directorVisual") === "1";
+    const acceleratedMotion = fast && !visualQa;
     const resetRequested = params.get("director") === "reset" || params.get("directorReset") === "1";
     const reset = resetRequested && !resetConsumedRef.current;
     if (reset) resetConsumedRef.current = true;
@@ -417,7 +421,13 @@ export function DirectorPresence({
     targets.forEach(({ target }) => observer.observe(target));
     setBrainState("observing", "initialising");
 
-    const hideNote = () => gsap.set(note, { opacity: 0, scale: .96 });
+    const hideNote = () => {
+      delete note.dataset.typing;
+      delete note.dataset.chatSide;
+      delete cursor.dataset.chat;
+      layer.dataset.directorCommentTyping = "false";
+      gsap.set(note, { opacity: 0, scale: .96 });
+    };
     const hideCursor = () => gsap.set(cursor, { opacity: 0 });
     const cursorPoint = () => ({
       x: Number(gsap.getProperty(cursor, "x")) || window.scrollX + window.innerWidth - 142,
@@ -429,8 +439,8 @@ export function DirectorPresence({
       && point.y >= window.scrollY - 42
       && point.y <= window.scrollY + window.innerHeight + 42
     );
-    const parkCursor = (opacity = .54) => {
-      gsap.set(cursor, { opacity });
+    const parkCursor = () => {
+      gsap.set(cursor, { opacity: 1 });
     };
 
     const clearTarget = () => {
@@ -446,6 +456,13 @@ export function DirectorPresence({
         if (image) gsap.set(image, { clearProps: "transform,filter" });
       }
       effectTargetRef.current = null;
+
+      const sharedScene = sharedSceneRef.current;
+      if (sharedScene) {
+        sharedScene.dataset.liveState = "settled";
+        delete sharedScene.dataset.directorSharedEdit;
+      }
+      sharedSceneRef.current = null;
       setTextOverlay(null);
     };
 
@@ -484,17 +501,18 @@ export function DirectorPresence({
     const moveCursor = async (x: number, y: number, duration: number, runId: number) => {
       tweenRef.current?.kill();
       layer.dataset.directorMotionCount = String(Number(layer.dataset.directorMotionCount ?? "0") + 1);
-      tweenRef.current = gsap.to(cursor, { x, y, opacity: .96, duration: duration / 1_000, ease: "power3.inOut" });
+      tweenRef.current = gsap.to(cursor, { x, y, opacity: 1, duration: duration / 1_000, ease: "power3.inOut" });
       return sleep(duration, runId);
     };
 
-    const showNote = (copy: string, x: number, y: number, target: HTMLElement) => {
+    const typeNote = async (copy: string, runId: number) => {
       const paragraph = note.querySelector("p");
-      if (paragraph) paragraph.textContent = copy;
+      if (!paragraph) return false;
+      paragraph.textContent = copy;
       const width = Math.min(304, window.innerWidth - 32);
       gsap.set(note, { x: 0, y: 0, width, opacity: 0, scale: 1 });
       const height = note.getBoundingClientRect().height;
-      const targetRect = toDocumentRect(target.getBoundingClientRect());
+      const anchor = cursorPoint();
       const safe = {
         top: window.scrollY + 78,
         right: window.scrollX + window.innerWidth - 16,
@@ -502,27 +520,20 @@ export function DirectorPresence({
         left: window.scrollX + 16,
       };
       const candidates = [
-        { x: x + 18, y: y + 30 },
-        { x: targetRect.left, y: targetRect.top - height - 18 },
-        { x: targetRect.right + 18, y: targetRect.top },
-        { x: targetRect.left, y: targetRect.bottom + 18 },
-        { x: targetRect.left - width - 18, y: targetRect.top },
+        { x: anchor.x + 28, y: anchor.y + 20, side: "right-down" },
+        { x: anchor.x - width - 22, y: anchor.y + 20, side: "left-down" },
+        { x: anchor.x + 28, y: anchor.y - height - 18, side: "right-up" },
+        { x: anchor.x - width - 22, y: anchor.y - height - 18, side: "left-up" },
       ];
-      const overlapsTarget = (candidate: { x: number; y: number }) => !(
-        candidate.x + width + 8 <= targetRect.left
-        || candidate.x >= targetRect.right + 8
-        || candidate.y + height + 8 <= targetRect.top
-        || candidate.y >= targetRect.bottom + 8
-      );
       const fits = (candidate: { x: number; y: number }) => (
         candidate.x >= safe.left
         && candidate.x + width <= safe.right
         && candidate.y >= safe.top
         && candidate.y + height <= safe.bottom
       );
-      const placement = candidates.find((candidate) => fits(candidate) && !overlapsTarget(candidate))
-        ?? candidates.find(fits)
-        ?? candidates[0];
+      const placement = candidates.find(fits) ?? candidates[0];
+      note.dataset.chatSide = placement.side;
+      cursor.dataset.chat = "true";
       gsap.set(note, {
         x: clamp(placement.x, safe.left, safe.right - width),
         y: clamp(placement.y, safe.top, safe.bottom - height),
@@ -530,6 +541,16 @@ export function DirectorPresence({
         opacity: 1,
         scale: 1,
       });
+      paragraph.textContent = "";
+      note.dataset.typing = "true";
+      layer.dataset.directorCommentTyping = "true";
+      for (const [index] of [...copy].entries()) {
+        paragraph.textContent = copy.slice(0, index + 1);
+        if (!await sleep(commentKeyDelay(copy, index, acceleratedMotion), runId)) return false;
+      }
+      delete note.dataset.typing;
+      layer.dataset.directorCommentTyping = "false";
+      return true;
     };
 
     const createOverlay = (target: HTMLElement, segment: string) => {
@@ -578,10 +599,10 @@ export function DirectorPresence({
 
       const documentSegment = toDocumentRect(segmentRect);
       const baselineY = documentSegment.bottom - 4;
-      if (!await moveCursor(documentSegment.right, baselineY, fast ? 90 : isOpeningHeadline ? 170 : 360, runId)) return false;
+      if (!await moveCursor(documentSegment.right, baselineY, acceleratedMotion ? 90 : isOpeningHeadline ? 280 : 360, runId)) return false;
       setTextOverlay((current) => current ? { ...current, selected: true } : current);
-      if (!await moveCursor(documentSegment.left, baselineY, fast ? 120 : isOpeningHeadline ? 220 : 540, runId)) return false;
-      if (!await sleep(fast ? 80 : isOpeningHeadline ? 110 : 360, runId)) return false;
+      if (!await moveCursor(documentSegment.left, baselineY, acceleratedMotion ? 120 : isOpeningHeadline ? 680 : 540, runId)) return false;
+      if (!await sleep(acceleratedMotion ? 80 : isOpeningHeadline ? 420 : 360, runId)) return false;
 
       let value = beat.segment;
       let keyIndex = 0;
@@ -594,24 +615,29 @@ export function DirectorPresence({
           gsap.set(cursor, {
             x: lastRect.right + window.scrollX,
             y: lastRect.bottom + window.scrollY - 4,
-            opacity: .96,
+            opacity: 1,
           });
         }
       };
       for (const action of beat.actions) {
         if (action.type === "pause") {
-          const openingPause = action.duration >= 700 ? 500 : action.duration >= 600 ? 720 : 120;
-          const fastOpeningPause = action.duration >= 700 ? 320 : action.duration >= 600 ? 420 : 80;
-          const pauseDuration = fast
-            ? isOpeningHeadline ? fastOpeningPause : Math.min(action.duration, 60)
-            : isOpeningHeadline ? openingPause : action.duration;
+          const pauseDuration = acceleratedMotion ? Math.min(action.duration, 60) : action.duration;
           if (!await sleep(pauseDuration, runId)) return false;
           continue;
         }
         if (action.type === "select-all") {
+          const typed = layer.querySelector<HTMLElement>("[data-director-current-text]");
+          const typedRect = typed?.getBoundingClientRect();
+          if (typedRect) {
+            const typedBaseline = typedRect.bottom + window.scrollY - 4;
+            if (!await moveCursor(typedRect.right + window.scrollX, typedBaseline, acceleratedMotion ? 55 : isOpeningHeadline ? 240 : 220, runId)) return false;
+            setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
+            if (!await moveCursor(typedRect.left + window.scrollX, typedBaseline, acceleratedMotion ? 75 : isOpeningHeadline ? 620 : 460, runId)) return false;
+          } else {
+            setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
+          }
           selectionActive = true;
-          setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
-          if (!await sleep(fast ? 60 : isOpeningHeadline ? 105 : 360, runId)) return false;
+          if (!await sleep(acceleratedMotion ? 60 : isOpeningHeadline ? 360 : 300, runId)) return false;
           continue;
         }
         if (action.type === "type") {
@@ -620,7 +646,7 @@ export function DirectorPresence({
             selectionActive = false;
             keyIndex += 1;
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
-            const delay = fast ? 12 : isOpeningHeadline ? HERO_KEY_DELAYS[keyIndex % HERO_KEY_DELAYS.length] : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
+            const delay = acceleratedMotion ? 12 : isOpeningHeadline ? HERO_KEY_DELAYS[keyIndex % HERO_KEY_DELAYS.length] : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
             if (!await sleep(delay, runId)) return false;
             followTypedText();
           }
@@ -628,7 +654,7 @@ export function DirectorPresence({
           for (let index = 0; index < action.count; index += 1) {
             value = value.slice(0, -1);
             setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
-            if (!await sleep(fast ? 14 : isOpeningHeadline ? 34 + (index % 3) * 5 : 92 + (index % 3) * 17, runId)) return false;
+            if (!await sleep(acceleratedMotion ? 14 : isOpeningHeadline ? 62 + (index % 3) * 8 : 92 + (index % 3) * 17, runId)) return false;
             followTypedText();
           }
         }
@@ -641,26 +667,37 @@ export function DirectorPresence({
       effectTargetRef.current = target;
       const gestureOrigin = cursorPoint();
       if (beat.mode === "comment") {
-        return moveCursor(gestureOrigin.x + 5, gestureOrigin.y + 3, fast && !visualQa ? 180 : 1_150, runId);
+        if (!await moveCursor(gestureOrigin.x + 7, gestureOrigin.y + 4, acceleratedMotion ? 180 : 680, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 40 : 420, runId)) return false;
+        return moveCursor(gestureOrigin.x + 2, gestureOrigin.y - 2, acceleratedMotion ? 160 : 620, runId);
       }
       target.dataset.directorEditing = beat.mode;
       if (beat.mode === "crop") {
         const image = target.querySelector("img") ?? target;
-        gsap.to(image, { xPercent: -1.8, scale: 1.025, duration: fast ? .12 : .72, ease: "power2.inOut" });
-        if (!await moveCursor(gestureOrigin.x - 18, gestureOrigin.y + 4, fast ? 140 : 820, runId)) return false;
-        gsap.to(image, { xPercent: 0, scale: 1, duration: fast ? .12 : .68, ease: "power3.inOut" });
-        return moveCursor(gestureOrigin.x + 4, gestureOrigin.y - 2, fast ? 140 : 760, runId);
+        if (!await sleep(acceleratedMotion ? 30 : 360, runId)) return false;
+        gsap.to(image, { xPercent: -1.8, scale: 1.025, duration: acceleratedMotion ? .12 : 1.02, ease: "power2.inOut" });
+        if (!await moveCursor(gestureOrigin.x - 18, gestureOrigin.y + 4, acceleratedMotion ? 140 : 980, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 520, runId)) return false;
+        gsap.to(image, { xPercent: 0, scale: 1, duration: acceleratedMotion ? .12 : 1.04, ease: "power3.inOut" });
+        if (!await moveCursor(gestureOrigin.x + 4, gestureOrigin.y - 2, acceleratedMotion ? 140 : 940, runId)) return false;
+        return sleep(acceleratedMotion ? 35 : 360, runId);
       }
       if (beat.mode === "easing") {
-        gsap.to(target, { scaleX: .82, transformOrigin: "left", duration: fast ? .12 : .68, ease: "power1.in" });
-        if (!await moveCursor(gestureOrigin.x + 28, gestureOrigin.y, fast ? 140 : 760, runId)) return false;
-        gsap.to(target, { scaleX: 1, duration: fast ? .12 : .72, ease: "power4.out" });
-        return moveCursor(gestureOrigin.x + 2, gestureOrigin.y, fast ? 140 : 800, runId);
+        if (!await sleep(acceleratedMotion ? 30 : 340, runId)) return false;
+        gsap.to(target, { scaleX: .82, transformOrigin: "left", duration: acceleratedMotion ? .12 : 1.08, ease: "power1.in" });
+        if (!await moveCursor(gestureOrigin.x + 28, gestureOrigin.y, acceleratedMotion ? 140 : 1_020, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 480, runId)) return false;
+        gsap.to(target, { scaleX: 1, duration: acceleratedMotion ? .12 : 1.06, ease: "power4.out" });
+        if (!await moveCursor(gestureOrigin.x + 2, gestureOrigin.y, acceleratedMotion ? 140 : 980, runId)) return false;
+        return sleep(acceleratedMotion ? 35 : 340, runId);
       }
-      gsap.to(target, { x: 2, y: -1, duration: fast ? .1 : .34, ease: "power2.out" });
-      if (!await moveCursor(gestureOrigin.x + 7, gestureOrigin.y - 4, fast ? 120 : 430, runId)) return false;
-      gsap.to(target, { x: 0, y: 0, duration: fast ? .1 : .38, ease: "power3.out" });
-      return moveCursor(gestureOrigin.x + 1, gestureOrigin.y, fast ? 120 : 460, runId);
+      if (!await sleep(acceleratedMotion ? 25 : 360, runId)) return false;
+      gsap.to(target, { x: 2, y: -1, duration: acceleratedMotion ? .1 : .66, ease: "power2.out" });
+      if (!await moveCursor(gestureOrigin.x + 7, gestureOrigin.y - 4, acceleratedMotion ? 120 : 620, runId)) return false;
+      if (!await sleep(acceleratedMotion ? 30 : 520, runId)) return false;
+      gsap.to(target, { x: 0, y: 0, duration: acceleratedMotion ? .1 : .72, ease: "power3.out" });
+      if (!await moveCursor(gestureOrigin.x + 1, gestureOrigin.y, acceleratedMotion ? 120 : 680, runId)) return false;
+      return moveCursor(gestureOrigin.x + 6, gestureOrigin.y + 2, acceleratedMotion ? 100 : 440, runId);
     };
 
     const sessionStage = (now: number): DirectorSessionStage => {
@@ -732,23 +769,27 @@ export function DirectorPresence({
       const rect = beat.mode === "text" && beat.segment
         ? findSegmentRect(target, beat.segment)
         : targetRect;
-      const documentTargetRect = toDocumentRect(targetRect);
       const documentRect = toDocumentRect(rect);
       const endX = documentRect.right - Math.min(30, documentRect.width * .14);
       const endY = documentRect.top + Math.min(42, documentRect.height * .42);
-      const noteX = beat.mode === "text" ? documentTargetRect.left + Math.min(72, documentTargetRect.width * .16) : endX;
-      const noteY = beat.mode === "text" ? documentTargetRect.top - 140 : endY;
-      if (entry) gsap.set(cursor, { x: entry.x, y: entry.y, opacity: .96 });
+      const sharedScene = target.closest<HTMLElement>("[data-live-scene]");
+      if (sharedScene && !isOpeningHeadline) {
+        sharedSceneRef.current = sharedScene;
+        sharedScene.dataset.directorSharedEdit = workedBeatId;
+        layer.dataset.directorLastSharedEdit = workedBeatId;
+        sharedScene.dataset.liveState = "observing";
+      }
+      if (entry) gsap.set(cursor, { x: entry.x, y: entry.y, opacity: 1 });
       else parkCursor();
       const startPoint = cursorPoint();
       const travelDistance = Math.hypot(endX - startPoint.x, endY - startPoint.y);
-      const travelDuration = fast
+      const travelDuration = acceleratedMotion
         ? 110
         : isOpeningHeadline
-          ? 300
+          ? 620
           : entry
-            ? 520
-            : clamp(620 + travelDistance * .22, 720, 1_520);
+            ? 720
+            : clamp(760 + travelDistance * .24, 840, 1_780);
       onStatusChange(cursorIsInViewport({ x: endX, y: endY }) ? "editing" : "elsewhere");
       if (!await moveCursor(endX, endY, travelDuration, runId)) return;
       layer.dataset.directorCue = beat.id;
@@ -756,33 +797,47 @@ export function DirectorPresence({
         layer.dataset.directorLine = line.id;
         recordLine(line);
         setBrainState("commenting", beat.id.startsWith("context:") ? "contextual-response" : "explaining-choice");
-        showNote(line.opening, noteX, noteY, target);
-        if (!await sleep(fast && !visualQa ? 70 : isOpeningHeadline ? 900 : 720, runId)) return;
-        if (isOpeningHeadline) {
-          hideNote();
-          if (!await sleep(fast && !visualQa ? 20 : 140, runId)) return;
-        }
+        if (!await typeNote(line.opening, runId)) return;
+        const openingHold = isOpeningHeadline
+          ? 1_650
+          : clamp(900 + line.opening.length * 8, 1_150, 1_700);
+        if (!await sleep(acceleratedMotion ? 70 : openingHold, runId)) return;
+        gsap.to(note, { opacity: 0, scale: .98, duration: acceleratedMotion ? .06 : .18, ease: "power2.out" });
+        if (!await sleep(acceleratedMotion ? 20 : isOpeningHeadline ? 240 : 190, runId)) return;
+        hideNote();
       }
 
       setBrainState(beat.mode === "comment" ? "commenting" : "editing", intent);
+      if (sharedSceneRef.current) {
+        sharedSceneRef.current.dataset.liveState = "editing";
+        window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: sharedSceneRef.current.dataset.liveScene } }));
+      }
       const completed = beat.mode === "text"
         ? await runTextBeat(beat, target, runId)
         : await runEffectBeat(beat, target, runId);
       if (!completed || generation !== runId) return;
 
       if (line?.resolution) {
-        if (isOpeningHeadline && !await sleep(fast && !visualQa ? 20 : 260, runId)) return;
-        showNote(line.resolution, noteX, noteY, target);
+        gsap.to(note, { opacity: 0, scale: .98, duration: acceleratedMotion ? .06 : .16, ease: "power2.out" });
+        if (!await sleep(acceleratedMotion ? 20 : isOpeningHeadline ? 320 : 220, runId)) return;
+        if (!await typeNote(line.resolution, runId)) return;
       }
-      const readingHold = line ? clamp(900 + (line.resolution ?? line.opening).length * 12, 1_350, 2_450) : 460;
-      const holdDuration = fast && !visualQa ? 100 : quiet ? 460 : readingHold;
+      const readingHold = line ? clamp(1_600 + (line.resolution ?? line.opening).length * 11, 2_100, 3_400) : 620;
+      const holdDuration = acceleratedMotion ? 100 : quiet ? 620 : readingHold;
       const holdPoint = cursorPoint();
-      if (!await moveCursor(holdPoint.x + 4, holdPoint.y + 3, holdDuration, runId)) return;
+      const held = line?.resolution
+        ? await sleep(holdDuration, runId)
+        : await moveCursor(holdPoint.x + 4, holdPoint.y + 3, holdDuration, runId);
+      if (!held) return;
+      if (sharedSceneRef.current) {
+        sharedSceneRef.current.dataset.liveState = "settling";
+        if (!await sleep(acceleratedMotion ? 35 : 520, runId)) return;
+      }
       clearTarget();
       setBrainState("roaming", "autonomous-work");
-      gsap.to(note, { opacity: 0, scale: .96, duration: fast ? .08 : .2 });
-      gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: .54, duration: fast ? .1 : .3, ease: "power2.inOut" });
-      if (!await sleep(fast ? 100 : isOpeningHeadline ? 200 : 360, runId)) return;
+      gsap.to(note, { opacity: 0, scale: .96, duration: acceleratedMotion ? .08 : .22 });
+      gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: 1, duration: acceleratedMotion ? .1 : .42, ease: "power2.inOut" });
+      if (!await sleep(acceleratedMotion ? 100 : isOpeningHeadline ? 320 : 460, runId)) return;
       running = false;
       lastWorkedBeatId = workedBeatId;
       if (quiet && intent === "autonomous-work") {
@@ -794,7 +849,7 @@ export function DirectorPresence({
       }
       currentCandidate = null;
       candidateSince = window.performance.now();
-      nextAllowedAt = window.performance.now() + (fast ? 70 : 120);
+      nextAllowedAt = window.performance.now() + (fast ? 70 : 90);
       onStatusChange(cursorIsInViewport({ x: endX + 12, y: endY + 8 }) ? "connected" : "elsewhere");
       setBrainState("roaming", "autonomous-work");
     };
@@ -841,11 +896,8 @@ export function DirectorPresence({
         selected = connected[(startIndex + 1) % connected.length];
       }
       autonomousAgendaIndex = (connected.indexOf(selected) + 1) % connected.length;
-      const mode = selected.beat.mode === "crop" || selected.beat.mode === "easing"
-        ? selected.beat.mode
-        : "nudge";
       return {
-        beat: { ...selected.beat, id: `ambient:${selected.beat.id}`, mode },
+        beat: { ...selected.beat, id: `ambient:${selected.beat.id}` },
         target: selected.target,
         score: 0,
         pointerInside: false,
@@ -882,13 +934,15 @@ export function DirectorPresence({
 
         const visitCue = `visit-${["one", "two", "three", "four", "five"][visitTier - 1]}` as ContextualCueId;
         const candidates: (ContextualCueId | "ambient")[] = [];
-        if (elapsed >= (fast ? 250 : visitTier > 1 ? 7_000 : 12_000) && !triggerSeen(visitCue)) candidates.push(visitCue);
         if (behavior.returnedFromTab && !triggerSeen("tab-return")) candidates.push("tab-return");
         if (behavior.returnedTop && !triggerSeen("returned-top")) candidates.push("returned-top");
         if (behavior.reachedEnd && !triggerSeen("reached-end")) candidates.push("reached-end");
         if ((behavior.fastScrollDetected || behavior.scrollBursts >= 2) && !triggerSeen("fast-scroll")) candidates.push("fast-scroll");
         if (behavior.directionChanges >= 2 && !triggerSeen("direction-change")) candidates.push("direction-change");
         if (behavior.revisitedSection && !triggerSeen("section-revisit")) candidates.push("section-revisit");
+        // Concrete behavior should outrank the generic visit greeting: the
+        // reaction feels timely only when it acknowledges what just happened.
+        if (elapsed >= (fast ? 250 : visitTier > 1 ? 7_000 : 12_000) && !triggerSeen(visitCue)) candidates.push(visitCue);
         if (behavior.focusBeatId === anchor.beat.id
           && now - behavior.focusSince >= (fast ? 900 : 8_500)
           && !triggerSeen("patient-reader")) candidates.push("patient-reader");
@@ -959,7 +1013,7 @@ export function DirectorPresence({
         if (focusHeld) {
           return {
             ...anchor,
-            beat: { ...anchor.beat, id: `ambient:focus:${anchor.beat.id}`, mode: "nudge" },
+            beat: { ...anchor.beat, id: `ambient:focus:${anchor.beat.id}` },
             quiet: true,
             intent: "visitor-focus" as const,
           };
@@ -975,15 +1029,27 @@ export function DirectorPresence({
       attention.scrollVelocity *= .58;
       const scrollIdle = now - lastScrollAt;
       const inputIdle = now - lastInputAt;
-      const visitorBusy = attention.scrollVelocity > .18 || attention.pointerVelocity > .65;
+      const navigationBusy = attention.scrollVelocity > .18 || scrollIdle < (fast ? 120 : 1_250);
       if (now < nextAllowedAt) {
         parkCursor();
         setBrainState("roaming", "autonomous-work");
         return;
       }
-      if (visitorBusy || scrollIdle < (fast ? 120 : 1_250) || inputIdle < (fast ? 100 : 720)) {
+      if (navigationBusy) {
         parkCursor();
-        setBrainState("observing", attention.scrollVelocity > .18 ? "navigating" : "interacting");
+        setBrainState("observing", "navigating");
+        return;
+      }
+      // Pointer activity can defer a reaction, but it must never become the
+      // engine of Javier's presence. His document-wide agenda keeps running.
+      if (attention.pointerVelocity > .65 || inputIdle < (fast ? 100 : 720)) {
+        const autonomous = autonomousCandidate();
+        if (autonomous) {
+          currentCandidate = autonomous;
+          candidateSince = now;
+          setBrainState("approaching", "autonomous-work");
+          void runBeat(autonomous).catch(failSafely);
+        }
         return;
       }
       const candidate = chooseCandidate(now);
@@ -1090,7 +1156,7 @@ export function DirectorPresence({
     gsap.set(cursor, {
       x: handoffEntry?.x ?? window.scrollX + (initialHeroRect?.right ?? window.innerWidth - 142),
       y: handoffEntry?.y ?? window.scrollY + (initialHeroRect?.top ?? 74) + 28,
-      opacity: handoffEntry ? .96 : .58,
+      opacity: 1,
     });
     onStatusChange("connected");
     interval = window.setInterval(() => {
@@ -1101,7 +1167,7 @@ export function DirectorPresence({
       const opening = targets.find(({ beat }) => beat.id === "hero-headline-indecision");
       if (opening && handoffEntry) {
         setBrainState("approaching", "figma-handoff");
-        gsap.set(cursor, { x: handoffEntry.x, y: handoffEntry.y, opacity: .96 });
+        gsap.set(cursor, { x: handoffEntry.x, y: handoffEntry.y, opacity: 1 });
         handoffTimer = window.setTimeout(() => {
           void runBeat({ ...opening, score: 100, pointerInside: false, entry: handoffEntry }).catch(failSafely);
         }, fast ? 20 : 80);
@@ -1140,13 +1206,18 @@ export function DirectorPresence({
   return (
     <div ref={layerRef} className={styles.layer} data-director-presence data-active={active ? "true" : "false"} data-director-state="observing" data-director-intent="idle" aria-hidden="true">
       {textOverlay ? (
-        <div className={styles.textOverlay} data-director-text-overlay style={textOverlay.style}>
+        <div
+          className={styles.textOverlay}
+          data-director-text-overlay
+          data-director-text-typing={textOverlay.typing ? "true" : "false"}
+          style={textOverlay.style}
+        >
           <span>{textOverlay.before}</span>
           <span data-director-current-text className={textOverlay.selected ? styles.selectedText : textOverlay.typing ? styles.typingText : undefined}>{textOverlay.current}</span>
           <span>{textOverlay.after}</span>
         </div>
       ) : null}
-      <div ref={cursorRef} className={styles.cursor} data-javier-cursor><i /><span>Javier</span></div>
+      <div ref={cursorRef} className={styles.cursor} data-javier-cursor><FigmaCursor /><span>Javier</span></div>
       <div ref={noteRef} className={styles.note} data-ambient-note>
         <span className={styles.avatar}>JO</span>
         <div><small>Javier · now</small><p /></div>

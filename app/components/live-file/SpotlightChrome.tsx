@@ -1,6 +1,7 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { commentKeyDelay } from "./commentTyping";
 import styles from "./SpotlightChrome.module.css";
 
 export type SpotlightView = {
@@ -8,6 +9,8 @@ export type SpotlightView = {
   action: string;
   rect: { top: number; left: number; width: number; height: number };
   panel: { top: number; left: number; width: number };
+  commentPanel: { top: number; left: number; width: number };
+  commentSide: "right-down" | "left-down" | "right-up" | "left-up";
   durationMs: number;
   hint: boolean;
   mandatory: boolean;
@@ -19,6 +22,24 @@ export type SpotlightView = {
   comment?: string;
   commentFirst?: boolean;
 };
+
+function TypedSpotlightComment({ copy }: { copy: string }) {
+  const [visibleCopy, setVisibleCopy] = useState("");
+
+  useEffect(() => {
+    let index = 0;
+    let timer: number | null = null;
+    const typeNext = () => {
+      index += 1;
+      setVisibleCopy(copy.slice(0, index));
+      if (index < copy.length) timer = window.setTimeout(typeNext, commentKeyDelay(copy, index));
+    };
+    timer = window.setTimeout(typeNext, 140);
+    return () => { if (timer !== null) window.clearTimeout(timer); };
+  }, [copy]);
+
+  return <strong data-comment-typing={visibleCopy !== copy ? "true" : "false"}>{visibleCopy}</strong>;
+}
 
 export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJavier, presenceStatus, onCancel, onFollow, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; followingJavier: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onFollow: () => void; onReplay: () => void; onStop: () => void }) {
   const dockExpanded = false;
@@ -58,6 +79,7 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJ
           )}
         </div>
       ) : null}
+      {followingJavier ? <div className={styles.followFrame} data-follow-frame aria-hidden="true" /> : null}
       {active ? (
         <div className={styles.overlay} data-spotlight-active>
           <div
@@ -86,13 +108,15 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJ
               className={styles.contextPanel}
               data-spotlight-context
               data-context-kind={showComment ? "comment" : "properties"}
-              style={{ top: active.panel.top, left: active.panel.left, width: active.panel.width } as CSSProperties}
+              data-chat-side={showComment ? active.commentSide : undefined}
+              data-follow-cursor-chat={showComment ? "true" : undefined}
+              style={showComment ? active.commentPanel as CSSProperties : active.panel as CSSProperties}
               aria-hidden="true"
             >
               {showComment ? (
                 <div className={styles.viewportComment}>
                   <span className={styles.avatar}>JO</span>
-                  <div><small>Javier · {commentResolved ? "resolved" : "now"}</small><strong>{active.comment}</strong></div>
+                  <div><small>Javier · {commentResolved ? "resolved" : "now"}</small>{commentResolved ? <strong data-comment-typing="false">{active.comment}</strong> : <TypedSpotlightComment key={`${active.id}:${active.phase}`} copy={active.comment ?? ""} />}</div>
                   <b>{commentResolved ? "✓" : ""}</b>
                 </div>
               ) : (

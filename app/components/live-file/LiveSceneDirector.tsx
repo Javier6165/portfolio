@@ -12,6 +12,8 @@ import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { usePathname } from "next/navigation";
 import { DirectorPresence, DirectorSafetyBoundary, type DirectorPresenceStatus } from "./DirectorPresence";
+import { FigmaCursor } from "./FigmaCursor";
+import { commentTypingDuration } from "./commentTyping";
 import { queueDirectorAction } from "./director-copy/signals";
 import { useNarrative } from "./NarrativeContext";
 import { DirectorContext } from "./LiveSceneContext";
@@ -182,7 +184,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     activeRef.current = null;
     candidateRef.current = null;
     firstIntentRef.current = 0;
-    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: followingRef.current && !disableFollowing ? .96 : 0 });
+    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: followingRef.current && !disableFollowing ? 1 : 0 });
     setSpotlight(null);
     if (active) {
       active.root.dataset.liveState = interrupted ? "interrupted" : "settled";
@@ -291,6 +293,9 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
 
       const targetRect = target.getBoundingClientRect();
       const rootRect = root.getBoundingClientRect();
+      const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
+      const cursorEndX = clamp(targetRect.left + targetRect.width * .58, 24, window.innerWidth - 96);
+      const cursorEndY = clamp(targetRect.top + targetRect.height * .42, 70, window.innerHeight - 80);
       const scrollY = lockPage();
       window.dispatchEvent(new CustomEvent("portfolio-spotlight-start", { detail: { id: config.id, mandatory } }));
       root.style.setProperty("--live-x", `${targetRect.left - rootRect.left}px`);
@@ -325,11 +330,23 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         left: clamp(safeRect.left, 16, window.innerWidth - panelWidth - 16),
         width: panelWidth,
       };
+      const commentHeight = 108;
+      const canOpenRight = cursorEndX + 28 + panelWidth <= window.innerWidth - 16;
+      const canOpenDown = cursorEndY + 20 + commentHeight <= window.innerHeight - 16;
+      const commentSide: SpotlightView["commentSide"] = `${canOpenRight ? "right" : "left"}-${canOpenDown ? "down" : "up"}`;
+      const commentPanel = {
+        top: canOpenDown ? cursorEndY + 20 : cursorEndY - commentHeight - 18,
+        left: canOpenRight ? cursorEndX + 28 : cursorEndX - panelWidth - 22,
+        width: panelWidth,
+      };
       // Comment-first pilots reserve a short reading beat even on optional
       // return visits. Otherwise the overlay would enter directly in edit mode
       // and the editorial reason for the correction would disappear.
-      const leadIn = mandatory || commentFirst ? config.readMs : 0;
-      const totalDuration = leadIn + config.spotlightMs;
+      const cursorArrivalMs = coarse ? 0 : 1_050;
+      const typedCommentLead = config.comment ? cursorArrivalMs + commentTypingDuration(config.comment) + 1_250 : 0;
+      const leadIn = mandatory || commentFirst ? Math.max(config.readMs, typedCommentLead) : 0;
+      const editDuration = Math.max(config.spotlightMs, commentFirst ? 4_800 : 4_600);
+      const totalDuration = leadIn + editDuration;
       const orderedRoots = [...registryRef.current.keys()];
       const requiredRoots = [...registryRef.current.entries()]
         .filter(([, item]) => item.requiredFirstVisit)
@@ -340,18 +357,25 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         action: config.action,
         rect: safeRect,
         panel,
+        commentPanel,
+        commentSide,
         durationMs: totalDuration,
         hint: false,
         mandatory,
         position: Math.max(1, positionRoots.indexOf(root) + 1),
         total: positionRoots.length,
-        phase: commentFirst ? "commenting" : mandatory ? "observing" : "entering",
+        phase: commentFirst || mandatory ? "observing" : "entering",
         tool: toolNames[config.tool],
         properties: config.properties,
         comment: config.comment,
         commentFirst,
       });
 
+      if (commentFirst) {
+        phaseTimersRef.current.push(window.setTimeout(() => {
+          setSpotlight((current) => current ? { ...current, phase: "commenting" } : current);
+        }, cursorArrivalMs));
+      }
       if (mandatory || commentFirst) {
         phaseTimersRef.current.push(window.setTimeout(() => {
           root.dataset.liveState = "spotlight-entering";
@@ -363,37 +387,40 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
         root.dataset.liveState = "editing";
         setSpotlight((current) => current ? { ...current, phase: "editing" } : current);
         window.dispatchEvent(new CustomEvent("portfolio-live-scene-play", { detail: { id: config.id } }));
-      }, leadIn + (commentFirst ? 460 : 1_040));
+      }, leadIn + (commentFirst ? 760 : 1_040));
       phaseTimersRef.current.push(editingTimer);
 
       if (config.comment && !commentFirst) {
-        const commentAt = leadIn + Math.max(3_800, config.spotlightMs - 3_600);
+        const commentAt = leadIn + Math.max(3_800, editDuration - 3_600);
         phaseTimersRef.current.push(window.setTimeout(() => {
           root.dataset.liveState = "commenting";
           setSpotlight((current) => current ? { ...current, phase: "commenting" } : current);
         }, commentAt));
       }
-      const settleHold = commentFirst ? 1_200 : 840;
+      const settleHold = commentFirst ? 1_450 : 1_050;
       phaseTimersRef.current.push(window.setTimeout(() => {
         root.dataset.liveState = "settling";
         setSpotlight((current) => current ? { ...current, phase: "settling" } : current);
-      }, leadIn + config.spotlightMs - settleHold));
+      }, leadIn + editDuration - settleHold));
       phaseTimersRef.current.push(window.setTimeout(() => endActive(false), totalDuration));
 
-      const coarse = window.matchMedia("(max-width: 720px), (pointer: coarse)").matches;
       if (!coarse && cursorRef.current) {
         const cursor = cursorRef.current;
-        const endX = clamp(targetRect.left + targetRect.width * .58, 24, window.innerWidth - 96);
-        const endY = clamp(targetRect.top + targetRect.height * .42, 70, window.innerHeight - 80);
+        const endX = cursorEndX;
+        const endY = cursorEndY;
         const direction = endX > window.innerWidth / 2 ? 1 : -1;
         const startX = clamp(endX + direction * 120, 22, window.innerWidth - 92);
         const startY = clamp(endY - 88, 72, window.innerHeight - 90);
-        gsap.set(cursor, { x: startX, y: startY, opacity: .72, scale: .9 });
-        cursorTimelineRef.current = gsap.timeline({ delay: leadIn / 1000 })
-          .to(cursor, { opacity: 1, scale: 1, duration: .2 }, .06)
-          .to(cursor, { duration: .66, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 28, y: endY - 22 }, { x: endX, y: endY }], curviness: 1.05 } }, .14)
-          .to(cursor, { x: endX + 3, y: endY - 3, duration: .22, ease: "power2.inOut" }, .88)
-          .to(cursor, { opacity: .96, duration: .18 }, Math.max(1.6, config.spotlightMs / 1000 - .5));
+        gsap.set(cursor, { x: startX, y: startY, opacity: 1, scale: 1 });
+        const timeline = gsap.timeline()
+          .to(cursor, { duration: .92, ease: "power3.inOut", motionPath: { path: [{ x: startX, y: startY }, { x: endX + direction * 34, y: endY - 26 }, { x: endX, y: endY }], curviness: 1.05 } }, .08);
+        const gestureAt = commentFirst ? leadIn / 1000 + .18 : 1.2;
+        timeline
+          .to(cursor, { x: endX + 8, y: endY - 4, duration: .54, ease: "power2.inOut" }, gestureAt)
+          .to(cursor, { x: endX - 3, y: endY + 2, duration: .66, ease: "power3.inOut" }, gestureAt + .68)
+          .to(cursor, { x: endX + 2, y: endY, duration: .48, ease: "power2.out" }, gestureAt + 1.52)
+          .to(cursor, { opacity: 1, duration: .12 }, Math.max(gestureAt + 2.1, editDuration / 1000 - .45));
+        cursorTimelineRef.current = timeline;
       }
     };
   }, [endActive, guidedFirstVisit, lockPage, sceneIsEligible]);
@@ -505,7 +532,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       gsap.set(cursorRef.current, {
         x: clamp(window.innerWidth - 142, 24, window.innerWidth - 96),
         y: 82,
-        opacity: .96,
+        opacity: 1,
         scale: 1,
       });
     }
@@ -690,7 +717,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
           visitTier={visitTier}
         />
       </DirectorSafetyBoundary>
-      <div ref={cursorRef} className={styles.globalCursor} data-spotlight-cursor aria-hidden="true"><i /><span>Javier</span></div>
+      <div ref={cursorRef} className={styles.globalCursor} data-spotlight-cursor aria-hidden="true"><FigmaCursor /><span>Javier</span></div>
     </DirectorContext.Provider>
   );
 }

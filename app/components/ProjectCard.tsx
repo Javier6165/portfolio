@@ -50,7 +50,7 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
   return (
     <div className="project-card-shell js-reveal">
       <Link
-        className={`project-card project-card--${project.accent}${compact ? " project-card--compact" : ""}`}
+        className={`project-card project-card--${project.accent} project-card--${project.slug}${compact ? " project-card--compact" : ""}`}
         href={`/work/${project.slug}`}
         onPointerEnter={startTracking}
         onPointerMove={trackPointer}

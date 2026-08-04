@@ -15,8 +15,9 @@ No sobrescribir originales. Las versiones servidas son copias optimizadas.
 | --- | --- | --- |
 | `public/images/portraits/hero-system.jpg` | `JaviNewPhotoDark-min.png` | Hero Live File |
 | `public/images/portraits/about-system.jpg` | `editadas/_MGL0339.jpg` | About |
+| `public/images/portraits/video-intro-placeholder.jpg` | `editadas/_MGL0247.jpg` | Placeholder de vídeo `Meet me in 60 seconds` |
 
-Hero y About conservan estos JPEG como fallback y añaden AVIF/WebP responsive `-960`/`-1440`. Los originales servidos no se sobrescriben. El sufijo `system` es un nombre histórico; ambos son los únicos assets canónicos Dark. El bootstrap precarga el AVIF de Hero; `EditorIntro` espera el decode hasta 350 ms y tiene fallback de fallo.
+Hero y About conservan estos JPEG como fallback y añaden AVIF/WebP responsive `-960`/`-1440`. Los originales servidos no se sobrescriben. El sufijo `system` es un nombre histórico; ambos son los únicos assets canónicos Dark. El bootstrap precarga el AVIF de Hero; `EditorIntro` espera el decode hasta 350 ms y tiene fallback de fallo. El poster provisional del vídeo es una copia JPEG separada para no confundirlo con ninguno de los dos stages fotográficos canónicos.
 
 ## Tarjeta social vigente
 

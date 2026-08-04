@@ -12,13 +12,16 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Idioma principal: inglés.
 - Orden de Home: Hero → Snapshot → Meet me in 60 seconds → Work → Product practice → AI-native workflow → About → References → Playground → Contact.
 - `Meet me in 60 seconds` es un atajo humano temprano, no una escena Live File. Mientras no exista media real muestra una miniatura explícitamente rotulada como placeholder; no simula reproducción ni usa autoplay.
+- Snapshot es una banda de cuatro señales, no un segundo manifiesto: nivel, experiencia, alcance `B2B platforms & systems` y práctica `AI + coded prototypes`.
+- Product practice explica una secuencia concreta `Map → Frame → Prove`; AI se reduce a `Frame → Build → Validate` y muestra solo output y human check.
 - Los casos actuales, escenarios, outcomes y métricas son ficticios y permanecen rotulados.
-- References es una preview honesta. No contiene citas ni identidades inventadas; una recomendación futura exige fuente, atribución, permiso y aprobación.
+- References es una preview honesta del layout final. No contiene citas ni identidades inventadas; una recomendación futura exige fuente, atribución, permiso y aprobación.
+- Playground se nombra como destino y enlaza al lab completo; no se presenta como una frase editorial abstracta.
 - La capa de editor es decorativa. Ningún dato profesional depende de ver una animación o comentario.
 
 ## Dirección Plan 15 — vigente
 
-- La primera visita abre durante `3–4 s` dentro de una recreación reconocible de Figma UI3; Javier está editando, reconoce al visitante y activa personalmente `Present`.
+- La primera visita abre durante aproximadamente `8 s` dentro de una recreación reconocible de Figma UI3; Javier escribe su comentario en vivo, deja una pausa de lectura y activa personalmente `Present` con un recorrido deliberado.
 - ADR-013 se sustituye en esta rama: cursor, comments, selection bounds, panels y Present adoptan deliberadamente la gramática visual de Figma para que el chiste se entienda sin explicación.
 - La intro es la única secuencia obligatoria. Snapshot ya no captura scroll; cualquier Follow posterior es voluntario, cancelable y visualmente discreto.
 - En Presentation mode desaparece el chrome de Figma. El portfolio debe sentirse editorial, fotográfico y humano, no como un dashboard ni como una herramienta persistente.
@@ -27,26 +30,29 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 ## Dirección visual
 
 - Grid editorial asimétrico de doce columnas y recomposición específica en móvil.
-- Hero, la introducción en vídeo y About usan stages editoriales; Atlas conserva el case dominante, Northstar/Pulse se comprimen como pruebas secundarias, Practice/AI usan artefactos planos y References un ledger de integridad compacto.
+- Hero, la introducción en vídeo y About usan stages editoriales; Atlas conserva el case dominante, Northstar/Pulse se comprimen como pruebas secundarias y cada case usa un campo visual inequívoco. Practice/AI usan artefactos planos y References un ledger de integridad compacto.
 - References deja de competir como capítulo principal: permanece visible y honesto, pero sale de la navegación primaria hasta disponer de recomendaciones verificadas.
 - Dark es la única dirección visual: grafito, hueso, latón apagado, Instrument Sans + Fragment Mono y fotografía oscura. No existe tema alternativo ni selector.
 - `Complexity Engine`, partículas, `Living Fold`, Three y R3F están retirados.
 - La capa de edición usa deliberadamente la gramática reconocible de Figma UI3; el portfolio en Presentation mode conserva identidad propia.
+- El Hero usa Instrument Sans a ancho natural en tres líneas y ocupa el centro vertical del primer viewport; ya no aplica la firma condensada que lo convertía en caption del retrato.
+- Home incorpora cinco entradas editoriales acotadas —columnas, corte de vídeo, case, split y timeline—. No existe un reveal genérico por sección y reduced motion conserva el estado final inmediato.
 
 ## Live WIP y Spotlight
 
 - El resultado final se diseña antes que su desviación WIP. Cada escena debe mostrar una diferencia observable, no un highlight arbitrario.
 - Gramática: `Notice → Follow → Select → Adjust → Comment? → Resolve → Return`.
 - Estados: `settled → wip → observing → spotlight-entering → editing → commenting? → settling → settled`; reduced motion usa `reduced`.
-- Director mantiene dos planos: una agenda autónoma sobre cualquier target del documento y un selector contextual limitado a targets visibles. La primera trabaja en silencio; el segundo puede traer a Javier a la zona del visitante cuando existe una señal suficiente.
+- Director mantiene dos planos: una agenda autónoma sobre cualquier target del documento y un selector contextual limitado a targets visibles. La primera conserva los mismos beats visuales completos que Follow y trabaja en silencio; el segundo puede traer a Javier a la zona del visitante cuando existe una señal suficiente.
 - La primera visita abre con un loading breve, un comentario de Javier y una acción `Present` que causa la expansión al hero; no ofrece Skip salvo reduced motion o fallo.
 - Ningún capítulo posterior a la intro es obligatorio. Snapshot, Work, Product practice, AI, About, References, Playground y Contact solo entran en Spotlight tras `Follow Javier`.
 - No hay cola entre capítulos. En primera visita, la escena requerida más temprana ya alcanzada se reencuadra aunque el visitante la haya atravesado con fast scroll.
 - La intro y cada Spotlight devuelven un estado desarmado: el siguiente capítulo exige un scroll nuevo del visitante. Los scroll/resize internos de restauración no cuentan como avance.
 - Al salir de Present la navegación queda libre y el avatar ofrece Follow. No hay una segunda captura obligatoria en Snapshot.
-- Al salir de Present, el cursor se entrega sin espera a `hero-headline-indecision`: selecciona el h1 completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. Este beat dura aproximadamente cuatro segundos, deja cada alternativa legible y es la continuación de la intro, no una acción ambiental elegible.
+- Al salir de Present, el cursor se entrega sin espera a `hero-headline-indecision`: selecciona el h1 completo, prueba nombre y rol, comete una errata y termina en el posicionamiento semántico. Es un beat deliberadamente largo: cada selección, alternativa, pausa y corrección debe poder leerse como una decisión humana. Es la continuación de la intro, no una acción ambiental elegible.
 - No existe focus trap. El cursor visitante nunca se sustituye. Con pointer fino, Javier permanece conectado mediante avatar/estado, trabaja sobre coordenadas del documento y puede salir de cámara; se pausa durante Spotlight y nunca captura scroll.
 - `DirectorPresence` mantiene una utility AI local. La agenda autoral es global, silenciosa y continua: no entra en `considering` ni cooldown. Visibilidad, centro, puntero, dwell y ritmo de scroll solo deciden cuándo interrumpirla para responder al visitante.
+- Mover el puntero puede aplazar una reacción contextual, pero no detiene la agenda autoral. Solo la navegación activa, Follow, Spotlight, pestaña oculta, touch o reduced motion pausan o cancelan trabajo.
 - Fuera del handoff inicial, un dwell claro o un trigger contextual puede acercar el cursor, comentar o hacer un cambio pequeño. Al terminar vuelve inmediatamente a su agenda global y debe completar trabajo autónomo antes de otro comentario contextual; sin Follow no recorre secciones como visita guiada.
 - Cada beat utiliza intercambios de apertura/resolución emparejados. Triggers adicionales responden a Allow/No thanks, visitas 1–5, etapas amplias de sesión, fast scroll, lectura pausada, final alcanzado, retorno arriba, cambio de dirección, vuelta de pestaña, revisita y salida de Follow. Son reglas locales con copy escrito, no IA generativa.
 - El catálogo editorial se divide por mantenimiento: `director-copy/sections.ts` para copy ligado al contenido, `generic.ts` para voz independiente del contenido y `context.ts` para sesión/acciones. Los ids son estables; un cambio de redacción no cambia el id salvo que cambie su significado.
@@ -55,10 +61,11 @@ Este documento resume lo que necesita un colaborador si recibe solo el repositor
 - Cualquier scroll cancela comentario y edición en la misma tarea, pero conserva la coordenada absoluta del cursor; Director nunca mueve cámara ni sigue al viewport.
 - Director es fail-open: el contexto de escenas tiene un modo pasivo y la presencia tiene boundary + circuit breaker. Un error apaga solo la simulación, restaura estilos y deja contenido, navegación y scroll operativos.
 - Un target sticky solo es elegible en su zona narrativa. El wordmark no puede desplazar el gag correspondiente a Work, Snapshot u otra sección.
-- Comentario máximo uno por escena, solo para explicar criterio, y visible al menos `1,3 s`.
+- Comentario máximo uno por escena, solo para explicar criterio. Intro, Director y Follow lo escriben carácter a carácter con cadencia irregular y, una vez completo, reservan al menos `1,25 s` de lectura. Como en Cursor Chat de Figma, el bocadillo nace junto al cursor y la flecha queda inmóvil mientras el mensaje está visible.
 - El tono de la capa Live File es seco, autocrítico y amable; se ríe de hábitos de diseño, nunca de clientes, compañeros, accesibilidad, privacidad o resultados.
 - La primera visita explica la regla dentro del editor: `You caught me at “one last tweak”`; Javier pulsa `Present` antes de ceder el hero.
-- Paneles y comentarios de Spotlight se anclan al viewport y se recolocan dentro de una zona segura. Una prueba geométrica verifica que no queden recortados.
+- Los paneles de propiedades se anclan al target; los comentarios de Spotlight se anclan al cursor y eligen únicamente uno de cuatro lados seguros. Una prueba geométrica verifica proximidad y ausencia de recorte.
+- Durante todo Follow, un marco violeta comparte color con cursor, avatar `JO` y selection bounds. Follow solo añade cámara, orden y Spotlight: no desbloquea una clase superior de edición.
 - Pulsar el avatar activa `Follow Javier`; el mismo avatar, rueda, teclado o `Stop following` lo cancelan.
 - Las escenas vistas son session-only: la memoria persistente puede acortar la intro, pero nunca suprime Live File en una pestaña nueva.
 - Una visita `familiar` muestra el hero final inmediatamente; no comprime el cursor en una animación sub-segundo que pueda parecer un destello.

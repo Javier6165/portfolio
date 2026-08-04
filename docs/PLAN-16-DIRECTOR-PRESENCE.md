@@ -34,7 +34,7 @@ Sobre esa base hay disparadores contextuales finitos para decisión de memoria, 
 ## Decisión de atención
 
 1. El handoff de Present activa inmediatamente `hero-headline-indecision`; el resto de Director espera a que intro y cualquier overlay terminen.
-2. Mantiene una agenda autónoma global que no depende de visibilidad; sus beats son silenciosos, pueden ocurrir fuera del viewport y se encadenan de inmediato.
+2. Mantiene una agenda autónoma global que no depende de visibilidad; sus beats son silenciosos, conservan la misma edición WIP → ajuste → final que Follow, pueden ocurrir fuera del viewport y se encadenan de inmediato.
 3. En paralelo puntúa únicamente la zona visible mediante visibilidad, centralidad, proximidad, dwell del puntero y ritmo de interacción.
 4. Una señal contextual o una pausa clara puede redirigir temporalmente el cursor a ese target visible.
 5. Tras la intervención contextual, reanuda su agenda global sin cooldown. Dos comentarios contextuales no pueden encadenarse sin trabajo autónomo intermedio. Sin Follow no hay visita guiada ni cámara automática.
@@ -67,9 +67,15 @@ El cursor vive en coordenadas absolutas del documento, no del viewport. Por eso 
 
 Así el cursor se comporta como otro colaborador dentro del archivo y nunca como un adorno fijo del viewport.
 
+## Cursor Chat y Follow
+
+Los mensajes siguen el contrato de Cursor Chat de Figma, no el de un tooltip alrededor del target. El bocadillo se calcula desde la posición actual de la flecha, elige uno de cuatro lados seguros y permanece unido al cursor mientras se escribe y durante el hold. Javier no continúa moviéndose hasta que el chat se cierra. Los comentarios permanentes de Figma pueden anclarse al canvas, pero esa no es la metáfora usada para la conversación en vivo.
+
+Follow no contiene un segundo set de ediciones. Director y Follow ejecutan el mismo beat de sección; Follow solo añade orden DOM, cámara, Spotlight y chrome de colaboración. Durante todo el estado Follow —también entre capítulos— un marco violeta comparte color con flecha, avatar `JO` y selection bounds. Stop elimina marco, captura y cursor global sin afectar al contenido final.
+
 ## Escritura humana
 
-Los headings editables incluyen Hero, Snapshot, AI y References. El primer beat del Hero selecciona el titular completo, prueba `Javier Ortiz`, `Senior Product Designer` y el posicionamiento final; los demás pueden trabajar sobre un fragmento. Cada beat:
+Los targets de texto editables incluyen Hero, el fact `B2B platforms & systems` de Snapshot, AI y References. El primer beat del Hero selecciona el titular completo, prueba `Javier Ortiz`, `Senior Product Designer` y el posicionamiento final; los demás pueden trabajar sobre un fragmento. Cada beat:
 
 1. mide el fragmento real con `Range`;
 2. mueve el cursor a su extremo —o consume las coordenadas del cursor que acaba de pulsar Present—;

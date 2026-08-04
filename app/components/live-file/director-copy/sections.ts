@@ -22,11 +22,11 @@ export const sectionCommentary = {
     { id: "section.hero.sixth-pass", intent: "self-edit", register: "warm", humor: 1, opening: "You caught the part where I question the headline for the sixth time.", resolution: "That says more than a job title. Finally." },
   ]),
   "snapshot-trust-typo": section("snapshot", [
-    { id: "section.snapshot.ending", intent: "craft", register: "professional", humor: 0, opening: "The ending can work harder.", resolution: "Small edit. Better landing." },
-    { id: "section.snapshot.trust-typo", intent: "self-edit", register: "dry", humor: 1, opening: "Trust is a dangerous word to misspell.", resolution: "Tested. Trusted. Spelled correctly." },
-    { id: "section.snapshot.cleaner-landing", intent: "craft", register: "professional", humor: 0, opening: "This sentence wants one cleaner landing.", resolution: "The sentence can keep its confidence now." },
-    { id: "section.snapshot.supervision", intent: "self-edit", register: "playful", humor: 2, opening: "The claim is fine. The typing needs supervision.", resolution: "Yes. Without the accidental anagram." },
-    { id: "section.snapshot.last-words", intent: "craft", register: "dry", humor: 0, opening: "Let’s make the last three words earn their place.", resolution: "Now the ending carries the claim." },
+    { id: "section.snapshot.scope", intent: "craft", register: "professional", humor: 0, opening: "Product terrain sounds like a conference panel.", resolution: "Scope says what a recruiter actually needs." },
+    { id: "section.snapshot.platforms-typo", intent: "self-edit", register: "dry", humor: 1, opening: "Platforms. Familiar territory, questionable spelling.", resolution: "B2B platforms and systems. Clear enough." },
+    { id: "section.snapshot.signal", intent: "craft", register: "professional", humor: 0, opening: "This fact needs a stronger hiring signal.", resolution: "Context first. Tool list elsewhere." },
+    { id: "section.snapshot.cv", intent: "self-edit", register: "playful", humor: 2, opening: "Four facts. One of them was trying to write a manifesto.", resolution: "Back to the useful version." },
+    { id: "section.snapshot.recruiter", intent: "craft", register: "dry", humor: 0, opening: "Let’s answer the recruiter’s question, not invent a new one.", resolution: "Scope made visible." },
   ]),
   "video-introduction-note": section("video", [
     { id: "section.video.shortcut", intent: "craft", register: "professional", humor: 0, opening: "A sixty-second shortcut should still feel like a person.", resolution: "Fast context. No compressed sales pitch." },

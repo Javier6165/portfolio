@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-04T15:03:44Z",
+  "generatedAt": "2026-08-04T17:20:00Z",
   "title": "Design System: Javier Ortiz Portfolio",
   "extensions": {
     "colorMeta": {
@@ -55,8 +55,8 @@
     },
     "typographyMeta": {
       "display": {
-        "displayName": "Condensed Editorial Display",
-        "purpose": "Hero positioning and major section statements; the width axis is reserved for decisive display moments."
+        "displayName": "Full-width Editorial Display",
+        "purpose": "Hero positioning at natural width; tighter width-axis settings are reserved for secondary display moments."
       },
       "body": {
         "displayName": "Instrument Sans Body",
@@ -97,8 +97,8 @@
     "motion": [
       {
         "name": "editor-handoff",
-        "value": "power4.inOut / 1.08s inside a ~6.4s opening",
-        "purpose": "Hold the caught-working comment for reading, then expand the exact selected artboard into Presentation mode."
+        "value": "power4.inOut / 1.08s inside a ~8s opening",
+        "purpose": "Type the caught-working comment live, hold its completed thought, then expand the exact selected artboard into Presentation mode."
       },
       {
         "name": "interface-standard",
@@ -112,8 +112,18 @@
       },
       {
         "name": "director-reading-hold",
-        "value": "1.35s–2.45s based on copy length",
-        "purpose": "Give contextual comments enough time to be read before clearing."
+        "value": "irregular live typing + 1.25s–3.4s completed-copy hold",
+        "purpose": "Make every Intro, Director and Follow comment visibly authored before it is held for reading and cleared."
+      },
+      {
+        "name": "director-action-cycle",
+        "value": "inspect → adjust → verify / no inter-beat cooldown",
+        "purpose": "Make autonomous work read as complete human actions instead of random cursor jumps or decorative nudges."
+      },
+      {
+        "name": "editorial-entry-cuts",
+        "value": "IntersectionObserver + GSAP / 0.46s–0.82s / power4.out",
+        "purpose": "Reveal five authored Home moments through frame cuts, evidence columns and split composition without repeating one generic entrance."
       },
       {
         "name": "reduced-motion",
@@ -180,7 +190,7 @@
   ],
   "narrative": {
     "northStar": "The Interrupted Working File",
-    "overview": "The portfolio begins inside recognisable Figma UI3 while Javier is still refining the real hero. Activating Present removes the tool completely and reveals a dark editorial dossier; Figma is the setup, not the permanent skin.\n\nThe finished world is calm, exact and human: integrated monochrome photography, condensed editorial type, thin rules, carbon surfaces and one restrained brass accent. Interface theatre stays subordinate to Javier and his work.",
+    "overview": "The portfolio begins inside recognisable Figma UI3 while Javier is still refining the real hero. Activating Present removes the tool completely and reveals a dark editorial dossier; Figma is the setup, not the permanent skin.\n\nThe finished world is calm, exact and human: integrated monochrome photography, full-width editorial type, thin rules, carbon surfaces and one restrained brass accent. Interface theatre stays subordinate to Javier and his work.",
     "keyCharacteristics": [
       "Authentic white UI3 chrome only during the opening.",
       "Carbon, bone-white and muted-brass editorial presentation after Present.",
@@ -194,8 +204,8 @@
         "section": "colors"
       },
       {
-        "name": "The Condensed Signature Rule",
-        "body": "Use the width axis for Javier's name and decisive display moments, not for continuous reading.",
+        "name": "The Full-Width Statement Rule",
+        "body": "The Hero uses Instrument Sans at natural width, no more than 6rem, in three deliberate lines that share the photographic field.",
         "section": "typography"
       },
       {

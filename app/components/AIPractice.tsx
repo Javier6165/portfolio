@@ -9,38 +9,22 @@ const stages = [
     index: "01",
     label: "Frame",
     title: "Structure context and risk",
-    task: "Turn a broad request into constraints, unknowns and a decision to test.",
-    tools: ["Claude", "Codex"],
     output: "Structured brief + risk map",
     check: "Accuracy · confidentiality · product intent",
   },
   {
-    id: "explore",
-    index: "02",
-    label: "Explore",
-    title: "Create constrained options",
-    task: "Compare interaction models against rules, edge cases and delivery cost.",
-    tools: ["Figma Make", "Claude"],
-    output: "Option set + explicit trade-offs",
-    check: "Coherence · feasibility · inclusion",
-  },
-  {
     id: "build",
-    index: "03",
+    index: "02",
     label: "Build",
     title: "Make the behaviour testable",
-    task: "Move beyond static screens and expose the risky interaction in code.",
-    tools: ["Codex", "Cursor", "Lovable"],
     output: "Functional prototype",
     check: "Interaction · accessibility · failure states",
   },
   {
     id: "validate",
-    index: "04",
+    index: "03",
     label: "Validate",
     title: "Collect evidence, not approval",
-    task: "Observe where the model breaks and feed the evidence back into the product decision.",
-    tools: ["Prototype", "Figma"],
     output: "Findings + next decision",
     check: "Signal quality · bias · accountable choice",
   },
@@ -57,19 +41,6 @@ function StageArtifact({ stage, simulation, onRun }: { stage: Stage; simulation:
         <div className={styles.brief}>
           <p>“Operators need to publish complex rules faster.”</p>
           <dl><div><dt>Risk</dt><dd>Unknown consequence</dd></div><div><dt>Decision</dt><dd>What must remain true?</dd></div><div><dt>Constraint</dt><dd>No silent changes</dd></div></dl>
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === "explore") {
-    return (
-      <div className={`${styles.artifact} ${styles.explore}`}>
-        <div className={styles.artifactBar}><span>OPTION SPACE / CONSTRAINED</span><b>3 routes</b></div>
-        <div className={styles.options}>
-          <article><small>A</small><strong>Form first</strong><span>Fast · opaque</span></article>
-          <article className={styles.selected}><small>B</small><strong>Impact first</strong><span>Clear · testable</span></article>
-          <article><small>C</small><strong>Graph first</strong><span>Powerful · dense</span></article>
         </div>
       </div>
     );
@@ -159,23 +130,21 @@ export function AIPractice() {
             aria-controls="ai-workflow-viewer"
             tabIndex={active === stage.id ? 0 : -1}
             key={stage.id}
+            aria-label={`${stage.label}: ${stage.title}`}
             onClick={() => setActive(stage.id)}
             onKeyDown={(event) => moveTab(event, index)}
           >
-            <span>{stage.index}</span><strong>{stage.label}</strong><small>{stage.title}</small>
+            <span>{stage.index}</span><strong>{stage.label}</strong>
           </button>
         ))}
       </div>
       <div className={styles.viewer} id="ai-workflow-viewer" role="tabpanel" aria-labelledby={`ai-tab-${active}`}>
         <StageArtifact stage={active} simulation={simulation} onRun={runSimulation} />
         <dl className={styles.meta}>
-          <div><dt>Task</dt><dd>{current.task}</dd></div>
-          <div><dt>Tools</dt><dd className={styles.tools}>{current.tools.map((tool) => <span key={tool}>{tool}</span>)}</dd></div>
           <div><dt>Output</dt><dd>{current.output}</dd></div>
           <div><dt>Human check</dt><dd>{current.check}</dd></div>
         </dl>
       </div>
-      <aside className={styles.guardrail}><span>Where I do not delegate</span><p>Product judgement, privacy decisions, accessibility and final quality remain accountable human work.</p></aside>
     </div>
   );
 }

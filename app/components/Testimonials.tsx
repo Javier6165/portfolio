@@ -21,8 +21,8 @@ export function Testimonials() {
     <section className={`section shell ${styles.section}`} id="testimonials" aria-labelledby="testimonials-title">
       <header className={styles.heading}>
         <p className="kicker">06 / References — preview</p>
-        <h2 id="testimonials-title">How the work feels from the other side of the table.</h2>
-        <p>The structure is ready for verified recommendations. Until the words, source and permission exist, no quote or identity is simulated.</p>
+        <h2 id="testimonials-title">What collaborators say—once verified.</h2>
+        <p>This is the final layout, not a fabricated testimonial. Real words appear only with a named source, context and permission.</p>
       </header>
 
       <LiveScene
@@ -74,10 +74,11 @@ export function Testimonials() {
                 </>
               ) : (
                 <div className={styles.pending}>
-                  <span>Placeholder · source required</span>
-                  <h3>{current.title}</h3>
+                  <span>Layout preview · source required</span>
+                  <h3>{current.perspective}</h3>
                   <p>{current.prompt}</p>
-                  <dl><div><dt>Required</dt><dd>Approved wording</dd></div><div><dt>Required</dt><dd>Name + professional context</dd></div><div><dt>Required</dt><dd>Publication permission</dd></div></dl>
+                  <p className={styles.quoteMeasure}>A verified recommendation will sit here in the speaker’s own words, at roughly this readable length.</p>
+                  <dl><div><dt>Quote</dt><dd>Approved wording</dd></div><div><dt>Context</dt><dd>Name + professional role</dd></div><div><dt>Permission</dt><dd>Approved for publication</dd></div></dl>
                 </div>
               )}
               <p className={styles.integrity}><i aria-hidden="true" /> No testimonial is published without a source.</p>

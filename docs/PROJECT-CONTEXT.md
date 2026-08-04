@@ -30,9 +30,11 @@ La Home vigente recorre hero → Snapshot → Meet me in 60 seconds → Work →
 - Retrato oscuro integrado en el hero y servido en formatos responsive.
 - Un único sistema Dark evita UI y QA duplicadas que no añadían valor al posicionamiento.
 - Product practice y AI son workflows accesibles con outputs y comportamiento real, presentados como artefactos planos en vez de una sucesión de paneles.
+- Snapshot evita repetir el posicionamiento del Hero y concentra cuatro señales de contratación. AI presenta tres decisiones —Frame, Build y Validate— en lugar de una taxonomía de herramientas.
+- Los tres casos conservan la composición sin cards, pero sus artefactos y dirección izquierda/derecha hacen inequívoco dónde termina uno y empieza el siguiente.
 - Northstar demuestra propagación de tokens en tres contextos.
 - El framework de evidencia admite capturas, comparativas, vídeo, Figma y demos click-to-load.
-- References usa un ledger tipado, compacto y fuera de la navegación principal; no atribuye citas o identidades mientras no existan fuentes y permisos.
+- References usa un ledger tipado, compacto y fuera de la navegación principal; enseña la medida del layout sin atribuir citas o identidades mientras no existan fuentes y permisos.
 - La experiencia recuerda visitas solo con consentimiento y se degrada a una web estática completa.
 
 ## Estado y límites

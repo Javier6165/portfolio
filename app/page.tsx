@@ -26,7 +26,7 @@ function AboutPortrait() {
 
 function VideoIntroduction() {
   return (
-    <section className={`section shell ${styles.videoIntroduction}`} id="meet-javier" aria-labelledby="video-introduction-title">
+    <section className={`section shell ${styles.videoIntroduction}`} id="meet-javier" aria-labelledby="video-introduction-title" data-home-entry="cut">
       <header className={styles.videoIntroductionHeading}>
         <h2 id="video-introduction-title">Meet me in 60 seconds.</h2>
         <p>A quick, human overview for people deciding whether to go deeper into the work.</p>
@@ -34,9 +34,7 @@ function VideoIntroduction() {
       <figure className={styles.videoPlaceholder} aria-label="Placeholder for Javier Ortiz's 60-second introduction video.">
         <div className={styles.videoStill}>
           <picture>
-            <source type="image/avif" srcSet="/images/portraits/about-system-960.avif 960w, /images/portraits/about-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 82vw" />
-            <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 82vw" />
-            <img src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
+            <img src="/images/portraits/video-intro-placeholder.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
           </picture>
           <span className={styles.videoStatus}>Placeholder · final video pending</span>
           <span className={styles.videoPlay} aria-hidden="true"><i /></span>
@@ -56,7 +54,7 @@ export default function Home() {
     <>
       <EditorIntro />
 
-      <section className={`section shell ${styles.snapshot}`} id="experience" aria-labelledby="snapshot-title">
+      <section className={`section shell ${styles.snapshot}`} id="experience" aria-label="Javier Ortiz at a glance">
         <LiveScene
           id="snapshot-clarify"
           verb="clarify"
@@ -75,14 +73,10 @@ export default function Home() {
           draftLabel="Draft · rhythm uneven"
           className={styles.snapshotScene}
         >
-          <div className={styles.snapshotLead}>
-            <p className="kicker">01 / Snapshot</p>
-            <h2 id="snapshot-title">I turn complex product logic into decisions people can see, test and trust.</h2>
-          </div>
-          <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance">
+          <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts">
             <li><span>Level</span><strong>Senior Product Designer</strong><small>Recent Lead responsibility</small></li>
             <li><span>Experience</span><strong>5+ years at GiG</strong><small>Marbella · Remote</small></li>
-            <li><span>Product terrain</span><strong>Rules · CMS · Backoffice</strong><small>Systems and operational tools</small></li>
+            <li><span>Product scope</span><strong id="snapshot-scope">B2B platforms &amp; systems</strong><small>Rules · CMS · Backoffice</small></li>
             <li><span>Working edge</span><strong>AI + coded prototypes</strong><small>From screen to behaviour</small></li>
           </ul>
         </LiveScene>
@@ -97,7 +91,7 @@ export default function Home() {
           <h2 id="work-title">Product systems made inspectable.</h2>
           <p>Concept previews for how real rule engine, design system and AI case studies will be told. Names, metrics and outcomes remain fictitious.</p>
         </header>
-        <div className="project-list">
+        <div className="project-list" data-home-entry="case">
           {projects.map((project, index) => index === 0 ? (
             <LiveScene
               id="work-frame"
@@ -124,8 +118,8 @@ export default function Home() {
       <section className={`section shell ${styles.practice}`} id="approach" aria-labelledby="practice-title">
         <header className={styles.sectionHeading}>
           <p className="kicker">03 / Product practice</p>
-          <h2 id="practice-title">I make the system visible before I make the interface.</h2>
-          <p>I turn rules, actors and edge cases into a shared model that product, design and engineering can question—and then prove through behaviour.</p>
+          <h2 id="practice-title">How I move complex product work from ambiguity to evidence.</h2>
+          <p>A repeatable three-step practice: map the system, frame the decision and prototype the risky behaviour before delivery.</p>
         </header>
         <LiveScene
           id="practice-connect"
@@ -151,8 +145,8 @@ export default function Home() {
         <div className={`shell ${styles.aiInner}`}>
           <header className={styles.aiHeading}>
             <p className="kicker">04 / AI-native product practice</p>
-            <h2 id="ai-title">How I use AI to frame, prototype and validate product decisions.</h2>
-            <p>AI shortens the distance between a question and useful evidence. Product judgement, privacy and final quality remain accountable human work.</p>
+            <h2 id="ai-title">AI gets me to evidence faster.</h2>
+            <p>I use it to frame the problem, prototype risky behaviour and validate a decision before the team commits.</p>
           </header>
           <LiveScene
             id="ai-operationalise"
@@ -190,7 +184,7 @@ export default function Home() {
           draftLabel="Draft · crop fighting the story"
           className={styles.aboutScene}
         >
-          <div className={styles.aboutSpread}>
+          <div className={styles.aboutSpread} data-home-entry="split">
             <AboutPortrait />
             <div className={styles.aboutCopy}>
               <p className="kicker">05 / About</p>
@@ -207,8 +201,8 @@ export default function Home() {
 
       <section className={`section shell ${styles.playground}`} id="playground" aria-labelledby="playground-title">
         <header className={styles.playgroundHeading}>
-          <div><p className="kicker">07 / Experimental shelf</p><h2 id="playground-title">Small experiments. Serious curiosity.</h2></div>
-          <p>Motion studies and coded ideas used to explore a behaviour, not decorate a page.</p>
+          <div><p className="kicker">07 / Playground</p><h2 id="playground-title">A playground for motion, code and interaction.</h2></div>
+          <p>Open the separate lab for small studies that test one behaviour without becoming a full case study.</p>
         </header>
         <LiveScene
           id="playground-experiment"
@@ -225,9 +219,9 @@ export default function Home() {
           draftLabel="Draft · motion without rhythm"
           className={styles.playgroundScene}
         >
-          <div className={styles.playgroundShelf}>
+          <div className={styles.playgroundShelf} data-home-entry="timeline">
             <PlaygroundStudy />
-            <div className={styles.playgroundMeta}><span>LAB / 001</span><strong>Kinetic type study</strong><p>Testing rhythm, hierarchy and handoff through a restrained typographic loop.</p><Link className="text-link" href="/playground">Open playground <ArrowIcon /></Link></div>
+            <div className={styles.playgroundMeta}><span>LAB / 001</span><strong>Kinetic type study</strong><p>Testing rhythm, hierarchy and handoff through a restrained typographic loop.</p><Link className="text-link" href="/playground">Enter the playground <ArrowIcon /></Link></div>
           </div>
         </LiveScene>
       </section>

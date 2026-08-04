@@ -27,11 +27,18 @@
   cursor: pointer;
   font: 600 .62rem/1 var(--font-sans);
   white-space: nowrap;
+  /* impeccable-disable-next-line layout-transition -- The compact Follow pill must grow its real keyboard hit area with its revealed label. */
   transition: width 300ms cubic-bezier(.16,1,.3,1), border-color 180ms ease;
 }
 .dockToggle:hover,
 .dockToggle:focus-visible { width: 8.85rem; border-color: color-mix(in srgb, #0d99ff 60%, var(--line)); }
-.dockToggle > span:last-child { max-width: 0; overflow: hidden; opacity: 0; transition: max-width 300ms cubic-bezier(.16,1,.3,1), opacity 180ms ease; }
+.dockToggle > span:last-child {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  /* impeccable-disable-next-line layout-transition -- Text disclosure tracks the pill's real interactive width rather than faking a visual-only scale. */
+  transition: max-width 300ms cubic-bezier(.16,1,.3,1), opacity 180ms ease;
+}
 .dockToggle:hover > span:last-child,
 .dockToggle:focus-visible > span:last-child { max-width: 6rem; opacity: 1; }
 .dockToggle > i { position: absolute; top: .28rem; left: 2.05rem; width: .48rem; aspect-ratio: 1; border: 2px solid var(--canvas); border-radius: 50%; background: #0acf83; }
@@ -49,12 +56,13 @@
 .dock p,
 .dockActions { display: none; }
 
-.overlay { position: fixed; z-index: 190; inset: 0; pointer-events: none; }
+.overlay { --collaborator-color:#9747ff; position: fixed; z-index: 190; inset: 0; pointer-events: none; }
 .overlay::before { display: none; }
+.followFrame { --collaborator-color:#9747ff; position:fixed; z-index:189; inset:4px; border:2px solid var(--collaborator-color); pointer-events:none; box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--collaborator-color) 18%,transparent); animation:frame-in 260ms cubic-bezier(.16,1,.3,1) both; }
 
 .focus {
   position: fixed;
-  border: 1.5px solid #0d99ff;
+  border: 1.5px solid var(--collaborator-color);
   pointer-events: none;
   animation: focus-in 260ms cubic-bezier(.16,1,.3,1) both;
 }
@@ -64,7 +72,7 @@
   position: absolute;
   width: .55rem;
   height: .55rem;
-  border: 1.5px solid #0d99ff;
+  border: 1.5px solid var(--collaborator-color);
   background: white;
 }
 .focus::before { top: -.35rem; left: -.35rem; }
@@ -85,6 +93,7 @@
   background: white;
   color: #202020;
   box-shadow: 0 .6rem 1.8rem rgba(0,0,0,.16);
+  /* impeccable-disable-next-line overused-font -- Spotlight chrome deliberately mirrors Figma's neutral system UI. */
   font-family: Arial, Helvetica, sans-serif;
   pointer-events: auto;
   animation: bar-in 320ms cubic-bezier(.16,1,.3,1) both;
@@ -95,7 +104,7 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #9747ff;
+  background: var(--collaborator-color);
   color: white;
   font: 600 .55rem/1 Arial, sans-serif;
 }
@@ -104,7 +113,7 @@
 .bar strong { font-size: .72rem; font-weight: 600; }
 .action { display: none; }
 .progress { position: absolute; right: .5rem; bottom: 0; left: .5rem; height: 2px; overflow: hidden; background: #e8e8e8; }
-.progress::after { content: ""; display: block; width: 100%; height: 100%; background: #0d99ff; transform-origin: left; animation: progress var(--spotlight-duration) linear both; }
+.progress::after { content: ""; display: block; width: 100%; height: 100%; background: var(--collaborator-color); transform-origin: left; animation: progress var(--spotlight-duration) linear both; }
 .bar button,
 .locked {
   min-height: 2rem;
@@ -119,7 +128,15 @@
 
 .contextPanel { position: fixed; z-index: 5; pointer-events: none; animation: context-in 320ms cubic-bezier(.16,1,.3,1) both; }
 .viewportProperties,
-.viewportComment { border: 1px solid #dedede; border-radius: .6rem; background: white; color: #202020; box-shadow: 0 .75rem 2rem rgba(0,0,0,.18); font-family: Arial, Helvetica, sans-serif; }
+.viewportComment {
+  border: 1px solid #dedede;
+  border-radius: .6rem;
+  background: white;
+  color: #202020;
+  box-shadow: 0 .75rem 2rem rgba(0,0,0,.18);
+  /* impeccable-disable-next-line overused-font -- Comments belong to the Figma reference layer, not the portfolio's editorial typography. */
+  font-family: Arial, Helvetica, sans-serif;
+}
 .viewportProperties { padding: .65rem; }
 .viewportProperties > div { display: flex; justify-content: space-between; gap: 1rem; padding: .05rem .1rem .55rem; border-bottom: 1px solid #e7e7e7; }
 .viewportProperties small,
@@ -128,10 +145,15 @@
 .viewportProperties ul { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .35rem; margin-top: .55rem; }
 .viewportProperties li { min-width: 0; padding: .5rem .45rem; overflow: hidden; border-radius: .35rem; background: #f4f4f4; font-size: .61rem; text-overflow: ellipsis; white-space: nowrap; }
 .viewportComment { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: .7rem; align-items: center; padding: .7rem; }
-.viewportComment::before { content: ""; position: absolute; top: -.34rem; right: 1.25rem; width: .62rem; aspect-ratio: 1; border-top: 1px solid #dedede; border-left: 1px solid #dedede; background: white; transform: rotate(45deg); }
+.viewportComment::before { content: ""; position: absolute; top: -.34rem; left: 1rem; width: .62rem; aspect-ratio: 1; border-top: 1px solid #dedede; border-left: 1px solid #dedede; background: white; transform: rotate(45deg); }
+.contextPanel[data-chat-side="left-down"] .viewportComment::before { right:1rem; left:auto; }
+.contextPanel[data-chat-side="right-up"] .viewportComment::before,
+.contextPanel[data-chat-side="left-up"] .viewportComment::before { top:auto; bottom:-.34rem; border:0; border-right:1px solid #dedede; border-bottom:1px solid #dedede; }
+.contextPanel[data-chat-side="left-up"] .viewportComment::before { right:1rem; left:auto; }
 .viewportComment > div { display: grid; gap: .1rem; }
 .viewportComment strong { font-size: .82rem; font-weight: 600; line-height: 1.3; }
-.viewportComment > b { color: #0d99ff; font-weight: 600; }
+.viewportComment strong[data-comment-typing="true"]::after { content: ""; display: inline-block; width: 1px; height: .88em; margin-left: .12rem; background: #202020; animation: comment-caret .72s steps(1,end) infinite; vertical-align: -.04em; }
+.viewportComment > b { color: var(--collaborator-color); font-weight: 600; }
 
 .hint {
   position: fixed;
@@ -153,7 +175,9 @@
 @keyframes focus-in { from { opacity: 0; transform: scale(.99); } }
 @keyframes bar-in { from { opacity: 0; transform: translateY(-.45rem); } }
 @keyframes context-in { from { opacity: 0; transform: translateY(.4rem) scale(.99); } }
+@keyframes frame-in { from { opacity:0; transform:scale(.998); } }
 @keyframes progress { from { transform: scaleX(0); } }
+@keyframes comment-caret { 50% { opacity: 0; } }
 
 @media (max-width: 720px) {
   .dock { top: auto; right: .8rem; bottom: .8rem; left: auto; }
@@ -169,6 +193,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .dock,
+  .followFrame,
   .focus,
   .bar,
   .progress::after,

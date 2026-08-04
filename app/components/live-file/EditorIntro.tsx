@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+import { commentKeyDelay, commentTypingDuration } from "./commentTyping";
+import { FigmaCursor } from "./FigmaCursor";
 import { useNarrative } from "./NarrativeContext";
 import styles from "./EditorIntro.module.css";
 
@@ -23,6 +25,9 @@ export type IntroPhase =
 
 type IntroRuntimeMode = "first" | "return" | "familiar" | "static";
 type ToolIconName = "select" | "frame" | "shape" | "pen" | "text" | "comment" | "actions" | "code" | "play" | "chevron";
+
+const INTRO_CHAT_EMPHASIS = "Oh—sorry.";
+const INTRO_CHAT_COPY = `${INTRO_CHAT_EMPHASIS} You caught me working.`;
 
 function runtimeMode(): IntroRuntimeMode {
   const value = document.documentElement.dataset.narrative;
@@ -50,6 +55,7 @@ export function EditorIntro() {
   const { completeIntro, reducedMotion, replayToken } = useNarrative();
   const [phase, setPhase] = useState<IntroPhase>("editing");
   const [expanded, setExpanded] = useState(false);
+  const [chatText, setChatText] = useState("");
   const stageRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -61,6 +67,7 @@ export function EditorIntro() {
   const figmaChromeRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const expansionRef = useRef<gsap.core.Tween | null>(null);
+  const chatTypingTimersRef = useRef<number[]>([]);
   const activeRef = useRef(false);
   const introLockRef = useRef<{ overflow: string; paddingRight: string } | null>(null);
 
@@ -68,6 +75,8 @@ export function EditorIntro() {
     activeRef.current = false;
     timelineRef.current?.kill();
     expansionRef.current?.kill();
+    chatTypingTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    chatTypingTimersRef.current = [];
     const stage = stageRef.current;
     const frame = frameRef.current;
     if (stage) stage.dataset.expanded = "true";
@@ -104,6 +113,9 @@ export function EditorIntro() {
 
     timelineRef.current?.kill();
     expansionRef.current?.kill();
+    chatTypingTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    chatTypingTimersRef.current = [];
+    setChatText("");
     setExpanded(false);
     stage.dataset.expanded = "false";
 
@@ -150,6 +162,21 @@ export function EditorIntro() {
     gsap.set(chat, { autoAlpha: 0, y: 8, scale: .98 });
     gsap.set(selection, { x: 0 });
 
+    const chatStartMs = 1_080;
+    let chatElapsedMs = 0;
+    [...INTRO_CHAT_COPY].forEach((_character, index) => {
+      chatElapsedMs += commentKeyDelay(INTRO_CHAT_COPY, index);
+      chatTypingTimersRef.current.push(window.setTimeout(() => {
+        if (activeRef.current) setChatText(INTRO_CHAT_COPY.slice(0, index + 1));
+      }, chatStartMs + chatElapsedMs));
+    });
+    const chatTypedAt = (chatStartMs + commentTypingDuration(INTRO_CHAT_COPY)) / 1_000;
+    const presentAt = chatTypedAt + 1.42;
+    const chatOutAt = presentAt + .08;
+    const travelAt = chatOutAt + .12;
+    const clickAt = travelAt + 1.44;
+    const expandAt = clickAt + .42;
+
     const expandFrame = () => {
       setPhase("expanding");
       document.body.dataset.directorHandoff = "hero-headline";
@@ -176,8 +203,8 @@ export function EditorIntro() {
       .to(selection, { x: 2, duration: .24, yoyo: true, repeat: 1, ease: "power2.inOut" }, .48)
       .call(() => setPhase("caught"), [], .96)
       .to(chat, { autoAlpha: 1, y: 0, scale: 1, duration: .3, ease: "power2.out" }, 1.02)
-      .call(() => setPhase("presenting"), [], 3.3)
-      .to(chat, { autoAlpha: 0, y: -5, duration: .28, ease: "power2.in" }, 3.38)
+      .call(() => setPhase("presenting"), [], presentAt)
+      .to(chat, { autoAlpha: 0, y: -5, duration: .28, ease: "power2.in" }, chatOutAt)
       .to(cursor, {
         duration: 1.28,
         ease: "power3.inOut",
@@ -189,9 +216,9 @@ export function EditorIntro() {
           ],
           curviness: .75,
         },
-      }, 3.48)
-      .to(present, { scale: .96, duration: .12, yoyo: true, repeat: 1, ease: "power2.inOut" }, 4.92)
-      .add(expandFrame, 5.34);
+      }, travelAt)
+      .to(present, { scale: .96, duration: .12, yoyo: true, repeat: 1, ease: "power2.inOut" }, clickAt)
+      .add(expandFrame, expandAt);
 
     const activeImage = portrait.querySelector<HTMLImageElement>("img");
     const failPortrait = () => { if (activeRef.current) finish("failed"); };
@@ -214,6 +241,8 @@ export function EditorIntro() {
 
     return () => {
       activeRef.current = false;
+      chatTypingTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+      chatTypingTimersRef.current = [];
       timeline.kill();
       expansionRef.current?.kill();
       activeImage?.removeEventListener("error", failPortrait);
@@ -292,7 +321,11 @@ export function EditorIntro() {
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
           <div className={styles.identity}>
             <p id="hero-name" className={styles.name}>Javier Ortiz</p>
-            <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>I design the calm inside complex products.</h1>
+            <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>
+              <span>I design the calm </span>
+              <span>inside complex </span>
+              <span>products.</span>
+            </h1>
             <p id="hero-role" className={styles.role}>Senior Product Designer</p>
           </div>
 
@@ -309,10 +342,10 @@ export function EditorIntro() {
         </div>
 
         <div ref={cursorRef} className={styles.multiplayerCursor} aria-hidden="true">
-          <ToolIcon name="select" /><span>Javier</span>
+          <FigmaCursor /><span>Javier</span>
         </div>
-        <div ref={cursorChatRef} className={styles.cursorChat} aria-hidden="true">
-          <i>JO</i><p><strong>Oh—sorry.</strong><span>You caught me working.</span></p>
+        <div ref={cursorChatRef} className={styles.cursorChat} data-typing={phase === "caught" && chatText !== INTRO_CHAT_COPY ? "true" : "false"} data-cursor-chat-typing aria-hidden="true">
+          <i>JO</i><p><strong>{chatText.slice(0, INTRO_CHAT_EMPHASIS.length)}</strong><span>{chatText.slice(INTRO_CHAT_EMPHASIS.length).trimStart()}</span></p>
         </div>
       </div>
     </section>

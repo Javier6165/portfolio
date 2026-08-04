@@ -22,28 +22,30 @@
   will-change: transform, opacity;
 }
 
-.cursor > i {
+.cursor > svg {
   position: absolute;
-  top: -.1rem;
-  left: -.1rem;
-  width: 0;
-  height: 0;
-  border-top: 1rem solid currentColor;
-  border-right: .66rem solid transparent;
-  filter: drop-shadow(0 .12rem .12rem rgba(0, 0, 0, .28));
-  transform: rotate(-16deg);
+  top: -.18rem;
+  left: -.14rem;
+  width: 1.38rem;
+  height: 1.62rem;
+  overflow: visible;
+  filter: drop-shadow(0 .1rem .12rem rgba(0, 0, 0, .34));
 }
 
 .cursor > span {
   position: absolute;
-  top: .88rem;
-  left: .72rem;
-  padding: .3rem .48rem;
-  border-radius: .2rem .5rem .5rem .5rem;
+  top: 1.02rem;
+  left: .76rem;
+  padding: .3rem .46rem .32rem;
+  border-radius: .12rem .38rem .38rem .38rem;
   background: #9747ff;
   color: #fff;
-  font: 600 .62rem/1 Arial, sans-serif;
+  font: 600 .6875rem/1 Arial, sans-serif;
+  letter-spacing: -.01em;
+  box-shadow: 0 .12rem .2rem rgba(0, 0, 0, .18);
 }
+
+.cursor[data-chat="true"] > span { opacity: 0; }
 
 .note {
   position: absolute;
@@ -78,13 +80,32 @@
   transform: rotate(45deg);
 }
 
+.note[data-chat-side="left-down"]::before {
+  right: 1rem;
+  left: auto;
+}
+
+.note[data-chat-side="right-up"]::before,
+.note[data-chat-side="left-up"]::before {
+  top: auto;
+  bottom: -.32rem;
+  border: 0;
+  border-right: 1px solid #dedede;
+  border-bottom: 1px solid #dedede;
+}
+
+.note[data-chat-side="left-up"]::before {
+  right: 1rem;
+  left: auto;
+}
+
 .avatar {
   width: 1.75rem;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #8b5e3c;
+  background: #9747ff;
   color: white;
   font: 600 .51rem/1 Arial, sans-serif;
 }
@@ -92,6 +113,16 @@
 .note > div { display: grid; gap: .12rem; }
 .note small { color: #555; font: 500 .6875rem/1.2 Arial, sans-serif; }
 .note p { max-width: 30ch; font: 500 .875rem/1.4 Arial, sans-serif; }
+.note[data-typing="true"] p::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: .9em;
+  margin-left: .12rem;
+  background: #202020;
+  animation: caret-blink .72s steps(1, end) infinite;
+  vertical-align: -.05em;
+}
 
 .textOverlay {
   position: absolute;

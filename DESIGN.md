@@ -56,7 +56,7 @@ components:
 
 The portfolio begins inside recognisable Figma UI3 while Javier is still refining the real hero. Activating Present removes the tool completely and reveals a dark editorial dossier; Figma is the setup, not the permanent skin.
 
-The finished world is calm, exact and human: integrated monochrome photography, condensed editorial type, thin rules, carbon surfaces and one restrained brass accent. Interface theatre stays subordinate to Javier and his work.
+The finished world is calm, exact and human: integrated monochrome photography, full-width editorial type, thin rules, carbon surfaces and one restrained brass accent. Interface theatre stays subordinate to Javier and his work.
 
 **Key Characteristics:**
 
@@ -73,13 +73,13 @@ Carbon neutrals carry the portfolio; muted brass marks authorship and emphasis, 
 
 ## Typography
 
-**Display and Body Font:** Instrument Sans Variable, using its width axis for signature display type.
+**Display and Body Font:** Instrument Sans Variable. The Hero uses the family at its natural width so the positioning can share the stage with the portrait; tighter width-axis settings remain available only for secondary display moments.
 
 **Label/Mono Font:** Fragment Mono for indexes, evidence labels and technical metadata.
 
 Display type is compact and editorial; body copy remains neutral and readable. Tiny mono labels may act as texture only when decorative content is hidden from assistive technology.
 
-**The Condensed Signature Rule.** Use the width axis for Javier's name and decisive display moments, not for continuous reading.
+**The Full-Width Statement Rule.** The Hero is a statement, not a caption: use Instrument Sans at natural width, no more than `6rem`, with three deliberate lines and enough horizontal reach to overlap the photographic field.
 
 ## Layout
 
@@ -101,11 +101,19 @@ Editorial content uses straight edges and horizontal rules. Small radii support 
 
 ### Figma opening
 
-The first-visit sequence lasts about six seconds: visible editing, a Javier comment held long enough to read, a deliberate cursor path to Present and an expansion of the same artboard into the portfolio. Return visits and reduced motion resolve immediately.
+The first-visit editor lasts about eight seconds: the caught-working comment is visibly typed, remains complete long enough to read, then a deliberate cursor path activates Present and expands the exact artboard into the portfolio. Return visits and reduced motion resolve immediately.
 
 ### Hero
 
-The final hero leads with `I design the calm inside complex products.` in the condensed signature. Javier Ortiz becomes a compact brass identity marker and Senior Product Designer a quiet supporting line; portrait and Explore complete the viewport. The photograph is masked into the carbon canvas rather than placed in a card. This hierarchy is the landing point of a visible post-Present edit, not an unexplained copy swap.
+The final hero leads with `I design the calm inside complex products.` in a full-width, three-line statement that overlaps the photographic field. Javier Ortiz is a compact brass identity marker and Senior Product Designer a quiet supporting line; portrait and Explore complete the viewport. The photograph is masked into the carbon canvas rather than placed in a card. This hierarchy is the landing point of a visible post-Present edit, not an unexplained copy swap.
+
+### Home evidence rhythm
+
+Snapshot is a compact hiring-signal band, not a second positioning statement. Selected work stays cardless, but Atlas, Northstar and Pulse use visibly different artefact fields and Pulse reverses the composition so case boundaries remain obvious. Product practice answers how Javier moves from ambiguity to evidence; the AI workflow is limited to Frame, Build and Validate with one output and one accountable human check per stage.
+
+### References and Playground
+
+References previews the final editorial measure without fabricating praise: pending states never render a blockquote or invented identity. Playground names itself as a separate lab in both heading and call to action; its experiment remains evidence of curiosity, not an ambiguous closing slogan.
 
 ### Navigation and actions
 
@@ -113,7 +121,7 @@ The header is transparent over the hero and becomes an opaque carbon surface aft
 
 ### Follow, cursor and comments
 
-Follow Javier is avatar-first and compact; a label appears only when space and hover allow. On first visit, the multiplayer cursor hands off directly from Present to the hero and visibly tries name, role and positioning before settling. Later the cursor chains a document-wide agenda without idle gaps, can work outside the viewport and stays silent unless Director has a contextual reason to redirect it. Contextual interventions can interrupt that agenda but never replace it: Javier must complete autonomous work between them. Ambient edits never capture scroll and use a Figma-violet identity label. Full Spotlight sequences require explicit Follow and always expose Stop.
+Follow Javier is avatar-first and compact; a label appears only when space and hover allow. Intro, Director and Follow share one fully opaque, sharp, filled Figma-style multiplayer cursor and the same violet angular name tag. Every collaborator comment is typed live in a Cursor Chat bubble attached directly to the arrow; the cursor stays still until its reading hold ends. On first visit, that cursor hands off directly from Present to the hero and visibly selects the full line, tries name, role and positioning at human typing speed, then corrects its typo before settling. Later it chains a document-wide agenda without idle gaps, can work outside the viewport and stays silent unless Director has a contextual reason to redirect it. Each autonomous beat uses the same complete WIP → inspect → adjust → verify action available in Follow, not a reduced decorative pointer jump. Follow adds camera, order and Spotlight—not better edits—and frames the viewport in the same violet used by the cursor, `JO` avatar and selection bounds. Contextual interventions can interrupt the agenda but never replace it: Javier must complete autonomous work between them. Ambient edits never capture scroll. Follow always exposes Stop.
 
 ## Do's and Don'ts
 

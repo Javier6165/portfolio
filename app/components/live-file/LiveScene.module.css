@@ -30,8 +30,8 @@
 :global(html[data-spotlight="active"]) .propertyPanel,
 :global(html[data-spotlight="active"]) .commentThread { opacity:0!important; }
 .globalCursor { position:fixed; z-index:210; top:0; left:0; width:1px; height:1px; color:#9747ff; opacity:0; pointer-events:none; will-change:transform,opacity; }
-.globalCursor > i { position:absolute; top:-.1rem; left:-.1rem; width:0; height:0; border-top:1rem solid currentColor; border-right:.66rem solid transparent; filter:drop-shadow(0 .12rem .12rem rgba(0,0,0,.28)); transform:rotate(-16deg); }
-.globalCursor > span { position:absolute; top:.88rem; left:.72rem; padding:.3rem .48rem; border-radius:.2rem .5rem .5rem .5rem; background:#9747ff; color:#fff; font:600 .62rem/1 Arial,sans-serif; }
+.globalCursor > svg { position:absolute; top:-.18rem; left:-.14rem; width:1.38rem; height:1.62rem; overflow:visible; filter:drop-shadow(0 .1rem .12rem rgba(0,0,0,.34)); }
+.globalCursor > span { position:absolute; top:1.02rem; left:.76rem; padding:.3rem .46rem .32rem; border-radius:.12rem .38rem .38rem .38rem; background:#9747ff; color:#fff; font:600 .6875rem/1 Arial,sans-serif; letter-spacing:-.01em; box-shadow:0 .12rem .2rem rgba(0,0,0,.18); }
 @media (max-width:720px),(pointer:coarse) {
   .globalCursor{display:none}.propertyPanel{position:fixed;z-index:205;top:auto;right:.75rem;bottom:5.4rem;left:.75rem;width:auto}.selection::after{content:"";position:absolute;right:-.8rem;bottom:-.8rem;width:1.6rem;aspect-ratio:1;border:1px solid var(--narrative-blue);border-radius:50%;background:color-mix(in srgb,var(--narrative-blue) 18%,transparent)}.commentThread{position:fixed;z-index:206;top:auto;right:.75rem;bottom:5.4rem;left:.75rem;max-width:none}.scene[data-live-state="commenting"] .propertyPanel{opacity:0}.draftStatus,.finalStatus{font-size:.56rem}
 }

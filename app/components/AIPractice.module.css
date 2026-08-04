@@ -1,14 +1,13 @@
 .root { position: relative; display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
-.pipeline { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid rgba(242,241,235,.22); }
-.pipeline button { min-height: 7.5rem; display: flex; flex-direction: column; align-items: flex-start; padding: 0.85rem; border: 0; border-right: 1px solid rgba(242,241,235,.18); background: transparent; color: #8d9396; cursor: pointer; text-align: left; transition: color 220ms ease, background 300ms ease, transform 350ms cubic-bezier(.16,1,.3,1); }
+.pipeline { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid rgba(242,241,235,.22); }
+.pipeline button { min-height: 5.4rem; display: flex; flex-direction: column; align-items: flex-start; padding: 0.85rem; border: 0; border-right: 1px solid rgba(242,241,235,.18); background: transparent; color: #8d9396; cursor: pointer; text-align: left; transition: color 220ms ease, background 300ms ease, transform 350ms cubic-bezier(.16,1,.3,1); }
 .pipeline button:last-child { border-right: 0; }
 .pipeline button:hover { color: #f2f1eb; transform: translateY(-0.2rem); }
 .pipeline button[aria-selected="true"] { background: var(--signal); color: #0d0e10; }
 .pipeline button span { font: 0.72rem var(--font-mono); }
-.pipeline button strong { margin-top: auto; font-size: 1.05rem; font-weight: 600; }
-.pipeline button small { margin-top: 0.25rem; font-size: 0.72rem; line-height: 1.25; }
+.pipeline button strong { margin-top: .9rem; font-size: 1.05rem; font-weight: 600; }
 .viewer { padding: 0.75rem 0; border-block: 1px solid rgba(242,241,235,.18); background: transparent; }
-.artifact { min-height: 24rem; overflow: hidden; border: 1px solid rgba(242,241,235,.12); border-radius: calc(var(--radius-md) - .35rem); background: #171a1e; color: #f2f1eb; animation: enter 500ms cubic-bezier(.16,1,.3,1); }
+.artifact { min-height: 22rem; overflow: hidden; border: 1px solid rgba(242,241,235,.12); border-radius: calc(var(--radius-md) - .35rem); background: #171a1e; color: #f2f1eb; animation: enter 500ms cubic-bezier(.16,1,.3,1); }
 .artifactBar { height: 3.3rem; display: flex; align-items: center; justify-content: space-between; padding: 0 1rem; border-bottom: 1px solid rgba(242,241,235,.12); color: #858b8e; font: 0.72rem var(--font-mono); text-transform: uppercase; }
 .artifactBar b { color: var(--signal); font-weight: 400; }
 .brief { min-height: 20rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: end; padding: clamp(1.4rem, 3vw, 2.5rem); }
@@ -42,16 +41,11 @@
 .findings span { color: #8c9295; font: 0.62rem var(--font-mono); text-transform: uppercase; }
 .findings strong { font-size: 0.9rem; font-weight: 520; }
 .findings i { padding: 0.3rem 0.5rem; border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent); border-radius: 999px; color: var(--signal); font: 0.58rem var(--font-mono); font-style: normal; }
-.meta { display: grid; grid-template-columns: 1.1fr .8fr .85fr 1.1fr; margin-top: 0.75rem; border-top: 1px solid rgba(242,241,235,.13); color: #f2f1eb; }
+.meta { display: grid; grid-template-columns: .8fr 1.2fr; margin-top: 0.75rem; border-top: 1px solid rgba(242,241,235,.13); color: #f2f1eb; }
 .meta > div { padding: 0.9rem 0.75rem; border-right: 1px solid rgba(242,241,235,.1); }
 .meta > div:last-child { border-right: 0; }
 .meta dt { color: #8f9597; font: 0.72rem var(--font-mono); text-transform: uppercase; }
 .meta dd { margin-top: 0.4rem; font-size: 0.78rem; line-height: 1.35; }
-.meta dd.tools { display: flex; flex-wrap: wrap; gap: 0.3rem; }
-.tools span { padding: 0.25rem 0.4rem; border: 1px solid rgba(242,241,235,.18); border-radius: 999px; }
-.guardrail { display: grid; grid-template-columns: 12rem 1fr; gap: 1rem; padding: 1rem 0; border-block: 1px solid rgba(242,241,235,.14); color: #a9adae; }
-.guardrail span { color: var(--signal); font: 0.72rem var(--font-mono); text-transform: uppercase; }
-.guardrail p { max-width: 44rem; font-size: 0.82rem; }
 .toolCloud { position: absolute; z-index: 5; inset: 8rem 8% auto; min-height: 23rem; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 0.7rem; opacity: 0; pointer-events: none; }
 .toolCloud span { padding: 0.8rem 1rem; border: 1px solid rgba(242,241,235,.22); border-radius: 999px; background: #1b1e22; color: #f2f1eb; font-size: 0.9rem; transform: rotate(var(--r, -3deg)); }
 .toolCloud span:nth-child(even) { --r: 3deg; }
@@ -61,25 +55,21 @@
 :global([data-live-state="wip"]) .pipeline,
 :global([data-live-state="observing"]) .pipeline,
 :global([data-live-state="wip"]) .viewer,
-:global([data-live-state="observing"]) .viewer,
-:global([data-live-state="wip"]) .guardrail,
-:global([data-live-state="observing"]) .guardrail { opacity: .22; transform: translateY(1.5rem); }
-.pipeline, .viewer, .guardrail, .toolCloud { transition: opacity 750ms ease, transform 900ms cubic-bezier(.16,1,.3,1); }
+:global([data-live-state="observing"]) .viewer { opacity: .22; transform: translateY(1.5rem); }
+.pipeline, .viewer, .toolCloud { transition: opacity 750ms ease, transform 900ms cubic-bezier(.16,1,.3,1); }
 @keyframes enter { from { opacity: .4; transform: translateY(.6rem); } }
 @keyframes progress { to { width: 100%; } }
 @media (max-width: 760px) {
-  .pipeline { grid-template-columns: repeat(2, 1fr); }
-  .pipeline button:nth-child(2) { border-right: 0; }
-  .pipeline button:nth-child(-n+2) { border-bottom: 1px solid rgba(242,241,235,.18); }
-  .pipeline button { min-height: 6.5rem; }
+  .pipeline { grid-template-columns: repeat(3, 1fr); }
+  .pipeline button { min-height: 5.5rem; }
   .brief { grid-template-columns: 1fr; }
   .meta { grid-template-columns: 1fr 1fr; }
   .meta > div:nth-child(2) { border-right: 0; }
   .meta > div { border-bottom: 1px solid rgba(242,241,235,.1); }
-  .guardrail { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
-  .pipeline button small { display: none; }
+  .pipeline { grid-template-columns: 1fr; }
+  .pipeline button { min-height: 4.6rem; border-right: 0; border-bottom: 1px solid rgba(242,241,235,.18); }
   .artifact { min-height: 22rem; }
   .options { grid-template-columns: 1fr; }
   .options article { min-height: 6rem; }
