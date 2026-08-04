@@ -1,27 +1,125 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-30T12:16:12Z",
+  "generatedAt": "2026-08-04T14:22:22Z",
   "title": "Design System: Javier Ortiz Portfolio",
   "extensions": {
     "colorMeta": {
-      "carbon-canvas": { "role": "neutral", "displayName": "Carbon Canvas", "canonical": "#0d0e10", "tonalRamp": ["#08090a", "#0d0e10", "#16181b", "#2a2d31", "#55595c", "#898c8d", "#c5c6c3", "#f2f1eb"] },
-      "muted-brass": { "role": "primary", "displayName": "Muted Brass", "canonical": "#d6b66b", "tonalRamp": ["#211b0d", "#3e3216", "#5f4d22", "#826a31", "#a98b48", "#d6b66b", "#ead398", "#f8edcf"] },
-      "figma-blue": { "role": "secondary", "displayName": "Figma Selection Blue", "canonical": "#0d99ff", "tonalRamp": ["#001a2c", "#003455", "#005181", "#006faf", "#0d99ff", "#64baff", "#acd9ff", "#e8f5ff"] },
-      "cursor-violet": { "role": "tertiary", "displayName": "Collaborator Violet", "canonical": "#9747ff", "tonalRamp": ["#1c0834", "#35105f", "#501b8d", "#6c29bd", "#9747ff", "#bc82ff", "#dab8ff", "#f3e7ff"] }
+      "carbon-canvas": {
+        "role": "neutral",
+        "displayName": "Carbon Canvas",
+        "canonical": "#0d0e10",
+        "tonalRamp": ["#08090a", "#0d0e10", "#16181b", "#2a2d31", "#55595c", "#898c8d", "#c5c6c3", "#f2f1eb"]
+      },
+      "carbon-surface": {
+        "role": "neutral",
+        "displayName": "Carbon Surface",
+        "canonical": "#16181b",
+        "tonalRamp": ["#090a0b", "#111214", "#16181b", "#292c30", "#4d5156", "#7e8286", "#b9bbba", "#eef0ed"]
+      },
+      "carbon-raised": {
+        "role": "neutral",
+        "displayName": "Raised Carbon",
+        "canonical": "#1d2024",
+        "tonalRamp": ["#0b0c0e", "#15171a", "#1d2024", "#30343a", "#555a60", "#83888c", "#bdc0bf", "#f0f1ee"]
+      },
+      "bone-ink": {
+        "role": "neutral",
+        "displayName": "Warm Bone",
+        "canonical": "#f2f1eb",
+        "tonalRamp": ["#24231e", "#45433b", "#69665b", "#8e8a7d", "#b2aea1", "#d4d1c7", "#e7e5dd", "#f7f6f1"]
+      },
+      "quiet-ink": {
+        "role": "neutral",
+        "displayName": "Quiet Ink",
+        "canonical": "#a5a7a5",
+        "tonalRamp": ["#191a19", "#323332", "#4c4e4c", "#676967", "#838583", "#a5a7a5", "#ced0cd", "#f2f3ef"]
+      },
+      "muted-brass": {
+        "role": "primary",
+        "displayName": "Muted Brass",
+        "canonical": "#d6b66b",
+        "tonalRamp": ["#211b0d", "#3e3216", "#5f4d22", "#826a31", "#a98b48", "#d6b66b", "#ead398", "#f8edcf"]
+      },
+      "figma-blue": {
+        "role": "secondary",
+        "displayName": "Figma Selection Blue",
+        "canonical": "#0d99ff",
+        "tonalRamp": ["#001a2c", "#003455", "#005181", "#006faf", "#0d99ff", "#64baff", "#acd9ff", "#e8f5ff"]
+      },
+      "cursor-violet": {
+        "role": "tertiary",
+        "displayName": "Collaborator Violet",
+        "canonical": "#9747ff",
+        "tonalRamp": ["#1c0834", "#35105f", "#501b8d", "#6c29bd", "#9747ff", "#bc82ff", "#dab8ff", "#f3e7ff"]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Condensed Editorial Display", "purpose": "Javier's name and major section statements." },
-      "body": { "displayName": "Instrument Sans Body", "purpose": "Readable narrative and explanation." },
-      "label": { "displayName": "Technical Mono Label", "purpose": "Indexes, evidence metadata and editor texture." }
+      "display": {
+        "displayName": "Condensed Editorial Display",
+        "purpose": "Hero positioning and major section statements; the width axis is reserved for decisive display moments."
+      },
+      "body": {
+        "displayName": "Instrument Sans Body",
+        "purpose": "Readable narrative, evidence and explanation across the portfolio."
+      },
+      "label": {
+        "displayName": "Technical Mono Label",
+        "purpose": "Indexes, evidence metadata and decorative editor texture."
+      }
     },
     "shadows": [
-      { "name": "figma-floating", "value": "0 .3rem 1.1rem rgba(0,0,0,.14)", "purpose": "Bottom toolbar and lightweight editor chrome." },
-      { "name": "comment-float", "value": "0 .7rem 2rem rgba(0,0,0,.18)", "purpose": "Transient Figma-style comments only." }
+      {
+        "name": "figma-floating",
+        "value": "0 .3rem 1.1rem rgba(0,0,0,.14)",
+        "purpose": "Bottom toolbar and lightweight editor chrome during the opening."
+      },
+      {
+        "name": "presence-dock",
+        "value": "0 .45rem 1.5rem rgba(0,0,0,.18)",
+        "purpose": "Compact Follow Javier presence control."
+      },
+      {
+        "name": "comment-float",
+        "value": "0 .7rem 2rem rgba(0,0,0,.18)",
+        "purpose": "Transient Figma-style comments only."
+      },
+      {
+        "name": "video-control",
+        "value": "0 1.5rem 5rem rgba(0,0,0,.32)",
+        "purpose": "The provisional 60-second video play control."
+      },
+      {
+        "name": "artifact-depth",
+        "value": "0 2rem 5rem rgba(0,0,0,.2)",
+        "purpose": "Bounded product evidence and concept artefacts, never editorial page containers."
+      }
     ],
     "motion": [
-      { "name": "editor-handoff", "value": "power4.inOut / 0.92s", "purpose": "Expand the exact selected artboard into Present." },
-      { "name": "interface-standard", "value": "cubic-bezier(.16,1,.3,1)", "purpose": "Measured transforms and responsive component state changes." },
-      { "name": "reduced-motion", "value": "immediate final state", "purpose": "Remove opening and live editing motion while preserving all content." }
+      {
+        "name": "editor-handoff",
+        "value": "power4.inOut / 0.92s",
+        "purpose": "Expand the exact selected artboard into Presentation mode."
+      },
+      {
+        "name": "interface-standard",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Measured transforms and responsive component state changes."
+      },
+      {
+        "name": "director-rest-cadence",
+        "value": "3.6s minimum between silent repositions",
+        "purpose": "Keep Javier present without competing continuously with reading."
+      },
+      {
+        "name": "director-reading-hold",
+        "value": "1.35s–2.45s based on copy length",
+        "purpose": "Give contextual comments enough time to be read before clearing."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "immediate final state",
+        "purpose": "Remove opening and live editing motion while preserving all content."
+      }
     ],
     "breakpoints": [
       { "name": "navigation-collapse", "value": "1000px" },
@@ -33,49 +131,90 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Bone-white action that turns muted brass on hover.",
+      "description": "Warm-bone action that turns muted brass on hover.",
       "html": "<button class=\"ds-button-primary\">OPEN CASE STUDY</button>",
-      "css": ".ds-button-primary{min-height:3.25rem;padding:.85rem 1.3rem;border:1px solid #f2f1eb;border-radius:.7rem;background:#f2f1eb;color:#0d0e10;font:600 .86rem 'Instrument Sans Variable',Arial,sans-serif;transition:transform 220ms cubic-bezier(.2,.7,.2,1),background 220ms ease}.ds-button-primary:hover{background:#d6b66b;border-color:#d6b66b;transform:translateY(-2px)}.ds-button-primary:focus-visible{outline:2px solid #d6b66b;outline-offset:5px}"
+      "css": ".ds-button-primary{min-height:3.25rem;padding:.85rem 1.3rem;border:1px solid #f2f1eb;border-radius:.7rem;background:#f2f1eb;color:#0d0e10;font:600 .86rem 'Instrument Sans Variable',Arial,sans-serif;transition:transform 220ms cubic-bezier(.2,.7,.2,1),background 220ms ease}.ds-button-primary:hover{background:#d6b66b;border-color:#d6b66b;transform:translateY(-2px)}.ds-button-primary:focus-visible{outline:2px solid #d6b66b;outline-offset:5px}.ds-button-primary:active{transform:translateY(0)}"
+    },
+    {
+      "name": "Editorial Navigation",
+      "kind": "nav",
+      "description": "Transparent hero navigation that becomes a carbon rule after scroll.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Primary navigation\"><a class=\"ds-wordmark\" href=\"#\"><i>JO</i><b>Javier Ortiz</b></a><span><a href=\"#\">Work</a><a href=\"#\">Practice</a><a href=\"#\">AI workflow</a><a href=\"#\">About</a></span></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:1.35rem 0;border-bottom:1px solid rgba(242,241,235,.16);background:#0d0e10;color:#f2f1eb;font-family:'Instrument Sans Variable',Arial,sans-serif}.ds-wordmark{display:flex;align-items:center;gap:.8rem;color:inherit;text-decoration:none}.ds-wordmark i{display:grid;place-items:center;width:2.2rem;aspect-ratio:1;border:1px solid rgba(242,241,235,.34);border-radius:50%;font:600 .62rem Arial,sans-serif;font-style:normal}.ds-wordmark b{font-size:.9rem}.ds-nav>span{display:flex;gap:2rem}.ds-nav>span a{color:#a5a7a5;font-size:.84rem;text-decoration:none}.ds-nav>span a:hover{color:#f2f1eb}.ds-nav a:focus-visible{outline:2px solid #d6b66b;outline-offset:5px}"
     },
     {
       "name": "Editorial Project Row",
       "kind": "card",
       "description": "Rule-led project container without a permanent card fill.",
-      "html": "<article class=\"ds-project\"><small>01 / PREVIEW</small><h3>Rules without the maze</h3><p>Complex product logic made inspectable.</p></article>",
-      "css": ".ds-project{padding:2rem 0;border-block:1px solid rgba(242,241,235,.34);background:transparent;color:#f2f1eb;font-family:'Instrument Sans Variable',Arial,sans-serif}.ds-project small{font:400 .58rem 'Fragment Mono',monospace;color:#a5a7a5}.ds-project h3{max-width:8ch;margin:.8rem 0 1.5rem;font-size:clamp(3rem,5.3vw,6rem);line-height:.92;letter-spacing:-.04em}.ds-project p{color:#a5a7a5}"
+      "html": "<article class=\"ds-project\"><small>01 / PREVIEW</small><h3>Rules without the maze</h3><p>Complex product logic made inspectable.</p><a href=\"#\">Open case study →</a></article>",
+      "css": ".ds-project{padding:2rem 0;border-block:1px solid rgba(242,241,235,.34);background:transparent;color:#f2f1eb;font-family:'Instrument Sans Variable',Arial,sans-serif}.ds-project small{font:400 .58rem 'Fragment Mono',monospace;color:#a5a7a5}.ds-project h3{max-width:8ch;margin:.8rem 0 1.5rem;font-size:clamp(3rem,5.3vw,6rem);font-weight:530;line-height:.92;letter-spacing:-.04em}.ds-project p{max-width:32rem;color:#a5a7a5}.ds-project a{display:inline-block;margin-top:1.5rem;padding-bottom:.3rem;border-bottom:1px solid currentColor;color:#f2f1eb;text-decoration:none}.ds-project:hover{border-color:#d6b66b}.ds-project a:focus-visible{outline:2px solid #d6b66b;outline-offset:5px}"
+    },
+    {
+      "name": "60-second Introduction",
+      "kind": "card",
+      "description": "Honest early video shortcut with a clearly provisional state and no simulated playback.",
+      "html": "<figure class=\"ds-video\"><div><small>PLACEHOLDER · FINAL VIDEO PENDING</small><button aria-label=\"Video unavailable until the final cut is ready\"><i></i></button><b>01:00</b></div><figcaption><span>Javier Ortiz · Product designer</span><span>Captions and transcript planned</span></figcaption></figure>",
+      "css": ".ds-video{margin:0;color:#f2f1eb;font-family:'Instrument Sans Variable',Arial,sans-serif}.ds-video>div{position:relative;min-height:18rem;display:grid;place-items:center;border-block:1px solid rgba(242,241,235,.34);background:linear-gradient(120deg,#070809,#1d2024 58%,#0d0e10)}.ds-video small,.ds-video b{position:absolute;font:400 .72rem 'Fragment Mono',monospace;letter-spacing:.04em}.ds-video small{top:1.25rem;left:1.25rem}.ds-video b{right:1.25rem;bottom:1.25rem}.ds-video button{width:6rem;aspect-ratio:1;display:grid;place-items:center;border:1px solid rgba(242,241,235,.62);border-radius:50%;background:rgba(13,14,16,.42);box-shadow:0 1.5rem 5rem rgba(0,0,0,.32)}.ds-video button i{width:0;height:0;margin-left:.3rem;border-top:.65rem solid transparent;border-bottom:.65rem solid transparent;border-left:1rem solid #f2f1eb}.ds-video button:focus-visible{outline:2px solid #d6b66b;outline-offset:5px}.ds-video figcaption{display:flex;justify-content:space-between;gap:1rem;padding-top:.85rem;color:#a5a7a5;font:400 .72rem 'Fragment Mono',monospace;text-transform:uppercase}"
     },
     {
       "name": "Follow Javier",
       "kind": "custom",
-      "description": "Compact avatar-first opt-in for guided edits.",
-      "html": "<button class=\"ds-follow\"><span>JO</span><b>FOLLOW JAVIER</b></button>",
-      "css": ".ds-follow{display:inline-flex;align-items:center;gap:.55rem;padding:.28rem .65rem .28rem .28rem;border:1px solid rgba(242,241,235,.34);border-radius:999px;background:#16181b;color:#f2f1eb}.ds-follow span{display:grid;place-items:center;width:2rem;aspect-ratio:1;border-radius:50%;background:#1d2024;font:600 .58rem Arial,sans-serif}.ds-follow b{font:400 .58rem 'Fragment Mono',monospace;letter-spacing:.06em}.ds-follow:focus-visible{outline:2px solid #d6b66b;outline-offset:4px}"
+      "description": "Compact avatar-first opt-in for guided edits; the label expands only on intent.",
+      "html": "<button class=\"ds-follow\"><span>JO</span><i></i><b>FOLLOW JAVIER</b></button>",
+      "css": ".ds-follow{position:relative;width:2.85rem;min-height:2.85rem;display:flex;align-items:center;gap:.45rem;overflow:hidden;padding:.28rem;border:1px solid rgba(242,241,235,.34);border-radius:999px;background:#16181b;color:#f2f1eb;box-shadow:0 .45rem 1.5rem rgba(0,0,0,.18);font:600 .62rem 'Instrument Sans Variable',Arial,sans-serif;white-space:nowrap;transition:width 300ms cubic-bezier(.16,1,.3,1),border-color 180ms ease}.ds-follow span{display:grid;place-items:center;width:2.15rem;aspect-ratio:1;flex:0 0 auto;border-radius:50%;background:#1d2024}.ds-follow i{position:absolute;top:.28rem;left:2.05rem;width:.48rem;aspect-ratio:1;border:2px solid #0d0e10;border-radius:50%;background:#0acf83}.ds-follow b{opacity:0}.ds-follow:hover,.ds-follow:focus-visible{width:8.85rem;border-color:#0d99ff}.ds-follow:hover b,.ds-follow:focus-visible b{opacity:1}.ds-follow:focus-visible{outline:2px solid #d6b66b;outline-offset:4px}"
     },
     {
       "name": "Figma Present Action",
       "kind": "custom",
       "description": "Editor-only action that owns the transition into the portfolio.",
-      "html": "<button class=\"ds-present\">▶&nbsp;&nbsp;Present&nbsp;&nbsp;⌄</button>",
-      "css": ".ds-present{min-height:2.25rem;padding:0 .65rem;border:0;border-radius:.42rem;background:#0d99ff;color:white;font:600 .7rem Arial,sans-serif}.ds-present:hover{background:#0787e3}.ds-present:focus-visible{outline:2px solid #1e1e1e;outline-offset:3px}"
+      "html": "<button class=\"ds-present\"><span aria-hidden=\"true\">▶</span><b>Present</b><span aria-hidden=\"true\">⌄</span></button>",
+      "css": ".ds-present{min-height:2.25rem;display:inline-flex;align-items:center;gap:.35rem;padding:0 .58rem;border:0;border-radius:.42rem;background:#0d99ff;color:#fff;font:600 .7rem Arial,sans-serif}.ds-present b{font:inherit}.ds-present:hover{background:#0787e3}.ds-present:focus-visible{outline:2px solid #1e1e1e;outline-offset:3px}.ds-present:active{transform:translateY(1px)}"
     },
     {
-      "name": "Figma Comment",
+      "name": "Director Comment",
       "kind": "custom",
-      "description": "Transient collaboration note attached to Javier's cursor.",
-      "html": "<aside class=\"ds-comment\"><i>JO</i><p><b>Oh—sorry.</b><span>You caught me working.</span></p></aside>",
-      "css": ".ds-comment{display:flex;gap:.65rem;width:17rem;padding:.72rem .8rem;border:1px solid #dedede;border-radius:.55rem;background:white;color:#202020;box-shadow:0 .7rem 2rem rgba(0,0,0,.18);font-family:Arial,sans-serif}.ds-comment i{display:grid;place-items:center;width:1.75rem;height:1.75rem;border-radius:50%;background:#8b5e3c;color:white;font:600 .52rem Arial,sans-serif}.ds-comment p{display:grid;margin:0}.ds-comment span{color:#5d5d5d;font-size:.72rem}"
+      "description": "Measured Figma-style collaboration note used by the contextual Director layer.",
+      "html": "<aside class=\"ds-comment\"><i>JO</i><div><small>Javier · now</small><p>Past the opening, the useful detail should start to carry the page.</p></div></aside>",
+      "css": ".ds-comment{position:relative;display:grid;grid-template-columns:auto 1fr;gap:.62rem;width:19rem;padding:.68rem .76rem;border:1px solid #dedede;border-radius:.56rem;background:#fff;color:#202020;box-shadow:0 .7rem 2rem rgba(0,0,0,.18);font-family:Arial,sans-serif}.ds-comment>i{display:grid;place-items:center;width:1.75rem;aspect-ratio:1;border-radius:50%;background:#8b5e3c;color:#fff;font:600 .51rem/1 Arial,sans-serif;font-style:normal}.ds-comment>div{display:grid;gap:.12rem}.ds-comment small{color:#555;font:500 .6875rem/1.2 Arial,sans-serif}.ds-comment p{max-width:30ch;margin:0;font:500 .875rem/1.4 Arial,sans-serif}"
     }
   ],
   "narrative": {
     "northStar": "The Interrupted Working File",
-    "overview": "The portfolio begins inside recognisable Figma UI3 while Javier refines the real hero. Present removes the tool and reveals a calm carbon editorial dossier in which interface theatre stays subordinate to Javier and his work.",
-    "keyCharacteristics": ["Authentic UI3 chrome only during the opening.", "Carbon, bone-white and muted-brass after Present.", "Native scrolling and optional guidance after handoff.", "Flat, rule-led compositions instead of generic cards."],
-    "rules": [
-      { "name": "The Rarity Rule", "body": "Brass is an accent, not a wash. Figma colors never become general brand colors.", "section": "colors" },
-      { "name": "The Condensed Signature Rule", "body": "Use the width axis for Javier's name and decisive display moments, not continuous reading.", "section": "typography" },
-      { "name": "The Flat-After-Present Rule", "body": "Once Present is active, permanent content should not look like a stack of app cards.", "section": "elevation" }
+    "overview": "The portfolio begins inside recognisable Figma UI3 while Javier is still refining the real hero. Activating Present removes the tool completely and reveals a dark editorial dossier; Figma is the setup, not the permanent skin.\n\nThe finished world is calm, exact and human: integrated monochrome photography, condensed editorial type, thin rules, carbon surfaces and one restrained brass accent. Interface theatre stays subordinate to Javier and his work.",
+    "keyCharacteristics": [
+      "Authentic white UI3 chrome only during the opening.",
+      "Carbon, bone-white and muted-brass editorial presentation after Present.",
+      "Native scrolling and optional guidance after the handoff.",
+      "Flat, rule-led compositions instead of generic rounded cards."
     ],
-    "dos": ["Do keep the opening recognisably Figma UI3 and the final portfolio recognisably Javier.", "Do preserve native scroll after Present and resolve instantly for reduced motion.", "Do use real portraits and keep fictitious cases and metrics visibly labelled.", "Do preserve noindex, nofollow and the existing Sites project until Javier authorises publication changes."],
-    "donts": ["Don't carry Figma chrome into the permanent page shell.", "Don't reintroduce neon lime, theme switching, generic card grids or oversized pill systems.", "Don't make Snapshot or any later edit mandatory.", "Don't publish an unverified reference or present a concept metric as a real result."]
+    "rules": [
+      {
+        "name": "The Rarity Rule",
+        "body": "Brass is an accent, not a wash. Figma colors never become general brand colors.",
+        "section": "colors"
+      },
+      {
+        "name": "The Condensed Signature Rule",
+        "body": "Use the width axis for Javier's name and decisive display moments, not for continuous reading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-After-Present Rule",
+        "body": "Once Present is active, permanent content should not look like a stack of app cards.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the opening recognisably Figma UI3 and the final portfolio recognisably Javier.",
+      "Do preserve native scroll after Present and resolve instantly for reduced motion.",
+      "Do use real portraits and keep fictitious cases and metrics visibly labelled.",
+      "Do preserve noindex, nofollow and the existing Sites project until Javier authorises publication changes."
+    ],
+    "donts": [
+      "Don't carry Figma chrome into the permanent page shell.",
+      "Don't reintroduce neon lime, theme switching, generic card grids or oversized pill systems.",
+      "Don't make Snapshot or any later edit mandatory.",
+      "Don't publish an unverified reference or present a concept metric as a real result."
+    ]
   }
 }
