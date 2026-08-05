@@ -32,7 +32,7 @@ test("server-renders the complete portfolio home", async () => {
   assert.match(html, /AI-native product practice/);
   assert.match(html, /How I move complex product work from ambiguity to evidence/);
   assert.match(html, /AI gets me to evidence faster/);
-  assert.match(html, /A playground for motion, code and interaction/);
+  assert.match(html, /Motion, interaction and code—tested in public/);
   assert.match(html, /References — preview/);
   assert.match(html, /not a fabricated testimonial/i);
   assert.match(html, /Layout preview · source required/);

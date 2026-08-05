@@ -17,6 +17,7 @@ import { commentTypingDuration } from "./commentTyping";
 import { queueDirectorAction } from "./director-copy/signals";
 import { useNarrative } from "./NarrativeContext";
 import { DirectorContext } from "./LiveSceneContext";
+import { readDirectorBeats, rememberDirectorBeats } from "./directorMemory";
 import { toolNames } from "./EditorPrimitives";
 import { SpotlightChrome, type SpotlightView } from "./SpotlightChrome";
 import styles from "./LiveScene.module.css";
@@ -39,6 +40,7 @@ export type LiveSceneConfig = {
   commentFirst?: boolean;
   requiredFirstVisit: boolean;
   cameraOffsetY: number;
+  directorBeatIds: readonly string[];
 };
 
 type RegisteredScene = { root: HTMLElement; config: LiveSceneConfig };
@@ -70,7 +72,6 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     markCueSeen,
     memoryDecision,
     reducedMotion,
-    replayLiveEdits,
     setAutoFollow,
     visitTier,
   } = useNarrative();
@@ -87,6 +88,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   const cursorTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const followTimerRef = useRef<number | null>(null);
   const followingRef = useRef(false);
+  const followReplayAllRef = useRef(false);
+  const pendingFollowRef = useRef(false);
   const advanceFollowRef = useRef<() => void>(() => undefined);
   const beginFollowRef = useRef<() => void>(() => undefined);
   const stopFollowRef = useRef<() => void>(() => undefined);
@@ -103,6 +106,7 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   // after Presentation mode is final until the visitor explicitly follows.
   const [guidedComplete, setGuidedComplete] = useState(true);
   const [followingJavier, setFollowingJavier] = useState(false);
+  const [pendingHeadlineFollow, setPendingHeadlineFollow] = useState(false);
   const [presenceStatus, setPresenceStatus] = useState<DirectorPresenceStatus>("connected");
 
   useEffect(() => {
@@ -188,7 +192,12 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     setSpotlight(null);
     if (active) {
       active.root.dataset.liveState = interrupted ? "interrupted" : "settled";
-      if (recordScene) persistSeen(active.config.id);
+      if (recordScene) {
+        persistSeen(active.config.id);
+        if (active.config.directorBeatIds.length) {
+          rememberDirectorBeats(readDirectorBeats(), active.config.directorBeatIds);
+        }
+      }
       window.requestAnimationFrame(() => { active.root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
       if (active.mandatory) awaitingAdvanceRef.current = true;
       unlockPage(active.scrollY, navigationDelta);
@@ -204,6 +213,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     }
     if (disableFollowing) {
       followingRef.current = false;
+      followReplayAllRef.current = false;
+      setPendingHeadlineFollow(false);
       setFollowingJavier(false);
       window.dispatchEvent(new CustomEvent("portfolio-follow-end"));
       registryRef.current.forEach((_config, root) => { root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
@@ -239,9 +250,11 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     const forced = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("live") : null;
     if (forced === "settled") return false;
     if (reducedMotion || pathname !== "/" || !autoFollow) return false;
-    if (liveReplayToken > 0) return true;
+    if (liveReplayToken > 0 || (followingRef.current && followReplayAllRef.current)) return true;
     const seen = seenRef.current ?? readSeenScenes();
     seenRef.current = seen;
+    const directorSeen = readDirectorBeats();
+    if (config.directorBeatIds.length > 0 && config.directorBeatIds.every((id) => directorSeen.has(id))) return false;
     // Persistent visit memory can vary the intro, but it must never erase the
     // core Live File story on a fresh tab. Scene suppression is session-only.
     return !seen.has(config.id);
@@ -498,6 +511,8 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     });
     if (!next) {
       followingRef.current = false;
+      followReplayAllRef.current = false;
+      setPendingHeadlineFollow(false);
       setFollowingJavier(false);
       setPresenceStatus("done");
       if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
@@ -526,6 +541,24 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
 
   const beginFollowing = useCallback(() => {
     if (reducedMotion || pathname !== "/") return;
+    const directorDisabled = new URLSearchParams(window.location.search).get("director") === "off";
+    if (!directorDisabled && liveReplayToken <= 0 && !readDirectorBeats().has("hero-headline-indecision")) {
+      pendingFollowRef.current = true;
+      setAutoFollow(true);
+      setPendingHeadlineFollow(true);
+      setPresenceStatus("editing");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    pendingFollowRef.current = false;
+    setPendingHeadlineFollow(false);
+    const liveSeen = seenRef.current ?? readSeenScenes();
+    const directorSeen = readDirectorBeats();
+    const hasRemaining = [...registryRef.current.values()].some((config) => (
+      !liveSeen.has(config.id)
+      && (config.directorBeatIds.length === 0 || config.directorBeatIds.some((id) => !directorSeen.has(id)))
+    ));
+    followReplayAllRef.current = !hasRemaining;
     setAutoFollow(true);
     followingRef.current = true;
     if (cursorRef.current) {
@@ -544,9 +577,16 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       if (sceneIsEligible(config)) root.dataset.liveState = "wip";
     });
     followTimerRef.current = window.setTimeout(() => advanceFollowRef.current(), 320);
-  }, [pathname, reducedMotion, sceneIsEligible, setAutoFollow]);
+  }, [liveReplayToken, pathname, reducedMotion, sceneIsEligible, setAutoFollow]);
 
   useEffect(() => { beginFollowRef.current = beginFollowing; }, [beginFollowing]);
+
+  useEffect(() => {
+    if (!pendingFollowRef.current || presenceStatus === "editing") return;
+    if (!readDirectorBeats().has("hero-headline-indecision")) return;
+    pendingFollowRef.current = false;
+    window.queueMicrotask(() => beginFollowRef.current());
+  }, [presenceStatus]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -658,7 +698,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
     if (!autoFollow || reducedMotion) {
       if (activeRef.current) endActive(true);
       followingRef.current = false;
-      window.queueMicrotask(() => setFollowingJavier(false));
+      window.queueMicrotask(() => {
+        setPendingHeadlineFollow(false);
+        setFollowingJavier(false);
+      });
       registryRef.current.forEach((_config, root) => { root.dataset.liveState = reducedMotion ? "reduced" : "settled"; });
     } else if (guidedFirstVisit && !guidedComplete) {
       scheduleEvaluation(300);
@@ -675,8 +718,12 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
   }), [experienceReady, liveReplayToken, reducedMotion, registerScene, settleScene]);
 
   const stopFollowing = useCallback(() => {
-    queueDirectorAction("follow-stop");
+    const wasPending = pendingFollowRef.current;
+    if (!wasPending) queueDirectorAction("follow-stop");
+    pendingFollowRef.current = false;
     followingRef.current = false;
+    followReplayAllRef.current = false;
+    setPendingHeadlineFollow(false);
     setFollowingJavier(false);
     if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 0 });
     window.dispatchEvent(new CustomEvent("portfolio-follow-end"));
@@ -695,12 +742,10 @@ export function LiveSceneDirector({ children }: { children: ReactNode }) {
       <SpotlightChrome
         active={spotlight}
         showDock={pathname === "/" && introComplete && autoFollow && !reducedMotion}
-        guidedFirstVisit={false}
-        followingJavier={followingJavier}
+        followingJavier={followingJavier || pendingHeadlineFollow}
         presenceStatus={presenceStatus}
         onCancel={() => endActive(true)}
         onFollow={beginFollowing}
-        onReplay={replayLiveEdits}
         onStop={stopFollowing}
       />
       <DirectorSafetyBoundary

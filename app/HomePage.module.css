@@ -5,7 +5,7 @@
 
 .snapshot { padding-top: clamp(4.5rem, 7vw, 7rem); }
 .snapshotScene { min-height: 16rem; padding-bottom: clamp(1rem, 2vw, 2rem); }
-.snapshotFacts { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--line-strong); transition: transform 800ms cubic-bezier(.16,1,.3,1), opacity 500ms ease, column-gap 800ms cubic-bezier(.16,1,.3,1); }
+.snapshotFacts { position: relative; box-sizing: border-box; display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--line-strong); transition: padding-inline-start 900ms cubic-bezier(.16,1,.3,1); }
 .snapshotFacts li { min-height: 12rem; display: flex; flex-direction: column; padding: 1.35rem 1.2rem 1.25rem 0; border-right: 1px solid var(--line); transition: transform 900ms cubic-bezier(.16,1,.3,1), opacity 500ms ease; }
 .snapshotFacts li:not(:first-child) { padding-left: 1.2rem; }
 .snapshotFacts li:last-child { border-right: 0; }
@@ -13,14 +13,9 @@
 .snapshotFacts strong { max-width: 14ch; margin-top: auto; font-size: clamp(1.25rem, 1.75vw, 1.75rem); font-weight: 540; line-height: 1.05; }
 .snapshotFacts small { margin-top: .45rem; color: var(--muted); font-size: .85rem; }
 :global([data-live-state="wip"]).snapshotScene .snapshotFacts,
-:global([data-live-state="observing"]).snapshotScene .snapshotFacts { column-gap: .35rem; opacity: .76; transform: translateX(-.65rem); }
-:global([data-live-state="wip"]).snapshotScene .snapshotFacts li:nth-child(2),
-:global([data-live-state="observing"]).snapshotScene .snapshotFacts li:nth-child(2) { transform: translateY(.55rem); }
-:global([data-live-state="wip"]).snapshotScene .snapshotFacts small,
-:global([data-live-state="observing"]).snapshotScene .snapshotFacts small { opacity: .38; }
-:global([data-live-state="wip"]).snapshotScene .snapshotFacts::before,
-:global([data-live-state="observing"]).snapshotScene .snapshotFacts::before { content: "RHYTHM / BASELINE OFF"; position: absolute; top: -1.65rem; right: 0; color: var(--signal); font: .7rem var(--font-mono); letter-spacing: .04em; }
+:global([data-live-state="observing"]).snapshotScene .snapshotFacts { padding-inline-start: clamp(.55rem, .8vw, .85rem); }
 
+.videoScene { position: relative; }
 .videoIntroduction { padding-top: clamp(5rem, 8vw, 8rem); }
 .videoIntroductionHeading { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: end; padding-bottom: clamp(2.5rem, 5vw, 4.5rem); border-bottom: 1px solid var(--line); }
 .videoIntroductionHeading h2 { grid-column: 1 / 9; max-width: 11ch; font-size: clamp(3rem, 5.2vw, 5.8rem); font-weight: 530; line-height: .94; letter-spacing: -.04em; text-wrap: balance; }
@@ -30,7 +25,15 @@
 .videoStill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,9,10,.48), transparent 52%), linear-gradient(0deg, rgba(8,9,10,.45), transparent 42%); pointer-events: none; }
 .videoStill picture,
 .videoStill img { width: 100%; height: 100%; display: block; }
+.videoStill picture { position: absolute; inset: 0; transition: opacity 920ms cubic-bezier(.16,1,.3,1), transform 1100ms cubic-bezier(.16,1,.3,1); }
+.videoStillDraft { opacity: 0; transform: scale(1.012); }
+.videoStillFinal { opacity: 1; transform: none; }
+.videoScene:global([data-live-state="wip"]) .videoStillDraft,
+.videoScene:global([data-live-state="observing"]) .videoStillDraft { opacity: 1; transform: none; }
+.videoScene:global([data-live-state="wip"]) .videoStillFinal,
+.videoScene:global([data-live-state="observing"]) .videoStillFinal { opacity: 0; transform: scale(.992); }
 .videoStill img { object-fit: cover; object-position: 50% 34%; filter: grayscale(.22) contrast(1.05) saturate(.72); }
+.videoStillDraft img { object-position: 50% 38%; }
 .videoStatus,
 .videoDuration { position: absolute; z-index: 2; color: #f2f1eb; font: .72rem var(--font-mono); letter-spacing: .04em; text-transform: uppercase; }
 .videoStatus { top: 1.25rem; left: 1.25rem; }
@@ -41,12 +44,14 @@
 
 .work { padding-top: clamp(7rem, 11vw, 11rem); padding-bottom: 0; }
 .workScene { position: relative; }
-:global([data-live-state="wip"]).workScene :global(.project-card__media .project-visual),
-:global([data-live-state="observing"]).workScene :global(.project-card__media .project-visual) { opacity: .74; filter: saturate(.74) contrast(.92); transform: scale(1.035) translateX(1.2%); }
-:global([data-live-state="wip"]).workScene :global(.project-card__media),
-:global([data-live-state="observing"]).workScene :global(.project-card__media) { border-color: color-mix(in srgb,var(--line-strong) 72%,transparent); }
-:global([data-live-state="wip"]).workScene :global(.project-card__media)::after,
-:global([data-live-state="observing"]).workScene :global(.project-card__media)::after { content: "CROP / TOO TIGHT"; position: absolute; z-index: 4; top: 1rem; right: 1rem; padding: .48rem .6rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--canvas); color: var(--muted); font: .62rem var(--font-mono); white-space: nowrap; }
+.workCropScene :global(.project-card__media .project-visual) { transition: transform 900ms cubic-bezier(.16,1,.3,1), filter 720ms ease; }
+.workCropScene:global([data-live-state="wip"]) :global(.project-card__media .project-visual),
+.workCropScene:global([data-live-state="observing"]) :global(.project-card__media .project-visual) { filter: saturate(.96) contrast(.98); transform: scale(1.022) translateX(.45%); }
+.workCropScene:global([data-live-state="wip"]) :global(.project-card__media)::after,
+.workCropScene:global([data-live-state="observing"]) :global(.project-card__media)::after { content: "CROP / 52%?"; position: absolute; z-index: 4; top: 1rem; right: 1rem; padding: .42rem .55rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--canvas); color: var(--muted); font: .62rem var(--font-mono); white-space: nowrap; }
+.workContrastScene :global(.project-card__meta) { transition: opacity 820ms cubic-bezier(.16,1,.3,1), filter 820ms cubic-bezier(.16,1,.3,1); }
+.workContrastScene:global([data-live-state="wip"]) :global(.project-card__meta),
+.workContrastScene:global([data-live-state="observing"]) :global(.project-card__meta) { opacity: .72; filter: brightness(.9); }
 
 .practice { padding-top: clamp(7rem, 11vw, 11rem); }
 .practiceStage { min-height: 40rem; }
@@ -73,29 +78,29 @@
 .aboutCopy h2 { font-size: clamp(3rem, 4.5vw, 5.2rem); font-weight: 530; line-height: .95; letter-spacing: -.04em; }
 .aboutCopy > p:not(:first-child) { max-width: 34rem; margin-top: 1.7rem; color: var(--muted); font-size: 1.05rem; }
 .aboutCopy :global(.text-link) { margin-top: 2rem; }
-.aboutDraft { position: absolute; right: 2rem; bottom: 2rem; max-width: 28rem; padding: 1rem; border: 1px solid var(--line-strong); border-radius: .65rem; background: var(--surface-raised); color: var(--muted); opacity: 0; font: .72rem var(--font-mono); }
 :global([data-live-state="wip"]).aboutScene .aboutPortrait :global(.portrait),
-:global([data-live-state="observing"]).aboutScene .aboutPortrait :global(.portrait) { transform: scale(1.18) translateY(-8%); filter: grayscale(.35) contrast(.92); }
-:global([data-live-state="wip"]).aboutScene .aboutDraft,
-:global([data-live-state="observing"]).aboutScene .aboutDraft { opacity: 1; }
+:global([data-live-state="observing"]).aboutScene .aboutPortrait :global(.portrait) { transform: scale(1.025) translateY(-.8%); filter: contrast(1.02) saturate(.76); }
 
 .playground { padding-top: clamp(7rem, 11vw, 11rem); padding-bottom: var(--section-space); }
-.playgroundHeading { display: grid; grid-template-columns: repeat(12,1fr); gap: 1rem; padding-bottom: 3rem; }
-.playgroundHeading > div { grid-column: 1 / 8; }
+.playgroundHeading { display: grid; grid-template-columns: repeat(12,1fr); gap: 1rem; padding-bottom: clamp(3rem, 5vw, 5rem); }
+.playgroundHeading > div { grid-column: 1 / 9; }
 .playgroundHeading :global(.kicker) { display: none; }
-.playgroundHeading h2 { max-width: 12ch; font-size: clamp(3rem, 4.8vw, 5.5rem); font-weight: 530; line-height: .95; letter-spacing: -.04em; }
+.playgroundHeading h2 { max-width: 13ch; font-size: clamp(3rem, 4.8vw, 5.5rem); font-weight: 530; line-height: .95; letter-spacing: -.04em; text-wrap: balance; }
 .playgroundHeading > p { grid-column: 9 / 13; align-self: end; color: var(--muted); font-size: 1.05rem; }
-.playgroundShelf { display: grid; grid-template-columns: 1.5fr .72fr; gap: .8rem; align-items: stretch; }
-.playgroundShelf :global(.playground-preview__canvas) { min-height: 31rem; border-radius: var(--radius-lg); }
-.playgroundMeta { display: flex; flex-direction: column; padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
-.playgroundMeta span { color: var(--signal); font: .7rem var(--font-mono); }
-.playgroundMeta strong { margin-top: auto; font-size: 1.7rem; font-weight: 520; line-height: 1; }
-.playgroundMeta p { margin-top: .8rem; color: var(--muted); font-size: .9rem; }
-.playgroundMeta :global(.text-link) { margin-top: 1.4rem; }
+.playgroundShelf { display: grid; grid-template-columns: minmax(0, 8fr) minmax(18rem, 4fr); align-items: stretch; border-block: 1px solid var(--line-strong); }
+.playgroundShelf :global(.playground-preview__canvas) { grid-column: auto; min-height: 36rem; border-left: 1px solid var(--line-strong); border-radius: 0; }
+.playgroundMeta { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.5rem, 2.6vw, 2.5rem); border-right: 1px solid var(--line-strong); border-left: 1px solid var(--line-strong); background: #101214; }
+.playgroundMeta span { color: var(--signal); font: .7rem var(--font-mono); letter-spacing: .05em; }
+.playgroundMeta strong { max-width: 14ch; margin-top: clamp(4rem, 9vw, 8rem); font-size: clamp(1.8rem, 2.5vw, 2.8rem); font-weight: 520; line-height: .98; letter-spacing: -.035em; }
+.playgroundMeta p { max-width: 30rem; margin-top: 1.2rem; color: var(--muted); font-size: .95rem; line-height: 1.55; }
+.playgroundTags { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: 1.5rem; }
+.playgroundTags small { padding: .36rem .55rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font: .62rem var(--font-mono); text-transform: uppercase; }
+.playgroundMeta :global(.text-link) { margin-top: auto; padding-top: 2.5rem; }
 :global([data-live-state="wip"]).playgroundScene :global(.kinetic-type),
-:global([data-live-state="observing"]).playgroundScene :global(.kinetic-type) { transform: skewY(-4deg) translateY(1.2rem); letter-spacing: -.15em; opacity: .52; }
-:global([data-live-state="wip"]).playgroundScene :global(.playground-playhead i),
-:global([data-live-state="observing"]).playgroundScene :global(.playground-playhead i) { transform: scaleX(.08); }
+:global([data-live-state="observing"]).playgroundScene :global(.kinetic-type) { transform: translateY(2px); }
+:global([data-live-state="wip"]).playgroundScene :global(.playground-playhead),
+:global([data-live-state="observing"]).playgroundScene :global(.playground-playhead) { opacity: .72; transform: translateX(-2px); }
+:global(.playground-playhead) { transition: opacity 520ms ease, transform 720ms cubic-bezier(.16,1,.3,1); }
 
 @media (max-width: 1000px) {
   .sectionHeading h2 { grid-column: 1 / 10; }
@@ -104,7 +109,7 @@
   .aiScene { grid-column: 6 / 13; }
   .aboutPortrait { grid-column: 1 / 7; }
   .aboutCopy { grid-column: 7 / 13; }
-  .playgroundShelf { grid-template-columns: 1.4fr .8fr; }
+  .playgroundShelf { grid-template-columns: minmax(0, 1.25fr) minmax(17rem, .75fr); }
 }
 
 @media (max-width: 720px) {
@@ -139,13 +144,13 @@
   .aboutPortrait { width: 100%; min-height: min(132vw, 43rem); }
   .aboutCopy { padding: 2rem 0 0; }
   .aboutCopy h2 { font-size: clamp(2.85rem, 11vw, 4rem); }
-  .aboutDraft { right: 1rem; bottom: 1rem; left: 1rem; }
   .playgroundHeading { display: block; }
   .playgroundHeading h2 { font-size: clamp(2.85rem, 11vw, 4rem); }
   .playgroundHeading > p { margin-top: 1.5rem; }
   .playgroundShelf { grid-template-columns: 1fr; }
-  .playgroundShelf :global(.playground-preview__canvas) { min-height: 25rem; }
-  .playgroundMeta { min-height: 16rem; }
+  .playgroundShelf :global(.playground-preview__canvas) { min-height: 29rem; border-right: 1px solid var(--line-strong); }
+  .playgroundMeta { min-height: 22rem; border-top: 1px solid var(--line-strong); }
+  .playgroundMeta strong { margin-top: 3rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

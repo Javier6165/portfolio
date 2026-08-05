@@ -18,6 +18,7 @@
 .index button div { display: grid; gap: .2rem; }
 .index button strong { font-size: 1rem; font-weight: 540; }
 .index button small { color: var(--muted); font: .7rem var(--font-mono); text-transform: uppercase; }
+.index button small[data-reference-status] { transition: opacity 680ms cubic-bezier(.16,1,.3,1); }
 .index button i { width: .6rem; aspect-ratio: 1; border: 1px solid var(--line-strong); border-radius: 50%; }
 .index button[aria-selected="true"] i { border-color: var(--signal); background: var(--signal); }
 .panel { min-width: 0; display: flex; flex-direction: column; padding: 1.1rem 0 1.1rem clamp(1.5rem,3vw,3rem); }
@@ -38,11 +39,8 @@
 .attribution span { color: var(--muted); }
 .integrity { display: flex; align-items: center; gap: .6rem; margin-top: auto; padding-top: .8rem; border-top: 1px solid var(--line); color: var(--muted); font: .72rem var(--font-mono); text-transform: uppercase; }
 .integrity i { width: .5rem; aspect-ratio: 1; border-radius: 50%; background: var(--signal); }
-.wipFlag { position: absolute; z-index: 5; top: 1rem; right: 0; padding: .45rem .55rem; border: 1px solid var(--line-strong); background: var(--canvas); color: var(--signal); opacity: 0; pointer-events: none; font: .7rem var(--font-mono); letter-spacing: .04em; }
-:global([data-live-state="wip"]) .wipFlag,
-:global([data-live-state="observing"]) .wipFlag { opacity: 1; }
-:global([data-live-state="wip"]) .ledger,
-:global([data-live-state="observing"]) .ledger { opacity: .48; transform: translateY(.35rem); }
+:global([data-live-state="wip"]) .index button small[data-reference-status],
+:global([data-live-state="observing"]) .index button small[data-reference-status] { opacity: .62; }
 
 @media (max-width: 800px) {
   .heading { display: block; }
@@ -56,7 +54,6 @@
   .pending dl { grid-template-columns: 1fr; }
   .pending dl div,
   .pending dl div:not(:first-child) { padding: .65rem 0; border-right: 0; border-bottom: 1px solid var(--line); }
-  .wipFlag { top: .75rem; right: .25rem; max-width: 12rem; }
 }
 
 @media (prefers-reduced-motion: reduce) { .section * { animation: none !important; transition: none !important; } }

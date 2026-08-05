@@ -5,13 +5,15 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 ## Experience concept
 
 - `Live File`: the portfolio opens as a working design file and resolves into the finished product.
-- A first visit opens inside recognisable Figma UI3; Javier is caught working and activates `Present` himself.
+- A first visit opens inside recognisable Figma UI3 with a working title and an empty portrait frame; Javier drags in the real portrait, is caught working and activates `Present` himself.
 - A semantic Dark hero with Javier Ortiz, `I design the calm inside complex products.`, Senior Product Designer, portrait and `Explore`.
 - One focused Dark visual system, with no theme selector or alternate appearance state.
 - Three clearly labelled fictitious case studies.
 - Native scroll immediately after the intro; every Spotlight chapter runs only after the visitor chooses `Follow Javier`.
-- `Director`: utility-AI presence that reads ephemeral local attention signals, rotates broad authored comment pools across visits, and makes small human edits without moving the camera or calling remote AI.
-- The Present handoff immediately becomes a full-headline edit: Javier visibly tries his name, role and positioning, makes a typo and corrects it while preserving semantic copy.
+- `Director`: utility-AI presence whose first authored pass runs uninterrupted in document order. Only after Contact may ephemeral local attention insert contextual comments, without moving the camera or calling remote AI. Follow adds camera and Spotlight to the same edits.
+- The Present handoff immediately continues the visible WIP: Javier promotes `Senior` to `Lead`, reconsiders the label, types the final positioning with a corrected typo and comments only after the edit while preserving semantic copy.
+- Follow is offered once from the right side of the top bar, then collapses to the same violet `JO` collaborator avatar. Scroll never stops the authored pass or the later micro-adjustment loop.
+- Snapshot trims a small padding excess, the video swaps its poster, Atlas tests its crop and Northstar raises metadata contrast. Practice then aligns its viewer by two pixels, AI corrects `Valdiate`, About relaxes a close crop, References raises status contrast, Playground refines easing and Contact aligns the final CTA.
 - A provisional Reference Ledger: three typed perspectives, no fabricated quotes or identities, and a source-required path to verified content.
 - A consented returning-visitor memory with replay, forget and motion controls.
 - An interactive token-propagation case block plus a typed framework for screenshots, galleries, video, Figma and coded prototypes.

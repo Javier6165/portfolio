@@ -24,20 +24,32 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
   await expect(page.getByText("Javier Ortiz / Portfolio", { exact: true }).last()).toBeVisible();
   await expect(hero.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.getByText("Present", { exact: true })).toBeVisible();
+  const introStage = page.locator("[data-phase]");
+  await expect(page.locator("[data-intro-draft-title]")).toHaveText("Senior Product Designer");
+  await expect(page.locator("[data-intro-draft-title]")).toBeVisible();
+  await expect(introStage).toHaveAttribute("data-portrait", "empty");
+  await expect(page.locator("[data-portrait-placeholder]")).toBeVisible();
+  await expect(page.locator("[data-portrait-drag]")).toBeVisible();
   const initialScroll = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 900);
   await page.keyboard.press("PageDown");
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(initialScroll);
   await expect(page.locator("html")).not.toHaveAttribute("data-narrative", "complete");
   const introChat = page.locator("[data-cursor-chat-typing]");
-  await expect(introChat).toBeVisible({ timeout: 2_000 });
+  await expect(introStage).toHaveAttribute("data-portrait", "placed", { timeout: 3_000 });
+  await expect(introChat).toBeVisible({ timeout: 4_000 });
   await expect(introChat).toHaveAttribute("data-typing", "true");
-  await expect(page.getByText("You caught me working.")).toBeVisible({ timeout: 4_500 });
+  const introCollaboratorColors = await page.evaluate(() => ({
+    topbar: getComputedStyle(document.querySelector("[data-intro-collaborator-avatar]")!).backgroundColor,
+    comment: getComputedStyle(document.querySelector("[data-intro-comment-avatar]")!).backgroundColor,
+  }));
+  expect(introCollaboratorColors).toEqual({ topbar: "rgb(151, 71, 255)", comment: "rgb(151, 71, 255)" });
+  await expect(page.getByText("You caught me working.")).toBeVisible({ timeout: 6_500 });
   await expect(introChat).toHaveAttribute("data-typing", "false");
   await page.waitForTimeout(900);
   await expect(page.getByText("You caught me working.")).toBeVisible();
   await expect(page.locator("[data-live-file-frame]").locator("xpath=..")).toHaveAttribute("data-phase", "presenting");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 9_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 12_000 });
 
   await expect(page.getByRole("link", { name: "Explore" })).toBeVisible();
   await expect(hero.getByRole("img", { name: /Portrait of Javier Ortiz/ })).toBeVisible();
@@ -67,6 +79,29 @@ test("the first visit opens the real portfolio frame in Figma and hands control 
     await page.mouse.wheel(0, 180);
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(releasedAt + 40);
   }
+});
+
+test("the Presentation handoff tries Lead before resolving to the final positioning", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  test.setTimeout(36_000);
+  await page.goto("/?narrative=return&director=fast&directorVisual=1&directorSeed=role-edit");
+
+  const semanticTitle = page.locator("#hero-title");
+  const role = page.locator("#hero-role");
+  const overlay = page.locator("[data-director-current-text]");
+  const note = page.locator("[data-ambient-note]");
+  await expect(semanticTitle).toHaveAccessibleName("I design the calm inside complex products.");
+  await expect(role).toBeVisible();
+  await expect(role).toHaveText("Senior Product Designer");
+  await expect(overlay).toHaveText("Lead Product Designer", { timeout: 16_000 });
+  await expect(note).toHaveCSS("opacity", "0");
+  await page.waitForTimeout(520);
+  await expect(overlay).toHaveText("Lead Product Designer");
+  await expect(overlay).toContainText("I design the calm", { timeout: 7_000 });
+  await expect(overlay).toHaveText("I design the calm inside complex products.", { timeout: 8_000 });
+  await expect(note).toHaveCSS("opacity", "1", { timeout: 3_000 });
+  await expect(semanticTitle).not.toHaveAttribute("data-director-editing", /.+/, { timeout: 9_000 });
+  await expect(semanticTitle).toHaveAccessibleName("I design the calm inside complex products.");
 });
 
 test("the mobile hero keeps the title, portrait and cue in the first viewport", async ({ page, isMobile }) => {
@@ -106,7 +141,7 @@ test("reduced motion resolves intro and all Live File scenes immediately", async
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
   await expect(page.getByRole("button", { name: "Skip opening" })).toBeHidden();
   const states = await page.locator("[data-live-scene]").evaluateAll((items) => items.map((item) => item.getAttribute("data-live-state")));
-  expect(states.length).toBe(8);
+  expect(states.length).toBe(10);
   expect(states.every((state) => state === "reduced")).toBe(true);
   await expect(page.locator("[data-follow-dock]")).toHaveCount(0);
 });
@@ -124,7 +159,7 @@ test("the portfolio exposes one intentional Dark appearance", async ({ page, isM
   expect(await page.locator("html").evaluate((element) => element.outerHTML)).not.toMatch(/hero-human|about-human|javier-theme|theme-toggle/);
 });
 
-test("the 60-second introduction is an honest early shortcut, not another forced scene", async ({ page }) => {
+test("the 60-second introduction is an honest early shortcut with an optional poster edit", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
 
@@ -132,10 +167,10 @@ test("the 60-second introduction is an honest early shortcut, not another forced
   await expect(section.getByRole("heading", { name: "Meet me in 60 seconds." })).toBeVisible();
   await expect(section.getByText("Placeholder · final video pending")).toBeVisible();
   await expect(section.getByText("Captions and transcript planned")).toBeVisible();
-  await expect(section.locator("img")).toHaveAttribute("src", /video-intro-placeholder\.jpg/);
-  await expect(section.locator("img")).not.toHaveAttribute("src", /hero-system|about-system/);
+  await expect(section.locator('img[src*="video-intro-placeholder"]')).toBeVisible();
+  await expect(section.locator("picture").first()).toHaveCSS("opacity", "0");
   await expect(section.getByRole("button")).toHaveCount(0);
-  await expect(section.locator("[data-live-scene]")).toHaveCount(0);
+  await expect(page.locator('[data-live-scene="video-poster"]')).toHaveAttribute("data-live-state", "reduced");
 
   const geometry = await page.evaluate(() => ({
     snapshotTop: document.querySelector("#experience")!.getBoundingClientRect().top,
@@ -152,37 +187,75 @@ test("forced WIP keeps Snapshot recognisable while exposing a small rhythm corre
   test.skip(isMobile, "The authored WIP contrast is measured once on desktop.");
   await page.goto("/?narrative=first&live=wip");
   await skipIntro(page);
+  await page.waitForTimeout(1_100);
   await page.getByRole("link", { name: "Explore" }).click();
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(scene).toHaveAttribute("data-live-state", "wip");
   const wipStyle = await scene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns,
-    opacity: getComputedStyle(element).opacity,
-    transform: getComputedStyle(element).transform,
+    paddingInlineStart: getComputedStyle(element).paddingInlineStart,
   }));
-  await expect(scene.getByText("Draft · rhythm uneven")).toBeAttached();
+  await expect(scene.getByText("Draft · padding loose")).toBeAttached();
 
   await page.goto("/?narrative=first&live=settled");
   await skipIntro(page);
+  await page.waitForTimeout(1_100);
   await page.getByRole("link", { name: "Explore" }).click();
   const finalScene = page.locator('[data-live-scene="snapshot-clarify"]');
   await expect(finalScene).toHaveAttribute("data-live-state", "settled");
   const finalStyle = await finalScene.getByRole("list", { name: "Javier Ortiz at a glance" }).evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns,
-    opacity: getComputedStyle(element).opacity,
-    transform: getComputedStyle(element).transform,
+    paddingInlineStart: getComputedStyle(element).paddingInlineStart,
   }));
   expect(finalStyle.columns.split(" ")).toHaveLength(4);
   expect(wipStyle.columns.split(" ")).toHaveLength(4);
-  expect(finalStyle.opacity).not.toBe(wipStyle.opacity);
-  expect(finalStyle.transform).not.toBe(wipStyle.transform);
+  expect(finalStyle.paddingInlineStart).toBe("0px");
+  expect(wipStyle.paddingInlineStart).not.toBe(finalStyle.paddingInlineStart);
 });
 
-test("the first visit keeps Snapshot native and makes every later edit optional", async ({ page, isMobile }) => {
-  test.skip(isMobile, "Desktop verifies free scroll and the explicit Follow control.");
+test("the lower authored pass starts from finished compositions and changes only one detail", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The desktop choreography is absent on touch; mobile layout remains covered by the visual matrix.");
+  await page.goto("/?narrative=first&live=wip");
+  await skipIntro(page);
+  await page.waitForTimeout(1_100);
+
+  const wip = await page.evaluate(() => ({
+    practice: getComputedStyle(document.querySelector<HTMLElement>("[data-practice-viewer]")!).transform,
+    aiColor: getComputedStyle(document.querySelector<HTMLElement>("[data-ai-validate-label]")!).color,
+    aiDraft: getComputedStyle(document.querySelector<HTMLElement>("[data-ai-validate-label]")!, "::after").content,
+    about: getComputedStyle(document.querySelector<HTMLElement>("#about-preview figure img")!).transform,
+    references: getComputedStyle(document.querySelector<HTMLElement>("[data-reference-status]")!).opacity,
+    playground: getComputedStyle(document.querySelector<HTMLElement>(".playground-playhead")!).transform,
+    contact: getComputedStyle(document.querySelector<HTMLElement>(".footer-contact .text-link")!).transform,
+  }));
+
+  const translateX = (matrix: string) => matrix === "none" ? 0 : Number(matrix.split(",")[4] ?? 0);
+  expect(translateX(wip.practice)).toBeLessThan(-1.5);
+  expect(wip.aiColor).toBe("rgba(0, 0, 0, 0)");
+  expect(wip.aiDraft).toBe('"Valdiate"');
+  expect(wip.about).not.toBe("none");
+  expect(wip.references).toBe("0.62");
+  expect(translateX(wip.playground)).toBeLessThan(-1.5);
+  expect(translateX(wip.contact)).toBeLessThan(-1.5);
+
+  await page.goto("/?narrative=first&live=settled");
+  await skipIntro(page);
+  await page.waitForTimeout(1_100);
+  const settled = await page.evaluate(() => ({
+    practice: getComputedStyle(document.querySelector<HTMLElement>("[data-practice-viewer]")!).transform,
+    aiDraft: getComputedStyle(document.querySelector<HTMLElement>("[data-ai-validate-label]")!, "::after").content,
+    references: getComputedStyle(document.querySelector<HTMLElement>("[data-reference-status]")!).opacity,
+    playground: getComputedStyle(document.querySelector<HTMLElement>(".playground-playhead")!).transform,
+    contact: getComputedStyle(document.querySelector<HTMLElement>(".footer-contact .text-link")!).transform,
+  }));
+  expect(settled).toEqual({ practice: "none", aiDraft: "none", references: "1", playground: "none", contact: "none" });
+});
+
+test("the first visit keeps free scroll while the shared edit pass begins", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Desktop verifies free scroll and the explicit Follow handoff.");
   await page.goto("/?narrative=first");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 20_000 });
   await page.getByRole("link", { name: "Explore" }).click();
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
@@ -200,12 +273,13 @@ test("the first visit keeps Snapshot native and makes every later edit optional"
   await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
 });
 
-test("free navigation never launches lower scenes and Follow Javier remains cancellable", async ({ page, isMobile }) => {
+test("free navigation stays native while Follow Javier remains cancellable", async ({ page, isMobile }) => {
   test.skip(isMobile, "The desktop pointer contract runs once; mobile keeps free navigation.");
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
     sessionStorage.setItem("javier-narrative-counted-v1", "true");
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify(["hero-headline-indecision"]));
   });
   await page.goto("/?narrative=return");
   await skipIntro(page);
@@ -213,8 +287,9 @@ test("free navigation never launches lower scenes and Follow Javier remains canc
 
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
   await page.waitForTimeout(1_200);
-  await expect(scene).toHaveAttribute("data-live-state", "settled");
+  await expect(scene).toHaveAttribute("data-live-state", /settled|observing|editing|settling/);
   await expect(page.locator("[data-spotlight-active]")).toHaveCount(0);
+  await expect(page.locator("body")).not.toHaveCSS("position", "fixed");
 
   await page.getByRole("button", { name: "Follow Javier" }).click();
   await expect(scene).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 3_000 });
@@ -227,6 +302,7 @@ test("free navigation never launches lower scenes and Follow Javier remains canc
 
 test("Director types like a person and stays present when the visitor scrolls", async ({ page, isMobile }) => {
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  test.setTimeout(45_000);
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
   await page.addInitScript(() => {
@@ -234,7 +310,7 @@ test("Director types like a person and stays present when the visitor scrolls", 
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 1, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
     sessionStorage.setItem("javier-narrative-counted-v1", "true");
   });
-  await page.goto("/?narrative=return&director=fast");
+  await page.goto("/?narrative=return&director=fast&directorVisual=1");
   await skipIntro(page);
 
   const dock = page.locator("[data-follow-dock]");
@@ -247,7 +323,7 @@ test("Director types like a person and stays present when the visitor scrolls", 
   await expect(overlay).toHaveAttribute("data-director-text-typing", "true", { timeout: 3_000 });
   const inProgressCopy = (await overlay.locator("[data-director-current-text]").textContent()) ?? "";
   expect(inProgressCopy).not.toBe("I design the calm inside complex products.");
-  await expect(page.locator("[data-ambient-note]")).toContainText(/different answer|impossible choices|what I actually bring|defensible opinions|question the headline/);
+  await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
   await expect(dock).toBeVisible();
   await expect(dock.locator("span").filter({ hasText: "FOLLOW JAVIER" })).toBeAttached();
   await expect(dock).toHaveAttribute("data-presence-status", "editing", { timeout: 3_000 });
@@ -262,10 +338,12 @@ test("Director types like a person and stays present when the visitor scrolls", 
   const cursor = page.locator("[data-javier-cursor]");
   await expect(cursor).not.toHaveCSS("opacity", "0");
   await expect(cursor).toHaveCSS("position", "absolute");
-  await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
-  await expect(overlay).toHaveCount(0);
-  await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/);
-  await expect(director).toHaveAttribute("data-director-last-context", /^context:fast-scroll:/, { timeout: 3_000 });
+  await expect(overlay).toBeVisible();
+  await expect(heroTitle).toHaveAttribute("data-director-editing", "text");
+  await expect(director).toHaveAttribute("data-director-cue", "hero-headline-indecision");
+  await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/, { timeout: 28_000 });
+  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0), { timeout: 4_000 }).toBeGreaterThanOrEqual(1);
+  await expect(director).toHaveAttribute("data-director-cue", "snapshot-spacing-trim", { timeout: 5_000 });
 
   // Director is an enhancement: its circuit breaker must remove only the
   // simulated collaborator and leave the real portfolio operational.
@@ -284,7 +362,7 @@ test("Director and Follow comments are written live before their reading hold", 
   await page.goto("/?narrative=return&director=fast&directorVisual=1&directorReset=1");
   const director = page.locator("[data-director-presence]");
   const directorNote = page.locator("[data-ambient-note] p");
-  await expect(director).toHaveAttribute("data-director-comment-typing", "true", { timeout: 3_000 });
+  await expect(director).toHaveAttribute("data-director-comment-typing", "true", { timeout: 14_000 });
   await expect(page.locator("[data-javier-cursor]")).toHaveAttribute("data-chat", "true");
   const directorChatGap = await page.evaluate(() => {
     const cursor = document.querySelector("[data-javier-cursor]")!.getBoundingClientRect();
@@ -326,7 +404,7 @@ test("Director and Follow comments are written live before their reading hold", 
   await page.waitForTimeout(360);
   const partialFollowCopy = (await followComment.textContent()) ?? "";
   expect(partialFollowCopy.length).toBeGreaterThan(0);
-  expect(partialFollowCopy.length).toBeLessThan("The content is right. The rhythm is trying too hard.".length);
+  expect(partialFollowCopy.length).toBeLessThan("This row is asking for a little too much room.".length);
   await expect(page.locator('[data-comment-typing="false"]')).toBeVisible({ timeout: 6_000 });
 });
 
@@ -336,9 +414,10 @@ test("Director keeps working autonomously and hands its cursor to Follow", async
     localStorage.setItem("javier-narrative-consent", "denied");
     sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
       "hero-headline-indecision",
-      "snapshot-trust-typo",
-      "video-introduction-note",
-      "work-evidence-note",
+      "snapshot-spacing-trim",
+      "video-poster-swap",
+      "work-crop-tuning",
+      "work-metadata-contrast",
       "practice-two-pixels",
       "ai-validate-typo",
       "about-crop-breathe",
@@ -350,25 +429,20 @@ test("Director keeps working autonomously and hands its cursor to Follow", async
       "context:patient-reader",
     ]));
   });
-  await page.goto("/?narrative=return&director=fast&directorAgenda=work-evidence-note");
+  await page.goto("/?narrative=return&director=fast&directorAgenda=work-crop-tuning");
   await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
 
   const ambientCursor = page.locator("[data-javier-cursor]");
   const followCursor = page.locator("[data-spotlight-cursor]");
   const director = page.locator("[data-director-presence]");
   await expect(ambientCursor).not.toHaveCSS("opacity", "0");
-  await expect(director).toHaveAttribute("data-director-cue", "ambient:work-evidence-note", { timeout: 3_000 });
+  await expect(director).toHaveAttribute("data-director-cue", "ambient:work-crop-tuning", { timeout: 3_000 });
   await expect(director).toHaveAttribute("data-director-intent", "autonomous-work");
-  await expect(director).toHaveAttribute("data-director-last-shared-edit", "work-evidence-note");
+  await expect(director).toHaveAttribute("data-director-last-shared-edit", "work-crop-tuning");
   const autonomousPosition = await ambientCursor.boundingBox();
   expect(autonomousPosition).not.toBeNull();
   expect(autonomousPosition!.y).toBeGreaterThan(await page.evaluate(() => innerHeight));
   await expect(page.locator("[data-ambient-note]")).toHaveCSS("opacity", "0");
-
-  const heroBox = await page.locator("#hero-title").boundingBox();
-  expect(heroBox).not.toBeNull();
-  await page.mouse.move(heroBox!.x + heroBox!.width * .5, heroBox!.y + heroBox!.height * .5);
-  await expect(director).toHaveAttribute("data-director-intent", "visitor-focus", { timeout: 3_000 });
 
   await page.getByRole("button", { name: "Follow Javier" }).first().click();
   await expect(page.getByRole("button", { name: /Stop following/ }).first()).toBeVisible();
@@ -379,6 +453,68 @@ test("Director keeps working autonomously and hands its cursor to Follow", async
   await expect(followCursor).toHaveCSS("opacity", "0");
   await expect(ambientCursor).not.toHaveCSS("opacity", "0");
   await expect(director).toHaveAttribute("data-director-cue", /^context:follow-stop:/, { timeout: 3_000 });
+});
+
+test("Director completes the canonical pass before any contextual response", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  test.setTimeout(30_000);
+  await page.addInitScript(() => {
+    localStorage.setItem("javier-narrative-consent", "denied");
+  });
+  await page.goto("/?narrative=return&director=fast&directorContext=visit-one");
+  const director = page.locator("[data-director-presence]");
+
+  await expect(director).toHaveAttribute("data-director-cue", "hero-headline-indecision", { timeout: 4_000 });
+  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0), { timeout: 18_000 }).toBeGreaterThanOrEqual(11);
+  const authoredOrder = await page.evaluate(() => JSON.parse(sessionStorage.getItem("javier-director-beats-v1") ?? "[]") as string[]);
+  expect(authoredOrder.slice(0, 11)).toEqual([
+    "hero-headline-indecision",
+    "snapshot-spacing-trim",
+    "video-poster-swap",
+    "work-crop-tuning",
+    "work-metadata-contrast",
+    "practice-two-pixels",
+    "ai-validate-typo",
+    "about-crop-breathe",
+    "references-side-typo",
+    "playground-easing",
+    "footer-handoff",
+  ]);
+  expect(authoredOrder.slice(0, 11).some((id) => id.startsWith("context:"))).toBe(false);
+  await expect(director).toHaveAttribute("data-director-cue", /^context:visit-one:/, { timeout: 4_000 });
+});
+
+test("Follow continues the shared authored pass instead of restarting completed edits", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Follow choreography.");
+  await page.addInitScript(() => {
+    localStorage.setItem("javier-narrative-consent", "denied");
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
+      "hero-headline-indecision",
+      "snapshot-spacing-trim",
+      "video-poster-swap",
+    ]));
+  });
+  await page.goto("/?narrative=return&director=off");
+  await page.getByRole("button", { name: "Follow Javier" }).first().click();
+
+  await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", "settled");
+  await expect(page.locator('[data-live-scene="video-poster"]')).toHaveAttribute("data-live-state", "settled");
+  await expect(page.locator('[data-live-scene="work-crop"]')).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 4_000 });
+  await page.getByRole("button", { name: /Stop following/ }).first().click();
+});
+
+test("Follow waits for the opening headline edit before taking the shared cursor", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Touch intentionally omits the synthetic Follow choreography.");
+  await page.addInitScript(() => localStorage.setItem("javier-narrative-consent", "denied"));
+  await page.goto("/?narrative=return&director=fast&directorReset=1");
+  await expect(page.locator("#hero-title")).toHaveAttribute("data-director-editing", "text", { timeout: 3_000 });
+  await page.getByRole("button", { name: "Follow Javier" }).first().click();
+
+  await expect(page.getByRole("button", { name: /Stop following/ }).first()).toBeVisible({ timeout: 6_000 });
+  await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 8_000 });
+  const seen = await page.evaluate(() => JSON.parse(sessionStorage.getItem("javier-director-beats-v1") ?? "[]") as string[]);
+  expect(seen).toContain("hero-headline-indecision");
+  await page.getByRole("button", { name: /Stop following/ }).first().click();
 });
 
 test("Director leaves the hero and chains autonomous work without an idle gap", async ({ page, isMobile }) => {
@@ -407,8 +543,26 @@ test("Director leaves the hero and chains autonomous work without an idle gap", 
 
   await expect(heroTitle).toHaveAttribute("data-director-editing", "text", { timeout: 3_000 });
   await expect(heroTitle).not.toHaveAttribute("data-director-editing", /.+/, { timeout: 5_000 });
-  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0), { timeout: 5_000 }).toBeGreaterThanOrEqual(3);
+  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0), { timeout: 15_000 }).toBeGreaterThanOrEqual(11);
   await expect(director).not.toHaveAttribute("data-director-last-autonomous", "hero-headline-indecision");
+  const authoredOrder = await page.evaluate(() => (JSON.parse(sessionStorage.getItem("javier-director-beats-v1") ?? "[]") as string[])
+    .filter((id) => !id.startsWith("context:")));
+  expect(authoredOrder.slice(0, 11)).toEqual([
+    "hero-headline-indecision",
+    "snapshot-spacing-trim",
+    "video-poster-swap",
+    "work-crop-tuning",
+    "work-metadata-contrast",
+    "practice-two-pixels",
+    "ai-validate-typo",
+    "about-crop-breathe",
+    "references-side-typo",
+    "playground-easing",
+    "footer-handoff",
+  ]);
+
+  await expect(director).toHaveAttribute("data-director-cue", /^ambient:/, { timeout: 3_000 });
+  await expect(director).not.toHaveAttribute("data-director-cue", /hero-headline-indecision|video-poster-swap/);
 
   const motionBefore = Number(await director.getAttribute("data-director-motion-count") ?? 0);
   await expect.poll(async () => Number(await director.getAttribute("data-director-motion-count") ?? 0), { timeout: 2_000 }).toBeGreaterThan(motionBefore);
@@ -426,15 +580,16 @@ test("every Director beat still resolves against the redesigned page", async ({ 
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   test.setTimeout(45_000);
   const beats = [
-    { id: "snapshot-trust-typo", selector: "#snapshot-scope" },
-    { id: "video-introduction-note", selector: "#video-introduction-title" },
-    { id: "work-evidence-note", selector: ".project-card__media" },
-    { id: "practice-two-pixels", selector: "#practice-title" },
-    { id: "ai-validate-typo", selector: "#ai-title" },
+    { id: "snapshot-spacing-trim", selector: "[data-snapshot-facts]" },
+    { id: "video-poster-swap", selector: "[data-video-frame]" },
+    { id: "work-crop-tuning", selector: ".project-card--atlas .project-card__media" },
+    { id: "work-metadata-contrast", selector: ".project-card--northstar .project-card__meta" },
+    { id: "practice-two-pixels", selector: "[data-practice-viewer]" },
+    { id: "ai-validate-typo", selector: "[data-ai-validate-label]" },
     { id: "about-crop-breathe", selector: "#about-preview figure" },
-    { id: "references-side-typo", selector: "#testimonials-title" },
+    { id: "references-side-typo", selector: "[data-reference-status]" },
     { id: "playground-easing", selector: ".playground-playhead" },
-    { id: "footer-handoff", selector: ".footer-contact" },
+    { id: "footer-handoff", selector: ".footer-contact .text-link" },
   ];
   await page.addInitScript((ids) => {
     localStorage.setItem("javier-narrative-consent", "denied");
@@ -451,12 +606,31 @@ test("every Director beat still resolves against the redesigned page", async ({ 
     await page.goto(`/?narrative=return&director=fast&directorOnly=${beat.id}`);
     await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete");
     await page.locator(beat.selector).first().scrollIntoViewIfNeeded();
-    await expect(page.locator("[data-director-presence]")).toHaveAttribute("data-director-cue", beat.id, { timeout: 3_000 });
+    await expect.poll(async () => {
+      const director = page.locator("[data-director-presence]");
+      return (await director.getAttribute("data-director-cue")) === beat.id
+        || (await director.getAttribute("data-director-last-shared-edit")) === beat.id;
+    }, { timeout: 3_000 }).toBe(true);
   }
 });
 
 test("Director varies return commentary and remembers only shown variants after consent", async ({ page, context, isMobile }) => {
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
+  await context.addInitScript(() => {
+    sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
+      "hero-headline-indecision",
+      "snapshot-spacing-trim",
+      "video-poster-swap",
+      "work-crop-tuning",
+      "work-metadata-contrast",
+      "practice-two-pixels",
+      "ai-validate-typo",
+      "about-crop-breathe",
+      "references-side-typo",
+      "playground-easing",
+      "footer-handoff",
+    ]));
+  });
   await page.addInitScript(() => {
     localStorage.setItem("javier-narrative-consent", "granted");
     localStorage.setItem("javier-narrative-memory-v1", JSON.stringify({ schema: 1, visitCount: 4, seenCueIds: [], lastVisitAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 86_400_000).toISOString() }));
@@ -488,9 +662,10 @@ test("Director turns session time into ephemeral commentary", async ({ page, isM
   await page.addInitScript(() => {
     sessionStorage.setItem("javier-director-beats-v1", JSON.stringify([
       "hero-headline-indecision",
-      "snapshot-trust-typo",
-      "video-introduction-note",
-      "work-evidence-note",
+      "snapshot-spacing-trim",
+      "video-poster-swap",
+      "work-crop-tuning",
+      "work-metadata-contrast",
       "practice-two-pixels",
       "ai-validate-typo",
       "about-crop-breathe",
@@ -510,18 +685,20 @@ test("Director acknowledges rejected memory without storing behavior", async ({ 
   test.skip(isMobile, "Touch intentionally omits the synthetic Director cursor.");
   test.setTimeout(75_000);
   await page.goto("/?narrative=first&director=fast");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 20_000 });
   await page.getByRole("link", { name: "Explore" }).click();
   await page.getByRole("button", { name: "Follow Javier" }).first().click();
   const scene = page.locator('[data-live-scene="snapshot-clarify"]');
+  await expect(scene).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 8_000 });
   await expect(scene).toHaveAttribute("data-live-state", "settled", { timeout: 16_000 });
   await page.getByRole("button", { name: /Stop following/ }).first().click();
   await expect(page.getByLabel("Portfolio memory preference")).toBeVisible({ timeout: 6_000 });
   await page.getByRole("button", { name: "No thanks" }).click();
 
   const director = page.locator("[data-director-presence]");
-  await expect(director).toHaveAttribute("data-director-cue", /^context:memory-denied:/, { timeout: 3_000 });
+  await expect(director).toHaveAttribute("data-director-cue", /^context:memory-denied:/, { timeout: 20_000 });
   await expect(page.locator("[data-ambient-note]")).toContainText(/No memory|No thanks received|Memory off|clean browser|Nothing saved/);
+  await expect.poll(async () => Number(await director.getAttribute("data-director-autonomous-count") ?? 0)).toBeGreaterThanOrEqual(11);
   expect(await page.evaluate(() => ({
     consent: localStorage.getItem("javier-narrative-consent"),
     memory: localStorage.getItem("javier-narrative-memory-v1"),
@@ -575,11 +752,11 @@ test("the Reference Ledger is honest, keyboard-operable and never fabricates quo
 test("consented memory produces deterministic return tiers without replaying the opening", async ({ page, context, isMobile }) => {
   test.skip(isMobile, "Storage tiers are viewport-independent and run once.");
   test.setTimeout(75_000);
-  await page.goto("/?narrative=first");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
+  await page.goto("/?narrative=first&director=fast");
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 20_000 });
   await page.getByRole("link", { name: "Explore" }).click();
   await page.getByRole("button", { name: "Follow Javier" }).first().click();
-  await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 4_000 });
+  await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", /wip|observing|spotlight-entering|editing|commenting/, { timeout: 8_000 });
   await expect(page.locator('[data-live-scene="snapshot-clarify"]')).toHaveAttribute("data-live-state", "settled", { timeout: 16_000 });
   await page.getByRole("button", { name: /Stop following/ }).first().click();
   await expect(page.getByLabel("Portfolio memory preference")).toBeVisible({ timeout: 6_000 });
@@ -592,13 +769,14 @@ test("consented memory produces deterministic return tiers without replaying the
   await expect.poll(() => secondVisit.evaluate(() => JSON.parse(localStorage.getItem("javier-narrative-memory-v1") ?? "null")?.visitCount)).toBe(2);
 
   const thirdVisit = await context.newPage();
+  await thirdVisit.addInitScript(() => sessionStorage.setItem("javier-director-beats-v1", JSON.stringify(["hero-headline-indecision"])));
   await thirdVisit.goto("/");
   await expect(thirdVisit.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 2_500 });
   await expect(thirdVisit.locator("[data-phase]")).toHaveAttribute("data-phase", "complete");
   await expect(thirdVisit.locator("[data-figma-editor]")).toBeHidden();
 
-  // Persistent return memory may shorten the intro, but lower edits remain
-  // opt-in until the visitor asks to follow Javier.
+  // Persistent return memory may shorten the intro. The authored pass remains
+  // autonomous; Follow only adds the camera and resumes at the first pending beat.
   await thirdVisit.getByRole("link", { name: "Explore" }).click();
   const returningScene = thirdVisit.locator('[data-live-scene="snapshot-clarify"]');
   await expect(returningScene).toHaveAttribute("data-live-state", "settled");
@@ -617,6 +795,11 @@ test("returning visitors get clearly labelled Follow controls", async ({ page, i
   await skipIntro(page);
 
   const replay = page.getByRole("button", { name: "Follow Javier" }).first();
+  await expect(page.locator("[data-follow-offer]")).toBeVisible();
+  const headerControl = await page.locator(".site-header__actions [data-follow-dock]").count();
+  expect(headerControl).toBe(1);
+  await page.getByRole("button", { name: "Dismiss Follow invitation" }).click();
+  await expect(page.locator("[data-follow-offer]")).toHaveCount(0);
   await expect(replay).toBeVisible();
   await replay.click();
   await expect(page.getByRole("button", { name: /Stop following/ }).first()).toBeVisible({ timeout: 4_000 });
@@ -626,7 +809,7 @@ test("a failed portrait request falls back to the finished semantic hero", async
   test.skip(isMobile, "The shared asset failure path runs once.");
   await page.route("**/hero-system*", (route) => route.abort());
   await page.goto("/?narrative=first");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 10_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-narrative", "complete", { timeout: 20_000 });
   await expect(page.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.locator("[data-figma-editor]")).toBeHidden();
 });

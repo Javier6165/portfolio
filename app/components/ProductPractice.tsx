@@ -100,12 +100,6 @@ export function ProductPractice() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.ungrouped} aria-hidden="true">
-        <b>Loose skills / no workflow</b>
-        <span>Systems thinking</span><span>Facilitation</span><span>Interaction design</span>
-        <span>Design systems</span><span>Prototyping</span><span>Product strategy</span>
-      </div>
-
       <div className={styles.tabs} role="tablist" aria-label="Javier's product design practice">
         {practiceSteps.map((step, index) => (
           <button
@@ -126,7 +120,7 @@ export function ProductPractice() {
         ))}
       </div>
 
-      <div className={styles.viewer} id="practice-viewer" role="tabpanel" aria-labelledby={`practice-tab-${active}`}>
+      <div className={styles.viewer} id="practice-viewer" role="tabpanel" aria-labelledby={`practice-tab-${active}`} data-practice-viewer>
         <div className={styles.viewerMeta}>
           <span>0{activeIndex + 1} / 03</span>
           <span>Output linked</span>

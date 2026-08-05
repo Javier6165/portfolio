@@ -18,6 +18,7 @@ import {
 } from "./DirectorCommentary";
 import { consumeDirectorAction, type DirectorActionCue } from "./director-copy/signals";
 import { commentKeyDelay } from "./commentTyping";
+import { readDirectorBeats, rememberDirectorBeats } from "./directorMemory";
 import { FigmaCursor } from "./FigmaCursor";
 import type { NarrativeConsent, VisitTier } from "./NarrativeContext";
 import styles from "./DirectorPresence.module.css";
@@ -29,26 +30,30 @@ type TextAction =
   | { type: "type"; value: string }
   | { type: "backspace"; count: number }
   | { type: "select-all" }
+  | { type: "select-range"; start: number; end: number }
   | { type: "pause"; duration: number };
 
 type DirectorBeat = {
   id: string;
   selector: string;
   section: DirectorSection;
-  mode: "text" | "comment" | "nudge" | "crop" | "easing";
+  mode: "text" | "comment" | "nudge" | "spacing" | "swap" | "crop" | "contrast" | "easing";
   comments: readonly DirectorLine[];
   selectedLine?: DirectorLine;
   trigger?: ContextualCueId | "ambient";
   segment?: string;
+  initialValue?: string;
   actions?: TextAction[];
   priority?: number;
+  repeatAfterPass?: boolean;
 };
 
 type TextOverlay = {
   before: string;
   current: string;
   after: string;
-  selected: boolean;
+  selection: { start: number; end: number } | null;
+  caretIndex: number | null;
   typing: boolean;
   style: CSSProperties;
 };
@@ -60,6 +65,7 @@ type Candidate = {
   pointerInside: boolean;
   entry?: { x: number; y: number };
   quiet?: boolean;
+  authoredPass?: boolean;
   intent?: "autonomous-work" | "visitor-focus" | "contextual-response" | "figma-handoff";
 };
 type AttentionModel = {
@@ -88,6 +94,7 @@ type BehaviorModel = {
   directionChanges: number;
   lastDirection: -1 | 0 | 1;
   firedTriggers: Set<ContextualCueId>;
+  pendingMemoryCue: ContextualCueId | null;
   pendingAction: DirectorActionCue | null;
   rareShown: boolean;
   scrollBursts: number;
@@ -104,7 +111,6 @@ type DirectorPresenceProps = {
   visitTier: VisitTier;
 };
 
-const DIRECTOR_MEMORY_KEY = "javier-director-beats-v1";
 const HUMAN_KEY_DELAYS = [82, 116, 69, 94, 128, 76, 103, 88, 142, 72];
 const HERO_KEY_DELAYS = [78, 112, 73, 96, 126, 81, 104, 88, 134, 76];
 
@@ -123,6 +129,7 @@ function createBehaviorModel(startedAt = 0): BehaviorModel {
     directionChanges: 0,
     lastDirection: 0,
     firedTriggers: new Set<ContextualCueId>(),
+    pendingMemoryCue: null,
     pendingAction: null,
     rareShown: false,
     scrollBursts: 0,
@@ -140,14 +147,14 @@ const directorBeats: DirectorBeat[] = [
     section: "hero",
     mode: "text",
     priority: .8,
+    repeatAfterPass: false,
     segment: "I design the calm inside complex products.",
+    initialValue: "Senior Product Designer",
     comments: sectionCommentary["hero-headline-indecision"],
     actions: [
-      { type: "type", value: "Javier Ortiz" },
-      { type: "pause", duration: 1_100 },
-      { type: "select-all" },
-      { type: "type", value: "Senior Product Designer" },
-      { type: "pause", duration: 1_300 },
+      { type: "select-range", start: 0, end: 6 },
+      { type: "type", value: "Lead" },
+      { type: "pause", duration: 1_350 },
       { type: "select-all" },
       { type: "type", value: "I design the calm inside complex prodcuts." },
       { type: "pause", duration: 680 },
@@ -156,52 +163,53 @@ const directorBeats: DirectorBeat[] = [
     ],
   },
   {
-    id: "snapshot-trust-typo",
-    selector: "#snapshot-scope",
+    id: "snapshot-spacing-trim",
+    selector: "[data-snapshot-facts]",
     section: "snapshot",
-    mode: "text",
-    segment: "B2B platforms & systems",
-    comments: sectionCommentary["snapshot-trust-typo"],
-    actions: [
-      { type: "type", value: "B2B platfroms & systems" },
-      { type: "pause", duration: 420 },
-      { type: "backspace", count: 19 },
-      { type: "type", value: "platforms & systems" },
-    ],
+    mode: "spacing",
+    comments: sectionCommentary["snapshot-spacing-trim"],
   },
   {
-    id: "video-introduction-note",
-    selector: "#video-introduction-title",
+    id: "video-poster-swap",
+    selector: "[data-video-frame]",
     section: "video",
-    mode: "comment",
-    comments: sectionCommentary["video-introduction-note"],
+    mode: "swap",
+    repeatAfterPass: false,
+    comments: sectionCommentary["video-poster-swap"],
   },
   {
-    id: "work-evidence-note",
-    selector: ".project-card__media",
+    id: "work-crop-tuning",
+    selector: ".project-card--atlas .project-card__media",
     section: "work",
-    mode: "comment",
-    comments: sectionCommentary["work-evidence-note"],
+    mode: "crop",
+    comments: sectionCommentary["work-crop-tuning"],
+  },
+  {
+    id: "work-metadata-contrast",
+    selector: ".project-card--northstar .project-card__meta",
+    section: "work",
+    mode: "contrast",
+    comments: sectionCommentary["work-metadata-contrast"],
   },
   {
     id: "practice-two-pixels",
-    selector: "#practice-title",
+    selector: "[data-practice-viewer]",
     section: "practice",
     mode: "nudge",
     comments: sectionCommentary["practice-two-pixels"],
   },
   {
     id: "ai-validate-typo",
-    selector: "#ai-title",
+    selector: "[data-ai-validate-label]",
     section: "ai",
     mode: "text",
-    segment: "evidence faster",
+    segment: "Validate",
     comments: sectionCommentary["ai-validate-typo"],
     actions: [
-      { type: "type", value: "evidnece faster" },
+      { type: "type", value: "Valdiate" },
       { type: "pause", duration: 390 },
-      { type: "backspace", count: 15 },
-      { type: "type", value: "evidence faster" },
+      { type: "backspace", count: 8 },
+      { type: "type", value: "Validate" },
     ],
   },
   {
@@ -213,17 +221,10 @@ const directorBeats: DirectorBeat[] = [
   },
   {
     id: "references-side-typo",
-    selector: "#testimonials-title",
+    selector: "[data-reference-status]",
     section: "references",
-    mode: "text",
-    segment: "once verified",
+    mode: "contrast",
     comments: sectionCommentary["references-side-typo"],
-    actions: [
-      { type: "type", value: "once verfied" },
-      { type: "pause", duration: 430 },
-      { type: "backspace", count: 7 },
-      { type: "type", value: "verified" },
-    ],
   },
   {
     id: "playground-easing",
@@ -234,9 +235,9 @@ const directorBeats: DirectorBeat[] = [
   },
   {
     id: "footer-handoff",
-    selector: ".footer-contact",
+    selector: ".footer-contact .text-link",
     section: "contact",
-    mode: "comment",
+    mode: "nudge",
     comments: sectionCommentary["footer-handoff"],
   },
 ];
@@ -280,25 +281,6 @@ function findSegmentRect(target: HTMLElement, segment: string) {
     node = walker.nextNode();
   }
   return target.getBoundingClientRect();
-}
-
-function readSeenBeats(reset: boolean) {
-  try {
-    if (reset) window.sessionStorage.removeItem(DIRECTOR_MEMORY_KEY);
-    const value = JSON.parse(window.sessionStorage.getItem(DIRECTOR_MEMORY_KEY) ?? "[]") as unknown;
-    return new Set(Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []);
-  } catch {
-    return new Set<string>();
-  }
-}
-
-function rememberBeat(seen: Set<string>, id: string) {
-  seen.add(id);
-  try {
-    window.sessionStorage.setItem(DIRECTOR_MEMORY_KEY, JSON.stringify([...seen]));
-  } catch {
-    // Director memory is session-only and entirely optional.
-  }
 }
 
 export function DirectorPresence({
@@ -357,7 +339,7 @@ export function DirectorPresence({
     const resetRequested = params.get("director") === "reset" || params.get("directorReset") === "1";
     const reset = resetRequested && !resetConsumedRef.current;
     if (reset) resetConsumedRef.current = true;
-    const seen = readSeenBeats(reset);
+    const seen = readDirectorBeats(reset);
     const intersections = new Map<HTMLElement, number>();
     const targets = directorBeats
       .map((beat) => ({ beat, target: document.querySelector<HTMLElement>(beat.selector) }))
@@ -375,6 +357,7 @@ export function DirectorPresence({
     }
     const sessionStartedAt = sessionStartedAtRef.current ?? startedAt;
     const behavior = behaviorRef.current;
+    if (memoryDecision) behavior.pendingMemoryCue ??= `memory-${memoryDecision}` as ContextualCueId;
     behavior.pendingAction ??= consumeDirectorAction();
     const attention: AttentionModel = {
       pointerX: window.innerWidth * .5,
@@ -390,6 +373,7 @@ export function DirectorPresence({
     let alive = true;
     let generation = 0;
     let running = false;
+    let runningIntent: Candidate["intent"] | null = null;
     let interval: number | null = null;
     let currentCandidate: Candidate | null = null;
     let candidateSince = startedAt;
@@ -409,9 +393,6 @@ export function DirectorPresence({
       y: (Number(document.body.dataset.directorHandoffY) || 42) + window.scrollY,
     } : null;
     if (handoffRequested) {
-      delete document.body.dataset.directorHandoff;
-      delete document.body.dataset.directorHandoffX;
-      delete document.body.dataset.directorHandoffY;
       nextAllowedAt = startedAt;
     }
 
@@ -452,7 +433,7 @@ export function DirectorPresence({
       if (effectTarget) {
         delete effectTarget.dataset.directorEditing;
         gsap.set(effectTarget, { clearProps: "transform,filter" });
-        const image = effectTarget.querySelector("img");
+        const image = effectTarget.querySelector(".project-visual, img");
         if (image) gsap.set(image, { clearProps: "transform,filter" });
       }
       effectTargetRef.current = null;
@@ -463,6 +444,9 @@ export function DirectorPresence({
         delete sharedScene.dataset.directorSharedEdit;
       }
       sharedSceneRef.current = null;
+      delete document.body.dataset.directorHandoff;
+      delete document.body.dataset.directorHandoffX;
+      delete document.body.dataset.directorHandoffY;
       setTextOverlay(null);
     };
 
@@ -474,6 +458,7 @@ export function DirectorPresence({
     ) => {
       generation += 1;
       running = false;
+      runningIntent = null;
       tweenRef.current?.kill();
       tweenRef.current = null;
       clearTarget();
@@ -553,7 +538,7 @@ export function DirectorPresence({
       return true;
     };
 
-    const createOverlay = (target: HTMLElement, segment: string) => {
+    const createOverlay = (target: HTMLElement, segment: string, initialValue = segment) => {
       const source = target.innerText.replace(/\s+/g, " ").trim();
       const start = source.indexOf(segment);
       if (start < 0) return null;
@@ -578,9 +563,10 @@ export function DirectorPresence({
       };
       return {
         before: source.slice(0, start),
-        current: segment,
+        current: initialValue,
         after: source.slice(start + segment.length),
-        selected: false,
+        selection: null,
+        caretIndex: null,
         typing: false,
         style,
       } satisfies TextOverlay;
@@ -589,25 +575,46 @@ export function DirectorPresence({
     const runTextBeat = async (beat: DirectorBeat, target: HTMLElement, runId: number) => {
       if (!beat.segment || !beat.actions) return false;
       const isOpeningHeadline = beat.id === "hero-headline-indecision";
-      const overlay = createOverlay(target, beat.segment);
+      // Remove the handoff veil and hide the semantic heading in the same task,
+      // before the browser can paint. This also lets getComputedStyle read the
+      // real hero color for the visual mirror instead of transparent.
+      if (isOpeningHeadline) {
+        delete document.body.dataset.directorHandoff;
+        delete document.body.dataset.directorHandoffX;
+        delete document.body.dataset.directorHandoffY;
+      }
+      const overlay = createOverlay(target, beat.segment, beat.initialValue);
       if (!overlay) return false;
       const segmentRect = findSegmentRect(target, beat.segment);
       setTextOverlay(overlay);
-      if (!await sleep(50, runId)) return false;
       target.dataset.directorEditing = "text";
       currentTargetRef.current = target;
+      if (!await sleep(50, runId)) return false;
 
       const documentSegment = toDocumentRect(segmentRect);
       const baselineY = documentSegment.bottom - 4;
       if (!await moveCursor(documentSegment.right, baselineY, acceleratedMotion ? 90 : isOpeningHeadline ? 280 : 360, runId)) return false;
-      setTextOverlay((current) => current ? { ...current, selected: true } : current);
-      if (!await moveCursor(documentSegment.left, baselineY, acceleratedMotion ? 120 : isOpeningHeadline ? 680 : 540, runId)) return false;
-      if (!await sleep(acceleratedMotion ? 80 : isOpeningHeadline ? 420 : 360, runId)) return false;
+      if (!beat.initialValue) {
+        setTextOverlay((current) => current ? { ...current, selection: { start: 0, end: current.current.length }, caretIndex: null } : current);
+        if (!await moveCursor(documentSegment.left, baselineY, acceleratedMotion ? 120 : isOpeningHeadline ? 680 : 540, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 80 : isOpeningHeadline ? 420 : 360, runId)) return false;
+      } else if (!await sleep(acceleratedMotion ? 50 : 280, runId)) return false;
 
-      let value = beat.segment;
+      let value = beat.initialValue ?? beat.segment;
       let keyIndex = 0;
-      let selectionActive = true;
+      let selectionRange = beat.initialValue ? null : { start: 0, end: value.length };
+      let caretIndex = beat.initialValue ? value.length : 0;
       const followTypedText = () => {
+        const caret = layer.querySelector<HTMLElement>("[data-director-caret]");
+        const caretRect = caret?.getBoundingClientRect();
+        if (caretRect) {
+          gsap.set(cursor, {
+            x: caretRect.right + window.scrollX,
+            y: caretRect.bottom + window.scrollY - 4,
+            opacity: 1,
+          });
+          return;
+        }
         const typed = layer.querySelector<HTMLElement>("[data-director-current-text]");
         const rects = typed?.getClientRects();
         const lastRect = rects?.length ? rects[rects.length - 1] : null;
@@ -618,6 +625,25 @@ export function DirectorPresence({
             opacity: 1,
           });
         }
+      };
+      const measureSelection = (element: HTMLElement, start: number, end: number) => {
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+        const nodes: Array<{ node: Text; start: number; end: number }> = [];
+        let offset = 0;
+        let node = walker.nextNode();
+        while (node) {
+          const text = node as Text;
+          nodes.push({ node: text, start: offset, end: offset + text.data.length });
+          offset += text.data.length;
+          node = walker.nextNode();
+        }
+        const first = nodes.find((item) => start >= item.start && start <= item.end);
+        const last = nodes.find((item) => end >= item.start && end <= item.end) ?? nodes.at(-1);
+        if (!first || !last) return null;
+        const range = document.createRange();
+        range.setStart(first.node, Math.max(0, start - first.start));
+        range.setEnd(last.node, Math.min(last.node.data.length, end - last.start));
+        return range.getBoundingClientRect();
       };
       for (const action of beat.actions) {
         if (action.type === "pause") {
@@ -631,35 +657,67 @@ export function DirectorPresence({
           if (typedRect) {
             const typedBaseline = typedRect.bottom + window.scrollY - 4;
             if (!await moveCursor(typedRect.right + window.scrollX, typedBaseline, acceleratedMotion ? 55 : isOpeningHeadline ? 240 : 220, runId)) return false;
-            setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
+            setTextOverlay((current) => current ? { ...current, selection: { start: 0, end: value.length }, caretIndex: null, typing: false } : current);
             if (!await moveCursor(typedRect.left + window.scrollX, typedBaseline, acceleratedMotion ? 75 : isOpeningHeadline ? 620 : 460, runId)) return false;
           } else {
-            setTextOverlay((current) => current ? { ...current, selected: true, typing: false } : current);
+            setTextOverlay((current) => current ? { ...current, selection: { start: 0, end: value.length }, caretIndex: null, typing: false } : current);
           }
-          selectionActive = true;
+          selectionRange = { start: 0, end: value.length };
+          caretIndex = 0;
           if (!await sleep(acceleratedMotion ? 60 : isOpeningHeadline ? 360 : 300, runId)) return false;
+          continue;
+        }
+        if (action.type === "select-range") {
+          const start = clamp(action.start, 0, value.length);
+          const end = clamp(action.end, start, value.length);
+          const typed = layer.querySelector<HTMLElement>("[data-director-current-text]");
+          const selectedRect = typed ? measureSelection(typed, start, end) : null;
+          if (selectedRect) {
+            const selectedBaseline = selectedRect.bottom + window.scrollY - 4;
+            if (!await moveCursor(selectedRect.right + window.scrollX, selectedBaseline, acceleratedMotion ? 55 : 260, runId)) return false;
+            setTextOverlay((current) => current ? { ...current, selection: { start, end }, caretIndex: null, typing: false } : current);
+            if (!await moveCursor(selectedRect.left + window.scrollX, selectedBaseline, acceleratedMotion ? 75 : 480, runId)) return false;
+          } else {
+            setTextOverlay((current) => current ? { ...current, selection: { start, end }, caretIndex: null, typing: false } : current);
+          }
+          selectionRange = { start, end };
+          caretIndex = start;
+          if (!await sleep(acceleratedMotion ? 60 : 340, runId)) return false;
           continue;
         }
         if (action.type === "type") {
           for (const character of action.value) {
-            value = selectionActive ? character : `${value}${character}`;
-            selectionActive = false;
+            if (selectionRange) {
+              value = `${value.slice(0, selectionRange.start)}${character}${value.slice(selectionRange.end)}`;
+              caretIndex = selectionRange.start + 1;
+              selectionRange = null;
+            } else {
+              value = `${value.slice(0, caretIndex)}${character}${value.slice(caretIndex)}`;
+              caretIndex += 1;
+            }
             keyIndex += 1;
-            setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
+            setTextOverlay((current) => current ? { ...current, current: value, selection: null, caretIndex, typing: true } : current);
             const delay = acceleratedMotion ? 12 : isOpeningHeadline ? HERO_KEY_DELAYS[keyIndex % HERO_KEY_DELAYS.length] : HUMAN_KEY_DELAYS[keyIndex % HUMAN_KEY_DELAYS.length];
             if (!await sleep(delay, runId)) return false;
             followTypedText();
           }
         } else {
           for (let index = 0; index < action.count; index += 1) {
-            value = value.slice(0, -1);
-            setTextOverlay((current) => current ? { ...current, current: value, selected: false, typing: true } : current);
+            if (selectionRange) {
+              value = `${value.slice(0, selectionRange.start)}${value.slice(selectionRange.end)}`;
+              caretIndex = selectionRange.start;
+              selectionRange = null;
+            } else if (caretIndex > 0) {
+              value = `${value.slice(0, caretIndex - 1)}${value.slice(caretIndex)}`;
+              caretIndex -= 1;
+            }
+            setTextOverlay((current) => current ? { ...current, current: value, selection: null, caretIndex, typing: true } : current);
             if (!await sleep(acceleratedMotion ? 14 : isOpeningHeadline ? 62 + (index % 3) * 8 : 92 + (index % 3) * 17, runId)) return false;
             followTypedText();
           }
         }
       }
-      setTextOverlay((current) => current ? { ...current, typing: false } : current);
+      setTextOverlay((current) => current ? { ...current, selection: null, caretIndex: null, typing: false } : current);
       return value === beat.segment;
     };
 
@@ -672,15 +730,40 @@ export function DirectorPresence({
         return moveCursor(gestureOrigin.x + 2, gestureOrigin.y - 2, acceleratedMotion ? 160 : 620, runId);
       }
       target.dataset.directorEditing = beat.mode;
+      if (beat.mode === "spacing") {
+        if (!await sleep(acceleratedMotion ? 25 : 360, runId)) return false;
+        if (!await moveCursor(gestureOrigin.x - 10, gestureOrigin.y, acceleratedMotion ? 120 : 820, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 540, runId)) return false;
+        return moveCursor(gestureOrigin.x - 13, gestureOrigin.y + 2, acceleratedMotion ? 100 : 460, runId);
+      }
+      if (beat.mode === "swap") {
+        if (!await sleep(acceleratedMotion ? 25 : 420, runId)) return false;
+        if (!await moveCursor(gestureOrigin.x + 8, gestureOrigin.y + 5, acceleratedMotion ? 120 : 720, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 980, runId)) return false;
+        return moveCursor(gestureOrigin.x + 2, gestureOrigin.y - 2, acceleratedMotion ? 100 : 520, runId);
+      }
       if (beat.mode === "crop") {
-        const image = target.querySelector("img") ?? target;
+        const image = target.querySelector<HTMLElement>(".project-visual, img") ?? target;
         if (!await sleep(acceleratedMotion ? 30 : 360, runId)) return false;
-        gsap.to(image, { xPercent: -1.8, scale: 1.025, duration: acceleratedMotion ? .12 : 1.02, ease: "power2.inOut" });
-        if (!await moveCursor(gestureOrigin.x - 18, gestureOrigin.y + 4, acceleratedMotion ? 140 : 980, runId)) return false;
-        if (!await sleep(acceleratedMotion ? 35 : 520, runId)) return false;
-        gsap.to(image, { xPercent: 0, scale: 1, duration: acceleratedMotion ? .12 : 1.04, ease: "power3.inOut" });
-        if (!await moveCursor(gestureOrigin.x + 4, gestureOrigin.y - 2, acceleratedMotion ? 140 : 940, runId)) return false;
-        return sleep(acceleratedMotion ? 35 : 360, runId);
+        gsap.to(image, { xPercent: -.7, scale: 1.018, duration: acceleratedMotion ? .12 : .84, ease: "power2.inOut" });
+        if (!await moveCursor(gestureOrigin.x - 12, gestureOrigin.y + 3, acceleratedMotion ? 140 : 820, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 360, runId)) return false;
+        gsap.to(image, { xPercent: .45, scale: .992, duration: acceleratedMotion ? .12 : .78, ease: "power2.inOut" });
+        if (!await moveCursor(gestureOrigin.x + 9, gestureOrigin.y - 2, acceleratedMotion ? 140 : 780, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 320, runId)) return false;
+        gsap.to(image, { xPercent: -.25, scale: 1.01, duration: acceleratedMotion ? .12 : .76, ease: "power2.inOut" });
+        if (!await moveCursor(gestureOrigin.x - 5, gestureOrigin.y + 1, acceleratedMotion ? 140 : 740, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 35 : 300, runId)) return false;
+        gsap.to(image, { xPercent: 0, scale: 1, duration: acceleratedMotion ? .12 : .86, ease: "power3.out" });
+        if (!await moveCursor(gestureOrigin.x + 2, gestureOrigin.y, acceleratedMotion ? 140 : 820, runId)) return false;
+        return sleep(acceleratedMotion ? 35 : 420, runId);
+      }
+      if (beat.mode === "contrast") {
+        if (!await sleep(acceleratedMotion ? 25 : 340, runId)) return false;
+        gsap.fromTo(target, { filter: "brightness(.9)" }, { filter: "brightness(1)", duration: acceleratedMotion ? .12 : .88, ease: "power2.out" });
+        if (!await moveCursor(gestureOrigin.x + 6, gestureOrigin.y - 3, acceleratedMotion ? 120 : 720, runId)) return false;
+        if (!await sleep(acceleratedMotion ? 30 : 620, runId)) return false;
+        return moveCursor(gestureOrigin.x + 2, gestureOrigin.y, acceleratedMotion ? 100 : 480, runId);
       }
       if (beat.mode === "easing") {
         if (!await sleep(acceleratedMotion ? 30 : 340, runId)) return false;
@@ -734,8 +817,8 @@ export function DirectorPresence({
       if (consent === "granted") markCueSeen(directorCopyMemoryId(line.id));
     };
 
-    const runBeat = async ({ beat, target, entry, quiet = false, intent = "autonomous-work" }: Candidate) => {
-      const mayWorkOffscreen = quiet && intent === "autonomous-work";
+    const runBeat = async ({ beat, target, entry, quiet = false, authoredPass = false, intent = "autonomous-work" }: Candidate) => {
+      const mayWorkOffscreen = intent === "autonomous-work" && (quiet || authoredPass);
       if (!alive || !target.isConnected || (!mayWorkOffscreen && visibleRatio(target) < .2)) {
         currentCandidate = null;
         candidateSince = window.performance.now();
@@ -750,15 +833,18 @@ export function DirectorPresence({
         return;
       }
       running = true;
+      runningIntent = intent;
       const runId = ++generation;
       const isOpeningHeadline = beat.id === "hero-headline-indecision";
       const workedBeatId = beat.id.replace(/^ambient:(?:focus:)?/, "");
-      if (!quiet) rememberBeat(seen, beat.id);
       if (beat.id.startsWith("context:")) {
         autonomousBeatsSinceContext = 0;
         behavior.lastContextAt = startedAt;
         layer.dataset.directorLastContext = beat.id;
-        if (beat.trigger && beat.trigger !== "ambient") behavior.firedTriggers.add(beat.trigger);
+        if (beat.trigger && beat.trigger !== "ambient") {
+          behavior.firedTriggers.add(beat.trigger);
+          if (behavior.pendingMemoryCue === beat.trigger) behavior.pendingMemoryCue = null;
+        }
         if (beat.trigger === "follow-stop") behavior.pendingAction = null;
         if (beat.trigger === "rare-review") behavior.rareShown = true;
       }
@@ -796,15 +882,15 @@ export function DirectorPresence({
       if (line) {
         layer.dataset.directorLine = line.id;
         recordLine(line);
-        setBrainState("commenting", beat.id.startsWith("context:") ? "contextual-response" : "explaining-choice");
-        if (!await typeNote(line.opening, runId)) return;
-        const openingHold = isOpeningHeadline
-          ? 1_650
-          : clamp(900 + line.opening.length * 8, 1_150, 1_700);
-        if (!await sleep(acceleratedMotion ? 70 : openingHold, runId)) return;
-        gsap.to(note, { opacity: 0, scale: .98, duration: acceleratedMotion ? .06 : .18, ease: "power2.out" });
-        if (!await sleep(acceleratedMotion ? 20 : isOpeningHeadline ? 240 : 190, runId)) return;
-        hideNote();
+        if (!isOpeningHeadline) {
+          setBrainState("commenting", beat.id.startsWith("context:") ? "contextual-response" : "explaining-choice");
+          if (!await typeNote(line.opening, runId)) return;
+          const openingHold = clamp(900 + line.opening.length * 8, 1_150, 1_700);
+          if (!await sleep(acceleratedMotion ? 70 : openingHold, runId)) return;
+          gsap.to(note, { opacity: 0, scale: .98, duration: acceleratedMotion ? .06 : .18, ease: "power2.out" });
+          if (!await sleep(acceleratedMotion ? 20 : 190, runId)) return;
+          hideNote();
+        }
       }
 
       setBrainState(beat.mode === "comment" ? "commenting" : "editing", intent);
@@ -816,16 +902,20 @@ export function DirectorPresence({
         ? await runTextBeat(beat, target, runId)
         : await runEffectBeat(beat, target, runId);
       if (!completed || generation !== runId) return;
+      if (!quiet || authoredPass) rememberDirectorBeats(seen, [workedBeatId]);
 
-      if (line?.resolution) {
+      const postEditComment = isOpeningHeadline ? (line?.resolution ?? line?.opening) : line?.resolution;
+      if (postEditComment) {
         gsap.to(note, { opacity: 0, scale: .98, duration: acceleratedMotion ? .06 : .16, ease: "power2.out" });
         if (!await sleep(acceleratedMotion ? 20 : isOpeningHeadline ? 320 : 220, runId)) return;
-        if (!await typeNote(line.resolution, runId)) return;
+        setBrainState("commenting", "explaining-choice");
+        if (!await typeNote(postEditComment, runId)) return;
       }
-      const readingHold = line ? clamp(1_600 + (line.resolution ?? line.opening).length * 11, 2_100, 3_400) : 620;
+      const visibleComment = postEditComment ?? (!isOpeningHeadline ? line?.opening : undefined);
+      const readingHold = visibleComment ? clamp(1_600 + visibleComment.length * 11, 2_100, 3_400) : 620;
       const holdDuration = acceleratedMotion ? 100 : quiet ? 620 : readingHold;
       const holdPoint = cursorPoint();
-      const held = line?.resolution
+      const held = postEditComment
         ? await sleep(holdDuration, runId)
         : await moveCursor(holdPoint.x + 4, holdPoint.y + 3, holdDuration, runId);
       if (!held) return;
@@ -839,8 +929,9 @@ export function DirectorPresence({
       gsap.to(cursor, { x: endX + 12, y: endY + 8, opacity: 1, duration: acceleratedMotion ? .1 : .42, ease: "power2.inOut" });
       if (!await sleep(acceleratedMotion ? 100 : isOpeningHeadline ? 320 : 460, runId)) return;
       running = false;
+      runningIntent = null;
       lastWorkedBeatId = workedBeatId;
-      if (quiet && intent === "autonomous-work") {
+      if (intent === "autonomous-work") {
         autonomousBeatsSinceContext += 1;
         layer.dataset.directorAutonomousCount = String(Number(layer.dataset.directorAutonomousCount ?? "0") + 1);
         layer.dataset.directorLastAutonomous = workedBeatId;
@@ -890,12 +981,29 @@ export function DirectorPresence({
       if (!connected.length) return null;
       const requested = fast ? params.get("directorAgenda") : null;
       const forced = requested ? connected.find(({ beat }) => beat.id === requested) : null;
-      const startIndex = forced ? connected.indexOf(forced) : autonomousAgendaIndex % connected.length;
-      let selected = connected[startIndex] ?? connected[0];
-      if (!forced && (selected.beat.id === lastAmbientBeatId || selected.beat.id === lastWorkedBeatId) && connected.length > 1) {
-        selected = connected[(startIndex + 1) % connected.length];
+      const nextAuthored = forced && !seen.has(forced.beat.id)
+        ? forced
+        : connected.find(({ beat }) => !seen.has(beat.id));
+      if (nextAuthored) {
+        return {
+          beat: nextAuthored.beat,
+          target: nextAuthored.target,
+          score: 0,
+          pointerInside: false,
+          quiet: visibleRatio(nextAuthored.target) < .2,
+          authoredPass: true,
+          intent: "autonomous-work",
+        };
       }
-      autonomousAgendaIndex = (connected.indexOf(selected) + 1) % connected.length;
+      const ambientConnected = connected.filter(({ beat }) => beat.repeatAfterPass !== false);
+      if (!ambientConnected.length) return null;
+      const ambientForced = forced?.beat.repeatAfterPass === false ? null : forced;
+      const startIndex = ambientForced ? ambientConnected.indexOf(ambientForced) : autonomousAgendaIndex % ambientConnected.length;
+      let selected = ambientConnected[startIndex] ?? ambientConnected[0];
+      if (!ambientForced && (selected.beat.id === lastAmbientBeatId || selected.beat.id === lastWorkedBeatId) && ambientConnected.length > 1) {
+        selected = ambientConnected[(startIndex + 1) % ambientConnected.length];
+      }
+      autonomousAgendaIndex = (ambientConnected.indexOf(selected) + 1) % ambientConnected.length;
       return {
         beat: { ...selected.beat, id: `ambient:${selected.beat.id}` },
         target: selected.target,
@@ -921,8 +1029,8 @@ export function DirectorPresence({
       const requestedContext = fast ? params.get("directorContext") : null;
       const forcedContext = requestedContext && isContextualTrigger(requestedContext) ? requestedContext : null;
       const directCue = forcedContext
-        ?? (memoryDecision && !triggerSeen(`memory-${memoryDecision}` as ContextualCueId)
-        ? `memory-${memoryDecision}` as ContextualCueId
+        ?? (behavior.pendingMemoryCue && !triggerSeen(behavior.pendingMemoryCue)
+        ? behavior.pendingMemoryCue
         : behavior.pendingAction === "follow-stop" && !triggerSeen("follow-stop")
           ? "follow-stop"
           : null);
@@ -1001,8 +1109,17 @@ export function DirectorPresence({
         : null;
       if (qaAuthored) return { ...qaAuthored, intent: "visitor-focus" as const };
 
+      const orderedPassPending = targets.some(({ beat, target }) => target.isConnected && !seen.has(beat.id));
+      if (orderedPassPending) {
+        // The first document pass is a readable authored sequence, not a
+        // shuffled playlist. Context can inform Director in the background,
+        // but it cannot interrupt Hero → Contact. Follow changes only the
+        // camera; visitors who never follow still see the exact same edits.
+        return autonomousCandidate();
+      }
+
       if (anchor) {
-        const contextual = contextualCandidate(now, anchor, autonomousBeatsSinceContext >= (fast ? 1 : 2));
+        const contextual = contextualCandidate(now, anchor, autonomousBeatsSinceContext >= 2);
         if (contextual) return { ...contextual, intent: "contextual-response" as const };
         const focusHeld = anchor.pointerInside
           && now - behavior.focusSince >= (fast ? 420 : 3_600)
@@ -1036,8 +1153,16 @@ export function DirectorPresence({
         return;
       }
       if (navigationBusy) {
-        parkCursor();
-        setBrainState("observing", "navigating");
+        const autonomous = autonomousCandidate();
+        if (autonomous) {
+          currentCandidate = autonomous;
+          candidateSince = now;
+          setBrainState("approaching", "autonomous-work");
+          void runBeat(autonomous).catch(failSafely);
+        } else {
+          parkCursor();
+          setBrainState("observing", "navigating");
+        }
         return;
       }
       // Pointer activity can defer a reaction, but it must never become the
@@ -1126,13 +1251,19 @@ export function DirectorPresence({
       }
       lastScrollAt = now;
       lastInputAt = now;
-      currentCandidate = null;
-      candidateSince = now;
-      nextAllowedAt = Math.max(nextAllowedAt, now + (fast ? 250 : 950));
-      // A viewport gesture invalidates measured overlays. Javier's document
-      // coordinate stays untouched, so the camera can naturally leave him
-      // behind instead of dragging a dead cursor through every viewport.
-      cancelCurrent("connected", "observing", attention.scrollDirection > 0 ? "navigating-down" : "navigating-up");
+      // Scroll informs the contextual layer but never interrupts Javier's
+      // authored pass or the post-pass work loop. Their cursor and overlays use
+      // document coordinates, so they can naturally leave the viewport while
+      // the same edit continues. Only a visitor-focused aside is disposable.
+      if (runningIntent === "contextual-response" || runningIntent === "visitor-focus") {
+        cancelCurrent("connected", "observing", attention.scrollDirection > 0 ? "navigating-down" : "navigating-up");
+        return;
+      }
+      if (!running) {
+        currentCandidate = null;
+        candidateSince = now;
+        setBrainState("observing", attention.scrollDirection > 0 ? "navigating-down" : "navigating-up");
+      }
     };
     const onResize = () => {
       if (!alive) return;
@@ -1213,7 +1344,21 @@ export function DirectorPresence({
           style={textOverlay.style}
         >
           <span>{textOverlay.before}</span>
-          <span data-director-current-text className={textOverlay.selected ? styles.selectedText : textOverlay.typing ? styles.typingText : undefined}>{textOverlay.current}</span>
+          <span data-director-current-text>
+            {textOverlay.selection ? (
+              <>
+                <span>{textOverlay.current.slice(0, textOverlay.selection.start)}</span>
+                <span className={styles.selectedText}>{textOverlay.current.slice(textOverlay.selection.start, textOverlay.selection.end)}</span>
+                <span>{textOverlay.current.slice(textOverlay.selection.end)}</span>
+              </>
+            ) : textOverlay.typing && textOverlay.caretIndex !== null ? (
+              <>
+                <span>{textOverlay.current.slice(0, textOverlay.caretIndex)}</span>
+                <i className={styles.typingCaret} data-director-caret />
+                <span>{textOverlay.current.slice(textOverlay.caretIndex)}</span>
+              </>
+            ) : textOverlay.current}
+          </span>
           <span>{textOverlay.after}</span>
         </div>
       ) : null}

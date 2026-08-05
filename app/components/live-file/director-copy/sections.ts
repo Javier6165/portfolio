@@ -15,31 +15,35 @@ function section(sectionId: DirectorSection, exchanges: readonly SectionExchange
 // selection engine or generic commentary.
 export const sectionCommentary = {
   "hero-headline-indecision": section("hero", [
-    { id: "section.hero.name-role-value", intent: "self-edit", register: "dry", humor: 1, opening: "Name, job title, positioning line. Every article has a different answer.", resolution: "The useful answer is what I make clearer." },
+    { id: "section.hero.name-role-value", intent: "self-edit", register: "dry", humor: 1, opening: "Senior, lead, positioning line. Every article has a different answer.", resolution: "The useful answer is what I make clearer." },
     { id: "section.hero.impossible-choice", intent: "self-edit", register: "dry", humor: 1, opening: "The headline again. Apparently I enjoy impossible choices.", resolution: "Specific enough to mean something. Keeping it." },
-    { id: "section.hero.who-or-value", intent: "craft", register: "professional", humor: 0, opening: "Do I say who I am or what I actually bring?", resolution: "Less label. More point of view." },
+    { id: "section.hero.who-or-value", intent: "craft", register: "professional", humor: 0, opening: "Do I name the level or what I actually bring?", resolution: "Less label. More point of view." },
     { id: "section.hero.three-opinions", intent: "self-edit", register: "playful", humor: 2, opening: "One hero. Three perfectly defensible opinions.", resolution: "Good. Now it sounds like the work." },
     { id: "section.hero.sixth-pass", intent: "self-edit", register: "warm", humor: 1, opening: "You caught the part where I question the headline for the sixth time.", resolution: "That says more than a job title. Finally." },
   ]),
-  "snapshot-trust-typo": section("snapshot", [
-    { id: "section.snapshot.scope", intent: "craft", register: "professional", humor: 0, opening: "Product terrain sounds like a conference panel.", resolution: "Scope says what a recruiter actually needs." },
-    { id: "section.snapshot.platforms-typo", intent: "self-edit", register: "dry", humor: 1, opening: "Platforms. Familiar territory, questionable spelling.", resolution: "B2B platforms and systems. Clear enough." },
-    { id: "section.snapshot.signal", intent: "craft", register: "professional", humor: 0, opening: "This fact needs a stronger hiring signal.", resolution: "Context first. Tool list elsewhere." },
-    { id: "section.snapshot.cv", intent: "self-edit", register: "playful", humor: 2, opening: "Four facts. One of them was trying to write a manifesto.", resolution: "Back to the useful version." },
-    { id: "section.snapshot.recruiter", intent: "craft", register: "dry", humor: 0, opening: "Let’s answer the recruiter’s question, not invent a new one.", resolution: "Scope made visible." },
+  "snapshot-spacing-trim": section("snapshot", [
+    { id: "section.snapshot.tight", intent: "self-edit", register: "dry", humor: 1, opening: "This row is asking for a little too much room.", resolution: "Ah. Tight. Much better." },
+    { id: "section.snapshot.padding", intent: "craft", register: "professional", humor: 0, opening: "The content is already doing enough.", resolution: "Trim the padding. Keep the signal." },
+    { id: "section.snapshot.cv", intent: "self-edit", register: "playful", humor: 2, opening: "Four facts. Half a centimetre of unnecessary ceremony.", resolution: "There. Less résumé accordion." },
+    { id: "section.snapshot.recruiter", intent: "craft", register: "dry", humor: 0, opening: "A recruiter will scan this, not frame it.", resolution: "Faster line of sight." },
   ]),
-  "video-introduction-note": section("video", [
-    { id: "section.video.shortcut", intent: "craft", register: "professional", humor: 0, opening: "A sixty-second shortcut should still feel like a person.", resolution: "Fast context. No compressed sales pitch." },
-    { id: "section.video.placeholder", intent: "evidence", register: "professional", humor: 0, opening: "Placeholder for now. Better honest than artificially polished.", resolution: "The label stays until the real cut exists." },
-    { id: "section.video.recruiter", intent: "craft", register: "warm", humor: 0, opening: "Some people have a minute, not a full portfolio review.", resolution: "This gives them a useful way in." },
-    { id: "section.video.autoplay", intent: "craft", register: "dry", humor: 1, opening: "No autoplay. Nobody requested a surprise monologue.", resolution: "The visitor keeps the controls." },
+  "video-poster-swap": section("video", [
+    { id: "section.video.laptop", intent: "self-edit", register: "dry", humor: 2, opening: "Good portrait. Not enough laptop.", resolution: "There. Officially a professional video." },
+    { id: "section.video.shortcut", intent: "craft", register: "professional", humor: 0, opening: "A sixty-second shortcut should look like an invitation, not a headshot.", resolution: "This frame says what the format is." },
+    { id: "section.video.corporate", intent: "self-edit", register: "playful", humor: 2, opening: "Can this look five percent more corporate?", resolution: "Laptop added. KPI achieved." },
+    { id: "section.video.human", intent: "craft", register: "warm", humor: 0, opening: "Let’s use the frame that feels ready to speak.", resolution: "Still human. Slightly more hireable." },
   ]),
-  "work-evidence-note": section("work", [
-    { id: "section.work.evidence-first", intent: "evidence", register: "professional", humor: 0, opening: "Evidence first. Decoration can wait.", resolution: "This frame earns its space." },
-    { id: "section.work.receipts", intent: "evidence", register: "dry", humor: 1, opening: "A case study should show its receipts.", resolution: "The claim now has something behind it." },
-    { id: "section.work.pretty-frames", intent: "evidence", register: "dry", humor: 1, opening: "Pretty frames are not evidence. This one is trying.", resolution: "Less theatre. More proof." },
-    { id: "section.work.visible-proof", intent: "evidence", register: "professional", humor: 0, opening: "If the work is real, the proof should be visible.", resolution: "Now the layout is doing product work." },
-    { id: "section.work.inspect", intent: "craft", register: "warm", humor: 0, opening: "This is the part hiring managers actually inspect.", resolution: "Keep the useful detail close." },
+  "work-crop-tuning": section("work", [
+    { id: "section.work.useful-part", intent: "evidence", register: "professional", humor: 0, opening: "The useful part should lead the frame.", resolution: "Enough context. No dead space." },
+    { id: "section.work.crop-anxiety", intent: "self-edit", register: "dry", humor: 2, opening: "Too close. Too far. The ancient crop ritual.", resolution: "That one. Before I change my mind." },
+    { id: "section.work.receipts", intent: "evidence", register: "dry", humor: 1, opening: "A case study should show its receipts.", resolution: "Keep the evidence in the crop." },
+    { id: "section.work.inspect", intent: "craft", register: "warm", humor: 0, opening: "This is where the eye decides what matters.", resolution: "The product logic gets the frame." },
+  ]),
+  "work-metadata-contrast": section("work", [
+    { id: "section.work.accessibility", intent: "craft", register: "professional", humor: 0, opening: "Useful metadata should not require optimism.", resolution: "A little more contrast. Better accessibility." },
+    { id: "section.work.two-points", intent: "self-edit", register: "dry", humor: 1, opening: "Two points darker.", resolution: "Tiny change. Much easier to read." },
+    { id: "section.work.whisper", intent: "self-edit", register: "playful", humor: 2, opening: "The metadata was whispering professionally.", resolution: "It can use an indoor voice." },
+    { id: "section.work.squint", intent: "craft", register: "warm", humor: 1, opening: "No hiring manager should have to squint for context.", resolution: "Signal restored." },
   ]),
   "practice-two-pixels": section("practice", [
     { id: "section.practice.leaning", intent: "self-edit", register: "dry", humor: 1, opening: "This line is leaning left.", resolution: "Two pixels. Emotionally significant." },
@@ -63,11 +67,11 @@ export const sectionCommentary = {
     { id: "section.about.keynote", intent: "self-edit", register: "playful", humor: 2, opening: "A little less keynote speaker, perhaps.", resolution: "Authority reduced to a responsible level." },
   ]),
   "references-side-typo": section("references", [
-    { id: "section.references.person", intent: "craft", register: "warm", humor: 0, opening: "This needs to sound like a person.", resolution: "And be spelt like one." },
-    { id: "section.references.placeholder", intent: "evidence", register: "professional", humor: 0, opening: "References deserve better than placeholder energy.", resolution: "Still provisional. Deliberately." },
-    { id: "section.references.invented-praise", intent: "evidence", register: "dry", humor: 1, opening: "No invented praise. Not even a well-kerned one.", resolution: "No fictional colleagues were harmed." },
-    { id: "section.references.honest", intent: "evidence", register: "professional", humor: 0, opening: "The honest version is quieter and stronger.", resolution: "Honesty survives the edit." },
-    { id: "section.references.source-first", intent: "evidence", register: "professional", humor: 0, opening: "Source first. Compliment later.", resolution: "Permission before polish." },
+    { id: "section.references.person", intent: "craft", register: "warm", humor: 0, opening: "Pending is still a status people need to read.", resolution: "There. Honest and legible." },
+    { id: "section.references.placeholder", intent: "evidence", register: "professional", humor: 0, opening: "The source label is doing important work very quietly.", resolution: "Still provisional. Less invisible." },
+    { id: "section.references.invented-praise", intent: "evidence", register: "dry", humor: 1, opening: "No invented praise. Not even a well-kerned one.", resolution: "The status can say so clearly." },
+    { id: "section.references.honest", intent: "evidence", register: "professional", humor: 0, opening: "The honest version is quieter and stronger.", resolution: "Quieter, not faint." },
+    { id: "section.references.source-first", intent: "evidence", register: "professional", humor: 0, opening: "Source first. Compliment later.", resolution: "A little more contrast. Same rule." },
   ]),
   "playground-easing": section("playground", [
     { id: "section.playground.technically-correct", intent: "craft", register: "dry", humor: 1, opening: "The timing is technically correct.", resolution: "Which is not the same as feeling right." },

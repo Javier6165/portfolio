@@ -139,8 +139,7 @@
   box-shadow: 0 0 0 1px #0d99ff;
 }
 
-.typingText::after {
-  content: "";
+.typingCaret {
   display: inline-block;
   width: 1px;
   height: .84em;
@@ -160,7 +159,10 @@
 }
 
 :global([data-director-editing="nudge"]),
+:global([data-director-editing="spacing"]),
+:global([data-director-editing="swap"]),
 :global([data-director-editing="crop"]),
+:global([data-director-editing="contrast"]),
 :global([data-director-editing="easing"]) {
   outline: 1px solid color-mix(in srgb, #0d99ff 76%, transparent);
   outline-offset: .28rem;

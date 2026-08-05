@@ -26,26 +26,46 @@ function AboutPortrait() {
 
 function VideoIntroduction() {
   return (
-    <section className={`section shell ${styles.videoIntroduction}`} id="meet-javier" aria-labelledby="video-introduction-title" data-home-entry="cut">
-      <header className={styles.videoIntroductionHeading}>
-        <h2 id="video-introduction-title">Meet me in 60 seconds.</h2>
-        <p>A quick, human overview for people deciding whether to go deeper into the work.</p>
-      </header>
-      <figure className={styles.videoPlaceholder} aria-label="Placeholder for Javier Ortiz's 60-second introduction video.">
-        <div className={styles.videoStill}>
-          <picture>
-            <img src="/images/portraits/video-intro-placeholder.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
-          </picture>
-          <span className={styles.videoStatus}>Placeholder · final video pending</span>
-          <span className={styles.videoPlay} aria-hidden="true"><i /></span>
-          <span className={styles.videoDuration}>01:00</span>
-        </div>
-        <figcaption>
-          <span>Javier Ortiz · Product designer</span>
-          <span>Captions and transcript planned</span>
-        </figcaption>
-      </figure>
-    </section>
+    <LiveScene
+      id="video-poster"
+      verb="reframe"
+      label="Video poster / Selected"
+      targetSelector={`.${styles.videoStill}`}
+      tool="asset"
+      action="Choosing the clearer opening frame"
+      properties={["Image · Replace", "Crop · 16:9", "Poster · Selected"]}
+      readMs={1200}
+      spotlightMs={3700}
+      comment="Five percent more hireable. Laptop added."
+      commentFirst
+      draftLabel="Draft · poster undecided"
+      className={styles.videoScene}
+      directorBeatIds={["video-poster-swap"]}
+    >
+      <section className={`section shell ${styles.videoIntroduction}`} id="meet-javier" aria-labelledby="video-introduction-title" data-home-entry="cut">
+        <header className={styles.videoIntroductionHeading}>
+          <h2 id="video-introduction-title">Meet me in 60 seconds.</h2>
+          <p>A quick, human overview for people deciding whether to go deeper into the work.</p>
+        </header>
+        <figure className={styles.videoPlaceholder} aria-label="Placeholder for Javier Ortiz's 60-second introduction video.">
+          <div className={styles.videoStill} data-video-frame>
+            <picture className={styles.videoStillDraft}>
+              <img src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
+            </picture>
+            <picture className={styles.videoStillFinal}>
+              <img src="/images/portraits/video-intro-placeholder.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
+            </picture>
+            <span className={styles.videoStatus}>Placeholder · final video pending</span>
+            <span className={styles.videoPlay} aria-hidden="true"><i /></span>
+            <span className={styles.videoDuration}>01:00</span>
+          </div>
+          <figcaption>
+            <span>Javier Ortiz · Product designer</span>
+            <span>Captions and transcript planned</span>
+          </figcaption>
+        </figure>
+      </section>
+    </LiveScene>
   );
 }
 
@@ -61,19 +81,20 @@ export default function Home() {
           label="Profile / Refined"
           targetSelector={`.${styles.snapshotFacts}`}
           tool="layout"
-          action="Tightening the evidence rhythm"
-          properties={["Gap 18 → 24", "Baseline +2", "Labels · aligned"]}
+          action="Trimming the left padding"
+          properties={["Left 12 → 0", "Columns · unchanged", "Content · untouched"]}
           readMs={1400}
           spotlightMs={3400}
           minVisibility={0.32}
-          comment="The content is right. The rhythm is trying too hard."
+          comment="Four facts. Twelve pixels of unnecessary ceremony."
           commentFirst
           requiredFirstVisit
           cameraOffsetY={190}
-          draftLabel="Draft · rhythm uneven"
+          draftLabel="Draft · padding loose"
           className={styles.snapshotScene}
+          directorBeatIds={["snapshot-spacing-trim"]}
         >
-          <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts">
+          <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts" data-snapshot-facts>
             <li><span>Level</span><strong>Senior Product Designer</strong><small>Recent Lead responsibility</small></li>
             <li><span>Experience</span><strong>5+ years at GiG</strong><small>Marbella · Remote</small></li>
             <li><span>Product scope</span><strong id="snapshot-scope">B2B platforms &amp; systems</strong><small>Rules · CMS · Backoffice</small></li>
@@ -94,22 +115,43 @@ export default function Home() {
         <div className="project-list" data-home-entry="case">
           {projects.map((project, index) => index === 0 ? (
             <LiveScene
-              id="work-frame"
+              id="work-crop"
               verb="frame"
-              label="Case 01 / Live"
+              label="Case 01 / Crop selected"
               targetSelector=".project-card__media"
               tool="asset"
-              action="Opening the evidence crop"
-              properties={["Crop 56 → 52%", "Contrast +4", "Frame · aligned"]}
+              action="Testing the evidence crop"
+              properties={["Crop 52 → 54 → 51%", "Focus · product logic", "Frame · selected"]}
               readMs={1600}
-              spotlightMs={3800}
-              comment="The evidence is here. The crop is hiding the useful part."
+              spotlightMs={4700}
+              comment="Too close. Too far. The ancient crop ritual."
               commentFirst
               draftLabel="Draft · crop too tight"
-              className={styles.workScene}
+              className={`${styles.workScene} ${styles.workCropScene}`}
+              directorBeatIds={["work-crop-tuning"]}
               key={project.slug}
             >
               <ProjectCard project={project} />
+            </LiveScene>
+          ) : index === 1 ? (
+            <LiveScene
+              id="work-contrast"
+              verb="clarify"
+              label="Case 02 / Metadata legible"
+              targetSelector=".project-card__meta"
+              tool="content-status"
+              action="Raising metadata contrast"
+              properties={["Opacity · +2", "Small text · checked", "Contrast · improved"]}
+              readMs={1100}
+              spotlightMs={3300}
+              comment="Useful metadata should not require optimism."
+              commentFirst
+              draftLabel="Draft · metadata too quiet"
+              className={`${styles.workScene} ${styles.workContrastScene}`}
+              directorBeatIds={["work-metadata-contrast"]}
+              key={project.slug}
+            >
+              <ProjectCard project={project} compact />
             </LiveScene>
           ) : <ProjectCard project={project} compact key={project.slug} />)}
         </div>
@@ -123,19 +165,20 @@ export default function Home() {
         </header>
         <LiveScene
           id="practice-connect"
-          verb="connect"
-          label="Practice / Connected"
-          targetSelector={`.${styles.practiceStage}`}
-          tool="connections"
-          action="Turning skills into a workflow"
-          properties={["3 triggers", "3 destinations", "On click"]}
+          verb="align"
+          label="Practice / Aligned"
+          targetSelector="[data-practice-viewer]"
+          tool="align"
+          action="Aligning the workflow viewer"
+          properties={["X · -2 → 0", "12-column grid", "Optical alignment"]}
           readMs={1500}
           spotlightMs={4000}
-          comment="A list of skills. Groundbreaking. Let’s add arrows."
+          comment="Two pixels. Nobody will notice. I will."
           commentFirst
           cameraOffsetY={380}
-          draftLabel="Draft · skills unconnected"
+          draftLabel="Draft · viewer 2 px off grid"
           className={styles.practiceScene}
+          directorBeatIds={["practice-two-pixels"]}
         >
           <div className={styles.practiceStage}><ProductPractice /></div>
         </LiveScene>
@@ -150,18 +193,19 @@ export default function Home() {
           </header>
           <LiveScene
             id="ai-operationalise"
-            verb="operationalise"
-            label="AI workflow / Live"
-            targetSelector={`.${styles.aiStage}`}
-            tool="workflow"
-            action="Turning tools into a working model"
-            properties={["Frame → Validate", "Output linked", "Human check · On"]}
+            verb="correct"
+            label="AI workflow / Checked"
+            targetSelector="[data-ai-validate-label]"
+            tool="text"
+            action="Correcting the validation label"
+            properties={["Valdiate → Validate", "Human check · On", "Copy · Final"]}
             readMs={1100}
             spotlightMs={4200}
-            comment="Five AI tools and no workflow. Very 2026."
+            comment="AI assisted. Typo handcrafted."
             commentFirst
-            draftLabel="Draft · tools before decisions"
+            draftLabel="Draft · human typo"
             className={styles.aiScene}
+            directorBeatIds={["ai-validate-typo"]}
           >
             <div className={styles.aiStage}><AIPractice /></div>
           </LiveScene>
@@ -176,13 +220,14 @@ export default function Home() {
           targetSelector={`.${styles.aboutPortrait}`}
           tool="crop"
           action="Giving the portrait some room"
-          properties={["Fill", "Zoom 112%", "Y 31 → 48"]}
+          properties={["Fill", "Zoom 103% → 100%", "Y · -1 → 0"]}
           readMs={1000}
           spotlightMs={3600}
-          comment="This crop says ‘thought leader’. Bit much."
+          comment="This crop says keynote speaker. I have not earned the lanyard."
           commentFirst
-          draftLabel="Draft · crop fighting the story"
+          draftLabel="Draft · crop a touch too close"
           className={styles.aboutScene}
+          directorBeatIds={["about-crop-breathe"]}
         >
           <div className={styles.aboutSpread} data-home-entry="split">
             <AboutPortrait />
@@ -191,7 +236,6 @@ export default function Home() {
               <h2 id="about-title">Close enough to lead the system. Hands-on enough to fix the detail.</h2>
               <p>I’m a Senior Product Designer based in Marbella. My recent lead experience expanded the frame—from polishing an interaction to helping a team hold quality, context and momentum together.</p>
               <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
-              <span className={styles.aboutDraft} aria-hidden="true">Senior · 5+ years · Rules · CMS · Backoffice · AI · Marbella · Recent Lead</span>
             </div>
           </div>
         </LiveScene>
@@ -201,8 +245,8 @@ export default function Home() {
 
       <section className={`section shell ${styles.playground}`} id="playground" aria-labelledby="playground-title">
         <header className={styles.playgroundHeading}>
-          <div><p className="kicker">07 / Playground</p><h2 id="playground-title">A playground for motion, code and interaction.</h2></div>
-          <p>Open the separate lab for small studies that test one behaviour without becoming a full case study.</p>
+          <div><p className="kicker">07 / Playground</p><h2 id="playground-title">Motion, interaction and code—tested in public.</h2></div>
+          <p>An optional lab for answering one interaction question at a time, without inflating every experiment into a case study.</p>
         </header>
         <LiveScene
           id="playground-experiment"
@@ -210,18 +254,19 @@ export default function Home() {
           label="Experiment / Played"
           targetSelector=".playground-playhead"
           tool="timeline"
-          action="Replacing linear with intentional"
-          properties={["00:02", "Cubic out", "1×"]}
+          action="Giving the playhead a better landing"
+          properties={["Linear → Cubic out", "00:02", "1×"]}
           readMs={900}
           spotlightMs={3400}
           comment="Linear easing. I was young. It was six seconds ago."
           commentFirst
-          draftLabel="Draft · motion without rhythm"
+          draftLabel="Draft · easing still linear"
           className={styles.playgroundScene}
+          directorBeatIds={["playground-easing"]}
         >
           <div className={styles.playgroundShelf} data-home-entry="timeline">
             <PlaygroundStudy />
-            <div className={styles.playgroundMeta}><span>LAB / 001</span><strong>Kinetic type study</strong><p>Testing rhythm, hierarchy and handoff through a restrained typographic loop.</p><Link className="text-link" href="/playground">Enter the playground <ArrowIcon /></Link></div>
+            <div className={styles.playgroundMeta}><span>CURRENT STUDY / 001</span><strong>Easing should explain hierarchy, not announce itself.</strong><p>A 2.2 second type study comparing a mechanical landing with one that settles into place.</p><div className={styles.playgroundTags}><small>Motion</small><small>Prototype</small><small>Coded</small></div><Link className="text-link" href="/playground">Enter the playground <ArrowIcon /></Link></div>
           </div>
         </LiveScene>
       </section>

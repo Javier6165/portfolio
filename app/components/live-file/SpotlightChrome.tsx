@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { commentKeyDelay } from "./commentTyping";
 import styles from "./SpotlightChrome.module.css";
 
@@ -41,8 +42,9 @@ function TypedSpotlightComment({ copy }: { copy: string }) {
   return <strong data-comment-typing={visibleCopy !== copy ? "true" : "false"}>{visibleCopy}</strong>;
 }
 
-export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJavier, presenceStatus, onCancel, onFollow, onReplay, onStop }: { active: SpotlightView | null; showDock: boolean; guidedFirstVisit: boolean; followingJavier: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onFollow: () => void; onReplay: () => void; onStop: () => void }) {
-  const dockExpanded = false;
+export function SpotlightChrome({ active, showDock, followingJavier, presenceStatus, onCancel, onFollow, onStop }: { active: SpotlightView | null; showDock: boolean; followingJavier: boolean; presenceStatus: "connected" | "editing" | "elsewhere" | "done"; onCancel: () => void; onFollow: () => void; onStop: () => void }) {
+  const [offerOpen, setOfferOpen] = useState(true);
+  const headerActions = typeof document === "undefined" ? null : document.querySelector(".site-header__actions");
   const showComment = Boolean(active?.comment) && (active?.phase === "commenting" || active?.phase === "settling");
   const commentResolved = active?.phase === "settling";
   const phaseAction = !active ? "" : active.phase === "commenting" && active.commentFirst
@@ -51,34 +53,40 @@ export function SpotlightChrome({ active, showDock, guidedFirstVisit, followingJ
       ? "Reviewing the unfinished version"
       : active.action;
 
+  useEffect(() => {
+    if (!showDock || followingJavier || !offerOpen) return;
+    const timer = window.setTimeout(() => setOfferOpen(false), 12_000);
+    return () => window.clearTimeout(timer);
+  }, [followingJavier, offerOpen, showDock]);
+
+  const followControl = showDock && !active ? (
+    <div className={styles.dock} data-follow-dock data-presence-status={presenceStatus} data-offer-open={offerOpen && !followingJavier ? "true" : "false"}>
+      {offerOpen && !followingJavier ? (
+        <div className={styles.followOffer} data-follow-offer>
+          <button className={styles.followOfferMain} type="button" aria-label="Follow Javier" onClick={() => { setOfferOpen(false); onFollow(); }}>
+            <span className={styles.collaboratorAvatar} aria-hidden="true">JO</span>
+            <span><strong>Follow Javier</strong><small>Keep the live edits in view</small></span>
+          </button>
+          <button className={styles.followOfferDismiss} type="button" aria-label="Dismiss Follow invitation" onClick={() => setOfferOpen(false)}><i /></button>
+          <i className={styles.offerProgress} aria-hidden="true" />
+        </div>
+      ) : (
+        <button
+          className={styles.dockToggle}
+          type="button"
+          aria-label={followingJavier ? "Stop following Javier" : "Follow Javier"}
+          onClick={followingJavier ? onStop : onFollow}
+          title={followingJavier ? "Stop following Javier" : "Follow Javier"}
+        >
+          <span className={styles.collaboratorAvatar} aria-hidden="true">JO</span><i />
+        </button>
+      )}
+    </div>
+  ) : null;
+
   return (
     <>
-      {showDock && !active ? (
-        <div className={styles.dock} data-follow-dock data-guided={guidedFirstVisit ? "true" : "false"} data-presence-status={presenceStatus} data-expanded={dockExpanded ? "true" : "false"}>
-          {guidedFirstVisit ? (
-            <>
-              <div className={styles.guidedMark}><span className={styles.avatarPortrait} /><i /> JAVIER {presenceStatus === "editing" ? "EDITING" : presenceStatus === "elsewhere" ? "ELSEWHERE" : "CONNECTED"}</div>
-              <p><strong>One guided edit</strong><span>Then explore or follow Javier</span></p>
-            </>
-          ) : (
-            <>
-              <button
-                className={styles.dockToggle}
-                type="button"
-                aria-label={followingJavier ? "Stop following Javier" : "Follow Javier"}
-                onClick={followingJavier ? onStop : onFollow}
-              >
-                <span className={styles.avatarPortrait} /><i /> <span>{followingJavier ? "STOP FOLLOWING" : "FOLLOW JAVIER"}</span>
-              </button>
-              <p><strong>{presenceStatus === "editing" ? "Making a small adjustment" : presenceStatus === "elsewhere" ? "Editing elsewhere in the file" : presenceStatus === "done" ? "File tidy. For now." : "Javier is still in the file"}</strong><span>Optional live edits · your scroll stays yours</span></p>
-              <div className={styles.dockActions} aria-hidden={dockExpanded ? undefined : "true"}>
-                <button type="button" onClick={followingJavier ? onStop : onFollow}>{followingJavier ? "Stop following" : "Follow Javier"}</button>
-                <button type="button" onClick={onReplay}>Follow from the top</button>
-              </div>
-            </>
-          )}
-        </div>
-      ) : null}
+      {followControl ? (headerActions ? createPortal(followControl, headerActions) : followControl) : null}
       {followingJavier ? <div className={styles.followFrame} data-follow-frame aria-hidden="true" /> : null}
       {active ? (
         <div className={styles.overlay} data-spotlight-active>

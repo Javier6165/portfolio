@@ -9,10 +9,11 @@ Elevar la calidad visual con una apertura Figma UI3 reconocible y un portfolio e
 ## Apertura
 
 1. La primera visita entra directamente en una recreación reconocible de Figma UI3.
-2. Javier está editando el frame real de la Home durante aproximadamente `6 s`: el comentario conserva cerca de dos segundos de lectura plena y el viaje a `Present` tiene un beat deliberado.
-3. El cursor colaborativo reconoce al visitante con humor seco: `Oh—sorry. You caught me working.`
-4. Javier se desplaza al control `Present` y lo activa.
-5. El mismo frame se expande y se convierte en el hero semántico.
+2. El hero enseña `Senior Product Designer` y `Portfolio WIP · Working title`; el área fotográfica es todavía un frame vacío rotulado `Portrait pending`.
+3. Desde el primer momento, el cursor arrastra una miniatura del retrato canónico hasta ese frame. El placeholder se resuelve al soltarla y Javier se detiene a comprobar el resultado.
+4. El Cursor Chat nace junto a la flecha y reconoce al visitante con humor seco: `Oh—sorry. You caught me working.`
+5. Tras el hold de lectura, Javier se desplaza al control `Present` y lo activa. La apertura completa dura aproximadamente `9 s`.
+6. El mismo frame se expande y conserva el working title hasta que Director toma el cursor.
 
 La apertura es la única secuencia obligatoria. Reduced motion, no-JS, fallo de media y visita familiar entregan el portfolio final sin comprimir la coreografía.
 
@@ -35,7 +36,7 @@ La apertura es la única secuencia obligatoria. Reduced motion, no-JS, fallo de 
 - Scroll nativo y navegación libre desde el hero.
 - Snapshot deja de ser obligatorio y no captura scroll.
 - Presencia ambiental permitida solo si no bloquea, no mueve la cámara y no compite con lectura o consentimiento.
-- `Follow Javier` permanece voluntario y cancelable, pero su acceso se reduce a una presencia discreta.
+- `Follow Javier` permanece voluntario y cancelable. Se ofrece una vez como notificación temporal en la derecha de la top bar y después se reduce al avatar violeta `JO`.
 - Toda selección, comentario o cursor posterior utiliza el mismo lenguaje visual de Figma.
 
 ## Distill visual

@@ -41,16 +41,17 @@ export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactN
         id="footer-handoff"
         verb="handoff"
         label="Preview ready / Your turn"
-        targetSelector=".footer-contact"
-        tool="file-status"
-        action="Closing the working file"
-        properties={["Editing → Ready for review", "Private preview", "Your turn"]}
+        targetSelector=".footer-contact .text-link"
+        tool="align"
+        action="Aligning the final handoff"
+        properties={["X · -2 → 0", "CTA baseline", "Private preview"]}
         readMs={900}
         spotlightMs={3000}
         comment="One last tweak. Again. Okay—your turn."
         commentFirst
-        draftLabel="Draft · handoff still open"
+        draftLabel="Draft · final CTA 2 px off"
         className="footer-live-scene"
+        directorBeatIds={["footer-handoff"]}
       >
         <div className="shell footer-grid">
           <div className="footer-heading">

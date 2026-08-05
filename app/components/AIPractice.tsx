@@ -117,9 +117,6 @@ export function AIPractice() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.toolCloud} aria-hidden="true">
-        <span>Claude</span><span>Codex</span><span>Figma Make</span><span>Cursor</span><span>Lovable</span><b>AI makes me faster</b>
-      </div>
       <div className={styles.pipeline} role="tablist" aria-label="AI-native product workflow">
         {stages.map((stage, index) => (
           <button
@@ -134,7 +131,7 @@ export function AIPractice() {
             onClick={() => setActive(stage.id)}
             onKeyDown={(event) => moveTab(event, index)}
           >
-            <span>{stage.index}</span><strong>{stage.label}</strong>
+            <span>{stage.index}</span><strong data-ai-validate-label={stage.id === "validate" ? "true" : undefined}>{stage.label}</strong>
           </button>
         ))}
       </div>

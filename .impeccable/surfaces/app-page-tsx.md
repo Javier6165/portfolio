@@ -26,7 +26,7 @@ Design, product and engineering leaders must identify Javier's seniority and poi
 
 ## Constraints
 
-- First visit: one mandatory opening of about `6 s`; the caught-working comment and movement to Present must remain legible.
+- First visit: one mandatory opening of about `9 s`; portrait import, caught-working comment and movement to Present must each remain legible.
 - Reduced motion, no-JS, touch and familiar visits reach the final portfolio safely.
 - Native scroll after Presentation mode; no mandatory Snapshot or later scroll capture.
 - Figma UI3 is a binding reference for the editor layer only.
@@ -38,7 +38,7 @@ Figma UI3 interrupted working file → Living Editorial Dossier. The editor is d
 
 ## Memorable moment
 
-Javier's multiplayer cursor pauses mid-edit, acknowledges being caught working, travels to the real-looking Present control and clicks it. The selected artboard becomes the live portfolio without a cut to a different object.
+Javier's multiplayer cursor drags the canonical portrait into an empty frame, pauses to check it, acknowledges being caught working, travels to the real-looking Present control and clicks it. The selected artboard becomes the live portfolio without a cut to a different object; the working title then resolves through `Lead` into the final positioning.
 
 ## Approved composition
 
@@ -52,14 +52,15 @@ Carry forward the close hero scale and clear cursor-to-Present path from B, the 
 | --- | --- | --- |
 | UI3 editor shell | Fixed left layers panel, canvas, right properties, top collaboration/Present, bottom toolbar | Semantic DOM + CSS |
 | Main artboard | Large selected hero frame that becomes the real portfolio | Existing React hero + CSS transforms |
-| Javier portrait | Integrated right-side photographic field, no floating card | Existing optimized portrait raster |
+| Javier portrait | Empty drop target resolves into the integrated right-side photographic field | Existing optimized portrait raster + decorative drag ghost |
 | Selection and handles | Figma-blue frame geometry | DOM + CSS |
-| Multiplayer cursor | Blue arrow, Javier name tag and cursor chat | DOM + CSS + existing GSAP timeline |
-| Presentation handoff | Javier clicks Present; editor recedes and the same cursor immediately edits the hero headline | Existing GSAP transform timeline + Director handoff |
+| Multiplayer cursor | Violet arrow, Javier name tag and cursor chat | DOM + CSS + existing GSAP timeline |
+| Presentation handoff | Javier clicks Present; editor recedes and the same cursor changes `Senior` to `Lead`, then writes the final hero headline | Existing GSAP transform timeline + Director handoff |
+| Follow access | Eight-second invitation in the right top-bar slot, then a violet `JO` avatar | Header portal + SpotlightChrome |
 | Post-intro chrome | Free scroll, no mandatory Snapshot, discreet Follow, no right rail | Existing behavior simplified in React/CSS |
 | Home rhythm | Fewer monumental headings, pills and micro-labels; warmer signal color | Global tokens + CSS Modules |
 
 ## Open decisions
 
-- Whether later evidence changes should reduce their visual deviation further after in-browser testing.
+- The first authored pass is fixed to document order. Every section now begins from a strong near-final composition and exposes only one micro-deviation: spacing, poster, crop, contrast, two-pixel alignment, typo, opacity or easing. After Contact, Director may roam silently through the repeatable subset; the headline resolution and poster swap remain one-off moments.
 - Whether the published replacement should preserve or remove References once real content work resumes; outside this sprint.

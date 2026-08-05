@@ -27,17 +27,17 @@ No se registra texto introducido, historial, identidad, URLs, analytics ni datos
 
 Director no es una secuencia aleatoria ni una IA remota. Es una `utility AI` similar a las usadas en videojuegos: mantiene un blackboard efímero, evalúa el contexto varias veces por segundo y cambia entre `observing`, `considering`, `approaching`, `commenting/editing`, `cooldown`, `roaming`, `paused` y `done`.
 
-El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Cuando esa señal no existe, una agenda autoral recorre todos los targets del documento, visibles o no, y encadena microajustes silenciosos sin un estado de reposo entre ellos. La velocidad reciente puede cancelar una medición activa, pero nunca sustituye la agenda por un cursor aparcado. Director no interpreta una navegación activa como atención ni arrastra el cursor con la cámara.
+El foco del visitante tiene más peso cuando el puntero permanece sobre un target. Aun así, la primera pasada autoral recorre todos los targets en orden de documento, visibles o no, y encadena microajustes sin un estado de reposo. Durante esa pasada no se inserta ninguna respuesta contextual. Tras completar Contact, la agenda puede rotar libremente entre los ajustes repetibles y reaccionar al visitante; el gran titular y el swap de póster son one-offs. Director no interpreta una navegación activa como atención ni arrastra el cursor con la cámara.
 
 Sobre esa base hay disparadores contextuales finitos para decisión de memoria, visitas 1–5, `45 s`/`2 min`/`4 min`, scroll rápido, lectura pausada, final alcanzado, retorno arriba y revisita de sección. No son respuestas generadas: cada disparador elige entre un pool editorial amplio y determinista. El resultado imita percepción, no inteligencia remota.
 
 ## Decisión de atención
 
 1. El handoff de Present activa inmediatamente `hero-headline-indecision`; el resto de Director espera a que intro y cualquier overlay terminen.
-2. Mantiene una agenda autónoma global que no depende de visibilidad; sus beats son silenciosos, conservan la misma edición WIP → ajuste → final que Follow, pueden ocurrir fuera del viewport y se encadenan de inmediato.
+2. Mantiene una primera agenda autónoma global y ordenada que no depende de visibilidad; conserva la misma edición WIP → ajuste → final que Follow, puede ocurrir fuera del viewport y se encadena de inmediato.
 3. En paralelo puntúa únicamente la zona visible mediante visibilidad, centralidad, proximidad, dwell del puntero y ritmo de interacción.
 4. Una señal contextual o una pausa clara puede redirigir temporalmente el cursor a ese target visible.
-5. Tras la intervención contextual, reanuda su agenda global sin cooldown. Dos comentarios contextuales no pueden encadenarse sin trabajo autónomo intermedio. Sin Follow no hay visita guiada ni cámara automática.
+5. La primera pasada Hero → Contact es exclusivamente autoral: ninguna reacción contextual puede interrumpirla. Tras completarla, Director puede responder al visitante y alternar esas respuestas con microtrabajo repetible. Sin Follow no hay visita guiada ni cámara automática.
 
 Director nunca mueve la cámara. Si no encuentra target legible, el estado puede indicar que Javier trabaja en otra zona del archivo.
 
@@ -58,12 +58,12 @@ Director debe fallar abierto. Las identidades de contexto viven en `LiveSceneCon
 
 ## Contrato de scroll
 
-El cursor vive en coordenadas absolutas del documento, no del viewport. Por eso el visitante puede dejarlo atrás o encontrarlo trabajando más abajo sin que Javier persiga la cámara. Los comentarios y overlays también se miden contra el documento, pero cualquier scroll, resize, cambio de pestaña o entrada en Follow cancela de inmediato la intervención activa:
+El cursor vive en coordenadas absolutas del documento, no del viewport. Por eso el visitante puede dejarlo atrás o encontrarlo trabajando más abajo sin que Javier persiga la cámara. Los comentarios y overlays también se miden contra el documento. El scroll no cancela la pasada autoral ni la rotación de microajustes: ambas siguen en el documento aunque salgan de cámara. Solo una reacción contextual dirigida al visitante es descartable al navegar. Resize material, cambio de pestaña o entrada en Follow cancelan o transfieren la intervención activa:
 
 - el comentario desaparece y el overlay tipográfico se desmonta;
 - el target recupera sus estilos originales;
 - la coordenada documental del cursor permanece intacta;
-- la agenda reanuda solo tras una nueva pausa estable.
+- la agenda autónoma continúa sin esperar una nueva pausa estable.
 
 Así el cursor se comporta como otro colaborador dentro del archivo y nunca como un adorno fijo del viewport.
 
@@ -71,11 +71,11 @@ Así el cursor se comporta como otro colaborador dentro del archivo y nunca como
 
 Los mensajes siguen el contrato de Cursor Chat de Figma, no el de un tooltip alrededor del target. El bocadillo se calcula desde la posición actual de la flecha, elige uno de cuatro lados seguros y permanece unido al cursor mientras se escribe y durante el hold. Javier no continúa moviéndose hasta que el chat se cierra. Los comentarios permanentes de Figma pueden anclarse al canvas, pero esa no es la metáfora usada para la conversación en vivo.
 
-Follow no contiene un segundo set de ediciones. Director y Follow ejecutan el mismo beat de sección; Follow solo añade orden DOM, cámara, Spotlight y chrome de colaboración. Durante todo el estado Follow —también entre capítulos— un marco violeta comparte color con flecha, avatar `JO` y selection bounds. Stop elimina marco, captura y cursor global sin afectar al contenido final.
+Follow no contiene un segundo set de ediciones. Director y Follow ejecutan el mismo beat en el mismo orden DOM; Follow solo añade cámara, Spotlight y chrome de colaboración. Cada capítulo completado comparte sus ids con la memoria session-only de Director para evitar repeticiones al pulsar Stop. Durante todo el estado Follow —también entre capítulos— un marco violeta comparte color con flecha, avatar `JO` y selection bounds. Stop elimina marco, captura y cursor global sin afectar al contenido final.
 
 ## Escritura humana
 
-Los targets de texto editables incluyen Hero, el fact `B2B platforms & systems` de Snapshot, AI y References. El primer beat del Hero selecciona el titular completo, prueba `Javier Ortiz`, `Senior Product Designer` y el posicionamiento final; los demás pueden trabajar sobre un fragmento. Cada beat:
+Los targets de texto editables incluyen Hero y el label `Validate` de AI. Snapshot corrige únicamente padding; `Meet me in 60 seconds` sustituye el poster; Work prueba el crop de Atlas y corrige el contraste de metadata de Northstar; Practice alinea su visor dos píxeles; About relaja mínimamente el crop; References eleva la legibilidad del estado; Playground afina easing y Contact alinea el CTA. El primer beat del Hero recibe `Senior Product Designer` desde la intro, lo mantiene visible durante el handoff, selecciona únicamente `Senior`, escribe `Lead`, mantiene `Lead Product Designer` legible, selecciona después el titular completo y escribe el posicionamiento final. Su único comentario aparece después de resolver el texto; los demás targets pueden trabajar sobre un fragmento. Cada beat:
 
 1. mide el fragmento real con `Range`;
 2. mueve el cursor a su extremo —o consume las coordenadas del cursor que acaba de pulsar Present—;

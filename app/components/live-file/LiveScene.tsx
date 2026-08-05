@@ -22,6 +22,7 @@ type LiveSceneProps = {
   commentFirst?: boolean;
   requiredFirstVisit?: boolean;
   cameraOffsetY?: number;
+  directorBeatIds?: readonly string[];
   draftLabel?: string;
   className?: string;
 };
@@ -42,6 +43,7 @@ export function LiveScene({
   commentFirst = false,
   requiredFirstVisit = false,
   cameraOffsetY = 0,
+  directorBeatIds = [],
   draftLabel,
   className = "",
 }: LiveSceneProps) {
@@ -51,8 +53,8 @@ export function LiveScene({
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || !introComplete) return;
-    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment, commentFirst, requiredFirstVisit, cameraOffsetY });
-  }, [action, cameraOffsetY, comment, commentFirst, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, requiredFirstVisit, spotlightMs, targetSelector, tool, verb]);
+    return registerScene(root, { id, verb, label, action, targetSelector, tool, properties, readMs, spotlightMs, minVisibility, comment, commentFirst, requiredFirstVisit, cameraOffsetY, directorBeatIds });
+  }, [action, cameraOffsetY, comment, commentFirst, directorBeatIds, id, introComplete, label, minVisibility, properties, readMs, reducedMotion, registerScene, replayToken, requiredFirstVisit, spotlightMs, targetSelector, tool, verb]);
 
   function handOff(event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) {
     const root = rootRef.current;

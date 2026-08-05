@@ -134,35 +134,9 @@
 .definition dt { color: var(--muted); font: 0.7rem var(--font-mono); text-transform: uppercase; }
 .definition dd { margin-top: 0.45rem; font-size: 0.93rem; line-height: 1.35; }
 
-.ungrouped {
-  position: absolute;
-  z-index: 4;
-  top: 4rem;
-  left: 1rem;
-  width: 28rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  opacity: 0;
-  pointer-events: none;
-}
-.ungrouped span { padding: 0.6rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 0.4rem; background: var(--surface-raised); font-size: 0.85rem; }
-.ungrouped b {
-  flex-basis: 100%;
-  margin-bottom: .25rem;
-  color: var(--muted);
-  font: 400 .65rem var(--font-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-
-:global([data-live-state="wip"]) .ungrouped,
-:global([data-live-state="observing"]) .ungrouped { opacity: 1; }
-:global([data-live-state="wip"]) .tabs,
-:global([data-live-state="observing"]) .tabs { opacity: 0.3; transform: translateY(2rem); }
 :global([data-live-state="wip"]) .viewer,
-:global([data-live-state="observing"]) .viewer { opacity: 0.5; transform: translate(1.2rem, 2.2rem) rotate(0.8deg); }
-.tabs, .viewer, .ungrouped { transition: opacity 700ms ease, transform 900ms cubic-bezier(.16, 1, .3, 1); }
+:global([data-live-state="observing"]) .viewer { transform: translateX(-2px); }
+.viewer { transition: transform 720ms cubic-bezier(.16, 1, .3, 1); }
 
 @keyframes artifact-in { from { opacity: .35; transform: translateY(.8rem); } }
 
@@ -171,7 +145,6 @@
   .tabs { grid-template-columns: repeat(3, 1fr); }
   .tabs button { min-height: 8rem; grid-template-columns: 1fr; }
   .tabs button i { display: none; }
-  .ungrouped { top: 2rem; width: calc(100% - 2rem); }
   .definition { grid-template-columns: 1fr; }
   .definition > div { border-right: 0; border-bottom: 1px solid var(--line); }
   .definition > div:last-child { border-bottom: 0; }
@@ -189,8 +162,6 @@
   .prototypeCanvas { grid-template-columns: 1.6rem 1fr; }
   .prototypeResult { grid-column: 1 / -1; min-height: 8rem; }
   .prototypeResult strong { font-size: 2.6rem; }
-  :global([data-live-state="wip"]) .viewer,
-  :global([data-live-state="observing"]) .viewer { transform: translate(.35rem, 1.2rem) rotate(.35deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

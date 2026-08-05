@@ -29,20 +29,19 @@ export function Testimonials() {
         id="testimonials-verify"
         verb="verify"
         label="References / Source pending"
-        targetSelector={`.${styles.stage}`}
-        tool="content-status"
-        action="Checking the source before the quote"
-        properties={["Quote · Unverified", "Variant · Pending", "Source · Required"]}
+        targetSelector="[data-reference-status]"
+        tool="contrast"
+        action="Raising the status copy"
+        properties={["Opacity · 62 → 82", "Status · Source required", "Contrast · AA"]}
         readMs={1000}
         spotlightMs={3600}
-        comment="No source, no quote. Apparently we have standards."
+        comment="Pending should not mean playing hide-and-seek."
         commentFirst
-        draftLabel="Draft · provenance missing"
+        draftLabel="Draft · status copy too quiet"
         className={styles.liveScene}
+        directorBeatIds={["references-side-typo"]}
       >
         <div className={styles.stage}>
-          <div className={styles.wipFlag} aria-hidden="true">PROVENANCE / NOT YET VERIFIED</div>
-
           <div className={styles.ledger}>
             <div className={styles.index} role="tablist" aria-label="Reference perspectives">
               <div className={styles.indexMeta}><span>REFERENCE LEDGER</span><b>03 records</b></div>
@@ -59,7 +58,7 @@ export function Testimonials() {
                   onKeyDown={(event) => moveTab(event, index)}
                 >
                   <span>{slot.index}</span>
-                  <div><strong>{slot.perspective}</strong><small>{slot.status === "verified" ? "Verified reference" : "Source required"}</small></div>
+                  <div><strong>{slot.perspective}</strong><small data-reference-status>{slot.status === "verified" ? "Verified reference" : "Source required"}</small></div>
                   <i aria-hidden="true" />
                 </button>
               ))}

@@ -44,10 +44,10 @@ Conclusión: ampliar únicamente los arrays produciría más frases, pero no una
 - Blackboard de comportamiento efímero dentro de la pestaña.
 - Tras `Allow`, solo pueden persistir `visitTier` e ids opacos de copy ya mostrado.
 - Nunca se persisten puntero, dwell, scroll, secciones, acciones ni duración.
-- Director no mueve la cámara, no captura scroll y cancela cualquier intervención al navegar.
+- Director no mueve la cámara ni captura scroll. Navegar solo cancela una reacción contextual dirigida al visitante; la pasada autoral y el microtrabajo posterior continúan fuera de cámara.
 - El cursor permanece presente y trabaja por su cuenta; Follow recibe el cursor de forma excluyente.
 - Touch, reduced motion, no-JS, pestaña oculta, Spotlight y Follow conservan sus límites actuales.
-- Tono general seco, autocrítico y amable; el humor apunta a hábitos de diseño o al propio Javier, nunca al visitante, clientes, compañeros, accesibilidad, privacidad o resultados.
+- Tono general seco, autocrítico y amable; el humor apunta a hábitos de diseño o al propio Javier, nunca al visitante, clientes, compañeros, accesibilidad, privacidad o resultados. No se escribe desde el sarcasmo o el cinismo: la gracia debe convivir con criterio, cuidado y gusto por el detalle.
 - El silencio es una respuesta válida. Una edición puede no llevar comentario.
 
 ## Decisiones que se cambian
@@ -253,6 +253,7 @@ Los números son valores iniciales de tuning, no contratos visuales. Se ajustar�
 - Apertura y resolución deben leerse como una unidad, no como dos frases intercambiables.
 - No abusar de `Apparently`, rayas largas, tecnicismos, juegos de palabras ni referencias internas.
 - El humor se dirige a la propia indecisión o al oficio, nunca juzga cómo navega el visitante.
+- El remate ideal hace sonreír a otra persona de diseño y, a la vez, explica por qué importan dos píxeles, un crop, un typo, una opacidad o un easing.
 - Un fast scroll se reconoce sin etiquetarlo como impaciencia; una pausa no se interpreta automáticamente como interés.
 - Privacidad, contenido ficticio, fuentes y permisos se explican sin remate frívolo.
 - No se afirma que el sistema “sabe”, “vigila”, “recuerda” o “ha visto” algo que no corresponda al consentimiento real.

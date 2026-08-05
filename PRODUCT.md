@@ -28,7 +28,7 @@ The portfolio is evaluated quickly, often by a design or product leader scanning
 
 ## Capabilities and Constraints
 
-- The Home contains Hero, Snapshot, Work, Product practice, AI workflow, About, References, Playground and Contact.
+- The Home contains Hero, Snapshot, a 60-second video introduction, Work, Product practice, AI workflow, About, References, Playground and Contact.
 - The first-visit opening is a short mandatory sequence; after it, native scrolling is free and any guided continuation is explicitly visitor-controlled and stoppable.
 - The current project is a server-rendered Next.js 16 and React 19 site using TypeScript, CSS Modules and GSAP where motion is required.
 - The existing Sites project in `.openai/hosting.json` must be reused. Preview access remains by link with `noindex` and `nofollow` until Javier explicitly changes that decision.

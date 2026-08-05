@@ -16,6 +16,7 @@ import styles from "./EditorIntro.module.css";
 export type IntroPhase =
   | "boot"
   | "editing"
+  | "placing"
   | "caught"
   | "presenting"
   | "expanding"
@@ -60,6 +61,7 @@ export function EditorIntro() {
   const frameRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const portraitRef = useRef<HTMLElement>(null);
+  const portraitDragRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorChatRef = useRef<HTMLDivElement>(null);
@@ -79,7 +81,10 @@ export function EditorIntro() {
     chatTypingTimersRef.current = [];
     const stage = stageRef.current;
     const frame = frameRef.current;
-    if (stage) stage.dataset.expanded = "true";
+    if (stage) {
+      stage.dataset.expanded = "true";
+      stage.dataset.portrait = "placed";
+    }
     setExpanded(true);
     setPhase(nextPhase);
     document.body.dataset.liveFile = "complete";
@@ -89,7 +94,7 @@ export function EditorIntro() {
       introLockRef.current = null;
     }
     if (frame) gsap.set(frame, { clearProps: "transform" });
-    gsap.set([figmaChromeRef.current, cursorRef.current, cursorChatRef.current, selectionRef.current], { clearProps: "all" });
+    gsap.set([figmaChromeRef.current, cursorRef.current, cursorChatRef.current, selectionRef.current, portraitDragRef.current], { clearProps: "all" });
     completeIntro();
     if (focusHeading) window.requestAnimationFrame(() => titleRef.current?.focus({ preventScroll: true }));
   }, [completeIntro]);
@@ -101,12 +106,13 @@ export function EditorIntro() {
     const frame = frameRef.current;
     const title = titleRef.current;
     const portrait = portraitRef.current;
+    const portraitDrag = portraitDragRef.current;
     const selection = selectionRef.current;
     const cursor = cursorRef.current;
     const chat = cursorChatRef.current;
     const present = presentRef.current;
     const figmaChrome = figmaChromeRef.current;
-    if (!stage || !frame || !title || !portrait || !selection || !cursor || !chat || !present || !figmaChrome) {
+    if (!stage || !frame || !title || !portrait || !portraitDrag || !selection || !cursor || !chat || !present || !figmaChrome) {
       finish("failed");
       return;
     }
@@ -118,6 +124,7 @@ export function EditorIntro() {
     setChatText("");
     setExpanded(false);
     stage.dataset.expanded = "false";
+    stage.dataset.portrait = "placed";
 
     const replaying = replayToken > 0 && !reducedMotion;
     const mode = replaying ? "first" : reducedMotion ? "static" : runtimeMode();
@@ -144,13 +151,18 @@ export function EditorIntro() {
     if (scrollbar) document.body.style.paddingRight = `${scrollbar}px`;
 
     activeRef.current = true;
+    stage.dataset.portrait = "empty";
 
     const stageBounds = stage.getBoundingClientRect();
     const selectionBounds = selection.getBoundingClientRect();
     const presentBounds = present.getBoundingClientRect();
     const start = {
-      x: selectionBounds.right - stageBounds.left - 18,
-      y: selectionBounds.bottom - stageBounds.top - 12,
+      x: Math.max(28, selectionBounds.left - stageBounds.left - Math.min(150, selectionBounds.width * .3)),
+      y: Math.max(76, selectionBounds.top - stageBounds.top - 54),
+    };
+    const dropPoint = {
+      x: selectionBounds.left - stageBounds.left + selectionBounds.width * .58,
+      y: selectionBounds.top - stageBounds.top + selectionBounds.height * .38,
     };
     const presentPoint = {
       x: presentBounds.left - stageBounds.left + presentBounds.width * .42,
@@ -159,10 +171,19 @@ export function EditorIntro() {
 
     gsap.set(figmaChrome, { autoAlpha: 1 });
     gsap.set(cursor, { x: start.x, y: start.y, opacity: 1, scale: 1 });
-    gsap.set(chat, { autoAlpha: 0, y: 8, scale: .98 });
+    const chatBounds = chat.getBoundingClientRect();
+    const chatX = dropPoint.x + chatBounds.width + 48 <= stageBounds.width
+      ? dropPoint.x + 28
+      : dropPoint.x - chatBounds.width - 22;
+    const chatY = dropPoint.y + chatBounds.height + 42 <= stageBounds.height
+      ? dropPoint.y + 22
+      : dropPoint.y - chatBounds.height - 18;
+    chat.dataset.chatSide = chatX < dropPoint.x ? "left" : "right";
+    gsap.set(chat, { autoAlpha: 0, x: Math.max(16, chatX), y: Math.max(70, chatY), scale: .98 });
+    gsap.set(portraitDrag, { x: start.x + 10, y: start.y + 12, autoAlpha: .96, scale: .92, rotation: -2 });
     gsap.set(selection, { x: 0 });
 
-    const chatStartMs = 1_080;
+    const chatStartMs = 2_380;
     let chatElapsedMs = 0;
     [...INTRO_CHAT_COPY].forEach((_character, index) => {
       chatElapsedMs += commentKeyDelay(INTRO_CHAT_COPY, index);
@@ -199,10 +220,38 @@ export function EditorIntro() {
     const timeline = gsap.timeline({ defaults: { ease: "power3.inOut" } });
     timelineRef.current = timeline;
     timeline
-      .to(cursor, { x: start.x + 12, y: start.y - 7, duration: .56 }, .18)
-      .to(selection, { x: 2, duration: .24, yoyo: true, repeat: 1, ease: "power2.inOut" }, .48)
-      .call(() => setPhase("caught"), [], .96)
-      .to(chat, { autoAlpha: 1, y: 0, scale: 1, duration: .3, ease: "power2.out" }, 1.02)
+      .to(cursor, {
+        duration: 1.42,
+        motionPath: {
+          path: [
+            start,
+            { x: start.x + (dropPoint.x - start.x) * .48, y: start.y + 34 },
+            dropPoint,
+          ],
+          curviness: .62,
+        },
+      }, .12)
+      .to(portraitDrag, {
+        duration: 1.42,
+        rotation: 0,
+        motionPath: {
+          path: [
+            { x: start.x + 10, y: start.y + 12 },
+            { x: start.x + (dropPoint.x - start.x) * .48 + 10, y: start.y + 46 },
+            { x: dropPoint.x + 10, y: dropPoint.y + 12 },
+          ],
+          curviness: .62,
+        },
+      }, .12)
+      .to(selection, { autoAlpha: 1, duration: .24, ease: "power2.out" }, 1.02)
+      .call(() => {
+        stage.dataset.portrait = "placed";
+        setPhase("placing");
+      }, [], 1.54)
+      .to(portraitDrag, { autoAlpha: 0, scale: .72, duration: .26, ease: "power2.out" }, 1.54)
+      .to(selection, { scale: 1.008, duration: .18, yoyo: true, repeat: 1, ease: "power2.inOut" }, 1.56)
+      .call(() => setPhase("caught"), [], 2.28)
+      .to(chat, { autoAlpha: 1, scale: 1, duration: .3, ease: "power2.out" }, 2.32)
       .call(() => setPhase("presenting"), [], presentAt)
       .to(chat, { autoAlpha: 0, y: -5, duration: .28, ease: "power2.in" }, chatOutAt)
       .to(cursor, {
@@ -261,7 +310,7 @@ export function EditorIntro() {
 
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
-      <div ref={stageRef} className={styles.stage} data-phase={phase} data-expanded={expanded ? "true" : "false"}>
+      <div ref={stageRef} className={styles.stage} data-phase={phase} data-expanded={expanded ? "true" : "false"} data-portrait="placed">
         <div ref={figmaChromeRef} className={styles.figmaChrome} data-figma-editor aria-hidden="true">
           <header className={styles.figmaTopbar}>
             <div className={styles.fileIdentity}>
@@ -270,7 +319,7 @@ export function EditorIntro() {
               <ToolIcon name="chevron" />
             </div>
             <div className={styles.topbarTools}>
-              <div className={styles.collaborators}><i>JO</i><i>MO</i><i>KS</i></div>
+              <div className={styles.collaborators}><i data-intro-collaborator-avatar>JO</i><i>MO</i><i>KS</i></div>
               <button className={styles.shareAction} type="button" tabIndex={-1}>Share</button>
               <div ref={presentRef} className={styles.presentAction}><ToolIcon name="play" /><span>Present</span><ToolIcon name="chevron" /></div>
               <span className={styles.zoom}>68%</span>
@@ -318,18 +367,34 @@ export function EditorIntro() {
           </div>
         </div>
 
+        <div ref={portraitDragRef} className={styles.portraitDrag} data-portrait-drag aria-hidden="true">
+          {/* The drag ghost must be a plain bitmap inside GSAP's transformed layer. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/portraits/hero-system.jpg" alt="" width="1800" height="1799" />
+          <span>hero-portrait.jpg</span>
+        </div>
+
         <div ref={frameRef} className={styles.frame} data-live-file-frame>
           <div className={styles.identity}>
             <p id="hero-name" className={styles.name}>Javier Ortiz</p>
-            <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>
-              <span>I design the calm </span>
-              <span>inside complex </span>
-              <span>products.</span>
-            </h1>
-            <p id="hero-role" className={styles.role}>Senior Product Designer</p>
+            <div className={styles.titleStack}>
+              <h1 ref={titleRef} id="hero-title" className={styles.title} tabIndex={-1}>
+                <span>I design the calm </span>
+                <span>inside complex </span>
+                <span>products.</span>
+              </h1>
+              <p className={styles.draftTitle} data-intro-draft-title aria-hidden="true">Senior Product Designer</p>
+            </div>
+            <div className={styles.roleStack}>
+              <p id="hero-role" className={styles.role}>Senior Product Designer</p>
+              <p className={styles.draftRole} aria-hidden="true">Portfolio WIP · Working title</p>
+            </div>
           </div>
 
           <figure ref={portraitRef} className={styles.portrait} role="img" aria-label="Portrait of Javier Ortiz.">
+            <div className={styles.portraitPlaceholder} data-portrait-placeholder aria-hidden="true">
+              <i /><span>Portrait pending</span><small>Drop image to place</small>
+            </div>
             <picture>
               <source type="image/avif" srcSet="/images/portraits/hero-system-960.avif 960w, /images/portraits/hero-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
               <source type="image/webp" srcSet="/images/portraits/hero-system-960.webp 960w, /images/portraits/hero-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
@@ -337,7 +402,7 @@ export function EditorIntro() {
             </picture>
           </figure>
 
-          <div ref={selectionRef} className={styles.portraitSelection} aria-hidden="true"><i /><i /><i /><i /><span>Portrait / cover</span></div>
+          <div ref={selectionRef} className={styles.portraitSelection} aria-hidden="true"><i /><i /><i /><i /><span><b>Portrait / empty</b><em>Portrait / cover</em></span></div>
           <Link className={styles.explore} href="#experience"><span>Explore</span><i aria-hidden="true" /></Link>
         </div>
 
@@ -345,7 +410,7 @@ export function EditorIntro() {
           <FigmaCursor /><span>Javier</span>
         </div>
         <div ref={cursorChatRef} className={styles.cursorChat} data-typing={phase === "caught" && chatText !== INTRO_CHAT_COPY ? "true" : "false"} data-cursor-chat-typing aria-hidden="true">
-          <i>JO</i><p><strong>{chatText.slice(0, INTRO_CHAT_EMPHASIS.length)}</strong><span>{chatText.slice(INTRO_CHAT_EMPHASIS.length).trimStart()}</span></p>
+          <i data-intro-comment-avatar>JO</i><p><strong>{chatText.slice(0, INTRO_CHAT_EMPHASIS.length)}</strong><span>{chatText.slice(INTRO_CHAT_EMPHASIS.length).trimStart()}</span></p>
         </div>
       </div>
     </section>
