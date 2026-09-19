@@ -1,5 +1,7 @@
 # Javier Ortiz — Portfolio Preview
 
+> **Home actual (19-09-2026):** estructura y copy según [Plan 18](docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md). Se abre directamente en el portfolio, sin intro Figma ni Director. Lab incluye una preview de formato, no un proyecto real. La explicación de Live File más abajo queda como historial de la versión anterior, no como comportamiento actual.
+
 An editorial, interactive portfolio for a Senior Product Designer working on complex platforms, systems and AI-assisted product development.
 
 ## Experience concept

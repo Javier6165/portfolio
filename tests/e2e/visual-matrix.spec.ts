@@ -26,7 +26,7 @@ for (const viewport of viewports) {
     for (const section of await page.locator("main > section").all()) {
       await section.scrollIntoViewIfNeeded();
     }
-    await page.waitForFunction(() => [...document.images].every((image) => image.complete));
+    await page.waitForFunction(() => [...document.images].filter((image) => !image.closest("dialog")).every((image) => image.complete));
     await page.screenshot({ path: testInfo.outputPath(`dark-${viewport.width}x${viewport.height}.png`), fullPage: true });
 
   });

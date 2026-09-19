@@ -136,6 +136,7 @@
   .text-link { width: fit-content; display: inline-flex; align-items: center; gap: .65rem; padding-bottom: .3rem; border-bottom: 1px solid currentColor; font-size: .9rem; }
   .text-link svg { transition: transform 220ms ease; }
   .text-link:hover svg { transform: translateX(.25rem); }
+  .footer-pending { display: block; margin-top: 1rem; color: var(--muted); font-size: .8rem; }
   .text-link--back svg { transform: rotate(180deg); }
   .text-link--back:hover svg { transform: rotate(180deg) translateX(.25rem); }
 

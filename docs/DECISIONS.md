@@ -1,5 +1,7 @@
 # Decisiones vigentes
 
+> **Cambio 19-09-2026:** el Plan 18 (`PLAN-18-HOME-CONTENT-RESTRUCTURE.md`) sustituye la dirección de producto y contenido de Home descrita a continuación. Live File, intro Figma, Director y Follow están desactivados por defecto. Se mantienen Dark, integridad de pruebas, privacidad y bloqueo de indexación. El resto de este documento describe la arquitectura histórica hasta que se consolide una nueva dirección visual.
+
 Este documento resume lo que necesita un colaborador si recibe solo el repositorio `site/`.
 
 > Plan 15 y ADR-028 son la dirección vigente desde el 30 de julio de 2026. Sustituyen las decisiones de intro, editor propio, Snapshot obligatorio y chrome persistente de Plan 14.

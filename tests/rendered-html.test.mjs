@@ -13,42 +13,34 @@ async function render(path = "/") {
   );
 }
 
-test("server-renders the complete portfolio home", async () => {
+test("server-renders the restructured portfolio home", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Javier Ortiz/);
-  assert.match(html, /5\+ years at GiG/);
+  assert.match(html, /5\+ years/);
   assert.match(html, /Senior Product Designer/);
   assert.match(html, /B2B platforms &amp; systems/);
   assert.match(html, /Meet me in 60 seconds/);
-  assert.match(html, /Placeholder · final video pending/);
-  assert.match(html, /Captions and transcript planned/);
+  assert.match(html, /there is no playable video yet/);
   assert.match(html, /AI \+ coded prototypes/);
-  assert.match(html, /Rules · CMS · Backoffice/);
-  assert.match(html, /Product systems made inspectable/);
-  assert.match(html, /AI-native product practice/);
-  assert.match(html, /How I move complex product work from ambiguity to evidence/);
-  assert.match(html, /AI gets me to evidence faster/);
-  assert.match(html, /Motion, interaction and code—tested in public/);
-  assert.match(html, /References — preview/);
-  assert.match(html, /not a fabricated testimonial/i);
-  assert.match(html, /Layout preview · source required/);
-  assert.match(html, /fictitious/i);
-  assert.match(html, /href="\/work\/atlas"/);
+  assert.match(html, /LogicX · Rules engine/);
+  assert.match(html, /Backoffice Design System/);
+  assert.match(html, /case studies are being prepared/);
+  assert.match(html, /What people I’ve worked with say/);
+  assert.match(html, /Yana Azzopardi/);
+  assert.match(html, /Donnalisa Buhagiar/);
+  assert.match(html, /Juan José Reina Cruz/);
+  assert.match(html, /How do you make trade-offs\?/);
+  assert.match(html, /Let’s make complex things a little simpler/);
+  assert.doesNotMatch(html, /href="\/work\/atlas"|href="\/playground"|data-director-presence|data-figma-editor/);
   assert.doesNotMatch(html, /javier-theme|hero-human|about-human|theme-toggle|Use Light mode|data-theme/i);
-  assert.match(html, /Javier Ortiz \/ Portfolio/);
-  assert.match(html, /Present/);
-  assert.match(html, /data-cursor-chat-typing/);
-  assert.match(html, /data-figma-editor/);
-  assert.match(html, /data-impeccable-contract="d3549a99"/);
-  assert.match(html, /javier-narrative-memory-v1/);
+  assert.match(html, /data\.narrative=&#x27;static&#x27;|dataset\.narrative='static'/);
   assert.match(html, /hero-system\.jpg/);
   assert.match(html, /Skip to content/);
-  assert.match(html, /og-live-file\.jpg/);
-  assert.match(html, /javier-ortiz-portfolio\.malapipa\.chatgpt\.site\/og-live-file\.jpg/);
+  assert.doesNotMatch(html, /og-live-file\.jpg/);
   assert.match(html, /name="robots" content="noindex, nofollow"/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/i);
   assert.doesNotMatch(html, /I design complex platforms|complexity-engine|LivingFold|@react-three|three\.module/i);

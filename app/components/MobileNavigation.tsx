@@ -5,10 +5,11 @@ import { useRef, type KeyboardEvent } from "react";
 
 const links = [
   { href: "/#work", label: "Work" },
-  { href: "/#approach", label: "Practice" },
-  { href: "/#ai-practice", label: "AI workflow" },
   { href: "/about", label: "About" },
-  { href: "/playground", label: "Playground" },
+  { href: "/#testimonials", label: "People" },
+  { href: "/#lab", label: "Lab" },
+  { href: "/#how-i-work", label: "How I work" },
+  { href: "/#contact", label: "Contact" },
 ] as const;
 
 export function MobileNavigation() {

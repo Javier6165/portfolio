@@ -1,15 +1,36 @@
 import Link from "next/link";
-import { AIPractice } from "./components/AIPractice";
-import { EditorIntro } from "./components/live-file/EditorIntro";
-import { MemoryConsent } from "./components/live-file/ExperienceSettings";
-import { LiveScene } from "./components/live-file/LiveScene";
-import { PlaygroundStudy } from "./components/PlaygroundStudy";
-import { ProductPractice } from "./components/ProductPractice";
-import { ProjectCard } from "./components/ProjectCard";
+import { Hero } from "./components/Hero";
 import { ArrowIcon } from "./components/SiteShell";
 import { Testimonials } from "./components/Testimonials";
-import { projects } from "./data";
 import styles from "./HomePage.module.css";
+
+const questions = [
+  { question: "How do you approach a complex product problem?", answer: [
+    "I start by making the problem smaller and clearer: understanding the users, the business context, the technical constraints and what we actually know.",
+    "From there, I explore flows and interactions, prototype when it helps us learn faster, and work closely with Product and Engineering through implementation.",
+    "I don’t follow a fixed process. I use the level of research, exploration and fidelity the problem needs.",
+  ] },
+  { question: "How do you make trade-offs?", answer: [
+    "I try to find the best balance between user needs, business goals and what is technically realistic.",
+    "That means understanding why each constraint exists, making the options visible and being clear about what we gain or lose with each decision.",
+    "I’d rather make a conscious compromise than design an ideal solution that cannot ship.",
+  ] },
+  { question: "How do you know if a design is working?", answer: [
+    "It depends on the evidence available.",
+    "I use user and stakeholder feedback, usability findings, product behaviour and metrics when they are available, then keep learning after implementation.",
+    "I care about whether the product became easier and more effective to use — not just whether the final UI looks better.",
+  ] },
+  { question: "How do you help a design team get better?", answer: [
+    "My Lead experience changed how I think about my role in a team.",
+    "I’m still very hands-on, but I also enjoy giving feedback, mentoring designers, improving shared patterns and design systems, and helping maintain a consistent quality bar.",
+    "I don’t need a Lead title to contribute at that level.",
+  ] },
+  { question: "What are you looking for next?", answer: [
+    "A hands-on Senior Product Designer role where I can own complex product problems from definition to delivery and stay close to the craft.",
+    "I’m especially interested in B2B products, complex platforms and teams where Design works closely with Product and Engineering.",
+    "My Lead experience is something I bring with me — not a requirement for my next title.",
+  ] },
+] as const;
 
 function AboutPortrait() {
   return (
@@ -24,251 +45,100 @@ function AboutPortrait() {
   );
 }
 
-function VideoIntroduction() {
-  return (
-    <LiveScene
-      id="video-poster"
-      verb="reframe"
-      label="Video poster / Selected"
-      targetSelector={`.${styles.videoStill}`}
-      tool="asset"
-      action="Choosing the clearer opening frame"
-      properties={["Image · Replace", "Crop · 16:9", "Poster · Selected"]}
-      readMs={1200}
-      spotlightMs={3700}
-      comment="Five percent more hireable. Laptop added."
-      commentFirst
-      draftLabel="Draft · poster undecided"
-      className={styles.videoScene}
-      directorBeatIds={["video-poster-swap"]}
-    >
-      <section className={`section shell ${styles.videoIntroduction}`} id="meet-javier" aria-labelledby="video-introduction-title" data-home-entry="cut">
-        <header className={styles.videoIntroductionHeading}>
-          <h2 id="video-introduction-title">Meet me in 60 seconds.</h2>
-          <p>A quick, human overview for people deciding whether to go deeper into the work.</p>
-        </header>
-        <figure className={styles.videoPlaceholder} aria-label="Placeholder for Javier Ortiz's 60-second introduction video.">
-          <div className={styles.videoStill} data-video-frame>
-            <picture className={styles.videoStillDraft}>
-              <img src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
-            </picture>
-            <picture className={styles.videoStillFinal}>
-              <img src="/images/portraits/video-intro-placeholder.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
-            </picture>
-            <span className={styles.videoStatus}>Placeholder · final video pending</span>
-            <span className={styles.videoPlay} aria-hidden="true"><i /></span>
-            <span className={styles.videoDuration}>01:00</span>
-          </div>
-          <figcaption>
-            <span>Javier Ortiz · Product designer</span>
-            <span>Captions and transcript planned</span>
-          </figcaption>
-        </figure>
-      </section>
-    </LiveScene>
-  );
-}
-
 export default function Home() {
   return (
     <>
-      <EditorIntro />
+      <Hero />
 
       <section className={`section shell ${styles.snapshot}`} id="experience" aria-label="Javier Ortiz at a glance">
-        <LiveScene
-          id="snapshot-clarify"
-          verb="clarify"
-          label="Profile / Refined"
-          targetSelector={`.${styles.snapshotFacts}`}
-          tool="layout"
-          action="Trimming the left padding"
-          properties={["Left 12 → 0", "Columns · unchanged", "Content · untouched"]}
-          readMs={1400}
-          spotlightMs={3400}
-          minVisibility={0.32}
-          comment="Four facts. Twelve pixels of unnecessary ceremony."
-          commentFirst
-          requiredFirstVisit
-          cameraOffsetY={190}
-          draftLabel="Draft · padding loose"
-          className={styles.snapshotScene}
-          directorBeatIds={["snapshot-spacing-trim"]}
-        >
-          <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts" data-snapshot-facts>
-            <li><span>Level</span><strong>Senior Product Designer</strong><small>Recent Lead responsibility</small></li>
-            <li><span>Experience</span><strong>5+ years at GiG</strong><small>Marbella · Remote</small></li>
-            <li><span>Product scope</span><strong id="snapshot-scope">B2B platforms &amp; systems</strong><small>Rules · CMS · Backoffice</small></li>
-            <li><span>Working edge</span><strong>AI + coded prototypes</strong><small>From screen to behaviour</small></li>
-          </ul>
-        </LiveScene>
-        <MemoryConsent />
+        <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts">
+          <li><span>Experience</span><strong>5+ years</strong><small>in Product Design</small></li>
+          <li><span>Progression</span><strong>Junior → Lead at GiG</strong><small>3 promotions in 5 years</small></li>
+          <li><span>Product scope</span><strong>B2B platforms &amp; systems</strong><small>Rules engines · CMS · Data · Design systems</small></li>
+          <li><span>Working edge</span><strong>AI + coded prototypes</strong><small>From screen to behaviour</small></li>
+        </ul>
       </section>
-
-      <VideoIntroduction />
 
       <section className={`section shell ${styles.work}`} id="work" aria-labelledby="work-title">
         <header className={styles.sectionHeading}>
-          <p className="kicker">02 / Selected work</p>
-          <h2 id="work-title">Product systems made inspectable.</h2>
-          <p>Concept previews for how real rule engine, design system and AI case studies will be told. Names, metrics and outcomes remain fictitious.</p>
+          <p className="kicker">Selected work</p>
+          <h2 id="work-title">Selected work</h2>
+          <p>Real product work at GiG. The case studies are being prepared; outcomes and ownership will be added only after review.</p>
         </header>
-        <div className="project-list" data-home-entry="case">
-          {projects.map((project, index) => index === 0 ? (
-            <LiveScene
-              id="work-crop"
-              verb="frame"
-              label="Case 01 / Crop selected"
-              targetSelector=".project-card__media"
-              tool="asset"
-              action="Testing the evidence crop"
-              properties={["Crop 52 → 54 → 51%", "Focus · product logic", "Frame · selected"]}
-              readMs={1600}
-              spotlightMs={4700}
-              comment="Too close. Too far. The ancient crop ritual."
-              commentFirst
-              draftLabel="Draft · crop too tight"
-              className={`${styles.workScene} ${styles.workCropScene}`}
-              directorBeatIds={["work-crop-tuning"]}
-              key={project.slug}
-            >
-              <ProjectCard project={project} />
-            </LiveScene>
-          ) : index === 1 ? (
-            <LiveScene
-              id="work-contrast"
-              verb="clarify"
-              label="Case 02 / Metadata legible"
-              targetSelector=".project-card__meta"
-              tool="content-status"
-              action="Raising metadata contrast"
-              properties={["Opacity · +2", "Small text · checked", "Contrast · improved"]}
-              readMs={1100}
-              spotlightMs={3300}
-              comment="Useful metadata should not require optimism."
-              commentFirst
-              draftLabel="Draft · metadata too quiet"
-              className={`${styles.workScene} ${styles.workContrastScene}`}
-              directorBeatIds={["work-metadata-contrast"]}
-              key={project.slug}
-            >
-              <ProjectCard project={project} compact />
-            </LiveScene>
-          ) : <ProjectCard project={project} compact key={project.slug} />)}
-        </div>
-      </section>
-
-      <section className={`section shell ${styles.practice}`} id="approach" aria-labelledby="practice-title">
-        <header className={styles.sectionHeading}>
-          <p className="kicker">03 / Product practice</p>
-          <h2 id="practice-title">How I move complex product work from ambiguity to evidence.</h2>
-          <p>A repeatable three-step practice: map the system, frame the decision and prototype the risky behaviour before delivery.</p>
-        </header>
-        <LiveScene
-          id="practice-connect"
-          verb="align"
-          label="Practice / Aligned"
-          targetSelector="[data-practice-viewer]"
-          tool="align"
-          action="Aligning the workflow viewer"
-          properties={["X · -2 → 0", "12-column grid", "Optical alignment"]}
-          readMs={1500}
-          spotlightMs={4000}
-          comment="Two pixels. Nobody will notice. I will."
-          commentFirst
-          cameraOffsetY={380}
-          draftLabel="Draft · viewer 2 px off grid"
-          className={styles.practiceScene}
-          directorBeatIds={["practice-two-pixels"]}
-        >
-          <div className={styles.practiceStage}><ProductPractice /></div>
-        </LiveScene>
-      </section>
-
-      <section className={`section ${styles.aiSection}`} id="ai-practice" aria-labelledby="ai-title">
-        <div className={`shell ${styles.aiInner}`}>
-          <header className={styles.aiHeading}>
-            <p className="kicker">04 / AI-native product practice</p>
-            <h2 id="ai-title">AI gets me to evidence faster.</h2>
-            <p>I use it to frame the problem, prototype risky behaviour and validate a decision before the team commits.</p>
-          </header>
-          <LiveScene
-            id="ai-operationalise"
-            verb="correct"
-            label="AI workflow / Checked"
-            targetSelector="[data-ai-validate-label]"
-            tool="text"
-            action="Correcting the validation label"
-            properties={["Valdiate → Validate", "Human check · On", "Copy · Final"]}
-            readMs={1100}
-            spotlightMs={4200}
-            comment="AI assisted. Typo handcrafted."
-            commentFirst
-            draftLabel="Draft · human typo"
-            className={styles.aiScene}
-            directorBeatIds={["ai-validate-typo"]}
-          >
-            <div className={styles.aiStage}><AIPractice /></div>
-          </LiveScene>
+        <div className={styles.caseList}>
+          <article className={styles.casePreview}>
+            <span>01 / LogicX · Rules engine</span>
+            <h3>Making complex rules easier to work with.</h3>
+            <p>Case study in preparation. The final story will show the workflows, dependencies and Javier’s specific contribution.</p>
+            <small>GiG · Case details pending review</small>
+          </article>
+          <article className={styles.casePreview}>
+            <span>02 / Backoffice Design System</span>
+            <h3>A shared system for backoffice products.</h3>
+            <p>Case study in preparation. The final story will explain the system, its scope and Javier’s specific role.</p>
+            <small>GiG · Case details pending review</small>
+          </article>
+          <div className={styles.casePreview}>
+            <span>03 / To be selected</span>
+            <h3>A third perspective on the work.</h3>
+            <p>The final project will be selected from real work to add a different dimension to the first two cases.</p>
+          </div>
         </div>
       </section>
 
       <section className={`section shell ${styles.about}`} id="about-preview" aria-labelledby="about-title">
-        <LiveScene
-          id="about-reframe"
-          verb="reframe"
-          label="Portrait + story / Approved"
-          targetSelector={`.${styles.aboutPortrait}`}
-          tool="crop"
-          action="Giving the portrait some room"
-          properties={["Fill", "Zoom 103% → 100%", "Y · -1 → 0"]}
-          readMs={1000}
-          spotlightMs={3600}
-          comment="This crop says keynote speaker. I have not earned the lanyard."
-          commentFirst
-          draftLabel="Draft · crop a touch too close"
-          className={styles.aboutScene}
-          directorBeatIds={["about-crop-breathe"]}
-        >
-          <div className={styles.aboutSpread} data-home-entry="split">
-            <AboutPortrait />
-            <div className={styles.aboutCopy}>
-              <p className="kicker">05 / About</p>
-              <h2 id="about-title">Close enough to lead the system. Hands-on enough to fix the detail.</h2>
-              <p>I’m a Senior Product Designer based in Marbella. My recent lead experience expanded the frame—from polishing an interaction to helping a team hold quality, context and momentum together.</p>
-              <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
-            </div>
+        <div className={styles.aboutSpread} data-home-entry="split">
+          <AboutPortrait />
+          <div className={styles.aboutCopy}>
+            <p className="kicker">About</p>
+            <h2 id="about-title">From graphic design and games to Product Design — and Lead.</h2>
+            <p>I grew from Junior to Lead at GiG while staying hands-on with the work. That mix of craft, systems thinking and team responsibility shapes how I design today.</p>
+            <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
           </div>
-        </LiveScene>
+        </div>
       </section>
 
       <Testimonials />
 
-      <section className={`section shell ${styles.playground}`} id="playground" aria-labelledby="playground-title">
-        <header className={styles.playgroundHeading}>
-          <div><p className="kicker">07 / Playground</p><h2 id="playground-title">Motion, interaction and code—tested in public.</h2></div>
-          <p>An optional lab for answering one interaction question at a time, without inflating every experiment into a case study.</p>
+      <section className={`section shell ${styles.lab}`} id="lab" aria-labelledby="lab-title">
+        <header className={styles.sectionHeading}>
+          <p className="kicker">Lab</p>
+          <h2 id="lab-title">Lab</h2>
+          <p>Small experiments in design, code and AI. A place to show what I tried, what worked and what I learned.</p>
         </header>
-        <LiveScene
-          id="playground-experiment"
-          verb="experiment"
-          label="Experiment / Played"
-          targetSelector=".playground-playhead"
-          tool="timeline"
-          action="Giving the playhead a better landing"
-          properties={["Linear → Cubic out", "00:02", "1×"]}
-          readMs={900}
-          spotlightMs={3400}
-          comment="Linear easing. I was young. It was six seconds ago."
-          commentFirst
-          draftLabel="Draft · easing still linear"
-          className={styles.playgroundScene}
-          directorBeatIds={["playground-easing"]}
-        >
-          <div className={styles.playgroundShelf} data-home-entry="timeline">
-            <PlaygroundStudy />
-            <div className={styles.playgroundMeta}><span>CURRENT STUDY / 001</span><strong>Easing should explain hierarchy, not announce itself.</strong><p>A 2.2 second type study comparing a mechanical landing with one that settles into place.</p><div className={styles.playgroundTags}><small>Motion</small><small>Prototype</small><small>Coded</small></div><Link className="text-link" href="/playground">Enter the playground <ArrowIcon /></Link></div>
+        <article className={styles.labPreview} aria-labelledby="lab-preview-title">
+          <div className={styles.labPreviewVisual} aria-hidden="true">
+            <div className={styles.labPreviewChrome}><span>LAB / FORMAT PREVIEW</span><span>01 — ∞</span></div>
+            <div className={styles.labPreviewDiagram}>
+              <span>WHAT IF?</span>
+              <span>BUILD IT.</span>
+              <span>WHAT CHANGED?</span>
+            </div>
+            <div className={styles.labPreviewAxis}><span>QUESTION</span><i /><span>PROTOTYPE</span><i /><span>LEARNING</span></div>
           </div>
-        </LiveScene>
+          <div className={styles.labPreviewCopy}>
+            <p className={styles.labPreviewEyebrow}>A preview of the format</p>
+            <h3 id="lab-preview-title">Ideas worth making tangible.</h3>
+            <p>Not another row of polished mockups. Each future entry will pair a working experiment with the question behind it and an honest account of what it taught me.</p>
+            <p className={styles.labPreviewNote}>The first documented experiments are being selected. This preview shows the space they’ll occupy; it isn’t a finished project.</p>
+          </div>
+        </article>
+      </section>
+
+      <section className={`section shell ${styles.faq}`} id="how-i-work" aria-labelledby="how-i-work-title">
+        <header className={styles.sectionHeading}>
+          <p className="kicker">How I work</p>
+          <h2 id="how-i-work-title">How I work</h2>
+          <p>Five practical questions about the work, the team and what I’m looking for next.</p>
+        </header>
+        <div className={styles.questionList}>
+          {questions.map(({ question, answer }, index) => (
+            <details className={styles.question} key={question} open={index === 0}>
+              <summary><span>{String(index + 1).padStart(2, "0")}</span><h3>{question}</h3><i aria-hidden="true" /></summary>
+              <div className={styles.answer}>{answer.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+            </details>
+          ))}
+        </div>
       </section>
     </>
   );

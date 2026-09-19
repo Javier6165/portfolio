@@ -1,5 +1,7 @@
 # Instrucciones del repositorio de la web
 
+> **Actualización 19-09-2026:** lee también `docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md` antes de modificar la Home. El plan de contenido aprobado prevalece sobre los contratos antiguos de Live File, Director, Follow y la arquitectura anterior. Están desactivados en el render por defecto; no los restaures sin nueva aprobación. Las reglas de integridad de evidencia, privacidad, preview y QA de este documento siguen vigentes.
+
 ## Lectura mínima antes de editar
 
 Lee, en este orden:

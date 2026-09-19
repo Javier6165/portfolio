@@ -1,6 +1,4 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { LiveScene } from "./live-file/LiveScene";
 import { MobileNavigation } from "./MobileNavigation";
 
 export function ArrowIcon() {
@@ -21,10 +19,11 @@ export function SiteHeader() {
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <Link href="/#work">Work</Link>
-          <Link href="/#approach">Practice</Link>
-          <Link href="/#ai-practice">AI workflow</Link>
           <Link href="/about">About</Link>
-          <Link href="/playground">Playground</Link>
+          <Link href="/#testimonials">People</Link>
+          <Link href="/#lab">Lab</Link>
+          <Link href="/#how-i-work">How I work</Link>
+          <Link href="/#contact">Contact</Link>
         </nav>
         <div className="site-header__actions">
           <MobileNavigation />
@@ -34,43 +33,24 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter({ experienceSettings }: { experienceSettings?: ReactNode }) {
+export function SiteFooter() {
   return (
     <footer className="site-footer" id="contact">
-      <LiveScene
-        id="footer-handoff"
-        verb="handoff"
-        label="Preview ready / Your turn"
-        targetSelector=".footer-contact .text-link"
-        tool="align"
-        action="Aligning the final handoff"
-        properties={["X · -2 → 0", "CTA baseline", "Private preview"]}
-        readMs={900}
-        spotlightMs={3000}
-        comment="One last tweak. Again. Okay—your turn."
-        commentFirst
-        draftLabel="Draft · final CTA 2 px off"
-        className="footer-live-scene"
-        directorBeatIds={["footer-handoff"]}
-      >
-        <div className="shell footer-grid">
-          <div className="footer-heading">
-            <p className="kicker">08 / Contact · Private preview</p>
-            <p>The file is ready for review.</p>
-          </div>
-          <div className="footer-contact">
-            <p>The real work starts with a hard product problem. Contact details arrive with the final content pass.</p>
-            <Link className="text-link" href="/about#contact-note">
-              Continue with Javier <ArrowIcon />
-            </Link>
-          </div>
-          <div className="footer-meta">
-            <p>Marbella, Spain · Preview ready · Contact pending</p>
-            <p>© {new Date().getFullYear()} Javier Ortiz</p>
-            {experienceSettings}
-          </div>
+      <div className="shell footer-grid">
+        <div className="footer-heading">
+          <p className="kicker">Contact</p>
+          <p>Let’s make complex things a little simpler.</p>
         </div>
-      </LiveScene>
+        <div className="footer-contact">
+          <p>I’m currently open to Senior Product Designer opportunities, especially around complex B2B products and platforms.</p>
+          <a className="text-link" href="https://es.linkedin.com/in/ortizalmagro" target="_blank" rel="noopener noreferrer">LinkedIn <ArrowIcon /></a>
+          <span className="footer-pending">Email and CV links will be added when their final details are confirmed.</span>
+        </div>
+        <div className="footer-meta">
+          <p>Marbella, Spain · Private preview</p>
+          <p>© {new Date().getFullYear()} Javier Ortiz</p>
+        </div>
+      </div>
     </footer>
   );
 }
