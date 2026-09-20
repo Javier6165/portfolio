@@ -8,7 +8,7 @@ const viewports = [
 ] as const;
 
 for (const viewport of viewports) {
-  test(`captures Dark at ${viewport.width}×${viewport.height}`, async ({ page, isMobile }, testInfo) => {
+  test(`captures light static Home at ${viewport.width}×${viewport.height}`, async ({ page, isMobile }, testInfo) => {
     test.skip(isMobile, "The explicit matrix runs once from the desktop project.");
     await page.setViewportSize(viewport);
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -23,11 +23,12 @@ for (const viewport of viewports) {
       scrollWidth: document.documentElement.scrollWidth,
     }));
     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
-    for (const section of await page.locator("main > section").all()) {
+    for (const section of await page.locator("main .ordered-home > section").all()) {
       await section.scrollIntoViewIfNeeded();
     }
     await page.waitForFunction(() => [...document.images].filter((image) => !image.closest("dialog")).every((image) => image.complete));
-    await page.screenshot({ path: testInfo.outputPath(`dark-${viewport.width}x${viewport.height}.png`), fullPage: true });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: testInfo.outputPath(`light-${viewport.width}x${viewport.height}.png`), fullPage: true });
 
   });
 }

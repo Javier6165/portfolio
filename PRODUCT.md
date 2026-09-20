@@ -2,67 +2,39 @@
 
 <!-- impeccable:product-schema 1 -->
 
-## Platform
+## Platform and audience
 
-web
+This is Javier Ortiz's web portfolio. Its primary readers are design leaders, hiring managers, recruiters and product or engineering partners evaluating him for hands-on Senior Product Designer opportunities. Recent Lead responsibility is a differentiator, not the target job title.
 
-## Users
+## Purpose and success
 
-- Design leaders evaluating Javier for senior product design or hands-on lead roles.
-- Product and engineering leaders looking for a designer who can clarify complex B2B platforms and collaborate across functions.
-- Founders and product teams assessing Javier's combination of product strategy, systems thinking, prototyping and execution craft.
+A visitor should quickly identify Javier, understand his work in complex B2B products and systems, inspect credible evidence when available and decide whether to continue the conversation. The current Home provides a fast first read; case-study interiors will be revised separately as real evidence is collected and approved.
 
-## Product Purpose
+## Current Home
 
-The portfolio helps a hiring or collaboration decision-maker understand Javier Ortiz's seniority, point of view and way of working. Success means the visitor can quickly recognize Javier as a clear, systemic and hands-on product designer, inspect convincing work and reach a confident decision about continuing the conversation.
+Content and order are governed by [Plan 18](docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md): Hero, Profile Snapshot, Selected Work, About, Proof from People, Lab, How I Work and Contact. The first viewport contains Javier's name, `Senior Product Designer`, the approved positioning `I design the calm inside complex products.`, a real portrait and two actions: see work or open an honest preview of the planned 60-second video.
 
-## Positioning
+The design direction is a light, static Swiss-editorial system documented in [Plan 19](docs/PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md) and `DESIGN.md`. The Home no longer presents itself as a working file. Figma intro, Director, Follow, narrative consent and automatic editorial motion are not rendered or bootstrapped. Their source remains historical for now, not a current product commitment. Native scrolling and semantic server-rendered content are the baseline.
 
-`I design the calm inside complex products.`
+## Evidence and integrity
 
-Javier turns dense platforms, design systems and AI-assisted workflows into experiences people can understand and teams can scale. The portfolio demonstrates that way of thinking through its structure and interactions instead of relying only on claims.
+- Name, role, trajectory, professional areas and portrait assets come from Javier's supplied profile and photography.
+- LogicX and Backoffice Design System are real-work candidates, but their case narratives, precise contributions and outcomes are pending review. The third slot is unselected. No case link or metric should imply completed evidence.
+- Three LinkedIn recommendation excerpts were provided by Javier and may be shown with attribution; direct source links and publication permission are still pending confirmation.
+- The video, Lab experiments, email and CV are pending. A preview must name itself as a preview and never simulate playback, an experiment or a contact method.
+- Older Atlas, Northstar and Pulse routes contain concept/fictitious material and keep those labels. They do not become proof on the Home.
 
-## Operating Context
+## Constraints
 
-The portfolio is evaluated quickly, often by a design or product leader scanning on desktop or mobile before deciding whether to inspect case studies. It uses the familiar ritual of reviewing and presenting work from a design file as a narrative frame, while the final portfolio remains the primary product.
+- Existing Sites project in `.openai/hosting.json`; link-only preview with `noindex, nofollow` until Javier explicitly changes the access and indexing decision.
+- No analytics, authentication, remote tracking or narrative memory on the Home.
+- Keyboard navigation, visible focus, mobile reflow, readable contrast and reduced-motion/no-JavaScript legibility must survive each change.
+- Original assets are preserved. Web optimizations live in `public/`.
+- Javier approved publication of the light Home from `design/ordered-static-home` on 20 September 2026. GitHub `main` remains a separate decision.
 
-## Capabilities and Constraints
+## Product principles
 
-- The Home contains Hero, Snapshot, a 60-second video introduction, Work, Product practice, AI workflow, About, References, Playground and Contact.
-- The first-visit opening is a short mandatory sequence; after it, native scrolling is free and any guided continuation is explicitly visitor-controlled and stoppable.
-- The current project is a server-rendered Next.js 16 and React 19 site using TypeScript, CSS Modules and GSAP where motion is required.
-- The existing Sites project in `.openai/hosting.json` must be reused. Preview access remains by link with `noindex` and `nofollow` until Javier explicitly changes that decision.
-- No analytics, authentication, remote persistence or cookies are part of the product.
-- Cases, metrics, playground experiments, references and contact details remain provisional where labelled. Future work must not present them as verified facts.
-
-## Brand Commitments
-
-- Name: Javier Ortiz.
-- Voice: direct international English, first person, clear and confident, with small doses of dry self-aware humor.
-- Real portrait photography is a primary identity asset.
-- The experience must feel human and precise without reading as an agency spectacle, generic portfolio template or product dashboard.
-- The opening must be unmistakably recognizable as the current Figma editing environment before Javier activates Presentation mode. This reference is intentionally binding so the narrative joke is immediately understood.
-- Dark is the current single-theme direction. It can be reconsidered only through an explicit design decision, not by adding an unrequested theme switcher.
-
-## Evidence on Hand
-
-- Confirmed professional profile and experience are documented in `planning/HANDOFF.md`, `planning/phase-01-content/strategy/01-posicionamiento-y-concepto.md` and `Assets/Profile.pdf`.
-- Original portrait photography lives in `Assets/Images/Portraits/`; optimized web variants live in `site/public/images/portraits/`.
-- Atlas, Northstar and Pulse are concept cases with fictitious preview content and illustrative metrics. Their visible labels must remain until replaced by reviewed real evidence.
-- References do not contain approved recommendations. No quotation, identity or verification state may be invented.
-- Final email, LinkedIn and CV links have not been approved for publication.
-
-## Product Principles
-
-1. Make Javier and his judgment more memorable than the interface mechanism.
-2. Show how complex product work becomes clear without celebrating complexity for its own sake.
-3. Use interaction only when it reveals a meaningful design decision or human point of view.
-4. Preserve factual integrity: provisional evidence stays visibly provisional.
-5. Let visitors regain full control immediately after the short first-visit premise is established.
-
-## Accessibility & Inclusion
-
-- Preserve semantic server-rendered content, keyboard navigation, visible focus and mobile reflow.
-- Reduced motion and no-JavaScript experiences must reach the final readable portfolio without the opening choreography.
-- Native scrolling remains the default outside the brief mandatory opening.
-- Decorative editor content and transient copy must not replace or mutate the accessible semantic content.
+1. Javier and his judgment are more important than an interface conceit.
+2. Professional claims gain prominence in proportion to their evidence.
+3. Distinction comes from typography, composition, media and rhythm before effects.
+4. Never fill a missing source with a fabricated metric, quote, case or link.

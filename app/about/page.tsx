@@ -17,7 +17,7 @@ const capabilities = [
 
 export default function AboutPage() {
   return (
-    <>
+    <div className="ordered-about">
       <section className="page-hero about-hero shell">
         <div>
           <p className="eyebrow js-hero-reveal">About / Javier Ortiz</p>
@@ -90,6 +90,6 @@ export default function AboutPage() {
           <div><p>For now, explore the work structure and the visual system.</p><Link className="text-link" href="/#work">View concept cases <ArrowIcon /></Link></div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

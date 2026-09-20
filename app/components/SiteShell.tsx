@@ -13,16 +13,14 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header__inner shell">
-        <Link className="wordmark" href="/" aria-label="Javier Ortiz — home">
+        <Link className="wordmark" href="/" aria-label="Javier Ortiz - home">
           <span className="wordmark__mark" aria-hidden="true">JO</span>
           <span className="wordmark__name">Javier Ortiz</span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <Link href="/#work">Work</Link>
           <Link href="/about">About</Link>
-          <Link href="/#testimonials">People</Link>
           <Link href="/#lab">Lab</Link>
-          <Link href="/#how-i-work">How I work</Link>
           <Link href="/#contact">Contact</Link>
         </nav>
         <div className="site-header__actions">

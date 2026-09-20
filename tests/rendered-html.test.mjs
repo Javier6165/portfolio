@@ -26,7 +26,7 @@ test("server-renders the restructured portfolio home", async () => {
   assert.match(html, /Meet me in 60 seconds/);
   assert.match(html, /there is no playable video yet/);
   assert.match(html, /AI \+ coded prototypes/);
-  assert.match(html, /LogicX · Rules engine/);
+  assert.match(html, /LogicX \/ Rules engine/);
   assert.match(html, /Backoffice Design System/);
   assert.match(html, /case studies are being prepared/);
   assert.match(html, /What people I’ve worked with say/);
@@ -37,7 +37,7 @@ test("server-renders the restructured portfolio home", async () => {
   assert.match(html, /Let’s make complex things a little simpler/);
   assert.doesNotMatch(html, /href="\/work\/atlas"|href="\/playground"|data-director-presence|data-figma-editor/);
   assert.doesNotMatch(html, /javier-theme|hero-human|about-human|theme-toggle|Use Light mode|data-theme/i);
-  assert.match(html, /data\.narrative=&#x27;static&#x27;|dataset\.narrative='static'/);
+  assert.doesNotMatch(html, /dataset\.narrative|data-director-presence|data-figma-editor/);
   assert.match(html, /hero-system\.jpg/);
   assert.match(html, /Skip to content/);
   assert.doesNotMatch(html, /og-live-file\.jpg/);

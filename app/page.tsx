@@ -40,14 +40,13 @@ function AboutPortrait() {
         <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
         <img className="portrait" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
       </picture>
-      <figcaption aria-hidden="true"><span>PORTRAIT / 02</span><b>Y 48%</b></figcaption>
     </figure>
   );
 }
 
 export default function Home() {
   return (
-    <>
+    <div className="ordered-home">
       <Hero />
 
       <section className={`section shell ${styles.snapshot}`} id="experience" aria-label="Javier Ortiz at a glance">
@@ -61,25 +60,27 @@ export default function Home() {
 
       <section className={`section shell ${styles.work}`} id="work" aria-labelledby="work-title">
         <header className={styles.sectionHeading}>
-          <p className="kicker">Selected work</p>
           <h2 id="work-title">Selected work</h2>
           <p>Real product work at GiG. The case studies are being prepared; outcomes and ownership will be added only after review.</p>
         </header>
         <div className={styles.caseList}>
-          <article className={styles.casePreview}>
-            <span>01 / LogicX · Rules engine</span>
-            <h3>Making complex rules easier to work with.</h3>
-            <p>Case study in preparation. The final story will show the workflows, dependencies and Javier’s specific contribution.</p>
-            <small>GiG · Case details pending review</small>
+          <article className={`${styles.casePreview} ${styles.caseLead}`}>
+            <div className={styles.caseCopy}>
+              <span>LogicX / Rules engine</span>
+              <h3>Making complex rules easier to work with.</h3>
+              <p>Case study in preparation. The final story will show the workflows, dependencies and Javier’s specific contribution.</p>
+              <small>GiG / Case details pending review</small>
+            </div>
+            <div className={styles.caseVisual} aria-hidden="true"><span>LOGIC<span className={styles.caseVisualX}>X</span></span><i /></div>
           </article>
-          <article className={styles.casePreview}>
-            <span>02 / Backoffice Design System</span>
+          <article className={`${styles.casePreview} ${styles.caseSecondary}`}>
+            <span>Backoffice Design System</span>
             <h3>A shared system for backoffice products.</h3>
             <p>Case study in preparation. The final story will explain the system, its scope and Javier’s specific role.</p>
-            <small>GiG · Case details pending review</small>
+            <small>GiG / Case details pending review</small>
           </article>
-          <div className={styles.casePreview}>
-            <span>03 / To be selected</span>
+          <div className={`${styles.casePreview} ${styles.caseTertiary}`}>
+            <span>To be selected</span>
             <h3>A third perspective on the work.</h3>
             <p>The final project will be selected from real work to add a different dimension to the first two cases.</p>
           </div>
@@ -90,7 +91,6 @@ export default function Home() {
         <div className={styles.aboutSpread} data-home-entry="split">
           <AboutPortrait />
           <div className={styles.aboutCopy}>
-            <p className="kicker">About</p>
             <h2 id="about-title">From graphic design and games to Product Design — and Lead.</h2>
             <p>I grew from Junior to Lead at GiG while staying hands-on with the work. That mix of craft, systems thinking and team responsibility shapes how I design today.</p>
             <Link className="text-link" href="/about">Read the full story <ArrowIcon /></Link>
@@ -102,19 +102,16 @@ export default function Home() {
 
       <section className={`section shell ${styles.lab}`} id="lab" aria-labelledby="lab-title">
         <header className={styles.sectionHeading}>
-          <p className="kicker">Lab</p>
           <h2 id="lab-title">Lab</h2>
           <p>Small experiments in design, code and AI. A place to show what I tried, what worked and what I learned.</p>
         </header>
         <article className={styles.labPreview} aria-labelledby="lab-preview-title">
           <div className={styles.labPreviewVisual} aria-hidden="true">
-            <div className={styles.labPreviewChrome}><span>LAB / FORMAT PREVIEW</span><span>01 — ∞</span></div>
             <div className={styles.labPreviewDiagram}>
-              <span>WHAT IF?</span>
-              <span>BUILD IT.</span>
-              <span>WHAT CHANGED?</span>
+              <span>Question.</span>
+              <span>Prototype.</span>
+              <span>Learning.</span>
             </div>
-            <div className={styles.labPreviewAxis}><span>QUESTION</span><i /><span>PROTOTYPE</span><i /><span>LEARNING</span></div>
           </div>
           <div className={styles.labPreviewCopy}>
             <p className={styles.labPreviewEyebrow}>A preview of the format</p>
@@ -127,7 +124,6 @@ export default function Home() {
 
       <section className={`section shell ${styles.faq}`} id="how-i-work" aria-labelledby="how-i-work-title">
         <header className={styles.sectionHeading}>
-          <p className="kicker">How I work</p>
           <h2 id="how-i-work-title">How I work</h2>
           <p>Five practical questions about the work, the team and what I’m looking for next.</p>
         </header>
@@ -140,6 +136,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }

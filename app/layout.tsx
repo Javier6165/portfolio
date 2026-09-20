@@ -2,14 +2,9 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/instrument-sans/wdth.css";
 import "@fontsource/fragment-mono/400.css";
 import "./globals.css";
-import { MotionController } from "./components/MotionController";
-import { PageProgress } from "./components/PageProgress";
+import "./ordered-home.css";
 import { SiteFooter, SiteHeader } from "./components/SiteShell";
 import { siteConfig } from "./config";
-
-// Motion and narrative eligibility are resolved before paint. Dark is the only
-// visual mode, so the bootstrap no longer reads appearance preferences.
-const appearanceScript = `(()=>{const root=document.documentElement;try{const portrait=document.createElement('link');portrait.rel='preload';portrait.as='image';portrait.type='image/avif';portrait.setAttribute('imagesrcset','/images/portraits/hero-system-960.avif 960w, /images/portraits/hero-system-1440.avif 1440w');portrait.setAttribute('imagesizes','(max-width: 720px) 92vw, 48vw');portrait.fetchPriority='high';document.head.appendChild(portrait);root.dataset.motion=matchMedia('(prefers-reduced-motion: reduce)').matches||localStorage.getItem('javier-motion')==='reduce'?'reduce':'full'}catch(e){root.dataset.motion='full'}root.dataset.narrative='static'})()`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -42,21 +37,17 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0d0e10",
+  themeColor: "#f7f7f3",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // The pre-paint script changes only narrative and motion attributes.
-    <html lang="en" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: appearanceScript }} /></head>
+    <html lang="en">
       <body>
         <a className="skip-link" href="#main-content">Skip to content</a>
         <SiteHeader />
-        <PageProgress />
         <main id="main-content">{children}</main>
         <SiteFooter />
-        <MotionController />
       </body>
     </html>
   );

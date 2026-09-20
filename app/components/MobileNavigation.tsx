@@ -6,9 +6,7 @@ import { useRef, type KeyboardEvent } from "react";
 const links = [
   { href: "/#work", label: "Work" },
   { href: "/about", label: "About" },
-  { href: "/#testimonials", label: "People" },
   { href: "/#lab", label: "Lab" },
-  { href: "/#how-i-work", label: "How I work" },
   { href: "/#contact", label: "Contact" },
 ] as const;
 

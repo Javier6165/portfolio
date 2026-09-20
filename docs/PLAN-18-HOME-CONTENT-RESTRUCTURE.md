@@ -1,5 +1,7 @@
 # Plan 18 — Home centrada en evidencia profesional
 
+> **Actualización visual 20-09-2026:** el contenido y el orden de este plan siguen vigentes; la instrucción histórica de conservar Dark fue sustituida por el sistema light estático del [Plan 19](PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md).
+
 Fecha: 19 de septiembre de 2026. Fuente: plan de contenido aprobado por Javier y entregado en esta tarea.
 
 ## Decisión vigente

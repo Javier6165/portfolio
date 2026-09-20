@@ -1,5 +1,7 @@
 # Instrucciones del repositorio de la web
 
+> **Actualización 20-09-2026:** `docs/PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md` sustituye para la Home todas las reglas de apariencia Dark, Live File, Director, Follow y motion de este documento. La Home nueva es clara y estática; no cargues las capas narrativas. Plan 18 continúa gobernando contenido y orden. Protecciones de evidencia, privacidad, preview y QA siguen vigentes. Los interiores de casos y rutas secundarias se revisarán por separado.
+
 > **Actualización 19-09-2026:** lee también `docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md` antes de modificar la Home. El plan de contenido aprobado prevalece sobre los contratos antiguos de Live File, Director, Follow y la arquitectura anterior. Están desactivados en el render por defecto; no los restaures sin nueva aprobación. Las reglas de integridad de evidencia, privacidad, preview y QA de este documento siguen vigentes.
 
 ## Lectura mínima antes de editar

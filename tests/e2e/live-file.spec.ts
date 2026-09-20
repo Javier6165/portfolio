@@ -2,8 +2,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 test("opens directly on the portfolio without Figma or Director", async ({ page }) => {
-  await page.goto("/?narrative=first&director=fast");
-  await expect(page.locator("html")).toHaveAttribute("data-narrative", "static");
+  await page.goto("/");
+  await expect(page.locator("html")).not.toHaveAttribute("data-narrative", /.+/);
   await expect(page.getByRole("heading", { level: 1, name: "I design the calm inside complex products." })).toBeVisible();
   await expect(page.getByText("Senior Product Designer", { exact: true }).first()).toBeVisible();
   await expect(page.locator("[data-figma-editor], [data-director-presence], [data-javier-cursor]")).toHaveCount(0);
@@ -14,10 +14,10 @@ test("opens directly on the portfolio without Figma or Director", async ({ page 
 
 test("the Home follows the approved content order and excludes fictional evidence", async ({ page }) => {
   await page.goto("/");
-  const ids = await page.locator("main > section[id]").evaluateAll((sections) => sections.map((section) => section.id));
+  const ids = await page.locator("main .ordered-home > section[id]").evaluateAll((sections) => sections.map((section) => section.id));
   expect(ids).toEqual(["experience", "work", "about-preview", "testimonials", "lab", "how-i-work"]);
   await expect(page.getByRole("heading", { name: "Selected work" })).toBeVisible();
-  await expect(page.getByText("LogicX · Rules engine")).toBeVisible();
+  await expect(page.getByText("LogicX / Rules engine")).toBeVisible();
   await expect(page.getByText("Backoffice Design System")).toBeVisible();
   await expect(page.getByRole("heading", { name: "What people I’ve worked with say." })).toBeVisible();
   await expect(page.getByText("Yana Azzopardi")).toBeVisible();
@@ -56,6 +56,19 @@ test("mobile navigation reaches the new sections", async ({ page, isMobile }) =>
   await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Lab" }).click();
   await expect(page).toHaveURL(/#lab$/);
   await expect(page.getByRole("heading", { name: "Lab" })).toBeVisible();
+});
+
+test("About trajectory uses direct, keyboard-accessible selection without horizontal overflow", async ({ page }) => {
+  await page.goto("/about");
+  await page.waitForLoadState("networkidle");
+  const visualCraft = page.getByRole("tab", { name: /Visual craft/ });
+  await visualCraft.click();
+  await expect(visualCraft).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel")).toContainText("I learned to make information feel intentional.");
+  await visualCraft.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: /Games & 3D/ })).toHaveAttribute("aria-selected", "true");
+  const geometry = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth }));
+  expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width);
 });
 
 test("the revised Home has no detectable serious accessibility violations", async ({ page }) => {

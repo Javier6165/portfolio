@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 
 const stages = [
   {
@@ -44,12 +44,6 @@ export function ExperienceSignal() {
   const activeIndex = stages.findIndex((stage) => stage.id === activeId);
   const active = stages[activeIndex] ?? stages[2];
 
-  function trackSpotlight(event: PointerEvent<HTMLDivElement>) {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.style.setProperty("--spot-x", `${event.clientX - bounds.left}px`);
-    event.currentTarget.style.setProperty("--spot-y", `${event.clientY - bounds.top}px`);
-  }
-
   function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -63,14 +57,8 @@ export function ExperienceSignal() {
     tabs?.[nextIndex]?.focus();
   }
 
-  const progressStyle = {
-    "--experience-progress": `${(activeIndex / (stages.length - 1)) * 100}%`,
-  } as CSSProperties;
-
   return (
-    <div className="experience-signal js-reveal" onPointerMove={trackSpotlight} style={progressStyle}>
-      <div className="experience-signal__spotlight" aria-hidden="true" />
-      <div className="experience-signal__line" aria-hidden="true"><i /></div>
+    <div className="experience-signal js-reveal">
       <div className="experience-signal__tabs" role="tablist" aria-label="Javier's multidisciplinary career path">
         {stages.map((stage, index) => (
           <button
@@ -83,7 +71,6 @@ export function ExperienceSignal() {
             key={stage.id}
             onClick={() => setActiveId(stage.id)}
             onFocus={() => setActiveId(stage.id)}
-            onPointerEnter={() => setActiveId(stage.id)}
             onKeyDown={(event) => moveTab(event, index)}
           >
             <span>0{index + 1}</span>
