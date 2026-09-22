@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/instrument-sans/wdth.css";
+import "@fontsource-variable/instrument-sans/wdth-italic.css";
 import "@fontsource/fragment-mono/400.css";
 import "./globals.css";
 import "./ordered-home.css";

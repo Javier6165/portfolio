@@ -11,6 +11,7 @@ body:has(.ordered-home), body:has(.ordered-about) {
   --shadow: rgba(23, 24, 23, .12);
   --page-pad: clamp(1.25rem, 4.2vw, 4rem);
   --section-space: clamp(6rem, 9vw, 9rem);
+  --section-space-wide: clamp(8rem, 11.5vw, 12rem);
   --content-max: 90rem;
   --grid-columns: repeat(12, minmax(0, 1fr));
   --grid-gutter: clamp(1rem, 1.7vw, 1.5rem);
@@ -37,10 +38,10 @@ body:has(.ordered-home) *, body:has(.ordered-home) *::before, body:has(.ordered-
 body:has(.ordered-home) .shell { max-width: 90rem; }
 body:has(.ordered-home) .site-header { position: relative; inset: auto; height: 5rem; border-bottom: 1px solid var(--line); background: var(--canvas); transition: none; }
 body:has(.ordered-home) .site-header__inner { gap: 2.5rem; }
-body:has(.ordered-home) .wordmark { display: block; font-size: .84rem; font-weight: 600; line-height: 1.2; }
+body:has(.ordered-home) .wordmark { display: block; font-size: .85rem; font-weight: 580; line-height: 1.2; }
 body:has(.ordered-home) .wordmark__mark { display: none; }
 body:has(.ordered-home) .wordmark__name { display: block; }
-body:has(.ordered-home) .desktop-nav { gap: clamp(1.2rem, 2.3vw, 2.7rem); font-size: .82rem; }
+body:has(.ordered-home) .desktop-nav { gap: clamp(1.3rem, 2.4vw, 2.7rem); font-size: .84rem; }
 body:has(.ordered-home) .desktop-nav a { color: var(--ink); }
 body:has(.ordered-home) .site-header__actions { display: flex; }
 body:has(.ordered-home) .mobile-nav nav { top: 5rem; border: 1px solid var(--line); background: var(--canvas); }
@@ -56,9 +57,9 @@ body:has(.ordered-home) :focus-visible { outline: 2px solid #5136b9; outline-off
 body:has(.ordered-home) .skip-link { border-radius: 0; background: #5136b9; color: #fff; }
 body:has(.ordered-home) main [id], body:has(.ordered-home) footer[id] { scroll-margin-top: 2rem; }
 body:has(.ordered-home) .site-footer { border-top: 1px solid var(--line); background: var(--canvas); }
-body:has(.ordered-home) .footer-grid { min-height: 27rem; padding-top: clamp(4rem, 7vw, 7rem); padding-bottom: 2rem; }
+body:has(.ordered-home) .footer-grid { min-height: 24rem; padding-top: clamp(4.5rem, 6.5vw, 6.5rem); padding-bottom: 2rem; }
 body:has(.ordered-home) .footer-heading .kicker { display: none; }
-body:has(.ordered-home) .footer-heading > p:last-child { max-width: 14ch; margin-top: 0; font-size: clamp(3.2rem, 5.2vw, 6rem); font-weight: 500; line-height: 1.01; letter-spacing: -.045em; }
+body:has(.ordered-home) .footer-heading > p:last-child { max-width: 16ch; margin-top: 0; font-size: clamp(3.1rem, 4.5vw, 5rem); font-weight: 480; line-height: 1.07; letter-spacing: -.035em; }
 body:has(.ordered-home) .footer-contact p { color: var(--muted); }
 body:has(.ordered-home) .footer-contact .text-link { min-height: 3.2rem; display: inline-flex; align-items: center; gap: 1rem; padding: .85rem 1.25rem; border: 1px solid var(--ink); background: var(--ink); color: var(--canvas); font-size: .85rem; font-weight: 500; }
 body:has(.ordered-home) .footer-contact .text-link:hover { background: #41443f; border-color: #41443f; }
@@ -72,7 +73,7 @@ body:has(.ordered-home) .footer-pending { color: var(--muted); }
 }
 
 @media (max-width: 720px) {
-  body:has(.ordered-home), body:has(.ordered-about) { --section-space: 6rem; --grid-columns: repeat(4, minmax(0, 1fr)); --grid-gutter: 1rem; }
+  body:has(.ordered-home), body:has(.ordered-about) { --section-space: 6rem; --section-space-wide: 7rem; --grid-columns: repeat(4, minmax(0, 1fr)); --grid-gutter: 1rem; }
   body:has(.ordered-home) .site-header { height: 4.25rem; }
   body:has(.ordered-home) .mobile-nav nav { top: 4.25rem; }
   body:has(.ordered-home) .footer-grid { min-height: 0; gap: 3rem; padding-top: 4rem; }

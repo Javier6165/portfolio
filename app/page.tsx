@@ -36,9 +36,9 @@ function AboutPortrait() {
   return (
     <figure className={styles.aboutPortrait} role="img" aria-label="Portrait of Javier Ortiz.">
       <picture>
-        <source type="image/avif" srcSet="/images/portraits/about-system-960.avif 960w, /images/portraits/about-system-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
-        <source type="image/webp" srcSet="/images/portraits/about-system-960.webp 960w, /images/portraits/about-system-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 58vw" />
-        <img className="portrait" src="/images/portraits/about-system.jpg" alt="" aria-hidden="true" width="1439" height="1800" loading="lazy" />
+        <source type="image/avif" srcSet="/images/portraits/about-editorial-960.avif 960w, /images/portraits/about-editorial-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
+        <source type="image/webp" srcSet="/images/portraits/about-editorial-960.webp 960w, /images/portraits/about-editorial-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
+        <img className="portrait" src="/images/portraits/about-editorial.jpg" alt="" aria-hidden="true" width="1440" height="1800" loading="lazy" />
       </picture>
     </figure>
   );
@@ -74,12 +74,14 @@ export default function Home() {
             <div className={styles.caseVisual} aria-hidden="true"><span>LOGIC<span className={styles.caseVisualX}>X</span></span><i /></div>
           </article>
           <article className={`${styles.casePreview} ${styles.caseSecondary}`}>
+            <div className={styles.systemVisual} aria-hidden="true"><span>Aa</span><div><i /><i /><i /><i /><i /><i /></div><small>Visual study / 02</small></div>
             <span>Backoffice Design System</span>
             <h3>A shared system for backoffice products.</h3>
             <p>Case study in preparation. The final story will explain the system, its scope and Javier’s specific role.</p>
             <small>GiG / Case details pending review</small>
           </article>
           <div className={`${styles.casePreview} ${styles.caseTertiary}`}>
+            <div className={styles.thirdVisual} aria-hidden="true"><span>03</span><small>Visual study / Open selection</small></div>
             <span>To be selected</span>
             <h3>A third perspective on the work.</h3>
             <p>The final project will be selected from real work to add a different dimension to the first two cases.</p>
@@ -108,9 +110,9 @@ export default function Home() {
         <article className={styles.labPreview} aria-labelledby="lab-preview-title">
           <div className={styles.labPreviewVisual} aria-hidden="true">
             <div className={styles.labPreviewDiagram}>
-              <span>Question.</span>
-              <span>Prototype.</span>
-              <span>Learning.</span>
+              <div className={styles.labStudy}><span>Question.</span><svg viewBox="0 0 280 200" fill="none"><path d="M30 160V40h220M30 100h220M85 40v120M140 40v120M195 40v120M250 40v120" stroke="currentColor" opacity=".2" /><path d="M30 150C80 150 65 65 120 65S170 135 210 95s25-55 40-55" stroke="currentColor" strokeWidth="2" /></svg></div>
+              <div className={styles.labStudy}><span>Prototype.</span><div className={styles.typeStudy}>Aa<span>↗</span></div></div>
+              <div className={styles.labStudy}><span>Learning.</span><div className={styles.scaleStudy}><i /><i /><i /><i /><i /></div></div>
             </div>
           </div>
           <div className={styles.labPreviewCopy}>

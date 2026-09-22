@@ -20,7 +20,7 @@ export function Hero() {
       <div className={styles.identity}>
         <p className={styles.name}>Javier Ortiz</p>
         <p className={styles.role}>Senior Product Designer</p>
-        <h1 id="hero-title">I design the calm inside complex products.</h1>
+        <h1 id="hero-title"><span>I design the <em>calm</em></span>{" "}<span>inside complex</span>{" "}<span>products.</span></h1>
         <p className={styles.summary}>Hands-on product designer with Lead experience, focused on complex B2B products, design systems and AI-assisted prototyping.</p>
         <div className={styles.actions}>
           <Link className="button button--primary" href="#work">View selected work <ArrowIcon /></Link>
