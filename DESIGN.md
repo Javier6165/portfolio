@@ -37,6 +37,14 @@ The canvas is a quiet near-white field; dark image plates and the real portrait 
 
 The shared light foundations cover Home and About via `app/ordered-home.css`. The Home's CSS Modules own its section compositions; About's trajectory now uses the same square, rule-led visual language. Playground and case-study interiors retain legacy styling until their own passes. The old Figma / Director components remain in the repository but are not rendered or bootstrapped.
 
+## Components
+
+- **Header and navigation:** square, rule-led links with a persistent focus ring; no pill chrome.
+- **Editorial case study frame:** prelude, two-column thesis, evidence rail, chapter index and generous rule-separated chapters.
+- **Evidence media:** provisional product captures use a contained treatment on a dark neutral surface so browser mockups and raw screens remain legible without cropping.
+- **Facts and captions:** compact definition-list facts beside the hero image; captions state provenance and provisional status instead of implying measured outcomes.
+- **Controls:** links and arrows use a one-pixel underline/transform cue; buttons remain square and reserve violet for focus or active utility states.
+
 Design review checkpoint: Javier chose the earlier light composition over the subsequent grid experiment and approved it for Sites publication on 20 September 2026. Case-study evidence, the final video, experiment assets, direct LinkedIn recommendation URLs, email and CV still require source material and approval. Motion remains a separate decision.
 
 ## Editorial refinement — 22 September 2026

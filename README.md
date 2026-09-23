@@ -1,12 +1,18 @@
 # Javier Ortiz — Portfolio Preview
 
+> **Refinamiento local 23-09-2026:** los casos comparten ahora una composición editorial más clara y la web incorpora motion de entrada y feedback sutil, sin scroll-jacking. El contrato está en [Plan 22](docs/PLAN-22-EDITORIAL-MOTION-AND-CASE-LAYOUT.md). No publicar junto al prototipo de Plan 20 hasta aprobación expresa de Javier.
+
+> **Case studies en preview, 23-09-2026:** LogicX, Backoffice Design System y Casino Customizer ya tienen páginas propias en `app/work/[slug]`, con contenido editable en `app/caseStudies.ts`. Los dos primeros usan placas neutras hasta recibir material visual; Customizer usa imágenes optimizadas de los originales locales. Lab queda oculto, no eliminado. Esta entrega es local: no desplegar la variante de Plan 20 sin aprobación explícita de Javier. Estado y pendientes: [Case studies draft](docs/PLAN-21-CASE-STUDIES-DRAFT.md).
+
+> **Prototipo local 23-09-2026:** Plan 20 recupera la intro Figma y un cursor ambiental ligero sobre la Home light. No hay Follow ni secuencia guiada; el resto del contenido y sistema visual siguen en Planes 18–19. `@playwright/cli` está instalado localmente para revisar la experiencia. No publicar esta variante sin la aprobación de Javier.
+
 > **Home light aprobada, 20-09-2026:** Javier eligió la composición anterior a la última exploración de retícula y autorizó su publicación en Sites. El código continúa en `design/ordered-static-home`, sin fusión a GitHub `main`. Sistema visual: [Plan 19](docs/PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md). Contenido: [Plan 18](docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md). Las rutas secundarias conservan su estado provisional hasta su revisión.
 
 > **Home actual (19-09-2026):** estructura y copy según [Plan 18](docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md). Se abre directamente en el portfolio, sin intro Figma ni Director. Lab incluye una preview de formato, no un proyecto real. La explicación de Live File más abajo queda como historial de la versión anterior, no como comportamiento actual.
 
-An editorial, interactive portfolio for a Senior Product Designer working on complex platforms, systems and AI-assisted product development.
+An editorial, interactive portfolio for a hands-on Lead Product Designer working on complex platforms, systems and AI-assisted product development.
 
-## Experience concept
+## Experience concept (historical; superseded by Plans 18–21 above)
 
 - `Live File`: the portfolio opens as a working design file and resolves into the finished product.
 - A first visit opens inside recognisable Figma UI3 with a working title and an empty portrait frame; Javier drags in the real portrait, is caught working and activates `Present` himself.
@@ -27,6 +33,8 @@ An editorial, interactive portfolio for a Senior Product Designer working on com
 ## Key paths
 
 - Home: `app/page.tsx`
+- Current case-study content: `app/caseStudies.ts`
+- Current case-study template: `app/work/[slug]/page.tsx` and `app/work/[slug]/CaseStudy.module.css`
 - Live File: `app/components/live-file/`
 - Case content/schema: `app/data.ts`
 - Case evidence renderer: `app/components/CaseEvidence.tsx`

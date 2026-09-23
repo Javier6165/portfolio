@@ -19,9 +19,9 @@ export function Hero() {
       </figure>
       <div className={styles.identity}>
         <p className={styles.name}>Javier Ortiz</p>
-        <p className={styles.role}>Senior Product Designer</p>
-        <h1 id="hero-title"><span>I design the <em>calm</em></span>{" "}<span>inside complex</span>{" "}<span>products.</span></h1>
-        <p className={styles.summary}>Hands-on product designer with Lead experience, focused on complex B2B products, design systems and AI-assisted prototyping.</p>
+        <p className={styles.role}>Lead Product Designer</p>
+        <h1 id="hero-title" data-studio-headline><span>I design the <em>calm</em></span>{" "}<span>inside complex</span>{" "}<span>products.</span><span className={styles.studioDraft} data-studio-draft aria-hidden="true"><span data-studio-draft-copy>Senior Product Designer</span></span></h1>
+        <p className={styles.summary}>I lead design for complex B2B products and systems, staying hands-on from product framing to AI-assisted prototyping.</p>
         <div className={styles.actions}>
           <Link className="button button--primary" href="#work">View selected work <ArrowIcon /></Link>
           <button className="button button--quiet" type="button" onClick={() => videoDialog.current?.showModal()}>Meet me in 60 seconds <ArrowIcon /></button>

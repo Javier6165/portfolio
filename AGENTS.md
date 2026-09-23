@@ -1,5 +1,13 @@
 # Instrucciones del repositorio de la web
 
+> **Actualización 23-09-2026 (posicionamiento):** el copy vigente presenta a Javier como `Lead Product Designer` para alinearse con LinkedIn y su búsqueda actual. Prevalece sobre las referencias a `Senior` como objetivo en Plan 18 y documentos anteriores. Conserva los cargos históricos de los casos, las citas literales y el borrador `Senior → Lead` de la intro. El cambio se puede revertir si Javier modifica el objetivo profesional.
+
+> **Actualización 23-09-2026 (motion/layout):** `docs/PLAN-22-EDITORIAL-MOTION-AND-CASE-LAYOUT.md` gobierna el layout actual de los casos y el motion editorial ligero. `MotionController.tsx` se reactivó con entrada breve por ruta y reveals acotados; durante la entrada establece `data-site-entrance="active"` para pausar el cursor. Preserva contenido visible sin JavaScript y con reduced motion. Sigue siendo preview local hasta aprobación de Javier.
+
+> **Actualización 23-09-2026 (casos):** `docs/PLAN-21-CASE-STUDIES-DRAFT.md` registra los tres case studies actuales, sus fuentes editables y las verificaciones pendientes. LogicX y Backoffice Design System muestran capturas provisionales suministradas por Javier; Casino Customizer usa imágenes reales. Lab permanece oculto. La publicación de esta combinación queda autorizada para el proyecto Sites existente, manteniendo acceso por enlace y noindex.
+
+> **Actualización 23-09-2026:** Javier ha aprobado rescatar una intro Figma breve y una presencia ambiental de cursor, sin Follow ni guion obligatorio. Contrato actual en `docs/PLAN-20-STUDIO-PRESENCE.md`, que prevalece sobre las prohibiciones de intro/Director de Plan 19 y sobre la arquitectura antigua de Planes 15–17. Plan 19 conserva el sistema visual light; Plan 18 conserva contenido y orden. Comentarios y microajustes son provisionales. La futura animación de entrada deberá suspender la presencia mediante `data-site-entrance="active"`.
+
 > **Actualización 20-09-2026:** `docs/PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md` sustituye para la Home todas las reglas de apariencia Dark, Live File, Director, Follow y motion de este documento. La Home nueva es clara y estática; no cargues las capas narrativas. Plan 18 continúa gobernando contenido y orden. Protecciones de evidencia, privacidad, preview y QA siguen vigentes. Los interiores de casos y rutas secundarias se revisarán por separado.
 
 > **Actualización 19-09-2026:** lee también `docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md` antes de modificar la Home. El plan de contenido aprobado prevalece sobre los contratos antiguos de Live File, Director, Follow y la arquitectura anterior. Están desactivados en el render por defecto; no los restaures sin nueva aprobación. Las reglas de integridad de evidencia, privacidad, preview y QA de este documento siguen vigentes.
@@ -15,6 +23,9 @@ Lee, en este orden:
 5. `docs/PLAN-15-FIGMA-INTRO-DESIGN-SPRINT.md`
 6. `docs/PLAN-16-DIRECTOR-PRESENCE.md`
 7. `docs/PLAN-17-DIRECTOR-COMMENTARY-ENGINE.md` si la tarea afecta a voz, variedad o selección de comentarios; es el contrato editorial vigente del Director.
+8. `docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md` y `docs/PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md` para Home, contenido y lenguaje visual actuales.
+9. `docs/PLAN-20-STUDIO-PRESENCE.md` si la tarea afecta a intro/cursor; `docs/PLAN-21-CASE-STUDIES-DRAFT.md` si afecta a casos.
+10. `docs/PLAN-22-EDITORIAL-MOTION-AND-CASE-LAYOUT.md` si afecta a motion o al layout de casos.
 
 Después, según la tarea:
 

@@ -26,6 +26,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@cloudflare/vite-plugin": "^1.47.0",
+    "@playwright/cli": "^0.1.21",
     "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",

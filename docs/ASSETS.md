@@ -34,4 +34,4 @@ La generación original está fuera del repo bajo el almacenamiento de Codex; la
 
 ## Favicon
 
-`public/favicon.svg` es una marca geométrica local `JO`, creada para el preview. No debe tratarse como identidad definitiva sin aprobación de Javier.
+`public/favicon.png` usa la marca `J` suministrada por Javier. `favicon.svg` permanece como fallback histórico del preview.

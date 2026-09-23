@@ -4,7 +4,7 @@
 
 ## Platform and audience
 
-This is Javier Ortiz's web portfolio. Its primary readers are design leaders, hiring managers, recruiters and product or engineering partners evaluating him for hands-on Senior Product Designer opportunities. Recent Lead responsibility is a differentiator, not the target job title.
+This is Javier Ortiz's web portfolio. Its primary readers are design leaders, hiring managers, recruiters and product or engineering partners evaluating him for hands-on Lead Product Designer opportunities. This positioning reflects Javier's current LinkedIn profile and can be revised if his search changes.
 
 ## Purpose and success
 
@@ -12,7 +12,7 @@ A visitor should quickly identify Javier, understand his work in complex B2B pro
 
 ## Current Home
 
-Content and order are governed by [Plan 18](docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md): Hero, Profile Snapshot, Selected Work, About, Proof from People, Lab, How I Work and Contact. The first viewport contains Javier's name, `Senior Product Designer`, the approved positioning `I design the calm inside complex products.`, a real portrait and two actions: see work or open an honest preview of the planned 60-second video.
+Content and order are governed by [Plan 18](docs/PLAN-18-HOME-CONTENT-RESTRUCTURE.md): Hero, Profile Snapshot, Selected Work, About, Proof from People, Lab, How I Work and Contact. The first viewport contains Javier's name, `Lead Product Designer`, the approved positioning `I design the calm inside complex products.`, a real portrait and two actions: see work or open an honest preview of the planned 60-second video.
 
 The design direction is a light, static Swiss-editorial system documented in [Plan 19](docs/PLAN-19-STATIC-HOME-DESIGN-SYSTEM.md) and `DESIGN.md`. The Home no longer presents itself as a working file. Figma intro, Director, Follow, narrative consent and automatic editorial motion are not rendered or bootstrapped. Their source remains historical for now, not a current product commitment. Native scrolling and semantic server-rendered content are the baseline.
 

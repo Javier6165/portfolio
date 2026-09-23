@@ -27,8 +27,8 @@ export function Testimonials() {
         <p>Selected excerpts from recommendations Javier received on LinkedIn.</p>
       </header>
       <div className={styles.quotes}>
-        {recommendations.map((recommendation) => (
-          <figure className={styles.quote} key={recommendation.name}>
+        {recommendations.map((recommendation, index) => (
+          <figure className={styles.quote} key={recommendation.name} data-studio-target={index === 0 ? "proof" : undefined}>
             <blockquote>“{recommendation.quote}”</blockquote>
             <figcaption><strong>{recommendation.name}</strong><span>{recommendation.context}</span></figcaption>
           </figure>

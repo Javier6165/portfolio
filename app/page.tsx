@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Hero } from "./components/Hero";
 import { ArrowIcon } from "./components/SiteShell";
 import { Testimonials } from "./components/Testimonials";
+import { StudioPresence } from "./components/studio/StudioPresence";
 import styles from "./HomePage.module.css";
 
 const questions = [
@@ -21,20 +22,20 @@ const questions = [
     "I care about whether the product became easier and more effective to use — not just whether the final UI looks better.",
   ] },
   { question: "How do you help a design team get better?", answer: [
-    "My Lead experience changed how I think about my role in a team.",
+    "Leading design has changed how I think about my role in a team.",
     "I’m still very hands-on, but I also enjoy giving feedback, mentoring designers, improving shared patterns and design systems, and helping maintain a consistent quality bar.",
-    "I don’t need a Lead title to contribute at that level.",
+    "I’m most useful when I can pair that direction with hands-on work, not step away from the craft.",
   ] },
   { question: "What are you looking for next?", answer: [
-    "A hands-on Senior Product Designer role where I can own complex product problems from definition to delivery and stay close to the craft.",
+    "A hands-on Lead Product Designer role where I can shape complex product direction, help a team raise its craft and still own important design work end to end.",
     "I’m especially interested in B2B products, complex platforms and teams where Design works closely with Product and Engineering.",
-    "My Lead experience is something I bring with me — not a requirement for my next title.",
+    "I value leadership that stays close to the product, the people using it and the team building it.",
   ] },
 ] as const;
 
 function AboutPortrait() {
   return (
-    <figure className={styles.aboutPortrait} role="img" aria-label="Portrait of Javier Ortiz.">
+    <figure className={styles.aboutPortrait} role="img" aria-label="Portrait of Javier Ortiz." data-studio-target="about">
       <picture>
         <source type="image/avif" srcSet="/images/portraits/about-editorial-960.avif 960w, /images/portraits/about-editorial-1440.avif 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
         <source type="image/webp" srcSet="/images/portraits/about-editorial-960.webp 960w, /images/portraits/about-editorial-1440.webp 1440w" sizes="(max-width: 720px) 100vw, 42vw" />
@@ -47,10 +48,11 @@ function AboutPortrait() {
 export default function Home() {
   return (
     <div className="ordered-home">
+      <StudioPresence />
       <Hero />
 
       <section className={`section shell ${styles.snapshot}`} id="experience" aria-label="Javier Ortiz at a glance">
-        <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts">
+        <ul className={styles.snapshotFacts} aria-label="Javier Ortiz at a glance" data-home-entry="facts" data-studio-target="snapshot">
           <li><span>Experience</span><strong>5+ years</strong><small>in Product Design</small></li>
           <li><span>Progression</span><strong>Junior → Lead at GiG</strong><small>3 promotions in 5 years</small></li>
           <li><span>Product scope</span><strong>B2B platforms &amp; systems</strong><small>Rules engines · CMS · Data · Design systems</small></li>
@@ -61,31 +63,35 @@ export default function Home() {
       <section className={`section shell ${styles.work}`} id="work" aria-labelledby="work-title">
         <header className={styles.sectionHeading}>
           <h2 id="work-title">Selected work</h2>
-          <p>Real product work at GiG. The case studies are being prepared; outcomes and ownership will be added only after review.</p>
+          <p>Three ways I’ve worked through complexity: product design, shared systems and interactive prototyping.</p>
         </header>
         <div className={styles.caseList}>
-          <article className={`${styles.casePreview} ${styles.caseLead}`}>
+          <Link href="/work/logicx" className={`${styles.casePreview} ${styles.caseLead}`} aria-label="Read the LogicX case study">
             <div className={styles.caseCopy}>
               <span>LogicX / Rules engine</span>
-              <h3>Making complex rules easier to work with.</h3>
-              <p>Case study in preparation. The final story will show the workflows, dependencies and Javier’s specific contribution.</p>
-              <small>GiG / Case details pending review</small>
+              <h3>Making powerful automation easier to understand.</h3>
+              <p>Redesigning a real-time rules engine without losing the flexibility that made it valuable.</p>
+              <small>GiG / Read case study ↗</small>
             </div>
-            <div className={styles.caseVisual} aria-hidden="true"><span>LOGIC<span className={styles.caseVisualX}>X</span></span><i /></div>
-          </article>
-          <article className={`${styles.casePreview} ${styles.caseSecondary}`}>
+            <div className={styles.caseVisual} aria-hidden="true" data-studio-target="work"><span>LOGIC<span className={styles.caseVisualX}>X</span></span><i /></div>
+          </Link>
+          <Link href="/work/backoffice-design-system" className={`${styles.casePreview} ${styles.caseSecondary}`} aria-label="Read the Backoffice Design System case study">
             <div className={styles.systemVisual} aria-hidden="true"><span>Aa</span><div><i /><i /><i /><i /><i /><i /></div><small>Visual study / 02</small></div>
             <span>Backoffice Design System</span>
-            <h3>A shared system for backoffice products.</h3>
-            <p>Case study in preparation. The final story will explain the system, its scope and Javier’s specific role.</p>
-            <small>GiG / Case details pending review</small>
-          </article>
-          <div className={`${styles.casePreview} ${styles.caseTertiary}`}>
-            <div className={styles.thirdVisual} aria-hidden="true"><span>03</span><small>Visual study / Open selection</small></div>
-            <span>To be selected</span>
-            <h3>A third perspective on the work.</h3>
-            <p>The final project will be selected from real work to add a different dimension to the first two cases.</p>
-          </div>
+            <h3>One product language across a complex ecosystem.</h3>
+            <p>Building the shared foundations behind very different B2B products.</p>
+            <small>GiG / Read case study ↗</small>
+          </Link>
+          <Link href="/work/casino-customizer" className={`${styles.casePreview} ${styles.caseTertiary}`} aria-label="Read the Casino Customizer case study">
+            <div className={styles.thirdVisual} aria-hidden="true">{/* Pre-optimized local editorial image. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/cases/customizer/overview.jpg" alt="" width="2100" height="1185" loading="lazy" />
+            </div>
+            <span>Casino Customizer</span>
+            <h3>A sales conversation clients could explore.</h3>
+            <p>An interactive prototype to make product configuration visible in real time.</p>
+            <small>GiG / Read case study ↗</small>
+          </Link>
         </div>
       </section>
 
@@ -102,13 +108,13 @@ export default function Home() {
 
       <Testimonials />
 
-      <section className={`section shell ${styles.lab}`} id="lab" aria-labelledby="lab-title">
+      <section className={`section shell ${styles.lab}`} id="lab" aria-labelledby="lab-title" hidden>
         <header className={styles.sectionHeading}>
           <h2 id="lab-title">Lab</h2>
           <p>Small experiments in design, code and AI. A place to show what I tried, what worked and what I learned.</p>
         </header>
         <article className={styles.labPreview} aria-labelledby="lab-preview-title">
-          <div className={styles.labPreviewVisual} aria-hidden="true">
+          <div className={styles.labPreviewVisual} aria-hidden="true" data-studio-target="lab">
             <div className={styles.labPreviewDiagram}>
               <div className={styles.labStudy}><span>Question.</span><svg viewBox="0 0 280 200" fill="none"><path d="M30 160V40h220M30 100h220M85 40v120M140 40v120M195 40v120M250 40v120" stroke="currentColor" opacity=".2" /><path d="M30 150C80 150 65 65 120 65S170 135 210 95s25-55 40-55" stroke="currentColor" strokeWidth="2" /></svg></div>
               <div className={styles.labStudy}><span>Prototype.</span><div className={styles.typeStudy}>Aa<span>↗</span></div></div>
@@ -131,7 +137,7 @@ export default function Home() {
         </header>
         <div className={styles.questionList}>
           {questions.map(({ question, answer }, index) => (
-            <details className={styles.question} key={question} open={index === 0}>
+            <details className={styles.question} key={question} open={index === 0} data-studio-target={index === 0 ? "faq" : undefined}>
               <summary><span>{String(index + 1).padStart(2, "0")}</span><h3>{question}</h3><i aria-hidden="true" /></summary>
               <div className={styles.answer}>{answer.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
             </details>

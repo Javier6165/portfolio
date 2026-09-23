@@ -2,117 +2,114 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon } from "../../components/SiteShell";
-import { CaseEvidence } from "../../components/CaseEvidence";
-import { ProjectVisual } from "../../components/ProjectVisual";
-import { getProject, projects } from "../../data";
+import { caseStudies, getCaseStudy, type CaseMedia } from "../../caseStudies";
+import styles from "./CaseStudy.module.css";
 
 type Params = Promise<{ slug: string }>;
 
 export function generateStaticParams() {
-  return projects.map(({ slug }) => ({ slug }));
+  return caseStudies.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const project = getProject((await params).slug);
-  if (!project) return {};
-  return { title: `${project.name} — ${project.title}`, description: project.summary };
+  const study = getCaseStudy((await params).slug);
+  if (!study) return {};
+  return {
+    title: `${study.name} | Case study`,
+    description: study.headline,
+    robots: { index: false, follow: false },
+  };
 }
 
-function DecisionArtifact({ slug, index }: { slug: string; index: number }) {
-  return (
-    <div className={`decision-artifact decision-artifact--${slug} decision-artifact--${index + 1}`} aria-hidden="true">
-      <div className="decision-artifact__bar"><i /><span>PROTOTYPE / 0{index + 1}</span><b>● LIVE</b></div>
-      <div className="decision-artifact__canvas">
-        <div className="decision-artifact__rail"><i /><i /><i /><i /></div>
-        <div className="decision-artifact__flow">
-          <span /><span /><span /><span />
-          <strong>{index === 0 ? "DECISION" : index === 1 ? "DEPENDENCY" : "REVIEW"}</strong>
+function Media({ media, hero = false }: { media: CaseMedia; hero?: boolean }) {
+  if (media.kind === "placeholder") {
+    return (
+      <figure className={`${styles.media} ${styles.placeholder} ${media.aspect === "square" ? styles.square : ""}`}>
+        <div className={styles.placeholderSurface} role="img" aria-label={media.label}>
+          <span>Visual evidence pending</span>
+          <strong>{media.label}</strong>
         </div>
-        <div className="decision-artifact__panel"><small>STATE</small><i /><i /><i /></div>
+        <figcaption>Image placeholder. Final product material will replace this panel.</figcaption>
+      </figure>
+    );
+  }
+
+  return (
+    <figure className={`${styles.media} ${media.aspect === "square" ? styles.square : ""} ${media.presentation === "screenshot" ? styles.screenshot : ""} ${media.presentation === "composition" ? styles.composition : ""}`}>
+      <div className={styles.imageSurface}>
+        {/* Pre-optimized local project media; no remote image service is required. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={media.src} alt={media.alt} width="2100" height="1185" loading={hero ? "eager" : "lazy"} fetchPriority={hero ? "high" : undefined} />
+        {/* Local, optimized companion capture in the editorial composition. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {media.companion && <img className={styles.companion} src={media.companion.src} alt={media.companion.alt} width="2100" height="1185" loading="lazy" />}
       </div>
-    </div>
+      <figcaption>{media.caption}</figcaption>
+    </figure>
   );
 }
 
 export default async function ProjectPage({ params }: { params: Params }) {
-  const project = getProject((await params).slug);
-  if (!project) notFound();
-  const currentIndex = projects.findIndex((item) => item.slug === project.slug);
-  const next = projects[(currentIndex + 1) % projects.length];
+  const study = getCaseStudy((await params).slug);
+  if (!study) notFound();
+  const currentIndex = caseStudies.findIndex((item) => item.slug === study.slug);
+  const next = caseStudies[(currentIndex + 1) % caseStudies.length];
 
   return (
-    <article className={`case case--${project.accent}`}>
-      <header className="case-hero case-hero--v2 shell" id="overview">
-        <div className="case-hero__top js-hero-reveal">
-          <p className="eyebrow">Concept case / {project.index}</p>
-          <p className="preview-pill">Fictitious preview content</p>
-        </div>
-        <div className="case-hero__title">
-          <p className="js-hero-reveal">{project.name} / {project.surface}</p>
-          <h1 className="page-display js-hero-reveal">{project.title}</h1>
-          <p className="case-hero__summary js-hero-reveal">{project.summary}</p>
-        </div>
-        <div className="case-hero__visual js-hero-reveal">
-          <ProjectVisual project={project} compact />
-          <span>{project.artifactLabel}</span>
-        </div>
-        <dl className="case-facts js-hero-reveal">
-          <div><dt>Context</dt><dd>{project.context}</dd></div>
-          <div><dt>Role</dt><dd>{project.role}</dd></div>
-          <div><dt>Proof format</dt><dd>{project.proof}</dd></div>
-        </dl>
-      </header>
-
-      <nav className="case-index shell" aria-label="On this case study">
-        <span>{project.name} / Case index</span>
-        <div><Link href="#overview">Overview</Link><Link href="#decisions">Decisions</Link><Link href="#outcomes">Outcomes</Link></div>
-      </nav>
-
-      <section className="case-thesis section shell">
-        <p className="kicker js-reveal">The core idea</p>
-        <blockquote className="js-reveal">{project.thesis}</blockquote>
-      </section>
-
-      <section className="case-challenge section shell" aria-labelledby="challenge-title">
-        <div className="js-reveal"><p className="kicker">Challenge</p><h2 id="challenge-title">{project.challengeTitle}</h2></div>
-        <p className="js-reveal">{project.challenge}</p>
-      </section>
-
-      {project.evidenceBlocks?.map((block) => (
-        <CaseEvidence block={block} key={block.id} />
-      ))}
-
-      <section className="case-decisions section shell" id="decisions" aria-labelledby="decisions-title">
-        <header className="section-heading section-heading--split js-reveal">
-          <p className="kicker">Selected decisions</p>
-          <h2 id="decisions-title">Show the reasoning. Then show the thing.</h2>
-          <p>Placeholder artefacts model the rhythm future cases will use for annotated Figma screens, prototypes and working demos.</p>
+    <article className="ordered-case">
+      <div className={styles.casePage}>
+        <header className={`shell ${styles.hero}`}>
+          <div className={styles.heroPrelude}>
+            <Link href="/#work" className={styles.backLink}><span aria-hidden="true">←</span> Selected work</Link>
+            <p>{study.client} <span aria-hidden="true">/</span> {study.discipline}</p>
+          </div>
+          <div className={styles.heroGrid} data-case-hero>
+            <div className={styles.heroIdentity}>
+              <p className={styles.projectName}>{study.name}</p>
+              <h1>{study.headline}</h1>
+            </div>
+            <p className={styles.introduction}>{study.introduction}</p>
+          </div>
+          <div className={styles.heroEvidence} data-case-evidence>
+            <Media media={study.hero} hero />
+            <dl className={styles.facts}>
+              <div><dt>Role</dt><dd>{study.role}</dd></div>
+              <div><dt>Scope</dt><dd>{study.scope}</dd></div>
+              <div><dt>With</dt><dd>{study.collaboration}</dd></div>
+            </dl>
+          </div>
         </header>
-        <div className="decision-list decision-list--v2">
-          {project.decisions.map((decision, index) => (
-            <article className="decision-module js-reveal" key={decision.label}>
-              <div className="decision-module__copy">
-                <p>{decision.label}</p><h3>{decision.title}</h3><p>{decision.body}</p>
-              </div>
-              <DecisionArtifact slug={project.slug} index={index} />
-            </article>
-          ))}
-        </div>
-      </section>
 
-      <section className="case-outcomes section shell" id="outcomes" aria-labelledby="outcomes-title">
-        <header className="js-reveal"><p className="kicker">Outcome preview</p><h2 id="outcomes-title">What success could look like.</h2><p>Illustrative metrics only. They will never be presented as real project results.</p></header>
-        <div className="outcome-grid">
-          {project.outcomes.map((outcome) => <div className="js-reveal" key={outcome.label}><strong>{outcome.value}</strong><p>{outcome.label}</p></div>)}
-        </div>
-      </section>
+        <nav className={`shell ${styles.chapterNav}`} aria-label="On this case study">
+          <span>Explore the case</span>
+          <ol>{study.chapters.map((chapter, index) => <li key={chapter.id}><a href={`#${chapter.id}`}><span>{String(index + 1).padStart(2, "0")}</span>{chapter.id.replaceAll("-", " ")}</a></li>)}</ol>
+        </nav>
 
-      <nav className="next-case shell" aria-label="Case study navigation">
-        <Link href="/#work" className="text-link text-link--back"><ArrowIcon /> All work</Link>
-        <Link className="next-case__link" href={`/work/${next.slug}`}>
-          <span>Next concept case / {next.index}</span><strong>{next.name} — {next.title}</strong><ArrowIcon />
-        </Link>
-      </nav>
+        {study.chapters.map((chapter, index) => (
+          <section className={`shell ${styles.chapter}`} id={chapter.id} aria-labelledby={`${chapter.id}-title`} key={chapter.id} data-case-chapter>
+            <div className={styles.chapterHead}>
+              <span className={styles.chapterNumber}>{String(index + 1).padStart(2, "0")}</span>
+              <h2 id={`${chapter.id}-title`}>{chapter.title}</h2>
+            </div>
+            <div className={styles.chapterBody} data-case-copy>
+              {chapter.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {chapter.points && <ul className={styles.points}>{chapter.points.map((point) => <li key={point}>{point}</li>)}</ul>}
+            </div>
+            {chapter.emphasis && <blockquote className={styles.emphasis}>{chapter.emphasis}</blockquote>}
+            {chapter.media && <div className={styles.chapterMedia} data-case-media><Media media={chapter.media} /></div>}
+          </section>
+        ))}
+
+        <div className={`shell ${styles.caseEnd}`}>
+          <p>{study.closing}</p>
+          {study.note && <small>{study.note}</small>}
+        </div>
+
+        <nav className={`shell ${styles.nextCase}`} aria-label="Case study navigation">
+          <Link href="/#work">All selected work <ArrowIcon /></Link>
+          <Link href={`/work/${next.slug}`}><span>Next case study</span><strong>{next.name}</strong><ArrowIcon /></Link>
+        </nav>
+      </div>
     </article>
   );
 }

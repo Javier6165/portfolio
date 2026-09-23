@@ -20,7 +20,6 @@ export function SiteHeader() {
         <nav className="desktop-nav" aria-label="Primary navigation">
           <Link href="/#work">Work</Link>
           <Link href="/about">About</Link>
-          <Link href="/#lab">Lab</Link>
           <Link href="/#contact">Contact</Link>
         </nav>
         <div className="site-header__actions">
@@ -40,8 +39,8 @@ export function SiteFooter() {
           <p>Let’s make complex things a little simpler.</p>
         </div>
         <div className="footer-contact">
-          <p>I’m currently open to Senior Product Designer opportunities, especially around complex B2B products and platforms.</p>
-          <a className="text-link" href="https://es.linkedin.com/in/ortizalmagro" target="_blank" rel="noopener noreferrer">LinkedIn <ArrowIcon /></a>
+          <p>I’m currently open to hands-on Lead Product Designer opportunities, especially around complex B2B products and platforms.</p>
+          <a className="text-link" href="https://es.linkedin.com/in/ortizalmagro" target="_blank" rel="noopener noreferrer" data-studio-target="contact">LinkedIn <ArrowIcon /></a>
           <span className="footer-pending">Email and CV links will be added when their final details are confirmed.</span>
         </div>
         <div className="footer-meta">

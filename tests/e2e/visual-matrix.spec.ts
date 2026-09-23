@@ -23,7 +23,7 @@ for (const viewport of viewports) {
       scrollWidth: document.documentElement.scrollWidth,
     }));
     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
-    for (const section of await page.locator("main .ordered-home > section").all()) {
+    for (const section of await page.locator("main .ordered-home > section:not([hidden])").all()) {
       await section.scrollIntoViewIfNeeded();
     }
     await page.waitForFunction(() => [...document.images].filter((image) => !image.closest("dialog")).every((image) => image.complete));

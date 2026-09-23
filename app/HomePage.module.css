@@ -49,6 +49,11 @@
 .thirdVisual { display: flex; align-items: center; justify-content: center; background: #ced9df; color: #334953; }
 .thirdVisual > span { font-size: clamp(7rem, 15vw, 14rem); font-weight: 400; line-height: 1; letter-spacing: -.08em; }
 .thirdVisual > small { color: #334953; }
+.thirdVisual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 48%; }
+.casePreview:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .15em; }
+.caseVisual > span, .systemVisual > span, .thirdVisual img { transition: transform .65s cubic-bezier(.16,1,.3,1); }
+.casePreview:hover .caseVisual > span, .casePreview:hover .systemVisual > span { transform: translateY(-.25rem); }
+.casePreview:hover .thirdVisual img { transform: scale(1.025); }
 
 .about { padding-top: var(--section-space-wide); }
 .aboutSpread { display: grid; grid-template-columns: var(--grid-columns); gap: var(--grid-gutter); align-items: center; }
@@ -100,6 +105,8 @@
 .question summary i::before, .question summary i::after { content: ""; position: absolute; top: 50%; left: 50%; width: 1rem; height: 1px; background: currentColor; transform: translate(-50%, -50%); }
 .question summary i::after { transform: translate(-50%, -50%) rotate(90deg); }
 .question[open] summary i::after { display: none; }
+.question summary i { transition: transform .25s cubic-bezier(.16,1,.3,1); }
+.question summary:hover i { transform: rotate(90deg); }
 .answer { max-width: 64ch; display: grid; gap: 1rem; padding: .3rem 0 2rem; color: var(--muted); font-size: 1rem; line-height: 1.6; }
 
 @media (max-width: 1000px) {

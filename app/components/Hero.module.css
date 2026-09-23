@@ -2,8 +2,13 @@
 .identity { grid-column: 1 / 8; grid-row: 1; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: .15rem 1.25rem 0 0; }
 .name { font-size: .88rem; font-weight: 570; line-height: 1.3; }
 .role { margin-top: .2rem; color: var(--muted); font-size: .83rem; line-height: 1.4; }
-.identity h1 { margin-top: 2.8rem; font-size: clamp(3.6rem, 5.7vw, 5.4rem); font-weight: 460; line-height: 1.04; letter-spacing: -.045em; }
+.identity h1 { position: relative; margin-top: 2.8rem; font-size: clamp(3.6rem, 5.7vw, 5.4rem); font-weight: 460; line-height: 1.04; letter-spacing: -.045em; }
 .identity h1 > span { display: block; }
+.identity h1 > .studioDraft { display: none; position: absolute; inset: 0; color: var(--ink); }
+.identity h1[data-studio-editing="true"] > span:not(.studioDraft) { color: transparent; }
+.identity h1[data-studio-editing="true"] > .studioDraft { display: block; }
+.studioDraft > span[data-selected="true"] { background: #d4eaff; outline: 1px solid #0d99ff; }
+.studioDraft > span[data-final="true"] { white-space: pre; }
 .identity h1 em { font-style: italic; font-weight: 410; }
 .summary { max-width: 43ch; margin-top: clamp(1.4rem, 2vw, 2rem); color: var(--muted); font-size: clamp(1.06rem, 1.25vw, 1.2rem); line-height: 1.53; }
 .actions { display: flex; flex-wrap: wrap; gap: .8rem 1.6rem; margin-top: clamp(1.4rem, 2vw, 2rem); }

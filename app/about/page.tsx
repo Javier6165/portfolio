@@ -5,7 +5,7 @@ import { ArrowIcon } from "../components/SiteShell";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "About Javier Ortiz, Senior Product Designer with recent lead experience.",
+  description: "About Javier Ortiz, Lead Product Designer working across complex B2B platforms and systems.",
 };
 
 const capabilities = [
@@ -24,7 +24,7 @@ export default function AboutPage() {
           <h1 className="page-display js-hero-reveal">I care about the space between a hard problem and an obvious next step.</h1>
         </div>
         <div className="about-hero__intro js-hero-reveal">
-          <p>I’m a Senior Product Designer based in Marbella, Spain, with recent experience stepping into lead responsibility at Gaming Innovation Group.</p>
+          <p>I’m a Lead Product Designer based in Marbella, Spain. At Gaming Innovation Group, I grew through complex platform work while staying hands-on with product design.</p>
           <p>My work lives where products become dense: many users, many rules, many edge cases and many teams trying to move at once.</p>
         </div>
       </section>
